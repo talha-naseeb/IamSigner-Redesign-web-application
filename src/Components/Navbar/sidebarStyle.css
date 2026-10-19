@@ -42,7 +42,11 @@
 .modern-theme-shell .sticky-header.scrolled {
   border: 1px solid var(--modern-border);
   border-radius: 20px;
-  background: var(--modern-card) !important;
+  background: linear-gradient(
+    110deg,
+    color-mix(in srgb, var(--modern-violet) 8%, var(--modern-card)),
+    var(--modern-card) 72%
+  ) !important;
   box-shadow: none !important;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -54,7 +58,12 @@
 
 .modern-theme-shell .sidebar {
   border-color: var(--modern-border);
-  background: var(--modern-card);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--modern-violet) 10%, var(--modern-card)),
+    color-mix(in srgb, var(--modern-blue) 4%, var(--modern-card)) 58%,
+    var(--modern-card)
+  );
   box-shadow: none;
 }
 

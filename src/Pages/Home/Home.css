@@ -153,12 +153,14 @@
   font-family: var(--modern-font-ui);
   font-size: 14px;
   font-weight: 600;
-  transition: background-color var(--motion-base, 200ms) var(--motion-standard);
+  transition: filter var(--motion-base, 200ms) var(--motion-standard),
+              transform var(--motion-base, 200ms) var(--motion-standard);
 }
 
 .btn-hero-primary:hover:not(:disabled) {
-  background: linear-gradient(110deg, var(--modern-violet-hover), var(--modern-action-blue));
   color: #fff !important;
+  filter: brightness(1.08) saturate(1.08);
+  transform: translateY(-1px);
 }
 
 .btn-hero-primary:focus-visible {
@@ -180,13 +182,16 @@
   font-size: 14px;
   font-weight: 600;
   transition: border-color var(--motion-base, 200ms) var(--motion-standard),
-              background-color var(--motion-base, 200ms) var(--motion-standard);
+              background-color var(--motion-base, 200ms) var(--motion-standard),
+              color var(--motion-base, 200ms) var(--motion-standard),
+              transform var(--motion-base, 200ms) var(--motion-standard);
 }
 
 .btn-hero-secondary:hover:not(:disabled) {
-  border-color: var(--modern-border-strong);
-  background: var(--modern-raised);
-  color: var(--modern-text) !important;
+  border-color: color-mix(in srgb, var(--modern-violet) 48%, var(--modern-border));
+  background: color-mix(in srgb, var(--modern-violet) 12%, var(--modern-card));
+  color: var(--modern-violet) !important;
+  transform: translateY(-1px);
 }
 
 .btn-hero-secondary:focus-visible {
