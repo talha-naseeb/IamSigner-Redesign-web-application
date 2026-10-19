@@ -1,0 +1,107 @@
+.audit-trail-internal {
+  padding: 20px;
+}
+
+.audit-trail-internal-container {
+  background-color: var(--bg-primary);
+  padding: 20px;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.audit-trail-internal .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+}
+
+.audit-trail-internal .header > img {
+  height: 40px;
+}
+
+.audit-trail-internal .header .iam-signer-full-logo {
+  width: 140px;
+  height: 40px;
+}
+
+.audit-trail-internal .header h4 {
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.audit-trail-internal .document-info,
+.audit-trail-internal .signers-info,
+.audit-trail-internal .journal-info {
+  margin-bottom: 25px;
+}
+
+.audit-trail-internal .info-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  display: block;
+}
+
+.audit-trail-internal .custom-table-container {
+  max-width: 100%;
+  overflow-x: auto;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+}
+
+.audit-trail-internal .MuiTable-root {
+  min-width: 800px;
+  background-color: transparent !important;
+}
+
+.audit-trail-internal .MuiTableHead-root {
+  background-color: var(--bg-primary) !important;
+}
+
+.audit-trail-internal .TableHeaderCell,
+.audit-trail-internal .MuiTableCell-head {
+  color: var(--text-primary) !important;
+  font-family: "Times New Roman" !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  background-color: var(--header-default) !important;
+}
+
+.audit-trail-internal .MuiTableCell-body {
+  color: var(--text-primary) !important;
+  font-family: "Times New Roman" !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  background-color: transparent !important;
+}
+
+.audit-trail-internal .no-docs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  color: var(--text-secondary);
+}
+
+.audit-trail-internal .loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.signers-info {
+  margin-bottom: 25px;
+}

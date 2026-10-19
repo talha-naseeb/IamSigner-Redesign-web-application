@@ -1,0 +1,186 @@
+.step_number_holder_templates {
+  margin: 0 auto;
+  padding: 20px 0px;
+  display: flex;
+  border-bottom: 1px solid #b1450b;
+  background-color: var(--bg-primary);
+  z-index: 1035;
+}
+
+.step_number_holder_templates .numb {
+  background: var(--theme-color) !important;
+  width: 50px !important;
+  color: white;
+  height: 50px !important;
+  text-align: center;
+  line-height: 32px;
+  padding: 5px 12px;
+  border-radius: 50%;
+  font-weight: 400;
+  font-size: 18px;
+  margin: 0px 16px;
+}
+.temp_numb {
+  background: var(--theme-color) !important;
+  width: 40px !important;
+  color: white;
+  text-align: center;
+  line-height: 32px;
+  padding: 5px 12px;
+  border-radius: 50%;
+  font-weight: 400;
+  font-size: 18px;
+  margin: 0px 16px;
+}
+
+.step_number_holder_templates .active em {
+  color: var(--text-primary);
+}
+
+.step_number_holder_templates em {
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 29px;
+  font-style: normal;
+  color: #aaafc4;
+}
+
+.step_number_holder_templates .nav-link:after {
+  position: absolute;
+  content: "";
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  left: -38px;
+  width: 19px;
+  height: 2px;
+  background-color: #aaafc4;
+}
+
+.step_number_holder_templates .nav-link:first-child:after {
+  content: none;
+}
+
+.step_number_holder_templates .nav-link.active:after {
+  background-color: #344072;
+}
+
+/* upload*/
+/*  */
+
+.step_number_holder {
+  width: 15%;
+  display: flex;
+  border-right: 1px solid var(--border-color);
+  flex-direction: column;
+  align-content: flex-start;
+  position: fixed;
+  top: 0px;
+  left: 0;
+  height: 100%;
+  z-index: 1035;
+  background-color: var(--bg-primary);
+}
+
+[dir="rtl"] .step_number_holder {
+  right: 0;
+  border-left: 1px solid var(--border-color);
+}
+
+.stepper-logo {
+  padding: 11px;
+  display: flex;
+  justify-content: flex-start;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.step_number_holder .completed .numb {
+  background: #24b032;
+  color: white;
+  padding: 5px 8px;
+}
+
+.step_number_holder .active .numb {
+  background: var(--theme-active);
+  color: white;
+}
+
+.step_number_holder .numb {
+  width: 30px !important;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  text-align: center;
+  padding: 5px 12px;
+  border-radius: 50%;
+  font-weight: 400;
+  font-size: 14px;
+  margin: 0px 5px;
+}
+
+.step_number_holder .completed em,
+.step_number_holder .active em {
+  color: var(--text-primary);
+}
+
+.step_number_holder em {
+  font-weight: 500;
+  font-size: 14px;
+  font-style: normal;
+  color: var(--text-primary);
+}
+
+.step_number_holder .nav-link:after {
+  position: absolute;
+  content: "";
+  width: 19px;
+  height: 2px;
+  background-color: var(--bg-secondary);
+}
+
+.step_number_holder .nav-link:first-child:after {
+  content: none;
+}
+
+.step_number_holder .nav-link.active:after {
+  background-color: var(--theme-color);
+}
+
+.stepper-line {
+  width: 3px;
+  height: 20px;
+  background-color: var(--bg-secondary);
+  border-radius: 5px;
+  position: relative;
+}
+
+.stepper-line-completed {
+  background: #24b032 !important;
+}
+
+.stepper-line-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 50%;
+  width: 100%;
+  /* background:  */
+  background: #c4ced4;
+  border-radius: 5px;
+}
+
+@media (max-width: 767px) {
+  .step_number_holder_templates {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .step_number_holder_templates {
+    padding: 0 10px !important;
+  }
+
+  .step_number_holder {
+    display: flex;
+    justify-content: flex-start;
+  }
+}

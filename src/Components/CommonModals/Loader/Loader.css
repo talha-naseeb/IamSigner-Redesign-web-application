@@ -1,0 +1,25 @@
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Force Lottie SVG elements to match theme-color */
+.loader svg path,
+.loader svg g,
+.loader svg circle,
+.loader svg rect,
+.loader svg polygon {
+  stroke: var(--theme-color) !important;
+  fill: transparent !important; /* Most stroke animations need transparent fill */
+}
+
+/* If the animation uses fills instead of strokes */
+.loader svg .fill-target {
+  fill: var(--theme-color) !important;
+}
+
+/* Global catch-all for the SVG inside the loader container */
+.loader svg * {
+  stroke: var(--theme-color) !important;
+}

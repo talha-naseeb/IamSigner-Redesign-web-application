@@ -1,0 +1,21 @@
+.alignment-guide {
+  --alignment-guide-color: rgb(214 169 0 / 76%);
+  position: absolute;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.alignment-guide--snapped { --alignment-guide-color: #d6a900; }
+.alignment-guide--vertical {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--alignment-guide-color);
+}
+
+.alignment-guide--horizontal {
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--alignment-guide-color);
+}

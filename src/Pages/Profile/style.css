@@ -1,0 +1,420 @@
+.userProfile-form {
+  border-radius: 6px;
+  background-color: var(--card-bg);
+  padding: 20px;
+  color: var(--text-primary);
+}
+
+.main-container-form-getbranding {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  margin-top: 12px;
+}
+
+.formWrapper {
+  width: 100%;
+  padding: 20px;
+}
+
+.form {
+  background-color: var(--card-bg);
+  padding: 20px;
+  border-radius: 8px;
+  color: var(--text-primary);
+}
+
+.formControl {
+  padding: 8px;
+  display: flex;
+  margin-top: 12px;
+  background-color: var(--bg-secondary);
+  align-items: center;
+}
+
+.formHeadings {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.Combinebutton {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  margin-left: 12px;
+  padding: 5px;
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+}
+
+.uploadProfilebtn {
+  background-color: var(--card-bg);
+  border: 1px solid var(--theme-color);
+  color: var(--theme-color);
+  padding: 10px 18px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.uploadProfilebtn:hover {
+  background-color: var(--theme-hover);
+  color: white;
+  border: 1px solid var(--theme-color);
+}
+
+.Imageshown {
+  width: 41px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid var(--theme-color);
+  color: var(--theme-color);
+}
+
+.profile-Form {
+  border-radius: 5px;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2px;
+  border: 1px solid var(--theme-color);
+  padding: 30px 20px;
+}
+
+@media (max-width: 768px) {
+  .profile-Form {
+    flex-direction: column;
+    align-items: start;
+  }
+}
+
+.ImageCancelBtn {
+  display: flex;
+  background-color: var(--card-bg);
+  color: var(--theme-color);
+  align-items: center;
+  border: 1px solid var(--theme-color) !important;
+  gap: 5px;
+}
+
+.ImageCancelBtn:hover {
+  background-color: var(--theme-hover);
+  color: white;
+  border: 1px solid var(--theme-color);
+}
+
+.ImageDoneBtn {
+  background-color: var(--theme-color);
+  color: white;
+  border: 1px solid var(--theme-color);
+}
+.ImageDoneBtn:hover {
+  background-color: var(--theme-hover);
+  color: #fff;
+}
+
+/* Profile, delegation, and password settings */
+.profile-page,
+.delegation-section {
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+}
+
+.profile-page {
+  width: 100%;
+  min-width: 0;
+  padding-inline: clamp(1rem, 2vw, 2rem);
+}
+
+.profile-page .userProfile-form {
+  width: 100%;
+  min-width: 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--modern-border);
+  border-radius: 20px;
+  background: var(--modern-card);
+}
+
+.profile-page-heading {
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--modern-border);
+  color: var(--modern-text);
+}
+
+.profile-section-title {
+  min-width: 0;
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+}
+
+.profile-section-icon {
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--modern-violet) 28%, var(--modern-border));
+  border-radius: 13px;
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+}
+
+.profile-section-icon svg {
+  color: var(--modern-violet);
+}
+
+.profile-section-label {
+  display: block;
+  margin: 0;
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.profile-page-heading .profile-section-label {
+  font-size: 1.25rem;
+}
+
+.profile-image-preview,
+.profile-image-placeholder {
+  width: min(400px, 100%);
+  max-height: 70vh;
+  border-radius: 8px;
+}
+
+.profile-image-preview {
+  height: auto;
+  object-fit: contain;
+}
+
+.profile-image-placeholder {
+  display: flex;
+  aspect-ratio: 1;
+  align-items: center;
+  justify-content: center;
+  background: var(--modern-raised);
+  color: var(--modern-violet);
+}
+
+.profile-image-placeholder svg {
+  width: min(200px, 75%);
+  height: auto;
+}
+
+.profile-page .profile-Form {
+  min-height: 142px;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  margin: 0;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--modern-border);
+  border-radius: 18px;
+  background: var(--modern-raised);
+  transition: border-color var(--motion-base) var(--motion-standard);
+}
+
+.profile-page .profile-Form:hover {
+  border-color: var(--modern-border-strong);
+}
+
+.profile-page .profile-Form .form-label {
+  color: var(--modern-muted);
+  font-family: var(--modern-font-ui);
+}
+
+.profile-page .profile-Form .form-label:first-child {
+  color: var(--modern-text);
+}
+
+.profile-page .Imageshown {
+  display: inline-flex;
+  width: 58px;
+  height: 58px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--modern-border-strong);
+  border-radius: 17px;
+  background: var(--modern-raised);
+  color: var(--modern-violet);
+}
+
+.profile-page .uploadProfilebtn {
+  flex: 0 0 auto;
+  padding: 0.65rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--modern-violet) 35%, var(--modern-border));
+  border-radius: 12px;
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+  font-size: 0.82rem;
+  font-weight: 650;
+  transition: background-color var(--motion-fast) var(--motion-standard), border-color var(--motion-fast) var(--motion-standard);
+}
+
+.profile-page .uploadProfilebtn:hover {
+  border-color: var(--modern-violet);
+  background: var(--modern-violet);
+  color: #fff;
+}
+
+.profile-page .form-label,
+.delegation-section .form-label {
+  color: var(--modern-text);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.profile-page .form-control,
+.delegation-section .form-control,
+.delegation-section .rmdp-input {
+  min-height: 44px;
+  border: 1px solid var(--modern-border-strong) !important;
+  border-radius: 12px;
+  background: var(--modern-raised) !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui);
+  font-size: 0.9rem;
+  box-shadow: none;
+}
+
+.profile-page .form-control:focus,
+.delegation-section .form-control:focus,
+.delegation-section .rmdp-input:focus {
+  border-color: var(--modern-violet) !important;
+  outline: 3px solid var(--modern-focus);
+  outline-offset: 2px;
+}
+
+.profile-page .react-tel-input .form-control,
+.delegation-section .react-tel-input .form-control {
+  width: 100% !important;
+  height: 44px !important;
+  border: 1px solid var(--modern-border-strong) !important;
+  border-radius: 12px !important;
+  background: var(--modern-raised) !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui) !important;
+}
+
+.profile-page .react-tel-input {
+  width: 100%;
+}
+
+.delegation-section .react-tel-input {
+  width: 100%;
+}
+
+.profile-page .react-tel-input .flag-dropdown,
+.delegation-section .react-tel-input .flag-dropdown {
+  border: 1px solid var(--modern-border-strong) !important;
+  border-radius: 12px 0 0 12px !important;
+  background: var(--modern-raised) !important;
+}
+
+[dir="rtl"] .profile-page .react-tel-input .flag-dropdown,
+[dir="rtl"] .delegation-section .react-tel-input .flag-dropdown {
+  border-radius: 0 12px 12px 0 !important;
+}
+
+.profile-page .ImageDoneBtn,
+.delegation-section .ImageDoneBtn,
+.cobranding-page .ImageDoneBtn {
+  min-height: 42px;
+  padding: 0.58rem 1.15rem;
+  border: 1px solid var(--modern-violet) !important;
+  border-radius: 12px;
+  background: var(--modern-violet);
+  color: #fff;
+  font-weight: 650;
+}
+
+.profile-page .ImageDoneBtn:hover,
+.delegation-section .ImageDoneBtn:hover,
+.cobranding-page .ImageDoneBtn:hover {
+  border-color: var(--modern-violet-hover) !important;
+  background: var(--modern-violet-hover);
+  color: #fff;
+}
+
+.profile-page .ImageCancelBtn,
+.delegation-section .ImageCancelBtn,
+.cobranding-page .ImageCancelBtn {
+  min-height: 42px;
+  padding: 0.58rem 1.15rem;
+  border: 1px solid var(--modern-border-strong) !important;
+  border-radius: 12px;
+  background: var(--modern-card);
+  color: var(--modern-text);
+  font-weight: 600;
+}
+
+.profile-page .ImageCancelBtn:hover,
+.delegation-section .ImageCancelBtn:hover,
+.cobranding-page .ImageCancelBtn:hover {
+  border-color: var(--modern-violet) !important;
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+}
+
+.profile-accordion .accordion-item,
+.delegation-accordion .accordion-item {
+  overflow: hidden;
+  margin-bottom: 0.85rem;
+  border: 1px solid var(--modern-border) !important;
+  border-radius: 18px !important;
+  background: var(--modern-card) !important;
+}
+
+.profile-accordion .accordion-button,
+.delegation-accordion .accordion-button {
+  min-height: 68px;
+  padding: 1rem 1.25rem;
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui);
+  font-weight: 650;
+  box-shadow: none !important;
+}
+
+.profile-accordion .accordion-button:not(.collapsed),
+.delegation-accordion .accordion-button:not(.collapsed) {
+  background: var(--modern-raised) !important;
+  color: var(--modern-text) !important;
+}
+
+.profile-accordion .accordion-button::after,
+.delegation-accordion .accordion-button::after {
+  filter: var(--accordion-icon-filter, none);
+}
+
+[data-theme="dark"] .profile-accordion .accordion-button::after,
+[data-theme="dark"] .delegation-accordion .accordion-button::after {
+  filter: invert(1) grayscale(1);
+}
+
+.profile-accordion .accordion-body,
+.delegation-accordion .accordion-body {
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  border-top: 1px solid var(--modern-border);
+  background: var(--modern-card);
+}
+
+.password-accordion .password-change-card {
+  max-width: 700px;
+}
+
+@media (max-width: 768px) {
+  .profile-page .profile-Form {
+    align-items: flex-start;
+  }
+
+  .profile-accordion .accordion-button,
+  .delegation-accordion .accordion-button {
+    min-height: 60px;
+    padding-inline: 1rem;
+  }
+}

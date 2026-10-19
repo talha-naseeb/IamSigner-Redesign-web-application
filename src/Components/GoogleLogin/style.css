@@ -1,0 +1,31 @@
+.googleSignIn {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  background: white;
+  border: 1px solid #ccc !important;
+  gap: 1rem;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+}
+.googleSignIn:hover {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  background: white;
+  border: 1px solid #ccc !important;
+  gap: 1rem;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* .googleData {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+} */

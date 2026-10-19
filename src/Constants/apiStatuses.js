@@ -1,0 +1,26 @@
+/**
+ * API Return Statuses matching Backend Enum
+ */
+export const API_STATUS = {
+  SUCCESS: "1",
+  FAILED: "0",
+  EXPIRED: "2",
+  EXCEPTION: "3",
+  NO_AUTHORIZED: "4",
+  DONT_HAVE_ACCESS: "5",
+  ALREADY_SIGNED: "6",
+  // NO_DATA_FOUND: "7",
+  INVALID_URL: "8",
+  NO_TOKEN_PROVIDED: "9",
+  ACCOUNT_EXISTS: "10",
+  SIGNATORY_DECLINED: "11",
+  LICENSE_EXCEED: "12",
+  LINK_EXPIRED: "13",
+  DOC_RECALLED: "14",
+  // OPENAI_ISSUE: "15",
+  // OPENAI_EXCEED: "16",
+  // REQUEST_ALREADY_INITIATED: "17",
+  // LICENSE_IS_EXPIRED: "18",
+  // VALIDATION_FAILED: "19",
+  ALREADY_VIEWED: "20",
+};

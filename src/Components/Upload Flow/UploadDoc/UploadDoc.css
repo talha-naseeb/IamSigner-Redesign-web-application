@@ -1,0 +1,43 @@
+.uploadDoc-container {
+  position: relative;
+  height: 100% !important;
+}
+
+.formSteps {
+  margin-left: 15%;
+}
+[dir="rtl"] .formSteps {
+  margin-right: 15%; /* Margin for right-to-left (rtl) text direction */
+  margin-left: 0px;
+}
+
+@media (max-width: 767px) {
+  .step_number_holder {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .main-content {
+    flex-direction: column-reverse;
+  }
+  
+  .formSteps {
+    margin-left: 0px !important;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .list {
+    flex-direction: row !important;
+    gap: 1px;
+    width: 100%;
+    gap: 15px;
+    justify-content: space-evenly;
+    border-bottom: 1px solid #ccc;
+    border-right: 0px !important;
+    padding-bottom: 13px;
+  }
+  .left-sidebar {
+    justify-content: center !important;
+    background-color: white;
+  }
+}

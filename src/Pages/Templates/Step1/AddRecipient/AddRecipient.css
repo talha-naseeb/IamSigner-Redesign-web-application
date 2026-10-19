@@ -1,0 +1,224 @@
+.recipient-form {
+  border-radius: 10px;
+  border-left: 10px solid #fe5800;
+  border: 1px solid solid lightgray;
+}
+
+.recipient-from .form-control {
+  height: 25px;
+  border: 1px solid solid grey;
+  padding: 5px;
+  font-size: 15px;
+}
+
+.recipient-form,
+.message-form {
+  padding: 20px 20px;
+  background-color: var(--bg-primary);
+  margin-bottom: 30px;
+}
+
+input[type="checkbox"]:not(.checked) {
+  border-color: #ccc;
+  box-shadow: none;
+  height: 20px;
+}
+
+input[type="checkbox"]:checked {
+  box-shadow: none;
+  background-color: var(--theme-color);
+  border: none;
+}
+
+.radio-button {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.radio-button input[type="radio"] {
+  margin-right: 18px;
+}
+
+.radio-button:checked {
+  background-color: orange;
+  color: white;
+}
+
+.info-btn {
+  color: var(--theme-color);
+}
+
+.info-btn:hover {
+  color: var(--theme-hover);
+}
+
+.draggable-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.temp-drag-handle {
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 50%;
+}
+
+.temp-form-number-box {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.temp-particles-checkbox {
+  height: 20px;
+  width: 20px;
+  display: inline-flex;
+  appearance: none;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  transition: var(--theme-transition);
+  margin: 2px;
+}
+
+.temp-particles-checkbox:focus {
+  outline: 0;
+}
+
+.temp-particles-checkbox:checked {
+  background-color: var(--theme-color);
+}
+
+.temp-particles-checkbox:checked::after {
+  background-color: var(--theme-color);
+  height: calc(20px * 0.3);
+  width: calc(20px * 0.3);
+}
+
+.temp-particles-checkbox:checked + span {
+  color: black;
+}
+
+.temp-particles-checkbox::before,
+.temp-particles-checkbox::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  border-radius: inherit;
+  height: 0px;
+  width: 0px;
+}
+
+.temp-particles-checkbox::after {
+  transition: var(--theme-transition);
+}
+
+.temp-particles-checkbox::before {
+  height: 4px;
+  width: 4px;
+  z-index: 2;
+}
+
+@keyframes particleAnimate {
+  0% {
+    box-shadow:
+      0px 0px 0px transparent,
+      0px 0px 0px transparent,
+      0px 0px 0px transparent;
+    transform: rotate(0turn);
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    box-shadow:
+      0px 20px 0px #f94144,
+      0px 30px 0px #f9c74f,
+      0px 32px 0px #ffd166;
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: rotate(0.5turn);
+  }
+}
+
+.particles-checkbox-container {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+}
+
+.particles-checkbox-container span {
+  border-radius: 10px;
+  padding: 6px;
+  color: #3b4a82;
+  transition: var(--theme-transition);
+}
+
+@media (max-width: 767px) {
+  .accordion-body {
+    padding: 5px 10px;
+  }
+  .form-fields {
+    justify-content: start;
+  }
+  .recipient-form-buttons {
+    justify-content: start;
+  }
+}
+
+.saveBtn {
+  background-color: var(--theme-color);
+  border: 1px solid solid var(--theme-color);
+  color: #fff;
+}
+.saveBtn:hover {
+  background-color: var(--theme-hover);
+  border: 1px solid var(--theme-hover);
+  color: #fff;
+}
+
+.deleteBtn {
+  color: black;
+  text-decoration: underline;
+}
+
+.deleteBtn:hover {
+  color: #cb1a1a;
+}
+
+.createBtn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 10px;
+  border: 1px solid var(--theme-color);
+  color: var(--theme-color);
+}
+
+.createBtn:hover {
+  background-color: var(--theme-hover);
+  color: #f0f0f0;
+}
+
+.add-signatory-btns {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: flex-start;
+  margin: 1rem 0;
+}

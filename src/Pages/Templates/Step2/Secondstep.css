@@ -1,0 +1,143 @@
+/* .secondstep-container {
+  margin-top: 20px;
+} */
+
+.truncate-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.secondstep-container .dropdown-toggle {
+  color: var(--text-primary);
+  border: none;
+}
+.documents-dropdown {
+  color: var(--text-primary);
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  display: flex;
+  text-align: center;
+  align-items: center;
+  padding: 5px;
+  margin: 7px 5px;
+}
+
+.documents-dropdown:hover {
+  color: var(--text-primary);
+}
+
+.input-group-text {
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  border-radius: 0;
+  border: none;
+}
+
+.doc_show {
+  display: flex;
+}
+
+.left-sidebar {
+  /* width: max-content; */
+  display: flex;
+  justify-content: flex-start;
+}
+
+.page-display,
+.doc_show {
+  border-left: 1px solid var(--border-color);
+  background: var(--bg-primary);
+}
+
+/* .list-container {
+    max-height: calc(80vh - 6vh);
+    overflow-y: auto;
+} */
+
+.draggable-button .icon-background {
+  width: 26px;
+  height: 26px;
+  border-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.draggable-button {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.controls {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background-color: #002c52;
+}
+
+.controls .btn {
+  background-color: #fe5800;
+  margin: 6px 6px;
+  border: none;
+}
+
+.large-image .doc-image {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+.draggable-button-container {
+  position: relative;
+  display: inline-block;
+}
+
+.drag-button {
+  position: absolute;
+  top: -5px;
+  left: -9px;
+  background-color: #002c52;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grabbing;
+  padding: 5px;
+  /* z-index: 1; */
+}
+
+.draggable-content .list {
+  display: flex;
+}
+
+@media screen and (max-width: 576px) {
+  .doc-image {
+    scale: 0.5;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .doc-image {
+    scale: 0.45;
+    transform: translate(-61%, -61%);
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .signatories-row {
+    top: var(--editor-header-height, 126px) !important;
+  }
+
+  .draggable-content {
+    top: calc(var(--editor-header-height, 126px) + 70px) !important;
+  }
+
+  .center-doc-image {
+    margin-top: calc(var(--editor-header-height, 126px) + 66px) !important;
+  }
+}

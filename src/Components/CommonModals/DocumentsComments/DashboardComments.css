@@ -1,0 +1,66 @@
+.commentsOffcanvas {
+  position: relative;
+  overflow-y: hidden;
+}
+
+.newComment {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  background: var(--bg-primary);
+}
+
+/* Avatar styling */
+.avatar-circle {
+  min-width: 32px;
+  min-height: 32px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.avatar-circle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* User info styling */
+.user-info {
+  flex-grow: 1;
+}
+
+.user-name {
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.user-email {
+  line-height: 1.2;
+  opacity: 0.8;
+}
+
+/* Comment header improvements */
+.comment-header {
+  margin-bottom: 8px !important;
+}
+
+.signature-comment-body {
+  padding: 8px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .avatar-circle {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 11px !important;
+  }
+  
+  .user-name {
+    font-size: 13px !important;
+  }
+  
+  .user-email {
+    font-size: 11px !important;
+  }
+}

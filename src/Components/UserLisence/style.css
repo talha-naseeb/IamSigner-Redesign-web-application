@@ -1,0 +1,12 @@
+.lisenceExpire {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+.LisenceImage{
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}

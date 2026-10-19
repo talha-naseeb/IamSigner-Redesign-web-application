@@ -1,0 +1,94 @@
+.DocsOffcanvas {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  margin: 10px 0px;
+  font-weight: 500;
+}
+
+.form-check label {
+  margin-top: 2px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.DocsOffcanvas.active {
+  border: 1px solid var(--theme-color);
+  color: var(--theme-color);
+  font-weight: 500;
+}
+
+.folderDivStyle {
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+}
+.folderStyles {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.folderDivStyle:hover {
+  border: 1px solid var(--theme-color);
+  color: var(--theme-color);
+}
+
+.FolderDivSpan {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.rtl-icon {
+  transform: scaleX(-1);
+}
+
+.sub-folderDivStyle {
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  padding: 0px 10px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--text-primary);
+  gap: 1rem;
+}
+.sub-folderStyles {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.addFileIcon {
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: var(--text-primary) !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.addFileIcon:hover {
+  border: 1px solid var(--theme-color);
+  color: var(--theme-color) !important;
+}

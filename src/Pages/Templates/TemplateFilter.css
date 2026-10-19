@@ -1,0 +1,26 @@
+.radio-container {
+  display: flex;
+  gap: 1rem;
+}
+
+.radio-label {
+  font-weight: 500;
+  margin-right: 10px;
+}
+
+.input-radio {
+  width: 20px;
+}
+
+.radio-container input[type="radio"] {
+  accent-color: var(--theme-color);
+}
+.filterOpenBtn {
+  border: 1px solid #ccc;
+  color: #ccc;
+}
+.filterOpenBtn:hover {
+  border: 1px solid var(--theme-color);
+  color: var(--theme-color);
+}
+

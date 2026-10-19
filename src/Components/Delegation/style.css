@@ -1,0 +1,47 @@
+.delegation-accordion .accordion-item {
+  overflow: hidden;
+  border: 1px solid var(--modern-border) !important;
+  border-radius: 18px !important;
+  background: var(--modern-card) !important;
+}
+
+.delegation-accordion .accordion-button {
+  min-height: 68px;
+  padding: 1rem 1.25rem;
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui);
+  font-weight: 650;
+  box-shadow: none !important;
+}
+
+.delegation-accordion .accordion-button:not(.collapsed) {
+  background: var(--modern-raised) !important;
+}
+
+[data-theme="dark"] .delegation-accordion .accordion-button::after {
+  filter: invert(1) grayscale(1);
+}
+
+.delegation-accordion .accordion-body {
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  border-top: 1px solid var(--modern-border);
+  background: var(--modern-card);
+}
+
+.delegation-accordion .password-protected {
+  color: var(--modern-text);
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.delegation-accordion .react-switch-bg {
+  border: 1px solid var(--modern-border-strong);
+}
+
+@media (max-width: 768px) {
+  .delegation-accordion .accordion-button {
+    min-height: 60px;
+    padding-inline: 1rem;
+  }
+}

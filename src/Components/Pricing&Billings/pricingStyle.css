@@ -1,0 +1,96 @@
+ .parentPricing {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  /* background: linear-gradient(45deg, rgba(255, 255, 255, 1) 0%, rgba(237, 255, 255, 1) 36%, rgba(191, 230, 250, 1) 89%); */
+}
+
+.MainBox {
+  border: 1px solid #0c9ad7;
+  border-radius: 10px;
+  padding: 40px 20px;
+  background: #fff;
+  max-width:100% ;
+  /* width: 20rem; */
+  /* display: flex; */
+  /* flex-direction: column; */
+  gap: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  transition: transform 0.5s ease;
+}
+
+.MainBox:hover {
+  border: none;
+  transform: translateY(-3rem);
+  background-color: #b7e6fb;
+  box-shadow: none;
+}
+
+.MainboxFirsStarter {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.IncludedDiv {
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: normal;
+}
+
+.includedchilds {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+}
+
+.ContactUsPricing {
+  background-color: #0c9ad7;
+  color: #fff;
+  font-weight: 500;
+  width: 100%;
+  border: 1px solid #0c9ad7;
+}
+
+.ContactUsPricing:hover {
+  background-color: #075679;
+  color: #fff;
+  font-weight: 500;
+  width: 100%;
+  border: 1px solid #075679;
+}
+
+.PricingButton {
+  background-color: white;
+  border-color: var(--theme-color);
+  color: var(--theme-color);
+  padding: 5px 40px;
+}
+.PricingButton:hover {
+  background-color: var(--theme-color);
+  border-color: var(--theme-color);
+  color: white;
+}
+
+.PricingButton.active {
+  background-color: var(--theme-color);
+  border-color: var(--theme-color);
+  color: white;
+}
+
+.pricingRows {
+  display: flex;
+  gap: 8px;
+  margin-top: 5rem;
+  justify-content: center;
+  padding: 2px;
+}
+
+
+
+
+
+

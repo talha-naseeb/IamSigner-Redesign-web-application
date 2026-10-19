@@ -1,0 +1,195 @@
+.add-team {
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 3px;
+  padding: 6px;
+}
+
+.add-team-card {
+  background-image: linear-gradient(to right, #f98141, #fed257);
+  border-bottom: 1px solid #f98141 !important ;
+}
+
+.add-team-card :hover {
+  transform: scale(1.01);
+}
+
+.createTeamBtn {
+  display: flex;
+  align-items: center;
+  /* gap: 5px; */
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  color: #ccc;
+  background-color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.createTeamBtn:hover {
+  border: 1px solid var(--theme-color);
+  color: var(--theme-color);
+}
+
+.viewDetails {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.viewDetailsCard {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 5px 10px;
+  text-align: center;
+  height: 80px;
+}
+
+[data-theme="dark"] .viewDetailsCard {
+  background-color: var(--bg-primary);
+}
+[data-theme="dark"] .viewDetails {
+  background-color: var(--bg-primary);
+}
+[data-theme="dark"] .viewerProfile {
+  background-color: var(--bg-primary);
+}
+
+.viewerProfile {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--bg-secondary);
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Team member management */
+.team-members-page {
+  max-width: 1320px;
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+}
+
+.team-members-page .createTemplate {
+  margin-bottom: 0.85rem;
+}
+
+.team-members-page .pendingtable {
+  width: 100%;
+  padding: clamp(1rem, 2vw, 1.5rem) !important;
+  border: 1px solid var(--modern-border) !important;
+  border-radius: 22px !important;
+  background: var(--modern-card) !important;
+  box-shadow: var(--modern-card-shadow);
+}
+
+.team-members-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.team-members-heading {
+  margin: 0;
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+  font-size: 1.15rem;
+  font-weight: 650;
+}
+
+.team-members-table {
+  height: min(60vh, 680px) !important;
+  border-radius: 16px !important;
+}
+
+.team-members-page .TableHeaderCell {
+  position: sticky !important;
+  top: 0 !important;
+}
+
+.team-members-page .TableCell {
+  min-height: 54px;
+}
+
+.team-members-page .showHideNoDocs {
+  align-self: center;
+  color: var(--modern-muted);
+  font-family: var(--modern-font-ui);
+  font-size: 0.82rem;
+}
+
+.team-members-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.team-members-pagination .MuiPaginationItem-root {
+  border-color: var(--modern-border) !important;
+  color: var(--modern-muted) !important;
+  font-family: var(--modern-font-ui);
+}
+
+.team-members-pagination .MuiPaginationItem-root.Mui-selected {
+  border-color: var(--modern-violet) !important;
+  background: var(--modern-violet) !important;
+  color: #fff !important;
+}
+
+.team-members-page .createTeamBtn {
+  min-height: 42px;
+  border-color: var(--modern-border-strong);
+  border-radius: 12px;
+  background: var(--modern-card);
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+  font-weight: 600;
+}
+
+.team-members-page .createTeamBtn:hover {
+  border-color: var(--modern-violet);
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+}
+
+.team-members-page .viewDetails,
+.team-members-page .viewDetailsCard {
+  border-color: var(--modern-border);
+  border-radius: 12px;
+  background: var(--modern-bg);
+  color: var(--modern-text);
+}
+
+.team-members-page .viewerProfile {
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+}
+
+@media (max-width: 768px) {
+  .team-members-toolbar,
+  .team-members-pagination {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .team-members-page .pendingtable {
+    padding: 0.85rem !important;
+  }
+}

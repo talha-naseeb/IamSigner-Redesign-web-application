@@ -1,0 +1,88 @@
+
+
+.three-dots:hover {
+  background-color: #c2dff7 !important;
+}
+
+.Dropdown.Item:hover {
+  background-color: #c2dff7 !important;
+  cursor: pointer;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+@media (max-width: 767px) {
+  .truncate-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+  }
+  .truncate-cell-template {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+  }
+}
+
+@media (min-width: 768px) {
+  .truncate-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+  .truncate-cell-template {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+  }
+}
+
+.truncate-cell.scrollable {
+  overflow: auto;
+  white-space: unset;
+  text-overflow: unset;
+}
+.truncate-cell-template.scrollable {
+  overflow: auto;
+  white-space: unset;
+  text-overflow: unset;
+}
+
+/* Ensure the PDF content has a white background */
+.openAITable {
+  background-color: white !important;
+  /* min-height: 100vh; */
+  box-sizing: border-box;
+  /* color: black;  */
+}
+
+
+
+.openAITable p {
+  margin: 0px 10px;
+  color: #000 !important;
+  opacity: 1 !important;
+}
+
+.openAITable table {
+  border-collapse: collapse;
+  max-width: 100% !important;
+  padding: 10px !important;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}

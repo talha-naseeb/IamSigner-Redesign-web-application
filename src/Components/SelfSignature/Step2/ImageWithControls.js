@@ -1,0 +1,436 @@
+import React, { useState } from "react";
+import { Button } from "react-bootstrap";
+import { Icons } from "@/assets/Icons";
+import ResizableButtons from "./ResizableButtons";
+import Draggable from "react-draggable";
+import SmartGuides from "@/Components/SignaturePlacement/SmartGuides";
+import "react-datepicker/dist/react-datepicker.css";
+import ControlsFotmatting from "./ControlsFotmatting";
+
+const ImageWithControls = ({
+  signatoryColors,
+  selectedImage,
+  displayedButtons,
+  drop,
+  updateControlsLocation,
+  handleButtonRemove,
+  dropRef,
+  textInput,
+  setTextInput,
+  onUpdateQRDetails,
+  imageContainerRef,
+  buttons,
+  isAPICallInProgress, // New prop to disable interaction when API is in progress
+  fetchButtonPositions,
+  alignmentGuides = { vertical: [], horizontal: [], verticalSnapped: false, horizontalSnapped: false },
+  onPlacedControlDrag,
+  onPlacedControlDrop,
+  onPlacedControlResize,
+  onPlacedControlResizeEnd,
+}) => {
+  return (
+    <div
+      className='large-image'
+      style={{
+        position: "relative",
+        height: "auto",
+        pointerEvents: isAPICallInProgress ? "none" : "auto", // Disable pointer events during API call
+      }}
+    >
+      <div
+        ref={drop(dropRef)}
+        className='doc-image'
+        style={{
+          // width: "100%",
+          position: "relative",
+          height: "auto",
+        }}
+      >
+        <img src={selectedImage} alt='' ref={imageContainerRef} />
+        <SmartGuides guides={alignmentGuides} />
+
+        {displayedButtons.map((button, index) => {
+          return (
+            <ButtonsOnImage
+              button={button}
+              index={index}
+              handleButtonRemove={handleButtonRemove}
+              signatoryColors={signatoryColors}
+              updateControlsLocation={updateControlsLocation}
+              textInput={textInput}
+              setTextInput={setTextInput}
+              selectedImage={selectedImage}
+              onUpdateQRDetails={onUpdateQRDetails}
+              buttons={buttons}
+              isAPICallInProgress={isAPICallInProgress}
+              fetchButtonPositions={fetchButtonPositions}
+              onPlacedControlDrag={onPlacedControlDrag}
+              onPlacedControlDrop={onPlacedControlDrop}
+              onPlacedControlResize={onPlacedControlResize}
+              onPlacedControlResizeEnd={onPlacedControlResizeEnd}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export default ImageWithControls;
+
+export const ButtonsOnImage = ({
+  button,
+  index,
+  handleButtonRemove,
+  signatoryColors,
+  updateControlsLocation,
+  selectedImage,
+  onUpdateQRDetails,
+  buttons,
+  isAPICallInProgress, // New prop to disable interaction when API is in progress
+  fetchButtonPositions,
+  onPlacedControlDrag,
+  onPlacedControlDrop,
+  onPlacedControlResize,
+  onPlacedControlResizeEnd,
+}) => {
+  const [resizing, setResizing] = useState(false);
+  const [editingStates, setEditingStates] = useState({});
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const [textInput, setTextInput] = useState();
+  const [showDateInput, setShowDateInput] = useState(false);
+  const [checkboxValue, setCheckboxValue] = useState(false);
+  const [categoryMap, setCategoryMap] = useState({});
+
+  const handleDateChange = (event) => {
+    const date = event.target.value;
+    setSelectedDate(date);
+  };
+
+  const handleCheckboxChange = (event) => {
+    const value = event.target.checked;
+    setCheckboxValue(value);
+
+    const transformedValue = value ? "YES" : "NO";
+
+    updateControlsLocation(
+      button.controlLocationID,
+      button.controlIdentifier,
+      transformedValue,
+      button.position.x,
+      button.position.y,
+      button.height,
+      button.width,
+      button.fontStyle,
+      button.fontSize,
+      button.fontColor,
+      button.customPlaceHolder,
+      button.isRequired,
+      button.isDigitalSignature,
+      button.category
+    );
+  };
+
+  const toggleOffcanvas = () => {
+    setShowOffcanvas(!showOffcanvas);
+  };
+
+
+  const handleText = (controlLocationID, text) => {
+    setTextInput(text);
+    setEditingStates((prevState) => ({
+      ...prevState,
+      [controlLocationID]: true,
+    }));
+  };
+
+  const handleInputChange = (event) => {
+    setTextInput(event.target.value);
+  };
+
+  const setResizeState = (value) => setResizing(value);
+
+  const resizeProps = {
+    button,
+    onUpdateControlsLocation: updateControlsLocation,
+    signatoryColors,
+    setResizing: setResizeState,
+    selectedImage,
+    onResizeGuides: (size) => onPlacedControlResize?.(button, size),
+    onResizeGuideEnd: () => onPlacedControlResizeEnd?.(),
+  };
+
+  return (
+    <Draggable
+      key={`${button.controlLocationID}-${button.position.x}-${button.position.y}`}
+      bounds='parent'
+      cancel='.react-resizable-handle, input, textarea, button'
+      defaultPosition={{ x: button.position.x, y: button.position.y }}
+      disabled={isAPICallInProgress || resizing}
+      onDrag={(event, data) => onPlacedControlDrag?.(button, { x: data.x, y: data.y })}
+      onStop={(event, data) => {
+        const position = onPlacedControlDrop?.(button, { x: data.x, y: data.y }) || { x: data.x, y: data.y };
+        updateControlsLocation(button.controlLocationID, button.controlIdentifier, button.textEditor, position.x, position.y, button.height, button.width, button.fontStyle, button.fontSize, button.fontColor, button.customPlaceHolder, button.isRequired, button.isDigitalSignature, button.category);
+      }}
+    >
+      <div
+      className='draggable-button-container'
+      style={{
+        position: "absolute",
+        left: 0,
+        top: 0,
+        touchAction: "none",
+        pointerEvents: isAPICallInProgress ? "none" : "auto",
+      }}
+    >
+      {button.label === "Radio" && (
+        <ResizableButtons {...resizeProps}>
+          <div
+            style={{
+              width: button.width + "px",
+              height: button.height + "px",
+              padding: "10px",
+              cursor: "grab",
+            }}
+          >
+            <div className='d-flex justify-content-start align-items-center gap-2'>
+              <input type='radio' id={`radio${button.controlLocationID}`} name='radioGroup' value={`Text`} style={{ width: "15px", height: "15px" }} />
+              <label htmlFor={`radio${button.controlLocationID}`}>{button.customPlaceHolder}</label>
+            </div>
+          </div>
+        </ResizableButtons>
+      )}
+
+      {button.label === "Checkbox" && (
+        <ResizableButtons {...resizeProps}>
+          <div
+            style={{
+              width: button.width + "px",
+              height: button.height + "px",
+              padding: "10px",
+              cursor: "grab",
+            }}
+          >
+            <div className='d-flex justify-content-start align-items-center gap-2'>
+              <input
+                type='checkbox'
+                id={`checkbox${button.controlLocationID}`}
+                name={`checkbox${button.controlLocationID}`}
+                value={``}
+                checked={checkboxValue}
+                onChange={handleCheckboxChange}
+                style={{ width: "15px", height: "15px" }}
+              />
+
+              <label htmlFor={`checkbox${button.controlLocationID}`}>{button.customPlaceHolder}</label>
+            </div>
+          </div>
+        </ResizableButtons>
+      )}
+
+      {button.label === "Date" && (
+        <ResizableButtons {...resizeProps} onClick={() => setShowDateInput(true)}>
+          <div
+            style={{
+              width: button.width + "px",
+              height: button.height + "px",
+              padding: "10px",
+              cursor: "grab",
+            }}
+          >
+            <input
+              type='date'
+              value={selectedDate || button.textEditor}
+              onChange={handleDateChange}
+              style={{
+                width: "100%",
+                height: "100%",
+                border: "none",
+                cursor: "grab",
+                background: "transparent",
+              }}
+              onBlur={() => {
+                updateControlsLocation(
+                  button.controlLocationID,
+                  button.controlIdentifier,
+                  selectedDate,
+                  button.position.x,
+                  button.position.y,
+                  button.height,
+                  button.width,
+                  button.fontStyle,
+                  button.fontSize,
+                  button.fontColor,
+                  button.customPlaceHolder,
+                  button.isRequired,
+                  button.isDigitalSignature,
+                  button.category
+                );
+                setShowDateInput(false);
+              }}
+            />
+          </div>
+        </ResizableButtons>
+      )}
+
+      {button.label === "Number" && (
+        <ResizableButtons {...resizeProps} onClick={() => handleText(button.controlLocationID, button.textEditor)}>
+          {editingStates[button.controlLocationID] ? (
+            <input
+              type='number'
+              value={textInput}
+              onChange={(event) => setTextInput(event.target.value)}
+              style={{
+                width: button.width + "px",
+                height: button.height + "px",
+              }}
+              onBlur={() => {
+                setEditingStates((prevState) => ({
+                  ...prevState,
+                  [button.controlLocationID]: false,
+                }));
+                updateControlsLocation(
+                  button.controlLocationID,
+                  button.controlIdentifier,
+                  textInput,
+                  button.position.x,
+                  button.position.y,
+                  button.height,
+                  button.width,
+                  button.fontStyle,
+                  button.fontSize,
+                  button.fontColor,
+                  button.customPlaceHolder,
+                  button.isRequired,
+                  button.isDigitalSignature,
+                  button.category
+                );
+              }}
+              autoFocus
+            />
+          ) : (
+            <div
+              style={{
+                width: button.textEditor ? "100%" : "",
+                height: button.textEditor ? "100%" : "",
+                display: "flex",
+                flexWrap: "wrap",
+              }}
+            >
+              {button.textEditor !== "" ? button.textEditor : button.customPlaceHolder}
+            </div>
+          )}
+        </ResizableButtons>
+      )}
+
+      {button.label === "Text" && (
+        <ResizableButtons {...resizeProps} onClick={() => handleText(button.controlLocationID, button.textEditor)}>
+          {editingStates[button.controlLocationID] ? (
+            <textarea
+              style={{
+                width: button.width + "px",
+                height: button.height + "px",
+                overflow: "auto",
+                resize: "none",
+              }}
+              value={textInput}
+              onChange={(event) => handleInputChange(event)}
+              onBlur={() => {
+                // Clear editing state for this button when blurred
+                setEditingStates((prevState) => ({
+                  ...prevState,
+                  [button.controlLocationID]: false,
+                }));
+                updateControlsLocation(
+                  button.controlLocationID,
+                  button.controlIdentifier,
+                  textInput,
+                  button.position.x,
+                  button.position.y,
+                  button.height,
+                  button.width,
+                  button.fontStyle,
+                  button.fontSize,
+                  button.fontColor,
+                  button.customPlaceHolder,
+                  button.isRequired,
+                  button.isDigitalSignature,
+                  button.category
+                );
+              }}
+              autoFocus
+            />
+          ) : (
+            <div
+              style={{
+                width: button.textEditor ? "100%" : "",
+                height: button.textEditor ? "100%" : "",
+                display: "flex",
+                flexWrap: "wrap",
+              }}
+            >
+              {button.textEditor !== "" ? button.textEditor : button.customPlaceHolder}
+            </div>
+          )}
+        </ResizableButtons>
+      )}
+
+      {button.label !== "Date" && button.label !== "Text" && button.label !== "Number" && button.label !== "Radio" && button.label !== "Checkbox" && (
+        <ResizableButtons {...resizeProps}>
+          {button.label === "QR Code" && button.qrCodePath ? (
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                boxSizing: "border-box",
+                pointerEvents: "none",
+                userSelect: "none",
+              }}
+            >
+              <img
+                src={`${button.qrCodePath}`}
+                style={{
+                  height: "100%",
+                  width: "100%",
+                  objectFit: "contain",
+                  pointerEvents: "none",
+                  userSelect: "none",
+                }}
+                alt='QR Code '
+                draggable={false}
+                onDragStart={(e) => e.preventDefault()}
+              />
+            </div>
+          ) : (
+            <div>{button.customPlaceHolder ?? button.label}</div>
+          )}
+        </ResizableButtons>
+      )}
+
+      <Button className='remove-button' onClick={() => handleButtonRemove(index, button.controlLocationID)}>
+        <Icons.CloseSmall size={9} />
+      </Button>
+
+      <Button className='draggableEdit-button' onClick={toggleOffcanvas}>
+        <Icons.EditFilled size={9} />
+      </Button>
+
+      {showOffcanvas && (
+        <ControlsFotmatting
+          show={showOffcanvas}
+          onHide={toggleOffcanvas}
+          button={button}
+          onUpdateControlsLocation={updateControlsLocation}
+          selectedImage={selectedImage}
+          onUpdateQRDetails={onUpdateQRDetails}
+          buttons={buttons}
+          categoryMap={categoryMap}
+          setCategoryMap={setCategoryMap}
+          fetchButtonPositions={fetchButtonPositions}
+        />
+      )}
+      </div>
+    </Draggable>
+  );
+};

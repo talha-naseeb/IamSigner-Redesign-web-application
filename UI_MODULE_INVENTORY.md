@@ -1,0 +1,52 @@
+# IAMSigner UI module inventory
+
+**Audit date:** 2026-10-19  
+**Scope:** visual implementation only. Feature behavior and availability are not being redesigned by this tracker.
+
+This inventory is based on active routes, navigation entries, and styling in the current source tree. “Old UI” describes legacy styling that is still present; it does not claim that a previous screen version is stored in this workspace. `New UI` records the state of the refreshed design.
+
+The current-version column marks each module as **Old**, **Mixed**, or **New**. The new-version column marks the refresh as **Pending**, **Partial**, or **Implemented**.
+
+| Module / feature | Feature coverage | Current version (Old / Mixed / New) | New version status | Route / source evidence |
+|---|---|---|---|---|
+| Shared app shell | Header, navigation sidebar, collapsed/mobile navigation, page canvas | Mixed | Partial — refreshed shell is scoped to Home and Profile; other routes still use the legacy shell treatment | `/home`, `/user-profile`; `Components/Navbar/Sidebar.js`, `sidebarStyle.css` |
+| Localization and shared UI states | Theme/palette toggle, language selection, RTL layout, guided tours, loading, error and empty states | Mixed | Partial — theme tokens and shared controls exist, but legacy routes still need a consistent pass | `Context/ThemeContext.js`, `Components/Language/`, `Components/Navbar/`, shared modal/loading components |
+| Home dashboard | Welcome/date area, Upload & Send / Sign Myself / Templates / Bulk Send actions, status summary cards, recent documents, quick status filters, search and advanced filters | New | Implemented — refreshed layout and shared token styling | `/home`; `Pages/Home/Home.js`, `Pages/Home/Home.css`, `DashboardStatuses/DashboardCards/DashboardCard.css` |
+| Recent documents report | Document table, status/date/name/reference filters, search, export, pagination | Mixed | Partial — refreshed report surface, but it still uses the legacy shared shell | `/documents-report`; `DashboardStatuses/Dashboard/RecentDocuments.css` |
+| Pending documents | Pending list, pending with me, pending with others, resend, recall, signing-order and ownership actions, supporting documents | Mixed | Partial — shared status summary cards are refreshed; list/table/action surfaces remain legacy | `/pending-docs`, `/pending-with-me`, `/pending-with-others` |
+| Draft documents | Draft summary, draft list and document actions | Mixed | Partial — refreshed summary cards; legacy list and controls remain | `/drafts`, `/draft-docs` |
+| Completed documents | Completed summary, completed document list, signed document actions | Mixed | Partial — refreshed summary cards; legacy list and controls remain | `/completed-status`, `/completed-docs` |
+| Inactive documents | Inactive summary and inactive document list | Mixed | Partial — refreshed summary cards; legacy list and controls remain | `/inactive`, `/inactive-docs` |
+| Declined and recalled documents | Declined summary/list; recalled summary/list and actions | Mixed | Partial — refreshed summary cards; legacy list and controls remain | `/declined`, `/declined-docs`, `/recall-documents`, `/recall-docs` |
+| Shared documents | Shared with me / others views, document lists and actions | Mixed | Partial — refreshed summary cards; legacy list and controls remain | `/share-docs` and shared status views |
+| Upload & Send | Document selection/upload, cloud-source selection, recipient setup, signing order, field placement and send review | Old | Pending — refresh all steps as one consistent flow | `/upload-doc`; `Components/Upload Flow/`, `Pages/Templates/Step1/`, `Pages/Templates/Step2/` |
+| Sign Myself | Self-sign upload, document review, signature placement and completion | Old | Pending — align the editor and stepper with the refreshed system | `/self-sign`; `Components/SelfSignature/` |
+| Bulk Send | Bulk upload, CSV/recipient setup, signatory placement, bulk documents and signatory lists | Old | Pending — refresh setup, editor, and result lists together | `/upload-bulk`, `/bulk-documents`, `/bulk-signatories/...`; `Components/BulkSend/`, `DashboardStatuses/BulkStatus/` |
+| Templates | Template list/search, create/edit, name changes, document preview, fields and confirmation dialogs | Old | Pending — refresh browse and editor views consistently | `/templates-page`, `/create-templates`, `/edit-templates`; `Pages/Templates/` |
+| Profile | Personal details, phone, profile photo, saved signature/stamp, image previews and save/cancel states | New | Implemented — refreshed card and form styling | `/user-profile`; `Pages/Profile/UserProfile.js`, `Pages/Profile/style.css` |
+| Password settings | Password change steps, visibility toggles, requirements, verification and errors | New | Implemented — part of the refreshed Profile surface | `/user-profile`; `Pages/Auth/PasswordChange/` |
+| Delegation | Delegate settings, date range, phone and enable/disable controls | New | Implemented — part of the refreshed Profile surface | `/user-profile`; `Components/Delegation/` |
+| Document Manager and folders | DMS list/grid, folder tree, breadcrumbs, document preview/details, upload, rename, share, access, activity, move and storage dialogs | Mixed | Partial — dedicated refreshed DMS styles exist; align shell and all dialogs with the shared rules | `/dms`, `/folders`, `/folders/:folderName/:folderId`, `/sub-folders/:folderName/:subFolderID`; `Components/DMS/`, `Components/Folder/` |
+| Team and user administration | User list, create/edit, team details, role and user actions | Mixed | Partial — refreshed styling exists in parts of team management; complete the route-level migration | `/app-users`; `Components/CreateTeam/` |
+| Department administration | Department list, search, create/edit, activate/deactivate | Old | Pending — use shared table, form, and modal styling | `/department-details/:accountId`; `Components/Department/` |
+| Company profile and reports | Company profile, user report, user document report, filters and exports | Old | Pending — standardize report headers, tables, filters and empty states | `/company-profile/:accountId`, `/users-report`, `/users-documents-report` |
+| Account branding | Co-branding, logos, expiration days, branding preview/settings | Mixed | Partial — refreshed accordion/form styles exist; align remaining settings and shell | `/account-settings`; `Components/Cobranding/` |
+| Email templates | Browse, create/edit, custom email content and template actions | Old | Pending — refresh list and editor together | `/email-templates`, `/create-email-template`; `Components/EmailTemplates/` |
+| Integrations | Webhook/API credentials, SMS integration, cloud-drive connections and integration dialogs | Old | Pending — refresh setup forms, tables, and modals | `/auth-integration`; `Integrations/`, `Components/OneDrive/`, `Components/SmsIntegration/` |
+| Document comments and supporting files | Comment thread, add/view supporting documents and related signing context | Old | Pending — align discussion and attachment states with refreshed document surfaces | Embedded in document and signing flows; `Components/Comments/` |
+| Mac AI and generated documents | AI document generation, manual document creation, generated document lists and PDF preview | Old | Pending — align forms, list views, and preview surfaces | `/mac-ai`, `/create-craft-documents`, `/mac-ai-docs`, `/craft-generated-documents`, `/AIGeneratedPDF/...` |
+| Public signing experience | Signature page, self-sign page, mobile signing, template signing, password prompt, field editors, consent/confirmation and signing errors | Old | Pending — refresh signer and mobile views while preserving the signing workflow | `/SignNow/...`, `/selfSignature/...`, `/MobileAppSignPage/...`, `/MobileAppTemplateSignPage/...` |
+| Signing outcomes and downloads | Signed/viewed/declined results, already-completed states, expired/recalled links, signed document and PDF downloads | Old | Pending — refresh outcome, error, and download screens | `/signed-message`, `/already-signed`, `/view-message`, `/declined-message`, `/already-declined`, `/link-expired`, `/doc-recalled`, `/Signed/...`, `/DownloadSignedPage/...`, `/DownloadPdfPage/...` |
+| Audit trail | Sign activity, verification trail and download trail | Old | Pending — refresh audit timeline/table and printable/download states | `/AuditTrail/...`, `/DownloadAuditTrail/...`; `Pages/AuditTrail/` |
+| Authentication | Login, signup, forgot/reset password, and OTP verification | Mixed | Partial — login/signup/OTP use refreshed tokens; recovery screens still need a consistent pass | `/`, `/sign-up`, `/forgot-password`, `/ChangingPassword/...`; `Pages/Auth/` |
+| Subscription and licensing surfaces | Expiration notices, remaining days, user licensing and pricing-plan view | Old | Pending — shared modal/card styles remain outside the refreshed system | Embedded in upload, reports, folders, email templates and other protected modules; `Components/UserLisence/`, `Components/Pricing&Billings/` |
+| AI Assistant | Assistant menu entry and chat screen | Old / inactive | Not currently trackable — the route is commented out even though a menu item is configured | `/ai-assistant` route is commented in `routes/AppRouter.js`; `Pages/ChatAIAgent/` |
+
+## Migration order
+
+1. Extend the shared shell and color rules to all protected routes.
+2. Refresh the document lifecycle views together: Upload & Send, Self Sign, Bulk Send, Templates, and public signing.
+3. Refresh status lists, administration, reports, integrations, and settings using the same table, form, modal, and empty-state patterns.
+4. Refresh public completion, audit, download, and authentication screens.
+
+Update the status in this file only after the relevant route styling is present in the source. Keep this work presentation-only, as required by [AGENTS.md](AGENTS.md).

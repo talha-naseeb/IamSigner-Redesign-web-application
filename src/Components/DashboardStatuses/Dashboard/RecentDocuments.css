@@ -1,0 +1,236 @@
+.recent-documents-page {
+  display: block !important;
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 22px clamp(16px, 2vw, 30px) 36px;
+  background: var(--modern-bg);
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+}
+
+.recent-documents-page > .MuiGrid-root {
+  width: 100%;
+}
+
+.recent-documents-card {
+  width: 100%;
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid color-mix(in srgb, var(--modern-violet) 20%, var(--modern-border));
+  border-radius: 20px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--modern-violet) 7%, var(--modern-card)),
+    color-mix(in srgb, var(--modern-blue) 4%, var(--modern-card))
+  );
+  box-shadow: var(--modern-card-shadow);
+}
+
+.recent-documents-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.recent-documents-title {
+  margin: 0;
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+  font-size: clamp(20px, 2vw, 25px);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+
+.recent-documents-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.recent-documents-export-btn {
+  min-height: 40px;
+  padding: 8px 14px !important;
+  border: 0 !important;
+  border-radius: 11px !important;
+  background: linear-gradient(110deg, var(--modern-action-violet), var(--modern-action-blue)) !important;
+  color: #fff !important;
+  font-family: var(--modern-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 6px 16px var(--modern-glow-violet);
+}
+
+.recent-documents-export-btn:hover,
+.recent-documents-export-btn:focus-visible {
+  background: linear-gradient(110deg, var(--modern-violet-hover), var(--modern-action-blue)) !important;
+  color: #fff !important;
+}
+
+.recent-documents-filter .navbar {
+  padding: 0;
+}
+
+.recent-documents-filter .navbar .container-fluid {
+  width: auto;
+  padding: 0;
+}
+
+.recent-documents-filter .filterOpenBtn {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--modern-border-strong);
+  border-radius: 11px;
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+}
+
+.recent-documents-filter .filterOpenBtn:hover {
+  border-color: var(--modern-violet);
+  background: color-mix(in srgb, var(--modern-violet) 16%, var(--modern-card));
+  color: var(--modern-violet);
+}
+
+.home-filter-offcanvas .input-field,
+.home-filter-offcanvas .form-control,
+.home-filter-offcanvas .form-select {
+  border-color: var(--modern-border-strong) !important;
+  background-color: var(--modern-raised) !important;
+  color: var(--modern-text) !important;
+}
+
+.home-filter-offcanvas .dropdown-menu {
+  border-color: var(--modern-border) !important;
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
+}
+
+.home-filter-offcanvas .dropdown-item:hover {
+  background: var(--modern-violet-soft) !important;
+  color: var(--modern-violet) !important;
+}
+
+.recent-documents-table-container.MuiTableContainer-root {
+  height: min(70vh, 780px) !important;
+  min-height: 260px;
+  border: 1px solid var(--modern-border) !important;
+  border-radius: 14px !important;
+  background: color-mix(in srgb, var(--modern-violet) 3%, var(--modern-card)) !important;
+  box-shadow: none;
+}
+
+.recent-documents-table .TableHeaderCell,
+.recent-documents-table .MuiTableHead-root .MuiTableCell-root {
+  padding: 13px 16px !important;
+  background: color-mix(in srgb, var(--modern-violet) 9%, var(--modern-card)) !important;
+  color: var(--modern-muted) !important;
+  border-bottom: 1px solid var(--modern-border) !important;
+  box-shadow: none !important;
+}
+
+.recent-documents-table .TableCell,
+.recent-documents-table .MuiTableBody-root .MuiTableCell-root {
+  padding: 13px 16px !important;
+  background: color-mix(in srgb, var(--modern-violet) 2%, var(--modern-card)) !important;
+  color: var(--modern-text) !important;
+  border-bottom: 1px solid var(--modern-border) !important;
+}
+
+.recent-documents-table .MuiTableBody-root .MuiTableRow-root:hover .MuiTableCell-root {
+  background: color-mix(in srgb, var(--modern-violet) 7%, var(--modern-card)) !important;
+}
+
+.recent-documents-table .recent-documents-empty-state {
+  height: 190px;
+  color: var(--modern-muted) !important;
+  text-align: center;
+}
+
+.recent-documents-empty-state > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.recent-documents-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid color-mix(in srgb, var(--status-color) 38%, var(--modern-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--status-color) 9%, var(--modern-card));
+  color: var(--status-color);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.recent-documents-pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.recent-documents-pagination-copy {
+  color: var(--modern-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.recent-documents-pagination .MuiPaginationItem-root {
+  border-color: var(--modern-border-strong);
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+}
+
+.recent-documents-pagination .MuiPaginationItem-root.Mui-selected {
+  border-color: var(--modern-violet);
+  background: var(--modern-violet);
+  color: #fff;
+}
+
+.recent-documents-pagination .MuiPaginationItem-root.Mui-selected:hover {
+  background: var(--modern-violet-hover);
+}
+
+@media (max-width: 640px) {
+  .recent-documents-page {
+    padding: 14px 12px 24px;
+  }
+
+  .recent-documents-card {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .recent-documents-toolbar {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .recent-documents-actions {
+    gap: 7px;
+    margin-inline-start: auto;
+  }
+
+  .recent-documents-export-btn {
+    min-height: 38px;
+    padding-inline: 10px !important;
+  }
+
+  .recent-documents-pagination-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

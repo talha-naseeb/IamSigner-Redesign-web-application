@@ -1,0 +1,39 @@
+.bilingual-language-control {
+  flex: 0 0 auto;
+}
+
+.bilingual-language-toggle {
+  display: inline-flex;
+  min-width: 48px;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--modern-border-strong);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--modern-violet) 8%, var(--modern-card));
+  color: var(--modern-violet);
+  font-family: var(--modern-font-ui);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--motion-fast) var(--motion-standard), border-color var(--motion-fast) var(--motion-standard), color var(--motion-fast) var(--motion-standard);
+}
+
+.bilingual-language-toggle:hover {
+  border-color: var(--modern-violet);
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+}
+
+.bilingual-language-toggle:focus-visible {
+  outline: 2px solid var(--modern-violet);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bilingual-language-toggle {
+    transition: none;
+  }
+}

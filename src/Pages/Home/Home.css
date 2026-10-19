@@ -1,0 +1,895 @@
+/* ==========================================================================
+   IAMSigner Minimalist Dashboard
+   Clean, modern, and high-contrast styling adhering to the design system.
+   ========================================================================== */
+
+.dashboard-section {
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.home-wrapper {
+  --bg-primary: var(--modern-bg);
+  --bg-secondary: var(--modern-raised);
+  --surface-0: var(--modern-bg);
+  --surface-50: var(--modern-surface);
+  --surface-100: var(--modern-raised);
+  --surface-200: var(--modern-border-strong);
+  --surface-card: var(--modern-card);
+  --text-primary: var(--modern-text);
+  --text-secondary: var(--modern-muted);
+  --text-muted: var(--modern-muted);
+  --border-color: var(--modern-border);
+  --border-subtle: var(--modern-border);
+  --input-bg: var(--modern-raised);
+  --input-text: var(--modern-text);
+  --input-border: var(--modern-border-strong);
+  --theme-color: var(--modern-violet);
+  --theme-hover: var(--modern-violet-hover);
+  --theme-active: var(--modern-violet-hover);
+  --theme-light: var(--modern-violet-soft);
+  --card-bg: var(--modern-card);
+
+  display: block;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 16px clamp(16px, 2vw, 32px) 48px;
+  background: var(--modern-bg);
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+}
+
+.home-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   1. Hero Banner: Minimalist & Action-Oriented
+   -------------------------------------------------------------------------- */
+.home-hero-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 180px;
+  padding: 30px clamp(20px, 2.5vw, 36px);
+  border: 1px solid var(--modern-border);
+  border-radius: 20px;
+  background: var(--modern-hero);
+  overflow: hidden;
+  transition: border-color var(--motion-base, 200ms) ease;
+}
+
+.home-hero-card:hover {
+  border-color: color-mix(in srgb, var(--modern-violet) 25%, var(--modern-border));
+}
+
+.home-hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  max-width: 860px;
+}
+
+.home-hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.home-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--modern-violet-soft);
+  border: 1px solid color-mix(in srgb, var(--modern-violet) 25%, transparent);
+  color: var(--modern-violet);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.home-hero-badge svg {
+  width: 14px;
+  height: 14px;
+}
+
+.home-hero-date {
+  color: var(--modern-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.home-hero-title {
+  margin: 0;
+  color: var(--modern-text);
+  font-size: clamp(24px, 2.3vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+.home-hero-name {
+  color: var(--modern-violet);
+}
+
+.home-hero-subtitle {
+  margin: 8px 0 22px;
+  color: var(--modern-muted);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.55;
+  max-width: 660px;
+}
+
+.home-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-hero-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 22px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: linear-gradient(110deg, var(--modern-action-violet), var(--modern-action-blue));
+  color: #fff !important;
+  font-family: var(--modern-font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color var(--motion-base, 200ms) var(--motion-standard);
+}
+
+.btn-hero-primary:hover:not(:disabled) {
+  background: linear-gradient(110deg, var(--modern-violet-hover), var(--modern-action-blue));
+  color: #fff !important;
+}
+
+.btn-hero-primary:focus-visible {
+  outline: 3px solid var(--modern-focus);
+  outline-offset: 2px;
+}
+
+.btn-hero-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid var(--modern-border);
+  border-radius: 12px;
+  background: var(--modern-card);
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  transition: border-color var(--motion-base, 200ms) var(--motion-standard),
+              background-color var(--motion-base, 200ms) var(--motion-standard);
+}
+
+.btn-hero-secondary:hover:not(:disabled) {
+  border-color: var(--modern-border-strong);
+  background: var(--modern-raised);
+  color: var(--modern-text) !important;
+}
+
+.btn-hero-secondary:focus-visible {
+  outline: 3px solid var(--modern-focus);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   2. Status Overview Metric Section
+   -------------------------------------------------------------------------- */
+.home-status-area {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.home-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.home-section-title {
+  margin: 0;
+  color: var(--modern-text);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.home-section-subtitle {
+  margin: 3px 0 0;
+  color: var(--modern-muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Home overrides for the 6 status cards grid */
+.home-status-area .dashboard-statuses {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.home-status-area .dashboard-stat-card {
+  min-height: 94px;
+  padding: 14px 16px;
+  gap: 10px;
+  border-radius: 16px;
+}
+
+.home-status-area .dashboard-stat-count {
+  font-size: 22px;
+}
+
+.home-status-area .CardIconsDiv {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  padding: 7px;
+  border-radius: 10px;
+}
+
+.home-status-area .CardIconsDiv svg {
+  width: 20px;
+  height: 20px;
+}
+
+.home-status-area .dashboard-stat-title {
+  font-size: 12.5px;
+}
+
+/* --------------------------------------------------------------------------
+   3. All Documents Workspace Table (Clean & Seamless)
+   -------------------------------------------------------------------------- */
+.home-recent-section {
+  width: 100%;
+}
+
+.homePageTable {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--modern-border);
+  border-radius: 20px;
+  background: var(--modern-card);
+}
+
+/* Unified top bar: No dividing border lines cutting through the header */
+.recentdocs-top-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 24px 18px;
+  background: var(--modern-card);
+}
+
+.recentdocs-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.recentdocs-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.recentdocs-title {
+  margin: 0;
+  color: var(--modern-text);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.recentdocs-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.recentdocs-subtitle {
+  margin: 0;
+  color: var(--modern-muted);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.recentdocs-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Instant Search Input */
+.recentdocs-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 270px;
+  min-height: 40px;
+  padding: 6px 12px;
+  border: 1px solid var(--modern-border);
+  border-radius: 12px;
+  background: var(--modern-raised);
+  transition: border-color var(--motion-fast, 150ms) ease;
+}
+
+.recentdocs-search-box:focus-within {
+  border-color: var(--modern-violet);
+  outline: 3px solid var(--modern-focus);
+  outline-offset: 2px;
+}
+
+.recentdocs-search-box .search-icon {
+  flex: 0 0 auto;
+  color: var(--modern-muted);
+}
+
+.recentdocs-search-input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.recentdocs-search-input::placeholder {
+  color: var(--modern-muted);
+  opacity: 0.85;
+}
+
+.search-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--modern-muted) 20%, transparent);
+  color: var(--modern-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.search-clear-btn:hover {
+  background: color-mix(in srgb, var(--modern-muted) 35%, transparent);
+  color: var(--modern-text);
+}
+
+/* Filter Control Button */
+.home-documents-filter-control {
+  display: inline-flex;
+}
+
+.home-documents-filter-control .navbar {
+  padding: 0;
+}
+
+.home-documents-filter-control .container-fluid {
+  padding: 0;
+  width: auto;
+}
+
+.homePageTable .filterOpenBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--modern-border);
+  border-radius: 12px;
+  background: var(--modern-raised);
+  color: var(--modern-muted);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+.homePageTable .filterOpenBtn:hover {
+  border-color: var(--modern-border-strong);
+  color: var(--modern-text);
+}
+
+.has-active-filters .filterOpenBtn {
+  border-color: var(--modern-violet);
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+}
+
+/* Filters row: seamless, integrated directly into the card top without borders or striped background */
+.recentdocs-filters-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 0;
+  background: transparent;
+}
+
+.home-documents-status-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  padding: 2px 0;
+}
+
+.home-status-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 6px 14px;
+  border: 1px solid var(--modern-border);
+  border-radius: var(--radius-full, 9999px);
+  background: var(--modern-raised);
+  color: var(--modern-muted);
+  font-family: var(--modern-font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--motion-fast, 150ms) ease,
+              border-color var(--motion-fast, 150ms) ease,
+              color var(--motion-fast, 150ms) ease;
+}
+
+.home-status-filter:hover {
+  border-color: color-mix(in srgb, var(--modern-violet) 40%, var(--modern-border));
+  color: var(--modern-text);
+}
+
+.home-status-filter.is-active {
+  border-color: var(--modern-violet);
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+}
+
+.home-status-filter-count {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+
+.recentdocs-reset-filters-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid var(--modern-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--modern-muted);
+  font-family: var(--modern-font-ui);
+  font-size: 11.5px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.recentdocs-reset-filters-btn:hover {
+  border-color: var(--modern-border-strong);
+  color: var(--modern-text);
+}
+
+/* --------------------------------------------------------------------------
+   4. Table Component: Single Clean Header Divider
+   -------------------------------------------------------------------------- */
+.homePageTable .home-documents-table-container {
+  width: 100%;
+  max-height: 540px;
+  min-height: 200px;
+  margin: 0;
+  overflow: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.homePageTable .home-documents-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Single clean divider under the table header */
+.homePageTable .TableHeaderCell {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 2 !important;
+  padding: 12px 22px !important;
+  border-bottom: 1px solid var(--modern-border) !important;
+  background: var(--surface-100) !important;
+  color: var(--modern-muted) !important;
+  font-family: var(--modern-font-ui) !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  box-shadow: none !important;
+}
+
+.homePageTable .TableCell {
+  padding: 14px 22px !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--modern-border) 45%, transparent) !important;
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui) !important;
+  font-size: 13px !important;
+}
+
+.home-doc-table-row:hover .TableCell {
+  background: var(--modern-raised) !important;
+}
+
+.homePageTable .MuiTableBody-root .MuiTableRow-root:last-child .TableCell {
+  border-bottom: 0 !important;
+}
+
+/* Document Name Column */
+.doc-name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.doc-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 8px;
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+}
+
+.doc-name-text {
+  max-width: 340px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--modern-text);
+}
+
+/* Status Pill */
+.home-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 11px;
+  border: 1px solid color-mix(in srgb, var(--status-color, var(--modern-violet)) 30%, transparent);
+  border-radius: var(--radius-full, 9999px);
+  background: color-mix(in srgb, var(--status-color, var(--modern-violet)) 10%, var(--modern-card));
+  color: var(--modern-text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: var(--status-color, var(--modern-violet));
+}
+
+/* Clean Reference Text (No heavy border box) */
+.mono-reference-text {
+  display: inline-block;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--modern-violet) 10%, transparent);
+  color: var(--modern-violet);
+  font-family: var(--modern-font-mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.date-cell {
+  color: var(--modern-muted) !important;
+  font-size: 12.5px !important;
+  white-space: nowrap;
+}
+
+.creator-cell {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Empty State */
+.home-documents-empty-state {
+  padding: 48px 24px !important;
+  text-align: center;
+  background: var(--modern-card) !important;
+}
+
+.empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.empty-state-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 14px;
+  border-radius: 50%;
+  background: var(--modern-raised);
+  color: var(--modern-muted);
+}
+
+.empty-state-title {
+  margin: 0 0 6px;
+  color: var(--modern-text);
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.empty-state-desc {
+  margin: 0 0 16px;
+  color: var(--modern-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.empty-state-reset-btn {
+  padding: 8px 18px;
+  border: 1px solid var(--modern-violet);
+  border-radius: 10px;
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+  font-family: var(--modern-font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.empty-state-reset-btn:hover {
+  background: var(--modern-violet);
+  color: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   5. Offcanvas Filter Panel Overrides
+   -------------------------------------------------------------------------- */
+.home-filter-offcanvas {
+  border-inline-start: 1px solid var(--modern-border) !important;
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui) !important;
+}
+
+.home-filter-offcanvas .offcanvas-header {
+  border-bottom: 1px solid var(--modern-border);
+  padding: 20px 24px;
+}
+
+.home-filter-offcanvas .offcanvas-title {
+  color: var(--modern-text);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.home-filter-offcanvas .offcanvas-body {
+  padding: 24px;
+}
+
+.home-filter-offcanvas label {
+  color: var(--modern-text);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.home-filter-offcanvas .input-field {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid var(--modern-border);
+  border-radius: 10px;
+  background: var(--modern-raised) !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui);
+  font-size: 13px;
+  transition: border-color 0.15s ease;
+}
+
+.home-filter-offcanvas .input-field:focus {
+  border-color: var(--modern-violet);
+  outline: 3px solid var(--modern-focus);
+  outline-offset: 2px;
+}
+
+.home-filter-offcanvas .resetBtn,
+.home-filter-offcanvas .applyBtn {
+  min-height: 42px;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-family: var(--modern-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.home-filter-offcanvas .resetBtn {
+  border: 1px solid var(--modern-border);
+  background: transparent;
+  color: var(--modern-text);
+}
+
+.home-filter-offcanvas .applyBtn {
+  border: 1px solid transparent;
+  background: linear-gradient(110deg, var(--modern-action-violet), var(--modern-action-blue));
+  color: #fff;
+}
+
+.home-filter-offcanvas .applyBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   6. Expire Modal
+   -------------------------------------------------------------------------- */
+.home-expire-modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.home-expire-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 16px;
+}
+
+.home-expire-title {
+  margin: 0 0 8px;
+  color: var(--modern-text);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.home-expire-text {
+  margin: 0;
+  color: var(--modern-muted);
+  font-size: 14px;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   7. Responsive Adaptations
+   -------------------------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .home-status-area .dashboard-statuses {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .home-wrapper {
+    padding-bottom: 40px;
+  }
+
+  .home-main {
+    gap: 20px;
+  }
+
+  .home-hero-card {
+    padding: 24px 20px;
+    min-height: auto;
+  }
+
+  .home-hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-hero-primary,
+  .btn-hero-secondary {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .recentdocs-top-bar {
+    padding: 18px 18px 14px;
+    gap: 14px;
+  }
+
+  .recentdocs-header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .recentdocs-actions-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .recentdocs-search-box {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-status-area .dashboard-statuses {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .home-status-area .dashboard-stat-card {
+    min-height: 84px;
+    padding: 12px 14px;
+  }
+
+  .home-status-area .dashboard-stat-count {
+    font-size: 20px;
+  }
+
+  .doc-name-text {
+    max-width: 180px;
+  }
+}

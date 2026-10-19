@@ -1,0 +1,225 @@
+.PlanDetails {
+  border-radius: 5px;
+  border: 1px solid var(--theme-color);
+  padding: 20px 10px;
+  margin-bottom: 1rem;
+}
+
+.PlanDetailsHeading {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.PlanDetailsAccess {
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.custom-card {
+  background-color: var(--bg-secondary) !important;
+  border-radius: 5px;
+  margin: 5px;
+  cursor: pointer;
+  padding: 15px;
+  width: 100%;
+  position: relative;
+}
+
+.custom-card.active {
+  border: 1px solid var(--theme-color);
+  background-color: var(--bg-primary) !important;
+}
+
+.checkmarkSource {
+  color: var(--theme-color);
+  position: absolute;
+  top: 50%;
+  left: 80%;
+  transform: translate(-50%, -50%);
+}
+
+[dir="rtl"] .checkmarkSource {
+  right: 80%;
+}
+
+.custom-card {
+  background-color: #eeeeee;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.custom-card.active {
+  border: 1px solid var(--theme-active);
+}
+
+.card-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+/* Co-branding settings use the same account surface system as Profile. */
+.cobranding-page {
+  max-width: 1240px;
+  padding-inline: 1rem;
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+}
+
+.cobranding-accordion .accordion-item {
+  overflow: hidden;
+  border: 1px solid var(--modern-border) !important;
+  border-radius: 22px !important;
+  background: var(--modern-card) !important;
+  box-shadow: var(--modern-card-shadow);
+}
+
+.cobranding-accordion .accordion-button {
+  min-height: 68px;
+  padding: 1rem 1.35rem;
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui);
+  font-weight: 650;
+  box-shadow: none !important;
+}
+
+.cobranding-accordion .accordion-button:not(.collapsed) {
+  background: var(--modern-raised) !important;
+}
+
+[data-theme="dark"] .cobranding-accordion .accordion-button::after {
+  filter: invert(1) grayscale(1);
+}
+
+.cobranding-accordion .accordion-body {
+  padding: clamp(1rem, 2.5vw, 1.75rem);
+  border-top: 1px solid var(--modern-border);
+  background: var(--modern-card);
+}
+
+.cobranding-page .main-container-form {
+  padding: 0;
+}
+
+.cobranding-page .profile-Form {
+  min-height: 142px;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.5rem 0;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--modern-border);
+  border-radius: 18px;
+  background: var(--modern-bg);
+}
+
+.cobranding-page .profile-Form .form-label {
+  color: var(--modern-muted);
+  font-family: var(--modern-font-ui);
+}
+
+.cobranding-page .profile-Form .form-label:first-child {
+  color: var(--modern-text);
+}
+
+.cobranding-page .Imageshown {
+  display: inline-flex;
+  width: 58px;
+  height: 58px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--modern-border-strong);
+  border-radius: 17px;
+  background: var(--modern-raised);
+  color: var(--modern-violet);
+}
+
+.cobranding-page .uploadProfilebtn {
+  flex: 0 0 auto;
+  padding: 0.65rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--modern-violet) 35%, var(--modern-border));
+  border-radius: 12px;
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+  font-family: var(--modern-font-ui);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.cobranding-page .uploadProfilebtn:hover {
+  border-color: var(--modern-violet);
+  background: var(--modern-violet);
+  color: #fff;
+}
+
+.cobranding-page .form-label,
+.cobranding-page > .accordion label {
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.cobranding-page .form-control {
+  min-height: 44px;
+  border: 1px solid var(--modern-border-strong) !important;
+  border-radius: 12px;
+  background: var(--modern-bg) !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui);
+  font-size: 0.9rem;
+  box-shadow: none;
+}
+
+.cobranding-page .form-control:focus {
+  border-color: var(--modern-violet) !important;
+  box-shadow: 0 0 0 3px var(--modern-focus) !important;
+}
+
+.cobranding-page .custom-card {
+  min-height: 58px;
+  margin: 0.35rem 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--modern-border) !important;
+  border-radius: 14px;
+  background: var(--modern-bg) !important;
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+  font-size: 0.86rem;
+  transition: border-color var(--motion-fast) var(--motion-standard), background-color var(--motion-fast) var(--motion-standard), transform var(--motion-fast) var(--motion-standard);
+}
+
+.cobranding-page .custom-card:hover {
+  border-color: var(--modern-border-strong) !important;
+  transform: translateY(-1px);
+}
+
+.cobranding-page .custom-card.active {
+  border-color: var(--modern-violet) !important;
+  background: var(--modern-violet-soft) !important;
+  color: var(--modern-text);
+}
+
+.cobranding-page .checkmarkSource {
+  right: 1.1rem;
+  left: auto;
+  color: var(--modern-violet);
+}
+
+[dir="rtl"] .cobranding-page .checkmarkSource {
+  right: auto;
+  left: 1.1rem;
+}
+
+
+@media (max-width: 768px) {
+  .cobranding-page .profile-Form {
+    align-items: flex-start;
+  }
+}

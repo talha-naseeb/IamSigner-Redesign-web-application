@@ -1,0 +1,350 @@
+/* ── Container ── */
+.home-calendar {
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: var(--theme-transition);
+}
+
+/* ── Mode toggle row (Gregorian / Hijri) ── */
+.cal-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px 6px;
+}
+
+.cal-mode-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+  user-select: none;
+}
+
+.cal-mode-label.active {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.cal-toggle-track {
+  width: 32px;
+  height: 17px;
+  border-radius: 9px;
+  background: var(--border-color);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  outline: none;
+}
+
+.cal-toggle-track.on {
+  background: var(--theme-color);
+}
+
+.cal-toggle-thumb {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #fff;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.cal-toggle-track.on .cal-toggle-thumb {
+  transform: translateX(15px);
+}
+
+/* ── react-multi-date-picker Calendar overrides ── */
+.home-cal-inner {
+  width: 100% !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.home-cal-inner .rmdp-calendar {
+  width: 100% !important;
+  padding: 0 8px 4px;
+}
+
+.home-cal-inner .rmdp-day-picker {
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+.home-cal-inner .rmdp-day-picker > div {
+  width: 100% !important;
+}
+
+/* Header */
+.home-cal-inner .rmdp-header {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.home-cal-inner .rmdp-header-values span {
+  color: var(--text-primary) !important;
+}
+
+.home-cal-inner .rmdp-header-values span:hover {
+  background: var(--bg-secondary) !important;
+}
+
+/* Arrow navigation */
+.home-cal-inner .rmdp-arrow {
+  border-color: var(--text-primary) !important;
+}
+
+.home-cal-inner .rmdp-arrow-container:hover {
+  background: var(--bg-secondary) !important;
+  box-shadow: none !important;
+}
+
+/* Week day names (Mo, Tu…) */
+.home-cal-inner .rmdp-week-day {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary) !important;
+}
+
+/* Day cells */
+.home-cal-inner .rmdp-day {
+  font-size: 12px;
+  color: var(--text-primary) !important;
+  height: 28px !important;
+  width: 28px !important;
+}
+
+.home-cal-inner .rmdp-day span {
+  font-size: 12px !important;
+  color: var(--text-primary) !important;
+  background: transparent;
+  height: 26px !important;
+  width: 26px !important;
+  line-height: 26px !important;
+}
+
+.home-cal-inner .rmdp-week {
+  margin-bottom: 0 !important;
+}
+
+.home-cal-inner .rmdp-week-day {
+  height: 24px !important;
+  line-height: 24px !important;
+}
+
+/* Today */
+.home-cal-inner .rmdp-day.rmdp-today span {
+  background: var(--theme-color) !important;
+  color: #fff !important;
+  border-radius: 50% !important;
+}
+
+/* Selected */
+.home-cal-inner .rmdp-day.rmdp-selected span {
+  background: var(--theme-active) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+/* Hover */
+.home-cal-inner .rmdp-day:not(.rmdp-day-hidden):hover span {
+  background: color-mix(in srgb, var(--theme-color) 12%, transparent) !important;
+  color: var(--theme-color) !important;
+}
+
+/* Disabled / other-month days */
+.home-cal-inner .rmdp-day.rmdp-deactive span,
+.home-cal-inner .rmdp-day.rmdp-disabled span {
+  color: var(--border-color) !important;
+}
+
+/* Dark mode calendar */
+[data-theme="dark"] .home-cal-inner .rmdp-wrapper {
+  background: transparent !important;
+}
+
+/* ── Converter section ── */
+.cal-converter {
+  padding: 10px 14px 14px;
+  border-top: 1px solid var(--border-color);
+}
+
+.cal-conv-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.cal-conv-header .cal-conv-label {
+  min-width: 72px;
+  text-align: center;
+}
+
+.cal-conv-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.cal-conv-label.active {
+  background: var(--theme-color);
+  color: #fff;
+  border-color: var(--theme-color);
+}
+
+.cal-swap-btn {
+  background: var(--theme-color);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  padding: 0;
+}
+
+.cal-swap-btn:hover {
+  background: var(--theme-active);
+  transform: rotate(180deg);
+}
+
+.cal-conv-input {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--card-bg);
+  outline: none;
+  margin-bottom: 8px;
+  transition: border-color 0.2s;
+}
+
+.cal-conv-input:focus {
+  border-color: var(--theme-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-color) 15%, transparent);
+}
+
+.cal-conv-input.error {
+  border-color: #dc3545;
+}
+
+.cal-conv-result {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--theme-color) 8%, var(--card-bg));
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+}
+
+.cal-conv-result.empty {
+  color: var(--text-secondary);
+  font-weight: 400;
+  background: var(--card-bg);
+}
+
+/* The dashboard rail can become a full-width panel on tablet and phone. */
+.home-calendar {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--modern-violet) 20%, var(--modern-border, var(--border-color)));
+  border-radius: var(--radius-lg, 12px);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--modern-violet) 7%, var(--modern-card)), var(--modern-card));
+  box-shadow: var(--modern-card-shadow);
+}
+
+.home-calendar .cal-converter {
+  border-top-color: var(--modern-border);
+}
+
+.home-calendar .cal-conv-label {
+  border-color: var(--modern-border-strong);
+  background: color-mix(in srgb, var(--modern-violet) 5%, var(--modern-card));
+}
+
+.home-calendar .cal-conv-input,
+.home-calendar .cal-conv-result {
+  border-color: var(--modern-border-strong);
+  background: color-mix(in srgb, var(--modern-violet) 4%, var(--modern-card));
+  color: var(--modern-text);
+}
+
+.home-calendar .cal-conv-result.empty {
+  background: color-mix(in srgb, var(--modern-violet) 3%, var(--modern-card));
+  color: var(--modern-muted);
+}
+
+.home-calendar .cal-conv-input:focus {
+  border-color: var(--modern-violet);
+  box-shadow: 0 0 0 3px var(--modern-focus);
+}
+
+.home-cal-inner,
+.home-cal-inner .rmdp-wrapper,
+.home-cal-inner .rmdp-calendar,
+.home-cal-inner .rmdp-day-picker,
+.home-cal-inner .rmdp-day-picker > div {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.home-cal-inner .rmdp-day-picker > div {
+  flex: 1 1 auto;
+}
+
+.cal-converter {
+  min-width: 0;
+}
+
+.cal-conv-input,
+.cal-conv-result {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 700px) {
+  .home-calendar .rmdp-calendar {
+    padding-inline: 5px;
+  }
+
+  .home-calendar .cal-mode-toggle {
+    gap: 7px;
+    padding: 12px 12px 6px;
+  }
+
+  .home-calendar .cal-converter {
+    padding: 10px 12px 12px;
+  }
+
+  .home-calendar .cal-conv-label {
+    padding-inline: 8px;
+  }
+}

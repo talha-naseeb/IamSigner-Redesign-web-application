@@ -1,0 +1,161 @@
+.dashboard-cards-section {
+  margin: 0;
+  width: 100%;
+}
+
+.dashboard-statuses {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+  margin: 0;
+}
+
+.dashboard-statuses .dashboard-stat-card {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 110px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--modern-border);
+  border-radius: var(--radius-lg, 16px);
+  background: var(--modern-card);
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+  text-decoration: none !important;
+  transition: border-color var(--motion-base, 200ms) var(--motion-standard),
+              background-color var(--motion-base, 200ms) var(--motion-standard);
+}
+
+.dashboard-stat-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dashboard-statuses .CardIconsDiv {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--status-color, var(--modern-violet)) 12%, var(--modern-card));
+  color: var(--status-color, var(--modern-violet));
+  transition: transform var(--motion-fast, 150ms) ease;
+}
+
+.dashboard-statuses .CardIconsDiv svg {
+  width: 22px;
+  height: 22px;
+}
+
+.dashboard-stat-count {
+  color: var(--modern-text);
+  font-size: 26px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.dashboard-stat-copy {
+  min-width: 0;
+}
+
+.dashboard-stat-title {
+  margin: 0;
+  color: var(--modern-text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-stat-description {
+  margin: 3px 0 0;
+  color: var(--modern-muted);
+  font-size: 12px;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Hover & Active States */
+.dashboard-statuses .dashboard-stat-card:hover {
+  border-color: color-mix(in srgb, var(--status-color, var(--modern-violet)) 45%, var(--modern-border));
+  color: var(--modern-text);
+}
+
+.dashboard-statuses .dashboard-stat-card:hover .CardIconsDiv {
+  transform: scale(1.05);
+}
+
+.dashboard-statuses .dashboard-stat-card.active {
+  border-color: var(--status-color, var(--modern-violet));
+  background: color-mix(in srgb, var(--status-color, var(--modern-violet)) 10%, var(--modern-card));
+}
+
+/* Dark mode refinement */
+[data-theme="dark"] .dashboard-statuses .dashboard-stat-card {
+  background: var(--modern-card);
+  border-color: var(--modern-border);
+}
+
+/* Compact mode */
+.dashboard-cards-section--compact .dashboard-stat-card {
+  min-height: 90px;
+  padding: 13px 15px;
+  gap: 10px;
+}
+
+.dashboard-cards-section--compact .dashboard-stat-count {
+  font-size: 22px;
+}
+
+.dashboard-cards-section--compact .dashboard-statuses .CardIconsDiv {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  padding: 6px;
+  border-radius: 10px;
+}
+
+.dashboard-cards-section--compact .dashboard-statuses .CardIconsDiv svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .dashboard-statuses {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-statuses {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .dashboard-statuses .dashboard-stat-card {
+    min-height: 86px;
+    padding: 12px 14px;
+  }
+
+  .dashboard-stat-count {
+    font-size: 20px;
+  }
+}

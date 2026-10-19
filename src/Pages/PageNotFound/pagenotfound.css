@@ -1,0 +1,12 @@
+.parentClass {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 576px) {
+  .parentClass img {
+    width: 250px;
+  }
+}

@@ -1,0 +1,149 @@
+.theme-aware-form .form-label {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.theme-aware-form .theme-aware-field {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px;
+  transition: var(--theme-transition);
+}
+
+.theme-aware-form .form-select.theme-aware-field {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+}
+
+[dir="rtl"] .theme-aware-form .form-select.theme-aware-field {
+  background-position: left 0.75rem center;
+  padding-left: 2.25rem;
+  padding-right: 0.75rem;
+}
+
+[data-theme="dark"] .theme-aware-form .form-select.theme-aware-field {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23f1f5f9' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+
+.theme-aware-form .form-select.theme-aware-field option {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+}
+
+.theme-aware-form .form-control.theme-aware-field::placeholder {
+  color: var(--text-secondary) !important;
+  opacity: 0.7;
+}
+
+.theme-aware-form .theme-aware-field:focus {
+  border-color: var(--theme-color) !important;
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--theme-color) 25%, transparent) !important;
+  outline: none;
+}
+
+.theme-aware-form .form-select.theme-aware-field:disabled,
+.theme-aware-form .form-control.theme-aware-field:disabled {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-secondary) !important;
+  opacity: 0.85;
+  cursor: not-allowed;
+}
+
+.theme-aware-form .ql-toolbar {
+  border: 1px solid var(--border-color) !important;
+  border-bottom: none !important;
+  background-color: var(--bg-secondary) !important;
+  border-radius: 4px 4px 0 0 !important;
+}
+
+.theme-aware-form .ql-container {
+  border: 1px solid var(--border-color) !important;
+  background-color: var(--input-bg) !important;
+  border-radius: 0 0 4px 4px !important;
+  font-family: inherit !important;
+}
+
+.theme-aware-form .ql-editor {
+  color: var(--input-text) !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  min-height: 250px !important;
+}
+
+.theme-aware-form .ql-editor.ql-blank::before {
+  color: var(--text-secondary) !important;
+  font-style: italic !important;
+}
+
+.theme-aware-form .ql-toolbar .ql-stroke {
+  stroke: var(--text-primary) !important;
+}
+
+.theme-aware-form .ql-toolbar .ql-fill {
+  fill: var(--text-primary) !important;
+}
+
+.theme-aware-form .ql-toolbar button:hover .ql-stroke,
+.theme-aware-form .ql-toolbar button.ql-active .ql-stroke {
+  stroke: var(--theme-color) !important;
+}
+
+.theme-aware-form .ql-toolbar button:hover .ql-fill,
+.theme-aware-form .ql-toolbar button.ql-active .ql-fill {
+  fill: var(--theme-color) !important;
+}
+
+.theme-aware-form .ql-toolbar .ql-formats:not(:first-child) {
+  padding-left: 8px;
+}
+
+.theme-aware-form .doc-type-label {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.theme-aware-form .doc-type-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.theme-aware-form .selectedButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px;
+  padding: 6px 12px !important;
+  color: var(--input-text) !important;
+  transition: var(--theme-transition);
+  box-shadow: none !important;
+}
+
+.theme-aware-form .selectedButton:hover:not(:disabled),
+.theme-aware-form .selectedButton:focus:not(:disabled) {
+  background-color: var(--theme-hover) !important;
+  border-color: var(--theme-hover) !important;
+  color: #fff !important;
+}
+
+.theme-aware-form .selectedButton.active {
+  background-color: var(--theme-color) !important;
+  border-color: var(--theme-color) !important;
+  color: #fff !important;
+}
+
+.theme-aware-form .selectedButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+[data-theme="dark"] .theme-aware-form .selectedButton:not(.active):not(:hover):not(:focus) {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--input-text) !important;
+}

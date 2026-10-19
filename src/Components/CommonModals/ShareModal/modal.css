@@ -1,0 +1,138 @@
+.input-modal {
+  width: 100%;
+  padding: 10px  !important;
+  display: flex;
+  justify-content: flex-start;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Email chips input container */
+.email-input-container {
+  position: relative;
+}
+
+.email-chips-input {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  min-height: 42px;
+  cursor: text;
+}
+
+
+/* Email chip styles */
+.email-chip {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 4px 8px;
+  border-radius: 16px;
+  font-size: 14px;
+  border: 1px solid var(--border-color);
+}
+
+.email-chip-remove {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  margin-left: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.email-chip-remove:hover {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Email input field inside chips container */
+.email-chip-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  min-width: 120px;
+  font-size: 14px;
+  padding: 4px 0;
+}
+
+.email-chip-input::placeholder {
+  color: var(--text-primary);
+}
+
+/* Folder attachment styles */
+.folder-attachment {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+}
+
+.folder-icon {
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.folder-info {
+  flex: 1;
+}
+
+.folder-name {
+  font-weight: 500;
+  color: #212529;
+  margin-bottom: 2px;
+}
+
+.folder-type {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+/* Email suggestions dropdown styles */
+.email-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.email-suggestion-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.email-suggestion-item:hover {
+  background-color: var(--bg-primary);
+}
+
+.email-suggestion-item:last-child {
+  border-bottom: none;
+}
+

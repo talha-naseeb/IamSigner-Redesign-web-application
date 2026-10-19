@@ -1,0 +1,79 @@
+/* ── Immutable placeholder token — used inside ReactQuill ───────────────────
+   Registered as a custom Quill blot (PlaceholderBlot).
+   Users can select/delete the whole chip but cannot type inside it.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.ql-placeholder-token {
+  display: inline-block;
+  background-color: var(--bg-secondary, #e9ecef);
+  color: var(--text-secondary, #495057);
+  border: 1px solid var(--border-color, #ced4da);
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-size: 0.85em;
+  font-weight: 600;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+  white-space: nowrap;
+
+  /* Quill-specific: prevent the cursor from entering */
+  contenteditable: false;
+}
+
+/* Inside the live editor, give a slightly warmer tint so users notice it's locked */
+.ql-editor .ql-placeholder-token {
+  background-color: #fff3cd;
+  border-color: #ffc107;
+  color: #664d03;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Legend row above the editor */
+.placeholder-legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 0.82rem;
+}
+
+.placeholder-legend .ql-placeholder-token {
+  /* Make legend chips slightly muted compared to the editor versions */
+  opacity: 0.8;
+  font-size: 0.8em;
+}
+
+/* Preview in the modal — entire area is read-only */
+.template-preview-disabled {
+  border: 1px solid var(--border-color, #ced4da);
+  padding: 12px;
+  border-radius: 6px;
+  color: var(--text-primary);
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.9;
+  user-select: none;
+  min-height: 100px;
+  background-color: var(--bg-secondary, #f8f9fa);
+}
+
+/* Old DB-stored spans (legacy) — keep styled in case they appear in read-only views */
+.immutable-placeholder {
+  display: inline-block;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #664d03;
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-size: 0.85em;
+  font-weight: 600;
+  cursor: not-allowed;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  white-space: nowrap;
+}

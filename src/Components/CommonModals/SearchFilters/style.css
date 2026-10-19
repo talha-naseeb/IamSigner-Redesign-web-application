@@ -1,0 +1,108 @@
+.filters-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.filter-items {
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    /* width: 70rem; */
+  }
+}
+
+
+.input-field {
+  height: 40px;
+  border: 1px solid #ccc;
+}
+
+.input-field.active {
+  border-color: black;
+}
+
+.resetBtn {
+  border: 1px solid black;
+  background: white;
+  color: black;
+  border-radius: 6px;
+  height: 40px;
+  width: 45%;
+}
+
+.resetBtn:hover {
+  border: 1px solid var(--theme-color);
+  background: var(--theme-color);
+  color: white;
+}
+
+.applyBtn {
+  border: 1px solid var(--theme-color);
+  background-color: var(--theme-color);
+  border-radius: 6px;
+  color: rgb(255, 255, 255);
+  height: 40px;
+  width: 45%;
+}
+.signedBtn {
+  border: 1px solid #3ea42c;
+  background-color: #3ea42c;
+  border-radius: 6px;
+  width: 100%;
+  color: rgb(255, 255, 255);
+  height: 40px;
+}
+
+.applyBtn:hover {
+  background-color: var(--theme-hover);
+  color: white;
+  border: 1px solid var(--theme-color);
+}
+
+.applyBtn:disabled {
+  background-color: #889caa;
+  border: #889caa;
+  color: #fff;
+}
+.signedBtn:hover {
+  background-color: #2e7921;
+  border: 1px solid #3ea42c;
+  color: white;
+}
+
+.disabled-button {
+  background-color: #ccc;
+  border: 1px solid #ccc !important;
+}
+.disabled-button:hover {
+  background-color: #ccc;
+  border: 1px solid #ccc;
+}
+
+.modalCancelButton {
+  background-color: #fff;
+  border: 1px solid black;
+  width: 40%;
+  border-radius: 5px;
+  height: 40px;
+  color: black;
+}
+
+.modalCancelButton:hover {
+  border: 1px solid var(--theme-color);
+  background-color: var(--theme-color);
+  color: white !important;
+}
+
+.modal-footer {
+  justify-content: space-between;
+}

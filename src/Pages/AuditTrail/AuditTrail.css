@@ -1,0 +1,90 @@
+/* External Audit Trail (Signature Page) - Forced Light Mode */
+.audit-trail-container {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  padding: 20px;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.audit-trail-container .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  color: #212529 !important;
+  border-bottom: 1px solid #dee2e6 !important;
+  padding-bottom: 10px;
+}
+
+.audit-trail-container .header > img {
+  height: 40px;
+}
+
+.audit-trail-container .header .iam-signer-full-logo {
+  width: 140px;
+  height: 40px;
+}
+
+.audit-trail-container .header h4 {
+  margin: 0;
+  color: #212529 !important;
+  font-weight: 600;
+}
+
+/* Aggressive Table Styling for external view */
+.audit-trail-container .MuiPaper-root,
+.audit-trail-container .MuiTable-root,
+.audit-trail-container .MuiTableContainer-root,
+.audit-trail-container .MuiTableCell-root,
+.audit-trail-container .MuiTableHead-root,
+.audit-trail-container .MuiTableBody-root,
+.audit-trail-container .MuiTableRow-root {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border-color: #dee2e6 !important;
+}
+
+.audit-trail-container .MuiTableHead-root .MuiTableCell-root {
+  background-color: #f0f3f4 !important;
+  font-weight: 600 !important;
+}
+
+.audit-trail-container .MuiTableCell-body {
+  border-bottom: 1px solid #dee2e6 !important;
+}
+
+.audit-trail-container .fw-bold,
+.audit-trail-container span {
+  color: #212529 !important;
+}
+
+.audit-trail-container .no-docs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Modal Specifics */
+.force-light-modal .modal-content,
+.force-light-modal .modal-header,
+.force-light-modal .modal-footer {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border-color: #dee2e6 !important;
+}
+
+.force-light-modal .modal-title {
+  color: #212529 !important;
+}
+
+.force-light-modal .modal-body {
+  background-color: #ffffff !important;
+}
+
+@media print {
+  .modal-body-white,
+  .iframe-white {
+    background-color: white !important;
+  }
+}

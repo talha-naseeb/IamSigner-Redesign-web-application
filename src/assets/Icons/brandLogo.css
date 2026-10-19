@@ -1,0 +1,30 @@
+.iam-signer-full-logo {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 auto;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.iam-signer-full-logo__art,
+.iam-signer-full-logo__light-wordmark {
+  position: absolute;
+  top: 50%;
+  left: -30%;
+  display: block;
+  width: 155%;
+  max-width: none;
+  height: auto;
+  transform: translateY(-50%);
+  pointer-events: none;
+  user-select: none;
+}
+
+.iam-signer-full-logo__light-wordmark {
+  clip-path: inset(33% 16% 31% 31%);
+  filter: brightness(0);
+}
+
+[data-theme="dark"] .iam-signer-full-logo__light-wordmark {
+  display: none;
+}

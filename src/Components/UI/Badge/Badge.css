@@ -1,0 +1,102 @@
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  border-radius: var(--radius-full);
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.ui-badge--sm {
+  font-size: 0.75rem;
+  padding: 3px 8px;
+}
+
+.ui-badge--md {
+  font-size: 0.8125rem;
+  padding: 4px 10px;
+}
+
+.ui-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Status variants matching IamSigner color palette */
+.ui-badge--pending {
+  background: var(--pending-card-bg);
+  color: var(--pending-status);
+  border-color: color-mix(in srgb, var(--pending-status) 25%, transparent);
+}
+.ui-badge--pending .ui-badge__dot {
+  background: var(--pending-status);
+}
+
+.ui-badge--completed {
+  background: var(--completed-card-bg);
+  color: var(--completed-status);
+  border-color: color-mix(in srgb, var(--completed-status) 25%, transparent);
+}
+.ui-badge--completed .ui-badge__dot {
+  background: var(--completed-status);
+}
+
+.ui-badge--draft {
+  background: var(--draft-card-bg);
+  color: var(--draft-status);
+  border-color: color-mix(in srgb, var(--draft-status) 25%, transparent);
+}
+.ui-badge--draft .ui-badge__dot {
+  background: var(--draft-status);
+}
+
+.ui-badge--shared {
+  background: var(--share-card-bg);
+  color: var(--share-status);
+  border-color: color-mix(in srgb, var(--share-status) 25%, transparent);
+}
+.ui-badge--shared .ui-badge__dot {
+  background: var(--share-status);
+}
+
+.ui-badge--declined {
+  background: var(--decline-card-bg);
+  color: var(--decline-status);
+  border-color: color-mix(in srgb, var(--decline-status) 25%, transparent);
+}
+.ui-badge--declined .ui-badge__dot {
+  background: var(--decline-status);
+}
+
+.ui-badge--inactive {
+  background: var(--inactive-card-bg);
+  color: var(--inactive-status);
+  border-color: color-mix(in srgb, var(--inactive-status) 25%, transparent);
+}
+.ui-badge--inactive .ui-badge__dot {
+  background: var(--inactive-status);
+}
+
+.ui-badge--recalled {
+  background: var(--recall-card-bg);
+  color: var(--recall-status);
+  border-color: color-mix(in srgb, var(--recall-status) 25%, transparent);
+}
+.ui-badge--recalled .ui-badge__dot {
+  background: var(--recall-status);
+}
+
+.ui-badge--primary {
+  background: var(--theme-light);
+  color: var(--theme-color);
+  border-color: color-mix(in srgb, var(--theme-color) 25%, transparent);
+}
+.ui-badge--primary .ui-badge__dot {
+  background: var(--theme-color);
+}

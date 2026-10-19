@@ -1,0 +1,790 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Covered+By+Your+Grace&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Rochester&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Monsieur+La+Doulaise&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Engagement&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Allura&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Arizonia&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Parisienne&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Sacramento&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Satisfy&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Homemade+Apple&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Marck+Script&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Tangerine:wght@700&display=swap");
+
+#botton1 {
+  padding: 12px 30px;
+  border-radius: 9px;
+  background: #707171;
+  color: #ffffff;
+  border: none;
+  font-family: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--theme-transition);
+}
+
+#botton1:hover {
+  box-shadow: 7px 5px 56px -14px #282827;
+}
+
+#botton1:active {
+  transform: scale(0.97);
+  box-shadow: 7px 5px 56px -10px #282827;
+}
+
+.signature-actions-tab .action {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding: 0 5px;
+  /* border-right: 1px solid #dee2e6; */
+  cursor: pointer;
+}
+
+.thumbnails {
+  min-height: 480px;
+  max-height: 480px;
+  border: 1px solid #dee2e6;
+  overflow-y: scroll;
+}
+
+.page-name {
+  color: #fe5800;
+  text-align: center;
+  font-weight: 400;
+}
+
+input {
+  width: 100%;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.signature-modal-body {
+  overflow-x: hidden;
+  padding: 0 10px !important;
+}
+.signature_tabs button {
+  border: 0;
+  margin: 0px 10px;
+  background-color: transparent;
+}
+
+.signature-tab-list {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  width: fit-content;
+}
+
+.signature_tabs .signature-tab-button {
+  margin: 0;
+  padding: 0 10px 10px;
+  border-bottom: 3px solid transparent !important;
+}
+
+.signature_tabs .signature-tab-button.active-tab {
+  border-bottom-color: transparent !important;
+}
+
+.signature-tab-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background-color: var(--theme-color);
+  pointer-events: none;
+  transition: transform 180ms ease-out, width 180ms ease-out, opacity 120ms ease-out;
+}
+
+.active-tab {
+  color: var(--theme-color);
+  font-weight: 500;
+  padding-bottom: 10px;
+  border-bottom: 3px solid var(--theme-color) !important;
+}
+
+.preview-box {
+  border: 1px solid gray;
+  height: 150px;
+  border-radius: 10px;
+}
+
+.adopt-button {
+  background-color: #fe5800;
+  color: black;
+}
+
+.signature_tabs .signature-button {
+  border: 2px solid var(--theme-color);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--theme-color);
+  padding: 5px 10px;
+}
+
+.signature-button:hover {
+  background-color: var(--theme-color);
+  color: white;
+}
+
+.adopt-button:hover {
+  background-color: #c34e10;
+  color: black;
+}
+
+.signature-name {
+  font-family: "FancyFont", cursive;
+  font-size: 24px;
+  color: #000;
+}
+
+.signature-initials {
+  font-family: "AnotherFancyFont", cursive;
+  font-size: 18px;
+  color: #ff0000;
+}
+.signature-item {
+  margin-inline: 20px;
+}
+
+.signature-item h1 {
+  font-size: 50px;
+}
+
+.change-sign-dropdown {
+  width: 110px;
+  height: 38px;
+  border: 1px solid #cecece !important;
+  margin-right: 0px !important;
+  background: #fff !important;
+  color: #333 !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  text-align: left !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.style-dropdown-menu {
+  width: 100% !important;
+  min-width: 140px !important;
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 0 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  background-color: #fff !important;
+  border: 1px solid #cecece !important;
+}
+
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
+
+/* Fixed, deterministic header height so it never overlaps the content below */
+.signaturePage-header {
+  height: 64px;
+  z-index: 1031;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.style-dropdown-menu .form-control-sm {
+  border-radius: 4px !important;
+  font-size: 13px !important;
+  border: 1px solid #eee !important;
+}
+
+.style-dropdown-menu .form-control-sm:focus {
+  border-color: var(--theme-color) !important;
+  box-shadow: none !important;
+}
+
+.style-dropdown-menu::-webkit-scrollbar {
+  width: 3px;
+}
+
+.style-dropdown-menu::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.style-dropdown-menu::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.style-dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.style-options-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.style-dropdown-item {
+  padding: 8px 12px !important;
+  font-size: 16px;
+  color: #333 !important;
+  transition: var(--theme-transition);
+}
+
+.style-dropdown-item:hover {
+  background-color: #f1f1f1 !important;
+}
+
+.check-icon-wrapper {
+  width: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.check-icon {
+  font-size: 14px;
+  color: #fff !important;
+}
+
+.arial {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.aptos {
+  font-family: "Inter", "Aptos", sans-serif !important;
+}
+
+.calibri {
+  font-family: "Calibri", "Candara", "Segoe UI", "Optima", Arial, sans-serif !important;
+}
+
+.ubuntu {
+  font-family: "Ubuntu", sans-serif !important;
+}
+
+.style1 {
+  font-family: "Dancing Script", cursive;
+}
+
+.style2 {
+  font-family: "Great Vibes", cursive;
+}
+
+.style3 {
+  font-family: "Pacifico", cursive;
+}
+
+.style4 {
+  font-family: "Covered By Your Grace", cursive;
+}
+
+.style5 {
+  font-family: "Rochester", cursive;
+}
+
+.style6 {
+  font-family: "Monsieur La Doulaise", cursive;
+}
+
+.style7 {
+  font-family: "Engagement", cursive;
+}
+
+.style8 {
+  font-family: "Alex Brush", cursive;
+}
+
+.style9 {
+  font-family: "Allura", cursive;
+}
+
+.style10 {
+  font-family: "Arizonia", cursive;
+}
+
+.style11 {
+  font-family: "Kaushan Script", cursive;
+}
+
+.style12 {
+  font-family: "Pinyon Script", cursive;
+}
+
+.style13 {
+  font-family: "Parisienne", cursive;
+}
+
+.style14 {
+  font-family: "Sacramento", cursive;
+}
+
+.style15 {
+  font-family: "Satisfy", cursive;
+}
+
+.style16 {
+  font-family: "Homemade Apple", cursive;
+}
+
+.style17 {
+  font-family: "Marck Script", cursive;
+}
+
+.style18 {
+  font-family: "Shadows Into Light", cursive;
+}
+
+.style19 {
+  font-family: "Tangerine", cursive;
+}
+
+.blur-background {
+  filter: blur(30px);
+  pointer-events: none;
+}
+
+.completed-btn {
+  position: absolute;
+  bottom: 0;
+  width: -webkit-fill-available;
+}
+
+.actions-btns {
+  z-index: 10;
+  width: inherit;
+  position: fixed;
+}
+
+.doc-pages {
+  overflow-y: scroll;
+  height: 67vh;
+  /* height: 75%; */
+  cursor: pointer;
+}
+
+.doc-pages:hover {
+  overflow-y: scroll;
+}
+
+.doc-pages::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+.doc-pages::-webkit-scrollbar-thumb {
+  background: hsl(0, 0%, 100%);
+  height: 100vh;
+}
+
+.doc-pages:hover::-webkit-scrollbar-thumb {
+  background: #d9d3d3;
+  border-radius: 6px;
+  height: 5px !important;
+  width: 10px;
+  margin-bottom: 200px !important;
+}
+
+[dir="ltr"] .page-display {
+  right: 0;
+  position: fixed;
+}
+
+[dir="rtl"] .page-display {
+  left: 0;
+  position: fixed;
+}
+
+@media screen and (max-width: 992px) {
+  .actions-btns {
+    top: 56px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .signaturePage .page-display {
+    position: fixed;
+    top: 118px;
+  }
+
+  .signaturePage .image-col {
+    margin-top: 56px;
+  }
+  .main-content {
+    flex-direction: column-reverse !important;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .action span {
+    display: none;
+  }
+
+  .signature-actions-tab {
+    gap: 0px !important;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .signaturePage .page-display {
+    /* width: 176px; */
+    width: 15%;
+    position: fixed;
+    /* right: 0; */
+    z-index: 11;
+    border-top: 1px solid #cecece;
+  }
+
+  .signaturePage .comments-col {
+    width: 15%;
+    position: fixed;
+    height: auto;
+    /* margin-bottom: 69px; */
+  }
+
+  .signaturePage .image-col {
+    width: 70%;
+    margin-left: 15%;
+    margin-right: 15.7%;
+  }
+}
+
+/* -------------------------------
+   🔒 FORCE LIGHT MODE OVERRIDES
+   (Overrides index.css globals)
+--------------------------------- */
+.signaturePage,
+.signaturePage .bg-white,
+.signaturePage .comments-col,
+.signaturePage .page-display,
+.signaturePage .image-col,
+.signaturePage .actions-btns div,
+.signaturePage .documents-dropdown,
+.signaturePage .dropdown-toggle,
+.signaturePage .doc-pages,
+.signaturePage .completed-btn {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border-color: #d1d5db !important;
+}
+
+.signaturePage .signaturePage-container,
+.signaturePage .main-content {
+  background-color: #f8f9fa !important;
+}
+
+.signaturePage .image-col {
+  background-color: #eee !important;
+}
+
+/* Force Comment Input & Buttons to Light */
+.signaturePage .comment-section,
+.signaturePage .comment-input,
+.signaturePage .comment-save-input,
+.signaturePage .form-control,
+.signaturePage input,
+.signaturePage textarea {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border-color: #d1d5db !important;
+}
+
+.signaturePage .comment-input::placeholder,
+.signaturePage .form-control::placeholder {
+  color: #6c757d !important;
+  opacity: 0.8 !important;
+}
+
+.signaturePage .comment-body {
+  background-color: #c1c1c1 !important;
+  color: #212529 !important;
+  border-bottom: 1px solid #eee !important;
+}
+
+.signaturePage .comments-heading,
+.signaturePage .supporting-docs h6,
+.signaturePage .docs-name p {
+  color: #0f1315 !important;
+}
+
+.signaturePage .supporting-docs,
+.signaturePage .supporting-docs-list,
+.signaturePage .docs-name,
+.signaturePage .comment-section + div, /* Supporting docs header div */
+.signaturePage .supporting-docs-list + div {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border-color: #eee !important;
+}
+
+.signaturePage .comment-section + div h6 {
+  color: #0f1315 !important;
+}
+
+/* Force specific icons/buttons to remain visible */
+.signaturePage .comment-button {
+  background-color: #889caa !important;
+  color: #ffffff !important;
+}
+
+.signaturePage .action-button {
+  color: #6c757d !important;
+}
+
+/* Thumbnails list specific */
+.signaturePage .scrollable-content-bookmark {
+  background-color: #ffffff !important;
+}
+
+.signaturePage .seemorebutton button {
+  color: #212529 !important;
+}
+
+/* Pagination Buttons Force Light */
+.signaturePage .buttonStyle {
+  background-color: #eee !important;
+  color: #212529 !important;
+}
+
+.signaturePage .PaginationNumbers {
+  color: #212529 !important;
+}
+
+/* --- Global Light Mode Overrides for Portaled Elements --- */
+
+/* Modals */
+.force-light-modal .modal-content,
+.force-light-modal .modal-header,
+.force-light-modal .modal-body,
+.force-light-modal .modal-footer {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border-color: #dee2e6 !important;
+}
+
+.force-light-modal .modal-title {
+  color: #212529 !important;
+}
+
+.force-light-modal .modal-header .btn-close {
+  filter: none !important; /* Ensure close button is visible in light mode */
+}
+
+/* Ensure iframe background is white in light mode modals */
+.force-light-modal iframe {
+  background-color: #ffffff !important;
+}
+
+.force-light-modal .form-control,
+.force-light-modal input,
+.force-light-modal select,
+.force-light-modal textarea {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border: 1px solid #ced4da !important;
+}
+
+.force-light-modal .text-muted {
+  color: #6c757d !important;
+}
+
+/* Offcanvas */
+.force-light-offcanvas,
+.force-light-offcanvas .offcanvas-header,
+.force-light-offcanvas .offcanvas-body {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+}
+
+.force-light-offcanvas .btn-close {
+  filter: none !important;
+}
+
+.force-light-offcanvas .dropzoneUploadFile {
+  border-color: #ced4da !important;
+  background-color: #f8f9fa !important;
+}
+
+/* Specific Component Fixes in Signature Page */
+
+/* Comment Text Background and Color */
+.signaturePage .comment-body,
+.signaturePage .comment-text {
+  background-color: #f8f9fa !important;
+  color: #212529 !important;
+  padding: 8px !important;
+  border-radius: 4px !important;
+  border: 1px solid #eee !important;
+}
+
+/* Comment Edit Input and Main Input */
+.signaturePage .comment-save-input,
+.signaturePage .comment-input {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border: 1px solid #ced4da !important;
+}
+
+.signaturePage .action-button {
+  color: #6c757d !important;
+}
+
+.signaturePage .action-button:hover {
+  color: #212529 !important;
+}
+
+.signaturePage .ImageCancelBtn {
+  color: #6c757d !important;
+  border-color: #6c757d !important;
+  background-color: transparent !important;
+}
+
+.signaturePage .ImageCancelBtn:hover {
+  background-color: #6c757d !important;
+  color: #ffffff !important;
+}
+
+/* Dropdown Menus */
+.signaturePage .dropdown-menu,
+.force-light-modal .dropdown-menu {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.signaturePage .dropdown-item,
+.force-light-modal .dropdown-item {
+  color: #212529 !important;
+}
+
+.signaturePage .dropdown-item:hover,
+.force-light-modal .dropdown-item:hover {
+  background-color: #f8f9fa !important;
+  color: #16181b !important;
+}
+
+/* Audit Trail Iframe Background (optional but good for consistency) */
+.force-light-modal iframe {
+  background-color: #ffffff !important;
+}
+
+/* Ensure avatar text is visible if it was affected */
+.signaturePage .signature-comment-body span {
+  color: #212529 !important;
+}
+
+/* Force Thumbnails to Light */
+.signaturePage .doc-pages {
+  background-color: #ffffff !important;
+}
+
+.signaturePage .image-div {
+  background-color: #ffffff !important;
+}
+
+.signaturePage .image-div img {
+  background-color: #ffffff !important;
+}
+
+/* Final Component Finishes */
+.signaturePage .newComment,
+.force-light-offcanvas .newComment {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border-top: 1px solid #dee2e6 !important;
+}
+
+.force-light-modal .preview-box {
+  background-color: #f8f9fa !important;
+  border: 1px solid #ced4da !important;
+  color: #212529 !important;
+}
+
+.signaturePage .change-sign-dropdown,
+.force-light-modal .change-sign-dropdown,
+.signaturePage .style-dropdown-menu .form-control-sm,
+.force-light-modal .style-dropdown-menu .form-control-sm {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border: 1px solid #ced4da !important;
+}
+
+/* AI Assistant Override */
+.signaturePage .ai-assistant-btn {
+  background: linear-gradient(135deg, #a85f2e, #8b4513) !important;
+  color: #ffffff !important;
+}
+
+/* Global Body Override to eliminate dark theme "reflection" on the public page */
+body.force-light-body {
+  background-color: #eee !important;
+  color: #212529 !important;
+}
+
+.large-image {
+  display: flex !important;
+  justify-content: center !important;
+  width: 100%;
+}
+
+.doc-image {
+  box-shadow:
+    rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+@media screen and (max-width: 576px) {
+  .doc-image {
+    scale: 0.5;
+    transform: translate(-50%, -50%);
+  }
+
+  .large-image {
+    display: flex;
+    justify-content: flex-start !important;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .doc-image {
+    scale: 0.45;
+    transform: translate(-61%, -61%);
+  }
+
+  .large-image {
+    display: flex;
+    justify-content: flex-start !important;
+  }
+}
+
+.doc-load-error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+

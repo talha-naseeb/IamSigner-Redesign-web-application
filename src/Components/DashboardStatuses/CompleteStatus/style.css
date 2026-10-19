@@ -1,0 +1,51 @@
+table {
+  border-collapse: collapse;
+  width: 70%;
+  margin: 0 auto;
+  border: 2px solid #333;
+}
+
+th,
+td {
+  padding: 8px;
+}
+
+@media screen and (max-width: 600px) {
+  table {
+    width: 100%;
+  }
+}
+.three-dots:hover {
+  background-color: #c2dff7 !important;
+}
+
+.Dropdown.Item:hover {
+  background-color: #c2dff7 !important;
+  cursor: pointer;
+}
+
+
+@media (max-width: 767px) {
+  .truncate-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px; 
+  }
+}
+
+@media (min-width: 768px) {
+  .truncate-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; 
+  }
+}
+
+
+.truncate-cell.scrollable {
+  overflow: auto;
+  white-space: unset;
+  text-overflow: unset;
+}
