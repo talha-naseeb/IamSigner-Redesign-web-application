@@ -17,6 +17,11 @@ These rules apply to every UI redesign or visual enhancement in this repository.
 - Keep hover and selected states clear through token-based border, surface, or text changes; do not use shadows or vertical lift to signal interaction.
 - Keep responsive layouts and translated/RTL layouts intact.
 
+## Loading and notifications
+
+- For actions started by a button in redesigned UI, show a compact spinning indicator inside the initiating button and keep the button label visible. Do not cover Profile, Delegation, or Change Password with the signing/Lottie loader overlay.
+- Keep toast styling centralized in the shared toaster and use the shared theme tokens so notifications stay consistent across light mode, dark mode, and palettes.
+
 ## Inventory status meanings
 
 - **Old UI**: the route still primarily uses the legacy visual treatment; redesign is pending.

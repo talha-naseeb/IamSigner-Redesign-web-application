@@ -4,14 +4,14 @@ import "./SignaturePage.css";
 import { Button, Col, Dropdown, DropdownButton, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import SignatureModal from "./SignatureModal";
+import SignatureModal from "@/Pages/SignaturePage/SignatureModal";
 import { useTranslation } from "react-i18next";
 import ImageThumbnails from "@/Components/ImageThumbnails/ImageThumbnails";
-import ConfirmationModal from "./ConfirmationModal";
+import ConfirmationModal from "@/Pages/SignaturePage/ConfirmationModal";
 import "react-datepicker/dist/react-datepicker.css";
 import { Icons } from "@/assets/Icons";
 import Loader from "@/Components/CommonModals/Loader/Loader";
-import InputEditors from "./InputEditors";
+import InputEditors from "@/Pages/SignaturePage/InputEditors";
 import PageNavigations from "@/Components/PageNavigations";
 
 const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {

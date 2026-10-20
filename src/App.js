@@ -11,6 +11,7 @@ import { NavigationSetter } from "@/Helpers/navigation";
 
 import { ThemeProvider } from "@/Context/ThemeContext";
 import PATHS from "@/routes/paths";
+import { tokenManager } from "@/services/tokenManager";
 
 const RecaptchaPageScope = () => {
   const { pathname } = useLocation();
@@ -27,19 +28,28 @@ const RecaptchaPageScope = () => {
 };
 
 function App() {
-  const [isToken, setIsToken] = useState(!!sessionStorage.getItem("token"));
+  const [isToken, setIsToken] = useState(tokenManager.hasToken());
 
   useEffect(() => {
+    // Subscribe to in-app token changes
+    const unsubscribe = tokenManager.subscribe((token, isAuthenticated) => {
+      setIsToken(isAuthenticated);
+    });
+
+    // Also listen to storage events across tabs
     const handleStorageChange = () => {
-      setIsToken(!!sessionStorage.getItem("token"));
+      setIsToken(tokenManager.hasToken());
     };
 
     window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    return () => {
+      unsubscribe();
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   const handleLogin = (token) => {
-    sessionStorage.setItem("token", token);
+    tokenManager.setToken(token);
     setIsToken(true);
   };
 

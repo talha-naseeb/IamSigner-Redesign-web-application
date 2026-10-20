@@ -36,7 +36,7 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
   const [deletingIndex, setDeletingIndex] = useState(null);
   const { user, userAccess } = useUser();
 
-  const storedTemplateID = localStorage.getItem("templateID");
+  const storedTemplateID = sessionStorage.getItem("templateID") || localStorage.getItem("templateID");
   const navigate = useNavigate();
 
   const handleDropboxFileSelected = (fileUrl) => {
@@ -145,9 +145,11 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
 
                 if (response.data.statusCode === "1") {
                   setRegisterSignID(response.data.response.registerSignID);
+                  sessionStorage.setItem("registerSignID", response.data.response.registerSignID);
                   localStorage.setItem("registerSignID", response.data.response.registerSignID);
                   // template
                   setTemplateID(response.data.response.templateID);
+                  sessionStorage.setItem("templateID", response.data.response.templateID);
                   localStorage.setItem("templateID", response.data.response.templateID);
 
                   setMasterDocIDs((prevIDs) => [...prevIDs, response.data.response.masterDocs[0].masterDocIDs]);

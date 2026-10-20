@@ -62,7 +62,7 @@ import RenameOffcanvas from "./modals/RenameOffcanvas";
 import MoveFolderModal from "./modals/MoveFolderModal";
 import FolderActivityModal from "./modals/FolderActivityModal";
 import UploadModal from "./modals/UploadModal";
-import ShareModal from "./modals/ShareModal";
+import DmsShareModal from "./modals/DmsShareModal";
 import FolderAccessModal from "./modals/FolderAccessModal";
 import UserLisence from "@/Components/UserLisence/UserLisence";
 
@@ -2041,7 +2041,7 @@ const DMS = () => {
       />
 
       {/* Invite to folder */}
-      <ShareModal
+      <DmsShareModal
         show={showShareModal}
         target={shareTarget}
         onHide={() => setShowShareModal(false)}

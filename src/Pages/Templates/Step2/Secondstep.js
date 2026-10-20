@@ -5,7 +5,7 @@ import { Icons } from "@/assets/Icons";
 import uploadFlowService from "@/services/uploadFlowService";
 import templateService from "@/services/templateService";
 import { toast } from "react-toastify";
-import DraggableButton from "@/Components/Upload Flow/Step2/DraggableButtons";
+import DraggableButton from "@/Components/DocumentPreparation/Step2_Canvas/DraggableButtons";
 import ImageWithDropZone from "./DisplayCenterImage";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -40,7 +40,7 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
   const [controlID, setControlID] = useState();
   const [hoveredSignatory, setHoveredSignatory] = useState(null);
 
-  const storedTemplateID = localStorage.getItem("templateID");
+  const storedTemplateID = sessionStorage.getItem("templateID") || localStorage.getItem("templateID");
   const navigate = useNavigate();
   const mainDocumentRef = useRef(null);
 

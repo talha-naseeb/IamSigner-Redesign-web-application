@@ -196,14 +196,14 @@
   border-radius: 8px;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #198754;
-  background: color-mix(in srgb, #198754 12%, transparent);
-  border: 1px solid color-mix(in srgb, #198754 25%, transparent);
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--theme-color) 12%, var(--surface-card));
+  border: 1px solid color-mix(in srgb, var(--theme-color) 25%, var(--border-color));
 }
 
-[data-theme="dark"] .password-change-verified-banner {
-  color: #75d99a;
-  background: color-mix(in srgb, #198754 18%, transparent);
+.password-change-verified-banner svg {
+  flex-shrink: 0;
+  color: var(--theme-color);
 }
 
 .password-change-requirements {

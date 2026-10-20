@@ -4,6 +4,7 @@ import PATHS from "@/routes/paths";
 import { navigateTo } from "@/Helpers/navigation";
 import { SIGN_STATE_STATUSES } from "@/Helpers/signatureErrors";
 import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
+import { tokenManager } from "@/services/tokenManager";
 
 const isCanceledRequest = (error) =>
   error?.code === "ERR_CANCELED" ||
@@ -58,7 +59,17 @@ export const handleSessionExpiry = () => {
 
   const currentTheme = localStorage.getItem("theme");
   const currentPalette = localStorage.getItem(PALETTE_STORAGE_KEY);
+  
+  // Clear tokens from in-memory manager and session storage
+  tokenManager.clearToken();
   sessionStorage.clear();
+
+  // Purge sensitive signature data and workflow keys while keeping user theme preferences
+  localStorage.removeItem("savedSignature");
+  localStorage.removeItem("registerSignID");
+  localStorage.removeItem("signatoriesID");
+  localStorage.removeItem("activeStep");
+  localStorage.removeItem("completedSteps");
   localStorage.clear();
 
   if (currentTheme) {
@@ -93,7 +104,7 @@ export const handleResponseError = (error) => {
 
   // A token present again means a new session started after an expiry —
   // re-arm the session-expiry guard so a future logout is handled once more.
-  if (isSessionExpiryInProgress && sessionStorage.getItem("token")) {
+  if (isSessionExpiryInProgress && tokenManager.hasToken()) {
     isSessionExpiryInProgress = false;
   }
 
@@ -115,7 +126,7 @@ export const handleResponseError = (error) => {
   }
 
   const status = response.status;
-  const token = sessionStorage.getItem("token");
+  const token = tokenManager.getToken();
 
   if (status === 401) {
     if (error.config?.skipSessionExpiryRedirect === true) {

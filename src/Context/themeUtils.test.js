@@ -34,4 +34,16 @@ describe("themeUtils", () => {
 
     expect(doc.documentElement.setAttribute).toHaveBeenCalledWith("data-theme", "dark");
   });
+
+  test("cleans up legacy theme keys from storage on initialization", () => {
+    const removeItem = jest.fn();
+    const storage = {
+      getItem: jest.fn((key) => (key === "iamsigner_theme_mode" ? "light" : null)),
+      removeItem,
+    };
+
+    getInitialTheme({ storage });
+
+    expect(removeItem).toHaveBeenCalledWith("iamsigner_theme_mode");
+  });
 });

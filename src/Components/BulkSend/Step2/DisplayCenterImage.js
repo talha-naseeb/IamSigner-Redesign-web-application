@@ -3,7 +3,7 @@ import uploadFlowService from "@/services/uploadFlowService";
 import { toast } from "react-toastify";
 import { useDrop } from "react-dnd";
 import { useTranslation } from "react-i18next";
-import ImageWithControls from "./ImageWithControls";
+import ImageWithControls from "@/Components/DocumentPreparation/Step2_Canvas/ImageWithControls";
 import useDragAutoScroll from "@/Components/SignaturePlacement/useDragAutoScroll";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";

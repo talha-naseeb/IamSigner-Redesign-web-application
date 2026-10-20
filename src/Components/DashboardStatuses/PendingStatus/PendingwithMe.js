@@ -21,6 +21,7 @@ import { onDocumentSigned } from "@/Helpers/documentSignChannel";
 import { normalizeSigningLink } from "@/Helpers/signingLink";
 import SignCompletedScreen from "@/Components/SignCompletedScreen/SignCompletedScreen";
 import { API_STATUS } from "@/Constants/apiStatuses";
+import { tokenManager } from "@/services/tokenManager";
 
 const Pendingwithme = () => {
   const { t } = useTranslation();
@@ -129,7 +130,7 @@ const Pendingwithme = () => {
   // refresh this tab's list, or show the completed screen when the session is gone.
   useEffect(() => {
     const unsubscribe = onDocumentSigned(() => {
-      if (!sessionStorage.getItem("token")) {
+      if (!tokenManager.hasToken()) {
         setShowSignCompleted(true);
         return;
       }

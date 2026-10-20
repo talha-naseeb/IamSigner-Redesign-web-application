@@ -1,10 +1,10 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import { tokenManager } from "@/services/tokenManager";
 
-// Simple protected route guard based on presence of session token
+// Protected route guard based on tokenManager authentication
 const ProtectedRoute = () => {
-  const token = sessionStorage.getItem("token");
-  if (!token) {
+  if (!tokenManager.hasToken()) {
     return <Navigate to="/" replace />;
   }
   return <Outlet />;

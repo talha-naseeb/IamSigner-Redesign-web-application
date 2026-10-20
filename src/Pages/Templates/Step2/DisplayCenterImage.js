@@ -5,7 +5,7 @@ import { useDrop } from "react-dnd";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
-import ImageWithControls from "./ImageWithControls";
+import ImageWithControls from "@/Components/DocumentPreparation/Step2_Canvas/ImageWithControls";
 import useDragAutoScroll from "@/Components/SignaturePlacement/useDragAutoScroll";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import { emptyAlignmentGuides, getControlDimensions, getNewControlDimensions, snapToControls as getSnappedControlPosition } from "@/Components/SignaturePlacement/SmartGuides";

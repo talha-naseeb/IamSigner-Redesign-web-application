@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { Button, Form, Col, Row, Accordion } from "react-bootstrap";
+import { Button, Form, Col, Row, Accordion, Spinner } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import { useUser } from "@/Context/UserContext";
 import "./style.css";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import DaysToExpire from "./DaysToExpire";
 import userService from "@/services/userService";
 
 function CoBrandingDetails() {
   const { t } = useTranslation();
   const { register, handleSubmit, setValue, reset, watch } = useForm();
-  const { userAccess, user, accountId } = useUser("");
+  const { userAccess = {}, user = {}, accountId } = useUser("");
   const [isFormChanged, setIsFormChanged] = useState(false);
   const [objectives, setObjectives] = useState("");
   const [companyPrefix, setCompanyPrefix] = useState("");
@@ -28,7 +27,7 @@ function CoBrandingDetails() {
   const [IsGoogleDrive, setIsGoogleDrive] = useState(false);
   const [IsOneDrive, setIsOneDrive] = useState(false);
   const [IsDropbox, setIsDropbox] = useState(false);
-  const [selectedSessionDuration, setSelectedSessionDuration] = useState("");
+  const [selectedSessionDuration, setSelectedSessionDuration] = useState("30");
 
   const [coBrandingData, setCoBrandingData] = useState({
     accountLogoPath: "",
@@ -47,15 +46,22 @@ function CoBrandingDetails() {
     if (coBrandingData) {
       setObjectives(coBrandingData.objectives || "");
       setCompanyPrefix(coBrandingData.companyRefPrefix || "");
-      setIsGoogleDrive(coBrandingData.IsGoogleDrive);
-      setIsOneDrive(coBrandingData.IsOneDrive);
-      setIsDropbox(coBrandingData.IsDropbox);
-      setDisplayedImage(coBrandingData.accountLogoPath && coBrandingData.accountLogoFile ? `${coBrandingData.accountLogoPath}${coBrandingData.accountLogoFile}` : Icons.Building);
-      setDisplayedStampImage(coBrandingData.companyStampPath && coBrandingData.companyStampFile ? `${coBrandingData.companyStampPath}${coBrandingData.companyStampFile}` : Icons.Stamp);
+      setIsGoogleDrive(Boolean(coBrandingData.IsGoogleDrive));
+      setIsOneDrive(Boolean(coBrandingData.IsOneDrive));
+      setIsDropbox(Boolean(coBrandingData.IsDropbox));
+      setDisplayedImage(
+        coBrandingData.accountLogoPath && coBrandingData.accountLogoFile
+          ? `${coBrandingData.accountLogoPath}${coBrandingData.accountLogoFile}`
+          : Icons.Building
+      );
+      setDisplayedStampImage(
+        coBrandingData.companyStampPath && coBrandingData.companyStampFile
+          ? `${coBrandingData.companyStampPath}${coBrandingData.companyStampFile}`
+          : Icons.Stamp
+      );
       setLogoImgError(false);
       setStampImgError(false);
 
-      // ✅ Set session time
       const timeout = coBrandingData.sessionTimeOut?.toString();
       const knownDurations = ["30", "60", "120", "360", "720", "1080", "1440"];
       if (knownDurations.includes(timeout)) {
@@ -64,8 +70,8 @@ function CoBrandingDetails() {
         setSelectedSessionDuration("30");
       }
       reset({
-        CompanyRefPrefix: coBrandingData.companyRefPrefix,
-        Objectives: coBrandingData.objectives,
+        CompanyRefPrefix: coBrandingData.companyRefPrefix || "",
+        Objectives: coBrandingData.objectives || "",
       });
     }
   }, [coBrandingData, reset]);
@@ -92,16 +98,26 @@ function CoBrandingDetails() {
     fetchCoBrandingData(accountId);
   }, [accountId]);
 
-  const fetchCoBrandingData = async (accountId) => {
+  const fetchCoBrandingData = async (accId) => {
     try {
-      if (!accountId) {
+      if (!accId) {
         return;
       }
       setIsLoading(true);
-      const response = await userService.getCoBranding(accountId);
+      const response = await userService.getCoBranding(accId);
       if (response.data.statusCode === "1") {
-        const { accountLogoFile, accountLogoPath, companyRefPrefix, objectives, companyStampPath, companyStampFile, isGoogleDrive, isOneDrive, isDropbox, sessionTimeOut } =
-          response.data.response;
+        const {
+          accountLogoFile,
+          accountLogoPath,
+          companyRefPrefix,
+          objectives,
+          companyStampPath,
+          companyStampFile,
+          isGoogleDrive,
+          isOneDrive,
+          isDropbox,
+          sessionTimeOut,
+        } = response.data.response;
 
         setCoBrandingData({
           companyStampFile,
@@ -249,227 +265,292 @@ function CoBrandingDetails() {
     { label: t("session.24hours"), value: "1440" },
   ];
 
+  const hasAccess =
+    user.AccountType === "B" && (user.RoleID === 1 || user.RoleID === 4) && (userAccess.remainingDays > 0);
+
   return (
-    <div className='cobranding-page container mt-3'>
-      {user.AccountType === "B" && (user.RoleID === 1 || user.RoleID === 4) && userAccess.remainingDays > 0 ? (
+    <div className='cobranding-page'>
+      {/* Top Page Header */}
+      <div className='cobranding-header'>
+        <h1 className='cobranding-header-title'>{t("coBranding.coBranding")}</h1>
+        <p className='cobranding-header-subtitle'>{t("coBranding.Selectoptions")}</p>
+      </div>
+
+      {hasAccess ? (
         <>
-          {userAccess.coBrand === true ? (
-            <>
-              <Accordion className='cobranding-accordion' defaultActiveKey='0'>
-                <Accordion.Item eventKey='2'>
-                  <Accordion.Header>
-                    <div className='d-flex align-items-center gap-3'>
-                      <Icons.CoBranding size={24} />
-                      <label style={{ fontSize: "20px", fontWeight: "500" }}>{t("coBranding.coBranding")}</label>
+          {userAccess.coBrand === true && (
+            <Accordion className='cobranding-accordion' defaultActiveKey='0'>
+              <Accordion.Item eventKey='0'>
+                <Accordion.Header>
+                  <div className='d-flex align-items-center gap-3 w-100 me-3'>
+                    <div className='cobranding-icon-pill'>
+                      <Icons.CoBranding size={22} />
                     </div>
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    <div className='main-container'>
-                      {isLoading && (
-                        <div className='loader-overlay'>
-                          <Loader />
-                        </div>
-                      )}
-                      <div className='main-container-form'>
-                        <Form onSubmit={handleSubmit(onSubmit)}>
-                          <Row>
-                            <Col md={6}>
-                              <div className='profile-Form'>
-                                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                                  {displayedImage && (
-                                    !logoImgError && typeof displayedImage === "string" ? (
-                                      <img src={displayedImage} alt='displayedImage' className='Imageshown' onError={() => setLogoImgError(true)} />
-                                    ) : (
-                                      <div
-                                        className='Imageshown d-flex align-items-center justify-content-center'
-                                      >
-                                        <Icons.Building size={18} />
-                                      </div>
-                                    )
-                                  )}
+                    <span className='cobranding-title-text'>{t("coBranding.coBranding")}</span>
+                  </div>
+                </Accordion.Header>
 
-                                  <div style={{ display: "flex", flexDirection: "column" }}>
-                                    <Form.Label style={{ fontSize: "18px", fontWeight: "600" }}>{t("coBranding.CompanyLogo")}</Form.Label>
-                                    <Form.Label>{t("coBranding.uploadCompanyLogo")}</Form.Label>
-                                  </div>
-                                </div>
-                                <Form.Label className='uploadProfilebtn' htmlFor='accountLogoImg'>
-                                  <Form.Control id='accountLogoImg' style={{ display: "none" }} name='accountLogoImg' accept='.jpg, .jpeg, .png' type='file' onChange={handleImageChange} />
-                                  {t("coBranding.uploadNewLogo")}
-                                </Form.Label>
-                              </div>
-                            </Col>
-
-                            <Col md={6}>
-                              <div className='profile-Form'>
-                                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                                  {displayedStampImage && (
-                                    !stampImgError && typeof displayedStampImage === "string" ? (
-                                      <img src={displayedStampImage} alt='displayedStampImage' className='Imageshown' onError={() => setStampImgError(true)} />
-                                    ) : (
-                                      <div
-                                        className='Imageshown d-flex align-items-center justify-content-center'
-                                      >
-                                        <Icons.Stamp size={18} />
-                                      </div>
-                                    )
-                                  )}
-
-                                  <div style={{ display: "flex", flexDirection: "column" }}>
-                                    <Form.Label style={{ fontSize: "18px", fontWeight: "600" }}>{t("coBranding.CompanyStamp")}</Form.Label>
-                                    <Form.Label>{t("coBranding.uploadCompanysStamp")}</Form.Label>
-                                  </div>
-                                </div>
-
-                                <Form.Label className='uploadProfilebtn' htmlFor='CompanyStampFile'>
-                                  <Form.Control id='CompanyStampFile' style={{ display: "none" }} name='CompanyStampFile' accept='.jpg, .jpeg, .png' type='file' onChange={handleStampImageChange} />
-                                  {t("coBranding.uploadStamp")}
-                                </Form.Label>
-                              </div>
-                            </Col>
-
-                            <Col md={6}>
-                              <Col>
-                                <div style={{ marginTop: "12px" }}>
-                                  <Form.Label>{t("coBranding.companyName")}</Form.Label>
-                                </div>
-                                <Form.Control
-                                  {...register("CompanyRefPrefix")}
-                                  onChange={handleCompanyPrefixChange}
-                                  value={watch("CompanyRefPrefix") || ""}
-                                  placeholder={t("coBranding.enterCompanyName")}
+                <Accordion.Body>
+                  <Form onSubmit={handleSubmit(onSubmit)}>
+                    <Row>
+                      {/* Company Logo Upload Card */}
+                      <Col lg={6}>
+                        <div className='cobranding-asset-card'>
+                          <div className='d-flex align-items-center gap-3 min-w-0'>
+                            <div className='cobranding-asset-preview'>
+                              {displayedImage && !logoImgError && typeof displayedImage === "string" ? (
+                                <img
+                                  src={displayedImage}
+                                  alt={t("coBranding.CompanyLogo")}
+                                  onError={() => setLogoImgError(true)}
                                 />
-                              </Col>
-
-                              <Col className='my-3'>
-                                <label>{t("coBranding.FileSources")}</label>
-
-                                <Row>
-                                  <Col md={4}>
-                                    <div className={`custom-card active`}>
-                                      <div className='d-flex justify-content-between align-items-center'>
-                                        <div className='d-flex align-items-center'>
-                                          <Icons.Local width={24} height={24} />
-
-                                          <span className='mx-2'>{t("coBranding.System")}</span>
-                                        </div>
-                                        <Icons.Check className='checkmarkSource' />
-                                      </div>
-                                    </div>
-                                  </Col>
-
-                                  {userAccess.googDrive === true && (
-                                    <Col md={4}>
-                                      <div className={`custom-card ${IsGoogleDrive ? "active" : ""}`} onClick={() => handleCheckboxChange("googleDrive", !IsGoogleDrive)}>
-                                        <div className='d-flex justify-content-between align-items-center'>
-                                          <div className='d-flex align-items-center'>
-                                            <Icons.GoogleDrive width={24} height={24} />
-
-                                            <span className='mx-2'>{t("coBranding.GoogleDrive")}</span>
-                                          </div>
-                                          {IsGoogleDrive && <Icons.Check className='checkmarkSource' />}
-                                        </div>
-                                      </div>
-                                    </Col>
-                                  )}
-
-                                  {userAccess.dropbox === true && (
-                                    <Col md={4}>
-                                      <div className={`custom-card ${IsDropbox ? "active" : ""}`} onClick={() => handleCheckboxChange("dropbox", !IsDropbox)}>
-                                        <div className='d-flex justify-content-between align-items-center'>
-                                          <div className='d-flex align-items-center'>
-                                            <Icons.Dropbox width={24} height={24} />
-
-                                            <span className='mx-2'>{t("coBranding.Dropbox")}</span>
-                                          </div>
-                                          {IsDropbox && <Icons.Check className='checkmarkSource' />}
-                                        </div>
-                                      </div>
-                                    </Col>
-                                  )}
-
-                                  {userAccess.oneDrive === true && (
-                                    <Col md={4}>
-                                      <div className={`custom-card ${IsOneDrive ? "active" : ""}`} onClick={() => handleCheckboxChange("oneDrive", !IsOneDrive)}>
-                                        <div className='d-flex justify-content-between align-items-center'>
-                                          <div className='d-flex align-items-center'>
-                                            <Icons.OneDrive width={24} height={24} />
-
-                                            <span className='mx-2'>{t("coBranding.OneDrive")}</span>
-                                          </div>
-                                          {IsOneDrive && <Icons.Check className='checkmarkSource' />}
-                                        </div>
-                                      </div>
-                                    </Col>
-                                  )}
-                                </Row>
-                              </Col>
-                            </Col>
-
-                            <Col md={6}>
-                              <div style={{ marginTop: "12px" }}>
-                                <Form.Label htmlFor='objectives'>{t("coBranding.description")}</Form.Label>
-                              </div>
-                              <Form.Control
-                                as='textarea'
-                                rows={5}
-                                id='objectives'
-                                {...register("Objectives")}
-                                onChange={handleObjectivesChange}
-                                value={watch("Objectives") || ""}
-                                placeholder={t("coBranding.enterDescription")}
-                              />
-                            </Col>
-
-                            <Col md={6}>
-                              <label className='my-3'>{t("coBranding.Session")}</label>
-                              <Row>
-                                {sessionOptions.map(({ label, value }) => (
-                                  <Col md={4} key={value}>
-                                    <div
-                                      className={`custom-card ${selectedSessionDuration === value ? "active" : ""}`}
-                                      onClick={() => {
-                                        setSelectedSessionDuration(value);
-                                        setIsFormChanged(true);
-                                      }}
-                                    >
-                                      <div className='d-flex justify-content-between align-items-center'>
-                                        <span>{label}</span>
-                                        {selectedSessionDuration === value && <Icons.Check className='checkmarkSource' />}
-                                      </div>
-                                    </div>
-                                  </Col>
-                                ))}
-                              </Row>
-                            </Col>
-
-                            <div className='d-flex gap-2 justify-content-start mt-5'>
-                              {isFormChanged && (
-                                <>
-                                  <Button variant='none' className='ImageDoneBtn' onClick={handleSubmit(onSubmit)}>
-                                    {t("userProfile.update")}
-                                  </Button>
-                                  <Button variant='none' className='ImageCancelBtn' onClick={handleCancelChanges}>
-                                    {t("coBranding.cancel")}
-                                  </Button>
-                                </>
+                              ) : (
+                                <Icons.Building size={24} />
                               )}
                             </div>
-                          </Row>
-                        </Form>
+                            <div className='cobranding-asset-info'>
+                              <h3 className='cobranding-asset-title'>{t("coBranding.CompanyLogo")}</h3>
+                              <p className='cobranding-asset-desc'>{t("coBranding.uploadCompanyLogo")}</p>
+                            </div>
+                          </div>
+
+                          <label className='cobranding-upload-btn' htmlFor='accountLogoImg' tabIndex={0}>
+                            <Form.Control
+                              id='accountLogoImg'
+                              style={{ display: "none" }}
+                              name='accountLogoImg'
+                              accept='.jpg, .jpeg, .png'
+                              type='file'
+                              onChange={handleImageChange}
+                            />
+                            {t("coBranding.uploadNewLogo")}
+                          </label>
+                        </div>
+                      </Col>
+
+                      {/* Company Stamp Upload Card */}
+                      <Col lg={6}>
+                        <div className='cobranding-asset-card'>
+                          <div className='d-flex align-items-center gap-3 min-w-0'>
+                            <div className='cobranding-asset-preview'>
+                              {displayedStampImage && !stampImgError && typeof displayedStampImage === "string" ? (
+                                <img
+                                  src={displayedStampImage}
+                                  alt={t("coBranding.CompanyStamp")}
+                                  onError={() => setStampImgError(true)}
+                                />
+                              ) : (
+                                <Icons.Stamp size={24} />
+                              )}
+                            </div>
+                            <div className='cobranding-asset-info'>
+                              <h3 className='cobranding-asset-title'>{t("coBranding.CompanyStamp")}</h3>
+                              <p className='cobranding-asset-desc'>{t("coBranding.uploadCompanysStamp")}</p>
+                            </div>
+                          </div>
+
+                          <label className='cobranding-upload-btn' htmlFor='CompanyStampFile' tabIndex={0}>
+                            <Form.Control
+                              id='CompanyStampFile'
+                              style={{ display: "none" }}
+                              name='CompanyStampFile'
+                              accept='.jpg, .jpeg, .png'
+                              type='file'
+                              onChange={handleStampImageChange}
+                            />
+                            {t("coBranding.uploadStamp")}
+                          </label>
+                        </div>
+                      </Col>
+
+                      {/* Company Reference Prefix Input */}
+                      <Col lg={6}>
+                        <div className='cobranding-field-group'>
+                          <label className='cobranding-label' htmlFor='companyRefPrefixInput'>
+                            {t("coBranding.companyName")}
+                          </label>
+                          <Form.Control
+                            id='companyRefPrefixInput'
+                            className='cobranding-input'
+                            {...register("CompanyRefPrefix")}
+                            onChange={handleCompanyPrefixChange}
+                            value={watch("CompanyRefPrefix") || ""}
+                            placeholder={t("coBranding.enterCompanyName")}
+                          />
+                        </div>
+
+                        {/* File Sources Grid */}
+                        <div className='cobranding-field-group'>
+                          <span className='cobranding-label'>{t("coBranding.FileSources")}</span>
+                          <span className='cobranding-sublabel'>{t("coBranding.Selectoptions")}</span>
+
+                          <div className='cobranding-options-grid'>
+                            {/* System Source Tile */}
+                            <div className='cobranding-option-tile active' tabIndex={0} role='button' aria-pressed='true'>
+                              <div className='d-flex align-items-center gap-2'>
+                                <Icons.Local width={20} height={20} />
+                                <span>{t("coBranding.System")}</span>
+                              </div>
+                              <Icons.Check className='cobranding-check-icon' size={18} />
+                            </div>
+
+                            {/* Google Drive */}
+                            {userAccess.googDrive === true && (
+                              <div
+                                className={`cobranding-option-tile ${IsGoogleDrive ? "active" : ""}`}
+                                onClick={() => handleCheckboxChange("googleDrive", !IsGoogleDrive)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    handleCheckboxChange("googleDrive", !IsGoogleDrive);
+                                  }
+                                }}
+                                tabIndex={0}
+                                role='button'
+                                aria-pressed={IsGoogleDrive}
+                              >
+                                <div className='d-flex align-items-center gap-2'>
+                                  <Icons.GoogleDrive width={20} height={20} />
+                                  <span>{t("coBranding.GoogleDrive")}</span>
+                                </div>
+                                {IsGoogleDrive && <Icons.Check className='cobranding-check-icon' size={18} />}
+                              </div>
+                            )}
+
+                            {/* Dropbox */}
+                            {userAccess.dropbox === true && (
+                              <div
+                                className={`cobranding-option-tile ${IsDropbox ? "active" : ""}`}
+                                onClick={() => handleCheckboxChange("dropbox", !IsDropbox)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    handleCheckboxChange("dropbox", !IsDropbox);
+                                  }
+                                }}
+                                tabIndex={0}
+                                role='button'
+                                aria-pressed={IsDropbox}
+                              >
+                                <div className='d-flex align-items-center gap-2'>
+                                  <Icons.Dropbox width={20} height={20} />
+                                  <span>{t("coBranding.Dropbox")}</span>
+                                </div>
+                                {IsDropbox && <Icons.Check className='cobranding-check-icon' size={18} />}
+                              </div>
+                            )}
+
+                            {/* OneDrive */}
+                            {userAccess.oneDrive === true && (
+                              <div
+                                className={`cobranding-option-tile ${IsOneDrive ? "active" : ""}`}
+                                onClick={() => handleCheckboxChange("oneDrive", !IsOneDrive)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    handleCheckboxChange("oneDrive", !IsOneDrive);
+                                  }
+                                }}
+                                tabIndex={0}
+                                role='button'
+                                aria-pressed={IsOneDrive}
+                              >
+                                <div className='d-flex align-items-center gap-2'>
+                                  <Icons.OneDrive width={20} height={20} />
+                                  <span>{t("coBranding.OneDrive")}</span>
+                                </div>
+                                {IsOneDrive && <Icons.Check className='cobranding-check-icon' size={18} />}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </Col>
+
+                      {/* Objectives / Description Textarea */}
+                      <Col lg={6}>
+                        <div className='cobranding-field-group'>
+                          <label className='cobranding-label' htmlFor='objectives'>
+                            {t("coBranding.description")}
+                          </label>
+                          <Form.Control
+                            as='textarea'
+                            id='objectives'
+                            className='cobranding-textarea'
+                            {...register("Objectives")}
+                            onChange={handleObjectivesChange}
+                            value={watch("Objectives") || ""}
+                            placeholder={t("coBranding.enterDescription")}
+                          />
+                        </div>
+
+                        {/* Session Timeout Options */}
+                        <div className='cobranding-field-group'>
+                          <span className='cobranding-label'>{t("coBranding.Session")}</span>
+
+                          <div className='cobranding-options-grid'>
+                            {sessionOptions.map(({ label, value }) => {
+                              const isSelected = selectedSessionDuration === value;
+                              return (
+                                <div
+                                  key={value}
+                                  className={`cobranding-option-tile ${isSelected ? "active" : ""}`}
+                                  onClick={() => {
+                                    setSelectedSessionDuration(value);
+                                    setIsFormChanged(true);
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                      setSelectedSessionDuration(value);
+                                      setIsFormChanged(true);
+                                    }
+                                  }}
+                                  tabIndex={0}
+                                  role='button'
+                                  aria-pressed={isSelected}
+                                >
+                                  <span>{label}</span>
+                                  {isSelected && <Icons.Check className='cobranding-check-icon' size={18} />}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </Col>
+                    </Row>
+
+                    {/* Bottom Action Bar */}
+                    {isFormChanged && (
+                      <div className='cobranding-actions'>
+                        <Button
+                          variant='none'
+                          className='ImageDoneBtn d-inline-flex align-items-center justify-content-center gap-2'
+                          onClick={handleSubmit(onSubmit)}
+                          disabled={isLoading}
+                        >
+                          {isLoading && (
+                            <Spinner animation='border' size='sm' className='inline-button-spinner' aria-hidden='true' />
+                          )}
+                          <span>{t("userProfile.update")}</span>
+                        </Button>
+
+                        <Button
+                          variant='none'
+                          className='ImageCancelBtn'
+                          onClick={handleCancelChanges}
+                          disabled={isLoading}
+                        >
+                          {t("coBranding.cancel")}
+                        </Button>
                       </div>
-                    </div>
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </>
-          ) : (
-            <></>
+                    )}
+                  </Form>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
           )}
+
+          {/* Subscribed Plan Details Component */}
           <DaysToExpire />
         </>
       ) : (
-        <></>
+        <DaysToExpire />
       )}
     </div>
   );

@@ -64,7 +64,7 @@ const SignatureModal = (props) => {
   }, [showModal]);
 
   useEffect(() => {
-    const savedSignature = localStorage.getItem("savedSignature");
+    const savedSignature = sessionStorage.getItem("savedSignature") || localStorage.getItem("savedSignature");
     if (savedSignature && signRef.current) {
       signRef.current.fromDataURL(savedSignature);
     }
@@ -317,7 +317,7 @@ const SignatureModal = (props) => {
     const signatureImage = await signRef.current.getTrimmedCanvas().toDataURL("image/png");
     const drawdata = extractBase64FromDataURI(signatureImage);
 
-    localStorage.setItem("savedSignature", signatureImage);
+    sessionStorage.setItem("savedSignature", signatureImage);
     return drawdata;
   };
 

@@ -5,6 +5,8 @@ import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
 import { IdleSessionTimeout } from "idle-session-timeout";
 import userService from "@/services/userService";
+import { tokenManager } from "@/services/tokenManager";
+import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
 
 const UserActivityStatus = () => {
   const navigate = useNavigate();
@@ -15,17 +17,27 @@ const UserActivityStatus = () => {
 
   const handleLogout = async (reason = "inactivity") => {
     try {
-      const token = sessionStorage.getItem("token");
+      const token = tokenManager.getToken();
       if (!token) return;
 
       const response = await userService.logout(null);
 
       if (response.data.statusCode === "1") {
         const currentTheme = localStorage.getItem("theme");
+        const currentPalette = localStorage.getItem(PALETTE_STORAGE_KEY);
+        tokenManager.clearToken();
         sessionStorage.clear();
+        localStorage.removeItem("savedSignature");
+        localStorage.removeItem("registerSignID");
+        localStorage.removeItem("signatoriesID");
+        localStorage.removeItem("activeStep");
+        localStorage.removeItem("completedSteps");
         localStorage.clear();
         if (currentTheme) {
           localStorage.setItem("theme", currentTheme);
+        }
+        if (currentPalette) {
+          localStorage.setItem(PALETTE_STORAGE_KEY, currentPalette);
         }
         navigate("/");
 

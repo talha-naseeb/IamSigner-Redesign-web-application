@@ -4,6 +4,7 @@ import { API_STATUS } from "@/Constants/apiStatuses";
 import userImg from "@/assets/images/defaultImg.svg";
 import documentService from "@/services/documentService";
 import userService from "@/services/userService";
+import { tokenManager } from "@/services/tokenManager";
 
 const UserContext = createContext();
 
@@ -129,12 +130,23 @@ export const UserProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = tokenManager.getToken();
     if (token) {
       fetchUserProfile();
       FetchRecordCounts();
     }
     fetchCoBrandingData();
+
+    const unsubscribe = tokenManager.subscribe((newToken, isAuthenticated) => {
+      if (isAuthenticated) {
+        fetchUserProfile();
+        FetchRecordCounts();
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   return (

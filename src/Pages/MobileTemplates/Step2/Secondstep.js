@@ -3,7 +3,7 @@ import "./Secondstep.css";
 import { Col, Dropdown, DropdownButton, Row } from "react-bootstrap";
 import mobileService from "@/services/mobileService";
 import { toast } from "react-toastify";
-import DraggableButton from "./DraggableButtons";
+import DraggableButton from "@/Components/DocumentPreparation/Step2_Canvas/DraggableButtons";
 import ImageWithDropZone from "./DisplayCenterImage";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";

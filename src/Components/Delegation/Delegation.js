@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { Button, Form, Accordion, Row, Col } from "react-bootstrap";
+import { Button, Form, Accordion, Row, Col, Spinner } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useUser } from "@/Context/UserContext";
 import { useTranslation } from "react-i18next";
 import ReactSwitch from "react-switch";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import PhoneInput from "react-phone-input-2";
 import { Icons } from "@/assets/Icons";
 import "react-phone-input-2/lib/style.css";
@@ -17,7 +16,7 @@ import "./style.css";
 function Delegation() {
   const { t } = useTranslation();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const { user, userAccess } = useUser();
   const [delegateData, setDelegateData] = useState(null);
   const [activeDelegate, setActiveDelegate] = useState(false);
@@ -56,6 +55,7 @@ function Delegation() {
   };
 
   const CreateDelegation = async (data) => {
+    setIsSaving(true);
     try {
       // Extract country code and phone number from the combined phone input
       const countryCode = phoneNumber.substring(0, phoneNumber.length - 10); // Assuming 10 digits for mobile
@@ -79,12 +79,14 @@ function Delegation() {
         });
         setPhoneNumber("");
         setButtonHide(false);
-        getDelegation();
+        await getDelegation();
       } else {
         toast.error(t("delegation.failedcreated"));
       }
     } catch (error) {
       console.error("Error creating delegation.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -103,13 +105,11 @@ function Delegation() {
       }
     } catch (error) {
       console.error(t("delegation.errorActivate"));
-      setIsLoading(false);
     }
   };
 
   const getDelegation = async () => {
     try {
-      setIsLoading(true);
       const response = await userService.getDelegation();
       if (response.data.statusCode === "1") {
         const userInfo = response.data.response;
@@ -133,18 +133,14 @@ function Delegation() {
           setDateRange([new DateObject(userInfo.startDate), new DateObject(userInfo.endDate)]);
         }
       }
-      setIsLoading(false);
     } catch (error) {
       console.log(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleUpdate = async (data) => {
+    setIsSaving(true);
     try {
-      setIsLoading(true);
-
       // Extract country code and phone number from the combined phone input
       const countryCode = phoneNumber.substring(0, phoneNumber.length - 10); // Assuming 10 digits for mobile
       const mobileNumber = phoneNumber.substring(phoneNumber.length - 10);
@@ -161,11 +157,11 @@ function Delegation() {
         toast.success(t("delegation.successUpdate"));
       }
       setButtonHide(false);
-      getDelegation();
-      setIsLoading(false);
+      await getDelegation();
     } catch (error) {
       console.error(error);
-      setIsLoading(false);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -260,12 +256,6 @@ function Delegation() {
                 </div>
               </Accordion.Header>
               <Accordion.Body>
-                {isLoading && (
-                  <div className='loader-overlay'>
-                    <Loader />
-                  </div>
-                )}
-
                 <Form className='my-3' onSubmit={handleSubmit(delegateData ? handleUpdate : CreateDelegation)}>
                   <Row className='g-3 mb-3'>
                     <Col xs={12} md={6} xl={4}>
@@ -323,6 +313,7 @@ function Delegation() {
                           country={"sa"}
                           value={phoneNumber}
                           onChange={handlePhoneChange}
+                          containerClass='phone-input-container delegation-phone-input'
                         />
                         {phoneNumber && phoneNumber.length < 10 && <div className='text-danger'>{t("userProfile.invalidPhone")}</div>}
                       </Form.Group>
@@ -349,20 +340,22 @@ function Delegation() {
                   {delegateData === null
                     ? buttonHide && (
                         <div className='d-flex gap-2 justify-content-start my-2'>
-                          <Button variant='none' className='ImageDoneBtn' type='submit'>
+                          <Button variant='none' className='ImageDoneBtn' type='submit' disabled={isSaving}>
+                            {isSaving && <Spinner animation='border' size='sm' className='inline-button-spinner' aria-hidden='true' />}
                             {t("userProfile.save")}
                           </Button>
-                          <Button variant='none' className='ImageCancelBtn' onClick={handleClearAndCancel}>
+                          <Button variant='none' className='ImageCancelBtn' onClick={handleClearAndCancel} disabled={isSaving}>
                             {t("userProfile.cancel")}
                           </Button>
                         </div>
                       )
                     : buttonHide && (
                         <div className='d-flex gap-2 justify-content-start my-2'>
-                          <Button variant='none' className='ImageDoneBtn' type='submit'>
+                          <Button variant='none' className='ImageDoneBtn' type='submit' disabled={isSaving}>
+                            {isSaving && <Spinner animation='border' size='sm' className='inline-button-spinner' aria-hidden='true' />}
                             {t("userProfile.update")}
                           </Button>
-                          <Button variant='none' className='ImageCancelBtn' onClick={handleCancel}>
+                          <Button variant='none' className='ImageCancelBtn' onClick={handleCancel} disabled={isSaving}>
                             {t("userProfile.cancel")}
                           </Button>
                         </div>

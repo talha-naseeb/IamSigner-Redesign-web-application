@@ -26,6 +26,7 @@ import { onDocumentSigned } from "@/Helpers/documentSignChannel";
 import { normalizeSigningLink } from "@/Helpers/signingLink";
 import SignCompletedScreen from "@/Components/SignCompletedScreen/SignCompletedScreen";
 import { API_STATUS } from "@/Constants/apiStatuses";
+import { tokenManager } from "@/services/tokenManager";
 import "./style.css";
 
 const PendingDocs = () => {
@@ -201,7 +202,7 @@ const PendingDocs = () => {
   // lists, or show the completed screen when this tab's session is gone.
   useEffect(() => {
     const unsubscribe = onDocumentSigned(() => {
-      if (!sessionStorage.getItem("token")) {
+      if (!tokenManager.hasToken()) {
         setShowSignCompleted(true);
         return;
       }

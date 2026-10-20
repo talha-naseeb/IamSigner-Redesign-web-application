@@ -605,6 +605,11 @@ body,
   background-color: var(--bg-secondary);
 }
 
+.inline-button-spinner {
+  flex: 0 0 auto;
+  margin-inline-end: 0.5rem;
+}
+
 /* Shared table surfaces across dashboard and account settings */
 .MuiTableContainer-root {
   overflow: auto;

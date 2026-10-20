@@ -3,9 +3,8 @@ import { toast } from "react-toastify";
 import "./style.css";
 import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
 import { useTranslation } from "react-i18next";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Spinner } from "react-bootstrap";
 import { useUser } from "@/Context/UserContext";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import userService from "@/services/userService";
 import { Icons } from "@/assets/Icons";
 
@@ -37,7 +36,8 @@ const RequirementItem = ({ met, label }) => (
 
 const PasswordChange = () => {
   const { t } = useTranslation();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isVerifyingOld, setIsVerifyingOld] = useState(false);
+  const [isSubmittingPassword, setIsSubmittingPassword] = useState(false);
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -111,7 +111,7 @@ const PasswordChange = () => {
       toast.error(t("changePassword.oldPassCheck"));
       return;
     }
-    setIsLoading(true);
+    setIsVerifyingOld(true);
     try {
       const oldPasswordCheck = await userService.checkOldPassword({
         UserName: emailId,
@@ -132,7 +132,7 @@ const PasswordChange = () => {
       toast.error(t("changePassword.oldPassCheck"));
       setOldVerified(false);
     } finally {
-      setIsLoading(false);
+      setIsVerifyingOld(false);
     }
   };
 
@@ -142,7 +142,7 @@ const PasswordChange = () => {
       toast.error(t("changePassword.passMatch"));
       return;
     }
-    setIsLoading(true);
+    setIsSubmittingPassword(true);
     try {
       const response = await userService.changePassword({
         UserName: emailId,
@@ -158,18 +158,12 @@ const PasswordChange = () => {
     } catch (error) {
       toast.error(t("changePassword.changePasswordError"), error);
     } finally {
-      setIsLoading(false);
+      setIsSubmittingPassword(false);
     }
   };
 
   return (
     <div className='password-change-card'>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
-
       <div className='password-change-header'>
         <div className='password-change-icon-badge' aria-hidden='true'>
           <Icons.Lock size={26} />
@@ -210,10 +204,11 @@ const PasswordChange = () => {
             />
             {oldPassword.trim().length > 0 && (
               <div className='password-change-actions'>
-                <Button type='button' className='password-change-btn password-change-btn-primary' onClick={handleVerifyOldPassword}>
+                <Button type='button' className='password-change-btn password-change-btn-primary' onClick={handleVerifyOldPassword} disabled={isVerifyingOld}>
+                  {isVerifyingOld && <Spinner animation='border' size='sm' className='inline-button-spinner' aria-hidden='true' />}
                   {t("changePassword.verify") || "Verify"}
                 </Button>
-                <Button type='button' className='password-change-btn password-change-btn-secondary' onClick={hanleCLearFields}>
+                <Button type='button' className='password-change-btn password-change-btn-secondary' onClick={hanleCLearFields} disabled={isVerifyingOld}>
                   {t("changePassword.cancel")}
                 </Button>
               </div>
@@ -222,7 +217,7 @@ const PasswordChange = () => {
         ) : (
           <>
             <div className='password-change-verified-banner'>
-              <Icons.CheckCircle size={18} />
+              <Icons.Completed size={18} aria-hidden='true' />
               <span>{t("changePassword.oldpassVerified") || "Old password verified"}</span>
             </div>
 
@@ -263,10 +258,11 @@ const PasswordChange = () => {
             />
 
             <div className='password-change-actions'>
-              <Button type='submit' className='password-change-btn password-change-btn-primary' disabled={!isFormValid}>
+              <Button type='submit' className='password-change-btn password-change-btn-primary' disabled={!isFormValid || isSubmittingPassword}>
+                {isSubmittingPassword && <Spinner animation='border' size='sm' className='inline-button-spinner' aria-hidden='true' />}
                 {t("changePassword.submit")}
               </Button>
-              <Button type='button' className='password-change-btn password-change-btn-secondary' onClick={hanleCLearFields}>
+              <Button type='button' className='password-change-btn password-change-btn-secondary' onClick={hanleCLearFields} disabled={isSubmittingPassword}>
                 {t("changePassword.cancel")}
               </Button>
             </div>

@@ -3,15 +3,15 @@ import "./Secondstep.css";
 import { Col, Dropdown, DropdownButton, Row } from "react-bootstrap";
 import mobileService from "@/services/mobileService";
 import { toast } from "react-toastify";
-import DraggableButton from "@/Components/Upload Flow/Step2/DraggableButtons";
+import DraggableButton from "@/Components/DocumentPreparation/Step2_Canvas/DraggableButtons";
 import ImageWithDropZone from "./DisplayCenterImage";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import ImageThumbnails from "./ImageThumbnails";
+import MobileImageThumbnails from "./MobileImageThumbnails";
 import PageNavigations from "@/Components/PageNavigations";
 import SearchControls from "@/Components/SearchControls";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import { Icons } from "@/assets/Icons";
+import { useTranslation } from "react-i18next";
 
 const Secondstep = ({ setActiveStep }) => {
   const { t } = useTranslation();
@@ -334,7 +334,7 @@ const Secondstep = ({ setActiveStep }) => {
 
             <hr className='m-0' />
             <div className='doc-pages d-none d-md-block'>
-              <ImageThumbnails
+              <MobileImageThumbnails
                 controls={controls}
                 t={t}
                 selectedImage={selectedImage}

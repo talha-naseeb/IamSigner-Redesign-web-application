@@ -14,22 +14,22 @@ const UploadDoc = () => {
   const [completedSteps, setCompletedSteps] = useState([]);
   const [activeStep, setActiveStep] = useState(1);
 
-  // Function to set active step and save it to localStorage
+  // Function to set active step and save it to sessionStorage
   const handleSetActiveStep = (step) => {
     setActiveStep(step);
-    localStorage.setItem("activeStep", step);
+    sessionStorage.setItem("activeStep", step);
   };
 
-  // Function to set completed steps and save them to localStorage
+  // Function to set completed steps and save them to sessionStorage
   const handleSetCompletedSteps = (steps) => {
     setCompletedSteps(steps);
-    localStorage.setItem("completedSteps", JSON.stringify(steps));
+    sessionStorage.setItem("completedSteps", JSON.stringify(steps));
   };
 
-  // Retrieve the saved steps from localStorage when the component mounts
+  // Retrieve the saved steps from sessionStorage when the component mounts
   useEffect(() => {
-    const storedActiveStep = localStorage.getItem("activeStep");
-    const storedCompletedSteps = localStorage.getItem("completedSteps");
+    const storedActiveStep = sessionStorage.getItem("activeStep") || localStorage.getItem("activeStep");
+    const storedCompletedSteps = sessionStorage.getItem("completedSteps") || localStorage.getItem("completedSteps");
 
     if (storedActiveStep) {
       setActiveStep(parseInt(storedActiveStep));

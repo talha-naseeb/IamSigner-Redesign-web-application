@@ -18,6 +18,7 @@ import { getPathAfterId } from "@/utils/url";
 import AuthThemeToggle from "@/Components/Auth/AuthThemeToggle";
 import { useTheme } from "@/Context/ThemeContext";
 import { Helmet } from "react-helmet-async";
+import { tokenManager } from "@/services/tokenManager";
 
 const ResetPassword = () => {
   const { theme } = useTheme();
@@ -121,7 +122,7 @@ const ResetPassword = () => {
 
   const handleCloseModal = () => {
     setShowSuccessModal(false);
-    if (sessionStorage.getItem("token")) {
+    if (tokenManager.hasToken()) {
       navigate("/home");
     } else {
       navigate("/");

@@ -3,13 +3,12 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import userService from "@/services/userService";
 import { resizeImage, convertToBase64, checkImageLoad } from "@/utils/image";
-import { Button, Col, Row, Accordion, Form, Modal } from "react-bootstrap";
+import { Button, Col, Row, Accordion, Form, Modal, Spinner } from "react-bootstrap";
 import "./style.css";
 import { useTranslation } from "react-i18next";
 import PasswordChange from "../Auth/PasswordChange/PasswordChange";
 import Delegation from "@/Components/Delegation/Delegation";
 import { useUser } from "@/Context/UserContext";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import PhoneInput from "react-phone-input-2";
 import { Icons } from "@/assets/Icons";
 
@@ -21,7 +20,8 @@ function UserProfile() {
   const { userAccess, fetchUserProfile: refreshHeaderProfile } = useUser("");
   const { handleSubmit } = useForm();
   const [userRoleID, setUserRoleID] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSavingAssets, setIsSavingAssets] = useState(false);
+  const [isSavingDetails, setIsSavingDetails] = useState(false);
   const [displayedImage, setDisplayedImage] = useState(Icons.Profile);
   const [displaySignatureImg, setdisplaySignatureImg] = useState(Icons.SelfSign);
   const [imgError, setImgError] = useState(false);
@@ -98,7 +98,7 @@ function UserProfile() {
       MySignatureExtention: ".png",
     };
 
-    setIsLoading(true);
+    setIsSavingAssets(true);
     try {
       const response = await userService.updateProfile(data);
 
@@ -123,13 +123,12 @@ function UserProfile() {
     } catch (error) {
       toast.error(t("userProfile.errProfileUpdate"));
     } finally {
-      setIsLoading(false);
+      setIsSavingAssets(false);
     }
   };
 
   //UserProfile API for Fetching Profile Path
   const fetchUserProfile = async () => {
-    setIsLoading(true);
     try {
       const response = await userService.getUserProfile();
 
@@ -157,10 +156,7 @@ function UserProfile() {
           setPhoneNumber(mobileNumber);
         }
       }
-    } catch (error) {
-    } finally {
-      setIsLoading(false);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -172,7 +168,7 @@ function UserProfile() {
       return;
     }
 
-    setIsLoading(true);
+    setIsSavingDetails(true);
     try {
       const roleIdString = String(userRoleID);
 
@@ -200,7 +196,7 @@ function UserProfile() {
     } catch (error) {
       toast.error(t("userProfile.errUpateName"));
     } finally {
-      setIsLoading(false);
+      setIsSavingDetails(false);
     }
   };
 
@@ -344,11 +340,6 @@ function UserProfile() {
 
   return (
     <div className='profile-page container-fluid my-3'>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <div className='userProfile-form mb-2'>
           <div className='profile-page-heading profile-section-title d-flex align-items-center gap-3 mb-3'>
             <span className='profile-section-icon' aria-hidden='true'>
@@ -420,10 +411,11 @@ function UserProfile() {
           <div className='d-flex gap-2 justify-content-start my-2'>
             {isImageSelected || isSignatureSelected ? (
               <>
-                <Button variant='none' onClick={handleDoneClick} className='ImageDoneBtn'>
+                <Button variant='none' onClick={handleDoneClick} className='ImageDoneBtn' disabled={isSavingAssets}>
+                  {isSavingAssets && <Spinner animation='border' size='sm' className='inline-button-spinner' aria-hidden='true' />}
                   {t("userProfile.save")}
                 </Button>
-                <Button variant='none' onClick={handleCancel} className='ImageCancelBtn'>
+                <Button variant='none' onClick={handleCancel} className='ImageCancelBtn' disabled={isSavingAssets}>
                   {t("userProfile.cancel")}
                 </Button>
               </>
@@ -459,6 +451,7 @@ function UserProfile() {
                   excludeCountries={["il"]}
                   value={phoneNumber}
                   onChange={(phone) => handleInputChange("phoneNumber", phone)}
+                  containerClass='phone-input-container profile-phone-input'
                 />
                 {errors.phoneNumber && <div className='text-danger'>{errors.phoneNumber}</div>}
               </Form.Group>
@@ -474,10 +467,11 @@ function UserProfile() {
 
         {showSaveButton && (
           <div className='d-flex gap-3 mt-3'>
-            <Button variant='none' onClick={handleNameSave} className='ImageDoneBtn' disabled={!fullNameInput.trim() || !/^[a-zA-Z\s]+$/.test(fullNameInput)}>
+            <Button variant='none' onClick={handleNameSave} className='ImageDoneBtn' disabled={isSavingDetails || !fullNameInput.trim() || !/^[a-zA-Z\s]+$/.test(fullNameInput)}>
+              {isSavingDetails && <Spinner animation='border' size='sm' className='inline-button-spinner' aria-hidden='true' />}
               {t("userProfile.update")}
             </Button>
-            <Button variant='none' onClick={handleNameCancel} className='ImageCancelBtn'>
+            <Button variant='none' onClick={handleNameCancel} className='ImageCancelBtn' disabled={isSavingDetails}>
               {t("userProfile.cancel")}
             </Button>
           </div>

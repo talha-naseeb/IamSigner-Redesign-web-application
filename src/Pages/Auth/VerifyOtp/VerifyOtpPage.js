@@ -9,6 +9,7 @@ import { FiMail, FiShield } from "react-icons/fi";
 import "./style.css";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import { useUser } from "@/Context/UserContext";
+import { tokenManager } from "@/services/tokenManager";
 
 const OtpInput = ({ length = 4, show, handleClose, email, password, onLogin }) => {
   const [otp, setOtp] = useState(new Array(length).fill(""));
@@ -96,7 +97,7 @@ const OtpInput = ({ length = 4, show, handleClose, email, password, onLogin }) =
 
       if (response.data.statusCode === "1") {
         const { token } = response.data.response;
-        sessionStorage.setItem("token", token);
+        tokenManager.setToken(token);
 
         toast.success(t("logScreens.loginSuccess"));
 

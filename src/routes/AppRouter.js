@@ -1,7 +1,9 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import PATHS from "./paths";
-import ProtectedRoute from "./ProtectedRoute";
+import AuthGuard from "./Guards/AuthGuard";
+import RoleGuard from "./Guards/RoleGuard";
+import { tokenManager } from "@/services/tokenManager";
 
 // Layout
 import Layout from "../Components/Layout/Layout";
@@ -33,18 +35,13 @@ import ShareDocs from "@/Components/DashboardStatuses/SharedStatus/ShareDocs";
 import RecentDocuments from "@/Components/DashboardStatuses/Dashboard/RecentDocuments";
 import PendingStatus from "@/Components/DashboardStatuses/PendingStatus/PendingwithMe";
 import PendingWithOthers from "@/Components/DashboardStatuses/PendingStatus/PendingWithothers";
-import DraftStatus from "@/Components/DashboardStatuses/Draftstatus/Draft";
 import DraftDocs from "@/Components/DashboardStatuses/Draftstatus/DraftDocs";
-import Complete from "@/Components/DashboardStatuses/CompleteStatus/Complete";
 import CompleteDocs from "@/Components/DashboardStatuses/CompleteStatus/CompleteDocs";
-import InactiveDocs from "@/Components/DashboardStatuses/InactiveStatues/InactiveDocs";
 import InActive from "@/Components/DashboardStatuses/InactiveStatues/InActive";
 import CreateTeam from "@/Components/CreateTeam/CreateTeam";
 import CoBrandingDetails from "@/Components/Cobranding/Cobranding";
-import Declined from "@/Components/DashboardStatuses/Decline/Declined";
 import DeclinedDocs from "@/Components/DashboardStatuses/Decline/DeclinedDocs";
 import RecallDocuments from "@/Components/DashboardStatuses/RecallDocuments/RecallDocuments";
-import RecallDocs from "@/Components/DashboardStatuses/RecallDocuments/RecallDocs";
 import TemplatesPage from "@/Pages/Templates/TemplatesPage";
 import Templates from "@/Pages/Templates/Templates";
 import UserProfile from "@/Pages/Profile/UserProfile";
@@ -72,8 +69,7 @@ import AppUserReport from "@/Components/ReportDashboard/AppUserReport/AppUserRep
 
 // Custom 404 handler based on token presence
 const Custom404Handler = () => {
-  const token = sessionStorage.getItem("token");
-  if (token) {
+  if (tokenManager.hasToken()) {
     return <Navigate to={PATHS.home} replace />;
   }
   return <Navigate to={PATHS.login} replace />;
@@ -92,51 +88,110 @@ const AppRouter = ({ onLogin }) => {
 
       {/* Routes wrapped in Layout */}
       <Route element={<Layout />}>
-        {/* Protected routes */}
-        <Route element={<ProtectedRoute />}>
+        {/* Protected routes wrapped in AuthGuard */}
+        <Route element={<AuthGuard />}>
+          {/* Base Authenticated Pages - Accessible to all roles */}
           <Route path={PATHS.home} element={<Home />} />
-          <Route path={PATHS.uploadDoc} element={<UploadDoc />} />
-          <Route path={PATHS.uploadBulk} element={<UploadBulk />} />
-          <Route path={PATHS.selfSign} element={<SelfSignatureFlow />} />
+          <Route path={PATHS.userProfile} element={<UserProfile />} />
+          <Route path={PATHS.allFolders} element={<Folder />} />
+          <Route path={PATHS.viewFolderDocs} element={<ViewDocuments />} />
+          <Route path={PATHS.viewSubFolderDocs} element={<ViewSubFolderDocuments />} />
+          <Route path={PATHS.completeDocs} element={<CompleteDocs />} />
+          <Route path={PATHS.completeStatus} element={<Navigate to={PATHS.completeDocs} replace />} />
+          <Route path={PATHS.inActive} element={<InActive />} />
+          <Route path={PATHS.inactiveDocs} element={<Navigate to={PATHS.inActive} replace />} />
+          <Route path={PATHS.declineDocs} element={<DeclinedDocs />} />
+          <Route path={PATHS.declined} element={<Navigate to={PATHS.declineDocs} replace />} />
           <Route path={PATHS.pendingDocs} element={<PendingDocs />} />
-          <Route path={PATHS.recentDocuments} element={<RecentDocuments />} />
-          <Route path={PATHS.shareDocs} element={<ShareDocs />} />
           <Route path={PATHS.pendingWithMe} element={<PendingStatus />} />
           <Route path={PATHS.pendingWithOthers} element={<PendingWithOthers />} />
-          <Route path={PATHS.drafts} element={<DraftStatus />} />
-          <Route path={PATHS.draftDocs} element={<DraftDocs />} />
-          <Route path={PATHS.completeStatus} element={<Complete />} />
-          <Route path={PATHS.completeDocs} element={<CompleteDocs />} />
-          <Route path={PATHS.inActive} element={<InActive />} />
-          <Route path={PATHS.inactiveDocs} element={<InactiveDocs />} />
-          <Route path={PATHS.teamMembers} element={<CreateTeam />} />
-          <Route path={PATHS.documentReport} element={<UserDocReport />} />
-          <Route path={PATHS.userReport} element={<AppUserReport />} />
-          <Route path={PATHS.accountSettings} element={<CoBrandingDetails />} />
-          <Route path={PATHS.declined} element={<Declined />} />
-          <Route path={PATHS.declineDocs} element={<DeclinedDocs />} />
-          <Route path={PATHS.recallDocuments} element={<RecallDocuments />} />
-          <Route path={PATHS.recallDocs} element={<RecallDocs />} />
-          <Route path={PATHS.templatesPage} element={<TemplatesPage />} />
-          <Route path={PATHS.createTemplates} element={<Templates />} />
-          <Route path={PATHS.editTemplates} element={<Templates />} />
-          <Route path={PATHS.userProfile} element={<UserProfile />} />
+          <Route path={PATHS.recentDocuments} element={<RecentDocuments />} />
+          <Route path={PATHS.emailTemplates} element={<EmailTemplates />} />
+          <Route path={PATHS.createEmailTemplate} element={<CreateEmailTemplate />} />
           <Route path={PATHS.authIntegration} element={<CreateWebhook />} />
-          <Route path={PATHS.macAi} element={<OpenAIComponent />} />
           <Route path={PATHS.manuallyGenerateDocs} element={<ManuallyGenerateComponent />} />
           <Route path={PATHS.macAiDocs} element={<ListOfDocuments />} />
           <Route path={PATHS.manualGeneratedDocuments} element={<ManualDosList />} />
           {isDmsEnabled && <Route path={PATHS.dms} element={<DMS />} />}
-          <Route path={PATHS.allFolders} element={<Folder />} />
-          <Route path={PATHS.viewFolderDocs} element={<ViewDocuments />} />
-          <Route path={PATHS.viewSubFolderDocs} element={<ViewSubFolderDocuments />} />
-          <Route path={PATHS.bulkSignatories} element={<BulkSignatoriesList />} />
-          <Route path={PATHS.bulkDocuments} element={<BulkDocuments />} />
-          <Route path={PATHS.emailTemplates} element={<EmailTemplates />} />
-          <Route path={PATHS.createEmailTemplate} element={<CreateEmailTemplate />} />
-          <Route path={PATHS.companyProfile} element={<CompanyProfile />} />
-          <Route path={PATHS.departmentDetails} element={<DepartmentList />} />
-          {/* <Route path={PATHS.aiAssistant} element={<ChatAIAgent />} /> */}
+
+          {/* Write Actions - Require Active Subscription & Role != 3 */}
+          <Route element={<RoleGuard allowedRoleIds={[1, 2, 4]} requireActiveSubscription={true} />}>
+            <Route path={PATHS.uploadDoc} element={<UploadDoc />} />
+            <Route path={PATHS.selfSign} element={<SelfSignatureFlow />} />
+            <Route path={PATHS.macAi} element={<OpenAIComponent />} />
+          </Route>
+
+          {/* Draft Documents - Block Role 3 */}
+          <Route element={<RoleGuard allowedRoleIds={[1, 2, 4]} />}>
+            <Route path={PATHS.draftDocs} element={<DraftDocs />} />
+            <Route path={PATHS.drafts} element={<Navigate to={PATHS.draftDocs} replace />} />
+          </Route>
+
+          {/* Recalled Documents - Requires recalled permission & Role != 3 */}
+          <Route element={<RoleGuard allowedRoleIds={[1, 2, 4]} requiredPermission='recalled' />}>
+            <Route path={PATHS.recallDocuments} element={<RecallDocuments />} />
+            <Route path={PATHS.recallDocs} element={<Navigate to={PATHS.recallDocuments} replace />} />
+          </Route>
+
+          {/* Shared Documents - Requires docShare permission & Role != 3 */}
+          <Route element={<RoleGuard allowedRoleIds={[1, 2, 4]} requiredPermission='docShare' />}>
+            <Route path={PATHS.shareDocs} element={<ShareDocs />} />
+          </Route>
+
+          {/* Templates - Requires templates permission & Role != 3 */}
+          <Route element={<RoleGuard allowedRoleIds={[1, 2, 4]} requiredPermission='templates' />}>
+            <Route path={PATHS.templatesPage} element={<TemplatesPage />} />
+            <Route element={<RoleGuard requireActiveSubscription={true} />}>
+              <Route path={PATHS.createTemplates} element={<Templates />} />
+              <Route path={PATHS.editTemplates} element={<Templates />} />
+            </Route>
+          </Route>
+
+          {/* Bulk Operations - Requires Business Account & Bulk Entitlement */}
+          <Route
+            element={
+              <RoleGuard
+                allowedAccountTypes={["B"]}
+                allowedRoleIds={[1, 2, 4]}
+                requiredPermission='bulkDocUpload'
+                requireActiveSubscription={true}
+              />
+            }
+          >
+            <Route path={PATHS.uploadBulk} element={<UploadBulk />} />
+            <Route path={PATHS.bulkDocuments} element={<BulkDocuments />} />
+            <Route path={PATHS.bulkSignatories} element={<BulkSignatoriesList />} />
+          </Route>
+
+          {/* Admin Only Pages - Business Super Admin (1) & Admin (4) with Teams permission */}
+          <Route
+            element={
+              <RoleGuard
+                allowedAccountTypes={["B"]}
+                allowedRoleIds={[1, 4]}
+                requiredPermission='teams'
+              />
+            }
+          >
+            <Route path={PATHS.teamMembers} element={<CreateTeam />} />
+            <Route path={PATHS.departmentDetails} element={<DepartmentList />} />
+            <Route path={PATHS.userReport} element={<AppUserReport />} />
+            <Route path={PATHS.documentReport} element={<UserDocReport />} />
+            <Route path={PATHS.companyProfile} element={<CompanyProfile />} />
+          </Route>
+
+          {/* Account Settings / Co-Branding - Business Admin with coBrand permission */}
+          <Route
+            element={
+              <RoleGuard
+                allowedAccountTypes={["B"]}
+                allowedRoleIds={[1, 4]}
+                requiredPermission='coBrand'
+              />
+            }
+          >
+            <Route path={PATHS.accountSettings} element={<CoBrandingDetails />} />
+          </Route>
         </Route>
       </Route>
       {/* Public signature/download routes that need mainbody (from Layout) */}

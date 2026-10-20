@@ -240,8 +240,9 @@ const TemplatesPage = () => {
   };
 
   const handleEditDoc = (templateID) => {
-    navigate("/edit-templates");
+    sessionStorage.setItem("templateID", templateID);
     localStorage.setItem("templateID", templateID);
+    navigate("/edit-templates");
   };
 
   const columns = [
@@ -324,6 +325,7 @@ const TemplatesPage = () => {
   };
 
   const handleCreateTemplate = () => {
+    sessionStorage.removeItem("templateID");
     localStorage.removeItem("templateID");
     navigate("/create-templates");
   };

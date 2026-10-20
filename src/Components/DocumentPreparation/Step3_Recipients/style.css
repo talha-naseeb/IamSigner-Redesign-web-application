@@ -1,0 +1,46 @@
+.itembutton {
+  background-color: var(--modern-raised, #eef2f6);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  margin-left: 10px;
+  font-weight: bold;
+  padding: 0;
+  line-height: 1;
+}
+
+li.p-chips-token {
+  gap: 5px;
+  border-radius: 12px;
+  padding: 0 5px;
+  background-color: var(--modern-raised, #eef2f6);
+  border: 1px solid var(--modern-border, #e2e8f0);
+}
+li.p-chips-input-token {
+  border: none;
+  border-bottom: #ccc;
+}
+
+ul.p-inputtext.p-chips-multiple-container {
+  gap: 5px;
+  margin-bottom: 0px;
+  padding-left: 0px;
+}
+
+div.input-tab.p-chips.p-component.p-inputwrapper {
+  padding: 0px 5px;
+  border: 1px solid var(--modern-border, #e2e8f0);
+  width: 100%;
+  border-radius: 5px;
+  margin-top: 1rem;
+}
+
+ul input {
+  border: none;
+  padding: 0px;
+  font-size: 15px;
+  border-radius: 5px;
+}

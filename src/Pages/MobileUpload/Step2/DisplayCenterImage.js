@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { useDrop } from "react-dnd";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import ImageWithControls from "@/Components/ImageWithControls";
+import ImageWithControls from "@/Components/DocumentPreparation/Step2_Canvas/ImageWithControls";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 
 const ImageWithDropZone = ({

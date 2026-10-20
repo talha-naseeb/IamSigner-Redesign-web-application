@@ -54,7 +54,7 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const storedTemplateID = localStorage.getItem("templateID");
+  const storedTemplateID = sessionStorage.getItem("templateID") || localStorage.getItem("templateID");
 
   // Fetching country codes for the dropdown
   useEffect(() => {

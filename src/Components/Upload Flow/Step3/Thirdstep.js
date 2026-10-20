@@ -5,7 +5,7 @@ import "./Thirdstep.css";
 import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import { useNavigate } from "react-router-dom";
-import CCEmail from "./CCEmail";
+import CCEmail from "@/Components/DocumentPreparation/Step3_Recipients/CCEmail";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import { useForm } from "react-hook-form";

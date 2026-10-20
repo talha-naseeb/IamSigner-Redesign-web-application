@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { hasOpenerTab, returnToOpenerTab } from "@/Helpers/openerTab";
+import { tokenManager } from "@/services/tokenManager";
 import "./SigningMessage.css";
 
 /**
@@ -23,7 +24,7 @@ const SigningMessage = ({
   loginLabel = "Go to Login",
 }) => {
   const navigate = useNavigate();
-  const hasToken = sessionStorage.getItem("token");
+  const hasToken = tokenManager.hasToken();
   const returnToOpener = hasOpenerTab();
 
   const handleGoBack = () => {

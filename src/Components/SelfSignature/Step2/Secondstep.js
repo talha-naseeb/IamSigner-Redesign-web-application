@@ -4,7 +4,7 @@ import { Button, Col, Dropdown, DropdownButton, Row } from "react-bootstrap";
 import { Icons } from "@/assets/Icons";
 import uploadFlowService from "@/services/uploadFlowService";
 import { toast } from "react-toastify";
-import DraggableButton from "./DraggableButtons";
+import DraggableButton from "@/Components/DocumentPreparation/Step2_Canvas/DraggableButtons";
 import ImageWithDropZone from "./DisplayCenterImage";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";

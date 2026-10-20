@@ -1,88 +1,54 @@
-.PlanDetails {
-  border-radius: 5px;
-  border: 1px solid var(--theme-color);
-  padding: 20px 10px;
-  margin-bottom: 1rem;
-}
+/* ==========================================================================
+   Co-Branding & Subscribed Plan Details - Modernized Presentation Stylesheet
+   Follows AGENTS.md rules: Shared --modern-* tokens, zero decorative box-shadow,
+   accessible outlines, smooth token-based hover/selected transitions.
+   ========================================================================== */
 
-.PlanDetailsHeading {
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
-.PlanDetailsAccess {
-  font-size: 16px;
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.custom-card {
-  background-color: var(--bg-secondary) !important;
-  border-radius: 5px;
-  margin: 5px;
-  cursor: pointer;
-  padding: 15px;
-  width: 100%;
-  position: relative;
-}
-
-.custom-card.active {
-  border: 1px solid var(--theme-color);
-  background-color: var(--bg-primary) !important;
-}
-
-.checkmarkSource {
-  color: var(--theme-color);
-  position: absolute;
-  top: 50%;
-  left: 80%;
-  transform: translate(-50%, -50%);
-}
-
-[dir="rtl"] .checkmarkSource {
-  right: 80%;
-}
-
-.custom-card {
-  background-color: #eeeeee;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.custom-card.active {
-  border: 1px solid var(--theme-active);
-}
-
-.card-icon {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
-}
-
-/* Co-branding settings use the same account surface system as Profile. */
 .cobranding-page {
   max-width: 1240px;
-  padding-inline: 1rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3.5rem;
   color: var(--modern-text);
   font-family: var(--modern-font-ui);
 }
 
+/* Page Header & Breadcrumbs */
+.cobranding-header {
+  margin-bottom: 1.75rem;
+}
+
+.cobranding-header-title {
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-weight: 700;
+  color: var(--modern-text);
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.cobranding-header-subtitle {
+  font-size: 0.92rem;
+  color: var(--modern-muted);
+  margin: 0;
+}
+
+/* Modern Accordion */
 .cobranding-accordion .accordion-item {
   overflow: hidden;
   border: 1px solid var(--modern-border) !important;
-  border-radius: 22px !important;
+  border-radius: 20px !important;
   background: var(--modern-card) !important;
-  box-shadow: var(--modern-card-shadow);
+  box-shadow: none !important;
+  margin-bottom: 1.5rem;
+  transition: border-color var(--motion-fast) var(--motion-standard);
+}
+
+.cobranding-accordion .accordion-item:focus-within {
+  border-color: var(--modern-border-strong) !important;
 }
 
 .cobranding-accordion .accordion-button {
   min-height: 68px;
-  padding: 1rem 1.35rem;
+  padding: 1.15rem 1.4rem;
   background: var(--modern-card) !important;
   color: var(--modern-text) !important;
   font-family: var(--modern-font-ui);
@@ -90,8 +56,14 @@
   box-shadow: none !important;
 }
 
+.cobranding-accordion .accordion-button:focus {
+  outline: 2px solid var(--modern-focus) !important;
+  outline-offset: -2px;
+}
+
 .cobranding-accordion .accordion-button:not(.collapsed) {
   background: var(--modern-raised) !important;
+  border-bottom: 1px solid var(--modern-border);
 }
 
 [data-theme="dark"] .cobranding-accordion .accordion-button::after {
@@ -99,127 +71,387 @@
 }
 
 .cobranding-accordion .accordion-body {
-  padding: clamp(1rem, 2.5vw, 1.75rem);
-  border-top: 1px solid var(--modern-border);
+  padding: clamp(1.25rem, 2.5vw, 2rem);
   background: var(--modern-card);
 }
 
-.cobranding-page .main-container-form {
-  padding: 0;
-}
-
-.cobranding-page .profile-Form {
-  min-height: 142px;
-  align-items: center;
-  gap: 1rem;
-  margin: 0.5rem 0;
-  padding: 1.1rem 1.25rem;
-  border: 1px solid var(--modern-border);
-  border-radius: 18px;
-  background: var(--modern-bg);
-}
-
-.cobranding-page .profile-Form .form-label {
-  color: var(--modern-muted);
-  font-family: var(--modern-font-ui);
-}
-
-.cobranding-page .profile-Form .form-label:first-child {
-  color: var(--modern-text);
-}
-
-.cobranding-page .Imageshown {
+/* Accordion Header Icon Pill */
+.cobranding-icon-pill {
   display: inline-flex;
-  width: 58px;
-  height: 58px;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--modern-border-strong);
-  border-radius: 17px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--modern-border);
   background: var(--modern-raised);
   color: var(--modern-violet);
+  flex-shrink: 0;
 }
 
-.cobranding-page .uploadProfilebtn {
-  flex: 0 0 auto;
-  padding: 0.65rem 1rem;
+.cobranding-title-text {
+  font-size: 1.15rem;
+  font-weight: 650;
+  color: var(--modern-text);
+  letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   Asset Upload Cards (Logo & Stamp)
+   ========================================================================== */
+.cobranding-asset-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--modern-border);
+  border-radius: 16px;
+  background: var(--modern-bg);
+  min-height: 120px;
+  margin-bottom: 1.25rem;
+  transition: border-color var(--motion-fast) var(--motion-standard);
+}
+
+.cobranding-asset-card:hover {
+  border-color: var(--modern-border-strong);
+}
+
+.cobranding-asset-preview {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  border: 1px solid var(--modern-border-strong);
+  background: var(--modern-raised);
+  color: var(--modern-violet);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.cobranding-asset-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+}
+
+.cobranding-asset-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.cobranding-asset-title {
+  font-size: 1rem;
+  font-weight: 650;
+  color: var(--modern-text);
+  margin: 0;
+}
+
+.cobranding-asset-desc {
+  font-size: 0.84rem;
+  color: var(--modern-muted);
+  margin: 0;
+}
+
+.cobranding-upload-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.62rem 1.15rem;
   border: 1px solid color-mix(in srgb, var(--modern-violet) 35%, var(--modern-border));
   border-radius: 12px;
   background: var(--modern-violet-soft);
   color: var(--modern-violet);
   font-family: var(--modern-font-ui);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 650;
+  cursor: pointer;
+  margin: 0;
+  transition: all var(--motion-fast) var(--motion-standard);
 }
 
-.cobranding-page .uploadProfilebtn:hover {
+.cobranding-upload-btn:hover {
   border-color: var(--modern-violet);
   background: var(--modern-violet);
-  color: #fff;
+  color: #ffffff;
 }
 
-.cobranding-page .form-label,
-.cobranding-page > .accordion label {
-  color: var(--modern-text);
-  font-family: var(--modern-font-ui);
-  font-size: 0.86rem;
+/* ==========================================================================
+   Form Controls & Labels
+   ========================================================================== */
+.cobranding-field-group {
+  margin-bottom: 1.35rem;
+}
+
+.cobranding-label {
+  display: block;
+  font-size: 0.875rem;
   font-weight: 600;
+  color: var(--modern-text);
+  margin-bottom: 0.45rem;
+  font-family: var(--modern-font-ui);
 }
 
-.cobranding-page .form-control {
+.cobranding-sublabel {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--modern-muted);
+  margin-bottom: 0.65rem;
+}
+
+.cobranding-input {
   min-height: 44px;
   border: 1px solid var(--modern-border-strong) !important;
-  border-radius: 12px;
+  border-radius: 12px !important;
   background: var(--modern-bg) !important;
   color: var(--modern-text) !important;
   font-family: var(--modern-font-ui);
   font-size: 0.9rem;
-  box-shadow: none;
+  box-shadow: none !important;
+  transition: border-color var(--motion-fast) var(--motion-standard);
 }
 
-.cobranding-page .form-control:focus {
+.cobranding-input:focus {
   border-color: var(--modern-violet) !important;
-  box-shadow: 0 0 0 3px var(--modern-focus) !important;
+  outline: 3px solid var(--modern-focus) !important;
+  outline-offset: 1px;
 }
 
-.cobranding-page .custom-card {
-  min-height: 58px;
-  margin: 0.35rem 0;
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--modern-border) !important;
-  border-radius: 14px;
+.cobranding-textarea {
+  min-height: 110px;
+  border: 1px solid var(--modern-border-strong) !important;
+  border-radius: 12px !important;
   background: var(--modern-bg) !important;
-  color: var(--modern-text);
+  color: var(--modern-text) !important;
   font-family: var(--modern-font-ui);
-  font-size: 0.86rem;
-  transition: border-color var(--motion-fast) var(--motion-standard), background-color var(--motion-fast) var(--motion-standard), transform var(--motion-fast) var(--motion-standard);
+  font-size: 0.9rem;
+  box-shadow: none !important;
+  padding: 0.85rem 1rem;
 }
 
-.cobranding-page .custom-card:hover {
-  border-color: var(--modern-border-strong) !important;
-  transform: translateY(-1px);
+.cobranding-textarea:focus {
+  border-color: var(--modern-violet) !important;
+  outline: 3px solid var(--modern-focus) !important;
+  outline-offset: 1px;
 }
 
-.cobranding-page .custom-card.active {
+/* ==========================================================================
+   Selectable Option Tiles (Sources & Session)
+   ========================================================================== */
+.cobranding-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.cobranding-option-tile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.1rem;
+  border: 1px solid var(--modern-border);
+  border-radius: 14px;
+  background: var(--modern-bg);
+  color: var(--modern-text);
+  font-size: 0.88rem;
+  font-weight: 550;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color var(--motion-fast) var(--motion-standard),
+              background-color var(--motion-fast) var(--motion-standard);
+}
+
+.cobranding-option-tile:hover {
+  border-color: var(--modern-border-strong);
+  background: var(--modern-raised);
+}
+
+.cobranding-option-tile.active {
   border-color: var(--modern-violet) !important;
   background: var(--modern-violet-soft) !important;
   color: var(--modern-text);
+  font-weight: 650;
 }
 
-.cobranding-page .checkmarkSource {
-  right: 1.1rem;
-  left: auto;
+.cobranding-option-tile:focus-visible {
+  outline: 2px solid var(--modern-focus);
+  outline-offset: 2px;
+}
+
+.cobranding-check-icon {
+  color: var(--modern-violet);
+  flex-shrink: 0;
+  margin-inline-start: 0.5rem;
+}
+
+/* ==========================================================================
+   Subscribed Plan Details (DaysToExpire) Redesign
+   ========================================================================== */
+.plan-overview-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1.35rem 1.6rem;
+  border: 1px solid var(--modern-border);
+  border-radius: 16px;
+  background: var(--modern-bg);
+  margin-bottom: 1.5rem;
+}
+
+.plan-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  background: var(--modern-violet-soft);
+  color: var(--modern-violet);
+  font-size: 0.84rem;
+  font-weight: 650;
+  border: 1px solid color-mix(in srgb, var(--modern-violet) 25%, transparent);
+}
+
+.plan-banner-timeline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: var(--modern-muted);
+}
+
+.plan-progress-wrapper {
+  width: 100%;
+  margin-top: 0.65rem;
+}
+
+.plan-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--modern-muted);
+  margin-bottom: 0.35rem;
+}
+
+.plan-progress-track {
+  width: 100%;
+  height: 7px;
+  background: var(--modern-raised);
+  border: 1px solid var(--modern-border);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.plan-progress-fill {
+  height: 100%;
+  background: var(--modern-violet);
+  border-radius: 9999px;
+  transition: width var(--motion-base) var(--motion-standard);
+}
+
+/* 4-Card Plan Metrics Grid */
+.plan-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.plan-metric-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--modern-border);
+  border-radius: 16px;
+  background: var(--modern-bg);
+  transition: border-color var(--motion-fast) var(--motion-standard);
+}
+
+.plan-metric-card:hover {
+  border-color: var(--modern-border-strong);
+}
+
+.plan-metric-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.plan-metric-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--modern-raised);
+  border: 1px solid var(--modern-border);
   color: var(--modern-violet);
 }
 
-[dir="rtl"] .cobranding-page .checkmarkSource {
-  right: auto;
-  left: 1.1rem;
+.plan-metric-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--modern-muted);
+  margin-bottom: 0.35rem;
 }
 
+.plan-metric-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--modern-text);
+  line-height: 1.25;
+  word-break: break-word;
+}
 
+.plan-metric-subtext {
+  font-size: 0.82rem;
+  color: var(--modern-muted);
+  margin-top: 0.35rem;
+}
+
+/* ==========================================================================
+   Action Buttons & Footer
+   ========================================================================== */
+.cobranding-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--modern-border);
+}
+
+.inline-button-spinner {
+  width: 1rem;
+  height: 1rem;
+  border-width: 2px;
+}
+
+/* Responsive Overrides */
 @media (max-width: 768px) {
-  .cobranding-page .profile-Form {
+  .cobranding-asset-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cobranding-upload-btn {
+    width: 100%;
+  }
+
+  .plan-overview-banner {
+    flex-direction: column;
     align-items: flex-start;
   }
 }

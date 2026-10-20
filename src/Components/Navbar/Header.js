@@ -13,6 +13,7 @@ import ReactSwitch from "react-switch";
 import { useTheme } from "@/Context/ThemeContext";
 import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
 import { SIDEBAR_COLLAPSED_STORAGE_KEY, useSidebarNavigation } from "./SidebarNavigationContext";
+import { tokenManager } from "@/services/tokenManager";
 
 function Header() {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +45,13 @@ function Header() {
     const currentTheme = theme;
     const currentPalette = palette;
     const collapsedPreference = localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY);
+    tokenManager.clearToken();
     sessionStorage.clear();
+    localStorage.removeItem("savedSignature");
+    localStorage.removeItem("registerSignID");
+    localStorage.removeItem("signatoriesID");
+    localStorage.removeItem("activeStep");
+    localStorage.removeItem("completedSteps");
     localStorage.clear();
     localStorage.setItem("theme", currentTheme);
     localStorage.setItem(PALETTE_STORAGE_KEY, currentPalette);

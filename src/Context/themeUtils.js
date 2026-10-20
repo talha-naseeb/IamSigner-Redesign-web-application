@@ -19,7 +19,22 @@ export const getSystemTheme = (matchMediaRef = typeof window !== "undefined" ? w
   return matchMediaRef("(prefers-color-scheme: dark)").matches ? THEMES.dark : DEFAULT_THEME;
 };
 
+export const cleanupLegacyThemeStorage = (storage = typeof localStorage !== "undefined" ? localStorage : undefined) => {
+  if (!storage) return;
+  const legacyKeys = ["iamsigner_theme_mode", "iamsigner_theme_palette"];
+  legacyKeys.forEach((key) => {
+    try {
+      if (storage.getItem(key)) {
+        storage.removeItem(key);
+      }
+    } catch {
+      // Storage access blocked or restricted
+    }
+  });
+};
+
 export const getInitialTheme = ({ storage = typeof localStorage !== "undefined" ? localStorage : undefined, matchMediaRef } = {}) => {
+  cleanupLegacyThemeStorage(storage);
   const storedTheme = storage?.getItem(THEME_STORAGE_KEY);
   if (isThemeName(storedTheme)) return storedTheme;
   return getSystemTheme(matchMediaRef);

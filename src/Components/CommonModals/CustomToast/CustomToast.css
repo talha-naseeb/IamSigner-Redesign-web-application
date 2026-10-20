@@ -1,0 +1,100 @@
+.app-toast-container.Toastify__toast-container {
+  width: min(420px, calc(100vw - 2rem));
+  padding: 0;
+}
+
+.app-toast-container .app-toast.Toastify__toast {
+  --toast-accent: var(--modern-violet);
+  position: relative;
+  display: flex;
+  min-height: 68px;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  padding: 0.875rem 1rem;
+  overflow: hidden;
+  border: 1px solid var(--modern-border-strong);
+  border-inline-start: 4px solid var(--toast-accent);
+  border-radius: 16px;
+  background: var(--modern-card);
+  color: var(--modern-text);
+  box-shadow: none;
+  font-family: var(--modern-font-ui);
+}
+
+.app-toast-container .Toastify__toast--success {
+  --toast-accent: var(--color-success);
+}
+
+.app-toast-container .Toastify__toast--error {
+  --toast-accent: var(--color-danger);
+}
+
+.app-toast-container .Toastify__toast--warning {
+  --toast-accent: var(--color-warning);
+}
+
+.app-toast-container .Toastify__toast--info {
+  --toast-accent: var(--color-info);
+}
+
+.app-toast-container .Toastify__toast-icon {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  align-items: center;
+  justify-content: center;
+  margin-inline-end: 0.25rem;
+  border: 1px solid color-mix(in srgb, var(--toast-accent) 28%, var(--modern-border));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--toast-accent) 12%, var(--modern-card));
+  color: var(--toast-accent);
+}
+
+.app-toast-container .Toastify__toast-icon svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
+}
+
+.app-toast-container .app-toast-body.Toastify__toast-body {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+  font-size: 0.9rem;
+  font-weight: 550;
+  line-height: 1.4;
+}
+
+.app-toast-container .Toastify__close-button {
+  align-self: flex-start;
+  color: var(--modern-muted);
+  opacity: 0.8;
+}
+
+.app-toast-container .Toastify__close-button:hover {
+  color: var(--modern-text);
+  opacity: 1;
+}
+
+.app-toast-container .app-toast-progress.Toastify__progress-bar {
+  height: 3px;
+  background: var(--toast-accent);
+}
+
+@media (max-width: 480px) {
+  .app-toast-container.Toastify__toast-container {
+    right: 0.75rem;
+    left: 0.75rem;
+    width: auto;
+  }
+
+  .app-toast-container .app-toast.Toastify__toast {
+    min-height: 62px;
+    padding: 0.75rem 0.875rem;
+    border-radius: 14px;
+  }
+}

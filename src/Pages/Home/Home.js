@@ -24,15 +24,20 @@ const Home = () => {
   };
 
   const clearSessionStorage = () => {
-    const currentTheme = localStorage.getItem("theme");
-    const currentPalette = localStorage.getItem(PALETTE_STORAGE_KEY);
-    localStorage.clear();
-    if (currentTheme) {
-      localStorage.setItem("theme", currentTheme);
-    }
-    if (currentPalette) {
-      localStorage.setItem(PALETTE_STORAGE_KEY, currentPalette);
-    }
+    // Non-destructive workflow state cleanup to prevent cross-tab state pollution
+    const workflowKeys = [
+      "registerSignID",
+      "signatoriesID",
+      "activeStep",
+      "completedSteps",
+      "templateID",
+      "documentName",
+      "savedSignature",
+    ];
+    workflowKeys.forEach((key) => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
   };
 
   const isRestrictedUser =

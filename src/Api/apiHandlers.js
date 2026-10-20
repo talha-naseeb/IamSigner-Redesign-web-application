@@ -1,11 +1,12 @@
 import { API_STATUS } from "@/Constants/apiStatuses";
 import { handleSessionExpiry, handleResponseError } from "./errorHandler";
+import { tokenManager } from "@/services/tokenManager";
 
 export const apiHandlers = (axiosInstance) => {
   // request interceptor
   const requestInterceptor = axiosInstance.interceptors.request.use(
     (config) => {
-      const token = sessionStorage.getItem("token");
+      const token = tokenManager.getToken();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

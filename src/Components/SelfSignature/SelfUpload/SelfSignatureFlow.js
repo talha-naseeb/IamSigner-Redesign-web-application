@@ -19,9 +19,9 @@ const SelfSignatureFlow = () => {
   }, [userAccess]);
 
   function retrieveSavedStep() {
-    // Retrieve saved activeStep and completedSteps from localStorage
-    const storedActiveStep = localStorage.getItem("activeStepBulk");
-    const storedCompletedSteps = localStorage.getItem("completedStepsBulk");
+    // Retrieve saved activeStep and completedSteps from sessionStorage (with fallback)
+    const storedActiveStep = sessionStorage.getItem("activeStepBulk") || localStorage.getItem("activeStepBulk");
+    const storedCompletedSteps = sessionStorage.getItem("completedStepsBulk") || localStorage.getItem("completedStepsBulk");
 
     if (storedActiveStep) {
       setActiveStep(parseInt(storedActiveStep));
@@ -34,12 +34,12 @@ const SelfSignatureFlow = () => {
 
   const handleSetActiveStep = (step) => {
     setActiveStep(step);
-    localStorage.setItem("activeStepBulk", step);
+    sessionStorage.setItem("activeStepBulk", step);
   };
 
   const handleSetCompletedSteps = (steps) => {
     setCompletedSteps(steps);
-    localStorage.setItem("completedStepsBulk", JSON.stringify(steps));
+    sessionStorage.setItem("completedStepsBulk", JSON.stringify(steps));
   };
 
   return (

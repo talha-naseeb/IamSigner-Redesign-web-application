@@ -67,6 +67,26 @@
   box-shadow: none;
 }
 
+/* Keep the shared shell visibly tied to the active brand palette in dark mode. */
+[data-theme="dark"] .modern-theme-shell .sticky-header,
+[data-theme="dark"] .modern-theme-shell .sticky-header.scrolled {
+  background: linear-gradient(
+    110deg,
+    color-mix(in srgb, var(--modern-violet) 42%, var(--modern-card)) 0%,
+    color-mix(in srgb, var(--modern-violet) 24%, var(--modern-card)) 48%,
+    var(--modern-card) 100%
+  ) !important;
+}
+
+[data-theme="dark"] .modern-theme-shell .sidebar {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--modern-violet) 46%, var(--modern-card)) 0%,
+    color-mix(in srgb, var(--modern-violet) 27%, var(--modern-card)) 46%,
+    var(--modern-card) 100%
+  );
+}
+
 .modern-theme-shell .UploadDocMenu {
   box-shadow: none;
 }
