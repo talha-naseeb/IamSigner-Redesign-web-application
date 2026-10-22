@@ -8,6 +8,8 @@ export { DraggableButton, default as DraggableButtons } from "./Step2_Canvas/Dra
 export { default as ResizableButtons } from "./Step2_Canvas/ResizableButtons";
 export { default as ControlsFotmatting } from "./Step2_Canvas/ControlsFotmatting";
 export { default as ImageWithControls } from "./Step2_Canvas/ImageWithControls";
+export { default as SearchControls } from "./Step2_Canvas/SearchControls";
+export { default as PageNavigations } from "./Step2_Canvas/PageNavigations";
 
 // Step 3: Recipients & Workflow
 export { default as CCEmail } from "./Step3_Recipients/CCEmail";

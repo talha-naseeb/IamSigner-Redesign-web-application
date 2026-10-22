@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./FirstStep.css";
-import "./FirstStep.css";
 import { Button, Col, Container, Form, Modal, Row, Dropdown, Accordion } from "react-bootstrap";
 import uploadFlowService from "@/services/uploadFlowService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import ReferenceNumber from "@/Components/DocumentPreparation/Step1_Source/ReferenceNumber";
 import Description from "@/Components/DocumentPreparation/Step1_Source/Description";
-import Dropbox from "./Dropbox";
-import UploadFromGoogleDrive from "./GoogleDrive";
+import { DropboxPicker as Dropbox, GoogleDrivePicker as UploadFromGoogleDrive } from "@/Components/Common/CloudPickers";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";

@@ -8,11 +8,10 @@ import SignatureModal from "@/Pages/SignaturePage/SignatureModal";
 import { useTranslation } from "react-i18next";
 import ImageThumbnails from "@/Components/ImageThumbnails/ImageThumbnails";
 import ConfirmationModal from "@/Pages/SignaturePage/ConfirmationModal";
-import "react-datepicker/dist/react-datepicker.css";
 import { Icons } from "@/assets/Icons";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import InputEditors from "@/Pages/SignaturePage/InputEditors";
-import PageNavigations from "@/Components/PageNavigations";
+import { PageNavigations } from "@/Components/DocumentPreparation";
 
 const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
   const { t } = useTranslation();

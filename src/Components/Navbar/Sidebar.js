@@ -44,7 +44,18 @@ const Sidebar = ({ children }) => {
   const location = useLocation();
   const menuConfig = useMenuConfig(user, userAccess, t, accountId);
   const isOpen = isMobile || !isCollapsed;
-  const usesModernShell = ["/home", "/user-profile"].includes(location.pathname);
+  const usesModernShell = [
+    "/home",
+    "/user-profile",
+    "/account-settings",
+    "/email-templates",
+    "/create-email-template",
+    "/completed-docs",
+    "/declined-docs",
+    "/draft-docs",
+    "/inactive",
+    "/recall-documents",
+  ].some((path) => location.pathname.startsWith(path));
 
   const closeMobileSidebar = useCallback(() => setIsMobileOpen(false), []);
   const openMobileSidebar = useCallback(() => setIsMobileOpen(true), []);

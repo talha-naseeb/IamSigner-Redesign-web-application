@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import ReactQuill, { Quill } from "react-quill";
-import { Button, Col, Form, Row, Modal } from "react-bootstrap";
+import { Col, Form, Row, Modal, Spinner } from "react-bootstrap";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import rectangleBox from "@/assets/images/rectangle.png";
-import Loader from "@/Components/CommonModals/Loader/Loader";
+import { Icons } from "@/assets/Icons";
 import { useUser } from "@/Context/UserContext";
-import "./style.css";
 import UserLisence from "@/Components/UserLisence/UserLisence";
 import { templateContentMapping } from "./CustomEmailTemplates";
 import userService from "@/services/userService";
-
+import "./style.css";
 
 const Embed = Quill.import("blots/embed");
 
@@ -36,13 +34,11 @@ PlaceholderBlot.tagName = "span";
 PlaceholderBlot.className = "ql-placeholder-token";
 
 Quill.register(PlaceholderBlot, true);
-// ─────────────────────────────────────────────────────────────────────────────
 
 // Converts raw HTML with legacy <span class="immutable-placeholder"> tags
 // (stored in DB) into Quill Delta-compatible HTML using the new blot spans.
 const convertLegacyHtmlToBlotHtml = (html) => {
   if (!html) return "";
-  // Replace old span format → new blot span format
   return html.replace(
     /<span class="immutable-placeholder"[^>]*>\{?(.*?)\}?<\/span>/g,
     (_, name) =>
@@ -66,8 +62,6 @@ const convertRawToBlotHtml = (html) => {
     `<span class="ql-placeholder-token" data-value="${name}" contenteditable="false">{${name}}</span>`
   );
 };
-
-// ─────────────────────────────────────────────────────────────────────────────
 
 const CreateEmailTemplate = () => {
   const { t } = useTranslation();
@@ -97,7 +91,6 @@ const CreateEmailTemplate = () => {
           ["clean"],
         ],
       },
-      // Disable clipboard HTML pasting that could smuggle in edited placeholders
       clipboard: {
         matchVisual: false,
       },
@@ -106,20 +99,26 @@ const CreateEmailTemplate = () => {
   );
 
   const formats = [
-    "header", "bold", "italic", "underline", "strike", "blockquote",
-    "list", "bullet", "indent", "link",
-    "placeholder", // ← our custom blot
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "placeholder",
   ];
 
   // ── Load existing template for edit ──────────────────────────────────────
   useEffect(() => {
     if (location.state?.template) {
       const { subject, templateType: type, body } = location.state.template;
-      setEmailSubject(subject);
-      setTemplateType(type);
+      setEmailSubject(subject || "");
+      setTemplateType(type || "");
 
-      // Body coming from DB may still have old immutable-placeholder spans
-      // or raw {tokens}. Normalise to blot spans either way.
       const legacyConverted = convertLegacyHtmlToBlotHtml(body || "");
       const fullyConverted = convertRawToBlotHtml(legacyConverted);
       setEmailBody(fullyConverted);
@@ -149,12 +148,10 @@ const CreateEmailTemplate = () => {
     return true;
   };
 
-  // ── Handle body changes — re-stamp blot attributes after every Quill edit ─
+  // ── Handle body changes ──────────────────────────────────────────────────
   const handleEmailBodyChange = (value) => {
     setEmailBody(value);
 
-    // Re-stamp contenteditable="false" because Quill may strip attributes
-    // when it re-renders. This is the belt-and-suspenders layer.
     setTimeout(() => {
       const editor = quillRef.current?.getEditor()?.root;
       if (!editor) return;
@@ -178,7 +175,6 @@ const CreateEmailTemplate = () => {
     setTemplateType(selectedType);
 
     const templateContent = templateContentMapping[selectedType] || "";
-    // Convert raw {tokens} in the template content to blot spans
     const blotContent = convertRawToBlotHtml(templateContent);
     setSelectedTemplateText(blotContent);
 
@@ -207,7 +203,6 @@ const CreateEmailTemplate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate that all required placeholders are still present
     if (location.state?.template?.body) {
       const originalBlot = convertRawToBlotHtml(
         convertLegacyHtmlToBlotHtml(location.state.template.body)
@@ -215,7 +210,6 @@ const CreateEmailTemplate = () => {
       if (!validatePlaceholders(originalBlot, emailBody)) return;
     }
 
-    // Convert blot spans back to raw {tokens} for DB storage
     const processedBody = convertBlotHtmlToRaw(emailBody);
 
     const requestBody = {
@@ -255,176 +249,206 @@ const CreateEmailTemplate = () => {
     templateType.trim() !== "" &&
     isContentNotEmpty(emailBody);
 
-  // ─────────────────────────────────────────────────────────────────────────
   return (
     <>
-      {userAccess.remainingDays <= 0 ? (
+      {userAccess?.remainingDays <= 0 ? (
         <UserLisence />
       ) : (
         <>
-          {user.AccountType === "B" &&
-          (user.RoleID === 1 || user.RoleID === 4) &&
-          userAccess.remainingDays >= 0 ? (
-            <>
-              <div className="container mt-3">
-                {isLoading && (
-                  <div className="loader-overlay">
-                    <Loader />
+          {user?.AccountType === "B" &&
+          (user?.RoleID === 1 || user?.RoleID === 4) &&
+          userAccess?.remainingDays >= 0 ? (
+            <div className='email-templates-container'>
+              {/* Hero Banner Header */}
+              <div className='email-create-hero'>
+                <div className='email-create-hero-content'>
+                  <button
+                    type='button'
+                    className='email-back-btn'
+                    onClick={() => navigate("/email-templates")}
+                    title={t("common.back") || "Back"}
+                  >
+                    <Icons.Back
+                      className={document.documentElement.dir === "rtl" ? "rtl-icon" : ""}
+                      size={18}
+                    />
+                  </button>
+                  <div className='email-create-hero-icon'>
+                    <Icons.EmailTemplates size={24} />
                   </div>
-                )}
+                  <div>
+                    <h1 className='email-create-hero-title'>
+                      {emailTemplateID
+                        ? t("emailTemplates.updateTemplate")
+                        : t("emailTemplates.createEmail") || "Create Email Template"}
+                    </h1>
+                    <p className='email-create-hero-subtitle'>
+                      {t("emailTemplates.letCreateEmail")}
+                    </p>
+                  </div>
+                </div>
 
-                <Row className="my-3 gap-4 justify-content-center">
-                  <Col md={3}>
-                    <div style={{ position: "relative", display: "inline-block" }}>
-                      <img src={rectangleBox} alt="Rectangle" />
-                      <div className="MACACIIMAGE">
-                        <div>
-                          <label>{t("emailTemplates.letCreateEmail")}</label>
-                          <br />
-                          <label>{t("macAi.seeHistory")}</label>
-                          <Link className="mx-1" to="/email-templates">
-                            <label
-                              className="AidocumentBtn"
-                              style={{ textDecoration: "underline" }}
-                            >
-                              {t("macAi.gotoList")}
-                            </label>
-                          </Link>
+                <div>
+                  <Link to='/email-templates' className='email-btn-secondary'>
+                    <Icons.BulkDocuments size={18} />
+                    <span>{t("macAi.gotoList") || "View All Templates"}</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Form */}
+              <Form onSubmit={handleSubmit}>
+                {/* Meta details card */}
+                <div className='email-form-section-card'>
+                  <Row className='g-3'>
+                    <Col md={6}>
+                      <Form.Group>
+                        <label className='email-form-label'>
+                          {t("emailTemplates.templateType")}
+                          <span className='required'>*</span>
+                        </label>
+                        <select
+                          className='email-form-select'
+                          value={templateType}
+                          disabled={!!emailTemplateID}
+                          onChange={handleTemplateTypeChange}
+                          required
+                        >
+                          <option value='' disabled>
+                            {t("emailTemplates.SelectType")}
+                          </option>
+                          <option value='Declined'>{t("emailTemplates.Declined")}</option>
+                          <option value='Completed'>{t("emailTemplates.Completed")}</option>
+                          <option value='PasswordReset'>{t("emailTemplates.PasswordReset")}</option>
+                          <option value='CreateTeam'>{t("emailTemplates.Createteam")}</option>
+                          <option value='SigningDocument'>{t("emailTemplates.SigningDocument")}</option>
+                        </select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6}>
+                      <Form.Group>
+                        <label className='email-form-label'>
+                          {t("emailTemplates.emailSubject")}
+                          <span className='required'>*</span>
+                        </label>
+                        <input
+                          type='text'
+                          className='email-form-control'
+                          value={emailSubject}
+                          onChange={(e) => setEmailSubject(e.target.value)}
+                          placeholder={t("emailTemplates.emailSubjectPlaceholder")}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </div>
+
+                {/* Email editor card */}
+                <div className='email-form-section-card'>
+                  <Form.Group>
+                    <label className='email-form-label mb-2'>
+                      {t("emailTemplates.emailBody")}
+                      <span className='required'>*</span>
+                    </label>
+
+                    {/* Placeholder legend */}
+                    {templateType && templatePlaceholders[templateType] && (
+                      <div className='placeholder-legend-box'>
+                        <div className='placeholder-legend-header'>
+                          <Icons.Info size={16} />
+                          <span>{t("emailTemplates.lockedPlaceholders") || "Locked placeholders (must be kept intact):"}</span>
                         </div>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-
-                <Form onSubmit={handleSubmit}>
-                  <div className="userProfile-form theme-aware-form">
-                    <Row>
-                      <Col md={6}>
-                        <Form.Group className="mb-3">
-                          <Form.Label>
-                            {t("emailTemplates.templateType")}
-                            <span className="required mx-1">*</span>
-                          </Form.Label>
-                          <Form.Select
-                            className="theme-aware-field"
-                            value={templateType}
-                            disabled={!!emailTemplateID}
-                            onChange={handleTemplateTypeChange}
-                            required
-                          >
-                            <option value="" disabled>
-                              {t("emailTemplates.SelectType")}
-                            </option>
-                            <option value="Declined">{t("emailTemplates.Declined")}</option>
-                            <option value="Completed">{t("emailTemplates.Completed")}</option>
-                            <option value="PasswordReset">
-                              {t("emailTemplates.PasswordReset")}
-                            </option>
-                            <option value="CreateTeam">{t("emailTemplates.Createteam")}</option>
-                            <option value="SigningDocument">
-                              {t("emailTemplates.SigningDocument")}
-                            </option>
-                          </Form.Select>
-                        </Form.Group>
-                      </Col>
-                      <Col md={6}>
-                        <Form.Group className="mb-3">
-                          <Form.Label>
-                            {t("emailTemplates.emailSubject")}{" "}
-                            <span className="required mx-1">*</span>
-                          </Form.Label>
-                          <Form.Control
-                            type="text"
-                            className="theme-aware-field"
-                            value={emailSubject}
-                            onChange={(e) => setEmailSubject(e.target.value)}
-                            placeholder={t("emailTemplates.emailSubjectPlaceholder")}
-                            required
-                          />
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                  </div>
-
-                  <div className="userProfile-form theme-aware-form mt-3">
-                    <Form.Group className="mb-3">
-                      <Form.Label>
-                        {t("emailTemplates.emailBody")}
-                        <span className="required mx-1">*</span>
-                      </Form.Label>
-
-                      {/* Placeholder legend — shows users which tokens are locked */}
-                      {templateType && templatePlaceholders[templateType] && (
-                        <div className="placeholder-legend mb-2">
-                          <small className="text-muted">
-                            {t("emailTemplates.lockedPlaceholders")}
-                          </small>{" "}
+                        <div className='placeholder-legend-chips'>
                           {templatePlaceholders[templateType].map((p) => (
-                            <span key={p} className="ql-placeholder-token mx-1">
+                            <span key={p} className='ql-placeholder-token'>
                               {p}
                             </span>
                           ))}
                         </div>
-                      )}
+                      </div>
+                    )}
 
-                      <ReactQuill
-                        ref={quillRef}
-                        value={emailBody}
-                        onChange={handleEmailBodyChange}
-                        modules={modules}
-                        formats={formats}
-                        theme="snow"
-                      />
-                    </Form.Group>
-                  </div>
-
-                  {isEmailTemplateValid && (
-                    <div className="d-flex gap-3 my-3">
-                      <Button variant="none" className="ImageDoneBtn" type="submit">
-                        {emailTemplateID
-                          ? t("emailTemplates.updateTemplate")
-                          : t("emailTemplates.createTemplate")}
-                      </Button>
-                      <Button
-                        variant="none"
-                        className="ImageCancelBtn"
-                        onClick={handleCancel}
-                      >
-                        {t("userProfile.cancel")}
-                      </Button>
-                    </div>
-                  )}
-                </Form>
-
-                {/* Template preview modal */}
-                <Modal
-                  show={showModal}
-                  onHide={() => setShowModal(false)}
-                  backdrop="static"
-                  keyboard={false}
-                  dialogClassName="custom-modal-width"
-                >
-                  <Modal.Header>
-                    <Modal.Title>{t("emailTemplates.defaultTemplateTitle")}</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body className="p-3">
-                    <p>{modalMessage}</p>
-                    <div
-                      className="template-preview-disabled"
-                      dangerouslySetInnerHTML={{ __html: selectedTemplateText }}
+                    <ReactQuill
+                      ref={quillRef}
+                      value={emailBody}
+                      onChange={handleEmailBodyChange}
+                      modules={modules}
+                      formats={formats}
+                      theme='snow'
                     />
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button className="modalCancelButton" onClick={ModalClose}>
-                      {t("dashboardCardStatuses.cancel")}
-                    </Button>
-                    <Button className="applyBtn" onClick={handleModalGotIt}>
-                      {t("emailTemplates.gotIt")}
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
-              </div>
-            </>
+                  </Form.Group>
+                </div>
+
+                {/* Form Action Buttons */}
+                <div className='d-flex gap-3 my-4'>
+                  <button
+                    type='submit'
+                    className='email-btn-primary'
+                    disabled={isLoading || !isEmailTemplateValid}
+                  >
+                    {isLoading && <Spinner animation='border' size='sm' className='me-2' />}
+                    <span>
+                      {emailTemplateID
+                        ? t("emailTemplates.updateTemplate")
+                        : t("emailTemplates.createTemplate")}
+                    </span>
+                  </button>
+                  <button
+                    type='button'
+                    className='email-btn-secondary'
+                    onClick={handleCancel}
+                    disabled={isLoading}
+                  >
+                    <span>{t("userProfile.cancel")}</span>
+                  </button>
+                </div>
+              </Form>
+
+              {/* Template preview modal */}
+              <Modal
+                show={showModal}
+                onHide={() => setShowModal(false)}
+                backdrop='static'
+                keyboard={false}
+                centered
+              >
+                <Modal.Header closeButton>
+                  <div className='d-flex align-items-center gap-2'>
+                    <div className='email-header-icon-badge' style={{ width: 36, height: 36 }}>
+                      <Icons.Info size={20} />
+                    </div>
+                    <Modal.Title style={{ fontSize: "1.1rem", fontWeight: 700 }}>
+                      {t("emailTemplates.defaultTemplateTitle")}
+                    </Modal.Title>
+                  </div>
+                </Modal.Header>
+                <Modal.Body className='py-3'>
+                  <p className='text-muted small mb-3'>{modalMessage}</p>
+                  <div
+                    className='template-preview-disabled'
+                    dangerouslySetInnerHTML={{ __html: selectedTemplateText }}
+                  />
+                </Modal.Body>
+                <Modal.Footer className='d-flex justify-content-between'>
+                  <button
+                    type='button'
+                    className='email-btn-secondary'
+                    onClick={ModalClose}
+                  >
+                    {t("dashboardCardStatuses.cancel")}
+                  </button>
+                  <button
+                    type='button'
+                    className='email-btn-primary'
+                    onClick={handleModalGotIt}
+                  >
+                    {t("emailTemplates.gotIt")}
+                  </button>
+                </Modal.Footer>
+              </Modal>
+            </div>
           ) : null}
         </>
       )}

@@ -3,7 +3,6 @@ import { RxCross2 } from "react-icons/rx";
 import { Button } from "react-bootstrap";
 import ResizableButtons from "./ResizableButtons";
 import Draggable from "react-draggable";
-import "react-datepicker/dist/react-datepicker.css";
 import { RiEdit2Fill } from "react-icons/ri";
 import ControlsFotmatting from "./ControlsFotmatting";
 import SmartGuides from "@/Components/SignaturePlacement/SmartGuides";
@@ -16,8 +15,6 @@ const ImageWithControls = ({
   updateControlsLocation,
   handleButtonRemove,
   dropRef,
-  textInput,
-  setTextInput,
   onUpdateQRDetails,
   imageContainerRef,
   buttons = [],
@@ -59,8 +56,6 @@ const ImageWithControls = ({
               handleButtonRemove={handleButtonRemove}
               signatoryColors={signatoryColors}
               updateControlsLocation={updateControlsLocation}
-              textInput={textInput}
-              setTextInput={setTextInput}
               selectedImage={selectedImage}
               onUpdateQRDetails={onUpdateQRDetails}
               buttons={buttons}
@@ -103,10 +98,8 @@ export const ButtonsOnImage = ({
   const [selectedDate, setSelectedDate] = useState(null);
   const [showOffcanvas, setShowOffcanvas] = useState(false);
   const [textInput, setTextInput] = useState();
-  const [showDateInput, setShowDateInput] = useState(false);
   const [checkboxValue, setCheckboxValue] = useState(false);
   const [categoryMap, setCategoryMap] = useState({});
-  const setResizeState = (value) => setResizing(value);
 
   const handleDateChange = (event) => {
     const date = event.target.value;
@@ -157,7 +150,7 @@ export const ButtonsOnImage = ({
     button,
     onUpdateControlsLocation: updateControlsLocation,
     signatoryColors,
-    setResizing: setResizeState,
+    setResizing,
     selectedImage,
     onResizeGuides: (size) => onPlacedControlResize?.(button, size),
     onResizeGuideEnd: () => onPlacedControlResizeEnd?.(),
@@ -228,7 +221,6 @@ export const ButtonsOnImage = ({
       {button.label === "Checkbox" && (
         <ResizableButtons {...resizeProps}>
           <div
-            div
             style={{
               width: button.width + "px",
               height: button.height + "px",
@@ -254,7 +246,7 @@ export const ButtonsOnImage = ({
       )}
 
       {button.label === "Date" && (
-        <ResizableButtons {...resizeProps} onClick={() => setShowDateInput(true)}>
+        <ResizableButtons {...resizeProps}>
           <div
             style={{
               width: button.width + "px",
@@ -263,7 +255,6 @@ export const ButtonsOnImage = ({
               cursor: "grab",
             }}
           >
-            {/* {showDateInput ? */}
             <input
               type='date'
               value={selectedDate || button.textEditor}
@@ -292,20 +283,8 @@ export const ButtonsOnImage = ({
                   button.isDigitalSignature,
                   button.category
                 );
-                setShowDateInput(false);
               }}
             />
-            {/* : */}
-            {/* <div style={{
-                width: "100%",
-                height: "100%",
-                border: "none",
-                cursor: "grab"
-              }}>
-                {button.textEditor && button.textEditor !== "" ? button.textEditor : "dd/mm/yyyy"}
-              </div> */}
-
-            {/* } */}
           </div>
         </ResizableButtons>
       )}
@@ -371,7 +350,7 @@ export const ButtonsOnImage = ({
                 resize: "none",
               }}
               value={textInput}
-              onChange={(event) => handleInputChange(event)}
+              onChange={handleInputChange}
               onBlur={() => {
                 // Clear editing state for this button when blurred
                 setEditingStates((prevState) => ({

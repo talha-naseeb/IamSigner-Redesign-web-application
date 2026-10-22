@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
@@ -13,7 +12,6 @@ const PageNavigations = ({ imagesData, selectedImage, setSelectedImage, onImageS
       setPageNumber(imagesData[selectedIndex].pagesOrder);
     }
   }, [selectedImage, imagesData]);
-
 
   const selectedImageIndex = () => {
     return imagesData.findIndex((image) => image.pagesPath === selectedImage);

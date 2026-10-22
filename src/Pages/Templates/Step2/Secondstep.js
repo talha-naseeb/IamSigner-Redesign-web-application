@@ -5,13 +5,11 @@ import { Icons } from "@/assets/Icons";
 import uploadFlowService from "@/services/uploadFlowService";
 import templateService from "@/services/templateService";
 import { toast } from "react-toastify";
-import DraggableButton from "@/Components/DocumentPreparation/Step2_Canvas/DraggableButtons";
+import { DraggableButton, PageNavigations, SearchControls } from "@/Components/DocumentPreparation";
 import ImageWithDropZone from "./DisplayCenterImage";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ImageThumbnails from "@/Components/ImageThumbnails/ImageThumbnails";
-import PageNavigations from "@/Components/PageNavigations";
-import SearchControls from "@/Components/SearchControls";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 
 const Secondstep = ({ setActiveStep, setCompletedSteps }) => {

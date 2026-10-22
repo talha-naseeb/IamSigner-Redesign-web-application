@@ -1,79 +1,823 @@
-/* ── Immutable placeholder token — used inside ReactQuill ───────────────────
-   Registered as a custom Quill blot (PlaceholderBlot).
-   Users can select/delete the whole chip but cannot type inside it.
-   ───────────────────────────────────────────────────────────────────────── */
+/* ==========================================================================
+   Email Templates & Create Email Template Styles
+   Modern Design System adhering to AGENTS.md tokens (zero box-shadow)
+   Full Light Mode, Dark Mode & Management Palette Support
+   ========================================================================== */
 
+/* ── Common Shell & Layout ─────────────────────────────────────────────── */
+.email-templates-container {
+  padding: 1.75rem clamp(1.25rem, 2.5vw, 2.5rem) 4rem;
+  max-width: 1240px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ── Page Header ───────────────────────────────────────────────────────── */
+.email-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.email-page-header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.email-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background-color: var(--modern-bg, #f1f5f9);
+  color: var(--modern-text, #0f172a);
+  border: 1px solid var(--modern-border-strong, #cbd5e1);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.email-back-btn:hover {
+  background-color: var(--modern-raised, #ffffff);
+  border-color: var(--modern-text, #0f172a);
+}
+
+.email-header-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: var(--modern-bg, #f1f5f9);
+  color: var(--modern-violet, #fe5800);
+  border: 1px solid var(--modern-border-strong, #cbd5e1);
+  flex-shrink: 0;
+}
+
+.email-page-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--modern-text, #0f172a);
+  letter-spacing: -0.015em;
+}
+
+.email-page-subtitle {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.875rem;
+  color: var(--modern-muted, #94a3b8);
+  opacity: 0.9;
+}
+
+.email-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ── Primary & Secondary Buttons ───────────────────────────────────────── */
+.email-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 8px;
+  background-color: var(--modern-violet, #7c3aed);
+  color: #ffffff !important;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+  text-decoration: none;
+}
+
+.email-btn-primary:hover:not(:disabled) {
+  background-color: var(--modern-violet-hover, #6d28d9);
+  color: #ffffff !important;
+}
+
+.email-btn-primary:focus-visible {
+  outline: 2px solid var(--modern-violet, #7c3aed);
+  outline-offset: 2px;
+}
+
+.email-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.email-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 8px;
+  background-color: var(--modern-bg, #f1f5f9);
+  color: var(--modern-text, #0f172a);
+  border: 1px solid var(--modern-border-strong, #cbd5e1);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  text-decoration: none;
+}
+
+.email-btn-secondary:hover {
+  background-color: var(--modern-raised, #ffffff);
+  border-color: var(--modern-text, #0f172a);
+  color: var(--modern-text, #0f172a);
+}
+
+.email-btn-secondary:focus-visible {
+  outline: 2px solid var(--modern-violet, #7c3aed);
+  outline-offset: 2px;
+}
+
+/* ── Quick Stats Row ───────────────────────────────────────────────────── */
+.email-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.email-stat-card {
+  background-color: var(--modern-card, #ffffff);
+  border: 1px solid var(--modern-border-strong, #e2e8f0);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.email-stat-icon-wrapper {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--modern-bg, #f8fafc);
+  color: var(--modern-violet, #7c3aed);
+  border: 1px solid var(--modern-border-strong, #e2e8f0);
+  flex-shrink: 0;
+}
+
+.email-stat-icon-wrapper.active {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.28);
+}
+
+.email-stat-icon-wrapper.inactive {
+  background-color: rgba(100, 116, 139, 0.12);
+  color: #94a3b8;
+  border-color: rgba(100, 116, 139, 0.28);
+}
+
+.email-stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.email-stat-label {
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: var(--modern-muted, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.email-stat-value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--modern-text, #0f172a);
+  line-height: 1.2;
+}
+
+/* ── Filter / Search Bar ───────────────────────────────────────────────── */
+.email-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.email-search-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 240px;
+  max-width: 380px;
+}
+
+.email-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(-50%);
+  color: var(--modern-muted, #94a3b8);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+[dir="rtl"] .email-search-icon {
+  left: auto;
+  right: 0.75rem;
+}
+
+.email-search-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem 0.6rem 2.25rem;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  background-color: var(--modern-bg, #ffffff) !important;
+  border: 1px solid var(--modern-border-strong, #cbd5e1) !important;
+  color: var(--modern-text, #0f172a) !important;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+[dir="rtl"] .email-search-input {
+  padding: 0.6rem 2.25rem 0.6rem 0.75rem;
+}
+
+.email-search-input:focus {
+  border-color: var(--modern-violet, #7c3aed) !important;
+  outline: 2px solid var(--modern-violet-alpha, rgba(124, 58, 237, 0.25));
+}
+
+.email-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.email-filter-select {
+  padding: 0.6rem 2rem 0.6rem 0.875rem;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  background-color: var(--modern-bg, #ffffff) !important;
+  border: 1px solid var(--modern-border-strong, #cbd5e1) !important;
+  color: var(--modern-text, #0f172a) !important;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  transition: border-color 0.15s ease;
+}
+
+[dir="rtl"] .email-filter-select {
+  padding: 0.6rem 0.875rem 0.6rem 2rem;
+  background-position: left 0.75rem center;
+}
+
+.email-filter-select:focus {
+  border-color: var(--modern-violet, #7c3aed) !important;
+}
+
+.email-filter-select option {
+  background-color: var(--modern-card, #ffffff);
+  color: var(--modern-text, #0f172a);
+}
+
+/* ── Modern Table Card ─────────────────────────────────────────────────── */
+.email-table-card {
+  background-color: var(--modern-card, #ffffff);
+  border: 1px solid var(--modern-border-strong, #e2e8f0);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.email-table-container {
+  overflow-x: auto;
+}
+
+.email-modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+[dir="rtl"] .email-modern-table {
+  text-align: right;
+}
+
+.email-modern-table th {
+  background-color: var(--modern-bg, #f8fafc);
+  color: var(--modern-muted, #94a3b8);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--modern-border-strong, #e2e8f0);
+  white-space: nowrap;
+}
+
+.email-modern-table td {
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  color: var(--modern-text, #0f172a);
+  border-bottom: 1px solid var(--modern-border, #f1f5f9);
+  vertical-align: middle;
+}
+
+.email-modern-table tbody tr {
+  transition: background-color 0.12s ease;
+}
+
+.email-modern-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.email-subject-cell {
+  font-weight: 600;
+  color: var(--modern-text, #0f172a);
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Pills & Badges ────────────────────────────────────────────────────── */
+.email-type-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: var(--modern-bg, #f1f5f9);
+  color: var(--modern-text, #334155);
+  border: 1px solid var(--modern-border-strong, #e2e8f0);
+  white-space: nowrap;
+}
+
+.email-type-pill.declined {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.email-type-pill.completed {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.email-type-pill.passwordreset {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.email-type-pill.createteam {
+  background-color: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.email-type-pill.signingdocument {
+  background-color: rgba(124, 58, 237, 0.12);
+  color: var(--modern-violet, #7c3aed);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+.email-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.email-status-pill.active {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.email-status-pill.inactive {
+  background-color: var(--modern-bg, #f1f5f9);
+  color: var(--modern-muted, #94a3b8);
+  border-color: var(--modern-border-strong, #cbd5e1);
+}
+
+.email-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.email-status-pill.active .email-status-dot {
+  background-color: #10b981;
+}
+
+.email-status-pill.inactive .email-status-dot {
+  background-color: #94a3b8;
+}
+
+/* ── Dropdown Menu Styling ─────────────────────────────────────────────── */
+.dropdown-menu {
+  background-color: var(--modern-card, #ffffff) !important;
+  border: 1px solid var(--modern-border-strong, #e2e8f0) !important;
+  border-radius: 8px;
+  padding: 0.35rem;
+  box-shadow: none !important;
+}
+
+.dropdown-item {
+  color: var(--modern-text, #0f172a) !important;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.12s ease;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: var(--modern-raised, #f1f5f9) !important;
+  color: var(--modern-text, #0f172a) !important;
+}
+
+.dropdown-item.text-danger:hover {
+  background-color: rgba(239, 68, 68, 0.12) !important;
+  color: #ef4444 !important;
+}
+
+/* ── Pagination Bar ────────────────────────────────────────────────────── */
+.email-pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.875rem 1.25rem;
+  background-color: var(--modern-card, #ffffff);
+  border-top: 1px solid var(--modern-border-strong, #e2e8f0);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--modern-muted, #94a3b8);
+}
+
+/* ── Empty State ───────────────────────────────────────────────────────── */
+.email-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+}
+
+.email-empty-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--modern-bg, #f1f5f9);
+  color: var(--modern-muted, #94a3b8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  border: 1px solid var(--modern-border-strong, #e2e8f0);
+}
+
+.email-empty-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--modern-text, #0f172a);
+  margin-bottom: 0.35rem;
+}
+
+.email-empty-desc {
+  font-size: 0.85rem;
+  color: var(--modern-muted, #94a3b8);
+  max-width: 360px;
+  margin-bottom: 1.25rem;
+}
+
+/* ==========================================================================
+   Create / Edit Email Template Form Styles
+   ========================================================================== */
+
+/* ── Hero Banner Card ──────────────────────────────────────────────────── */
+.email-create-hero {
+  background-color: var(--modern-card, #ffffff);
+  border: 1px solid var(--modern-border-strong, #e2e8f0);
+  border-radius: 14px;
+  padding: 1.15rem 1.5rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.email-create-hero-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.email-create-hero-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: var(--modern-bg, #f1f5f9);
+  color: var(--modern-violet, #7c3aed);
+  border: 1px solid var(--modern-border-strong, #e2e8f0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.email-create-hero-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--modern-text, #0f172a);
+}
+
+.email-create-hero-subtitle {
+  margin: 0.2rem 0 0 0;
+  font-size: 0.85rem;
+  color: var(--modern-muted, #94a3b8);
+  opacity: 0.9;
+}
+
+/* ── Form Section Cards ────────────────────────────────────────────────── */
+.email-form-section-card {
+  background-color: var(--modern-card, #ffffff);
+  border: 1px solid var(--modern-border-strong, #e2e8f0);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.email-form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--modern-text, #0f172a);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.email-form-label .required {
+  color: #ef4444;
+}
+
+/* Form inputs & select with recessed inset surface on dark cards */
+.email-form-control,
+.email-form-select {
+  width: 100%;
+  padding: 0.65rem 0.875rem;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  background-color: var(--modern-bg, #ffffff) !important;
+  border: 1px solid var(--modern-border-strong, #cbd5e1) !important;
+  color: var(--modern-text, #0f172a) !important;
+  transition: border-color 0.15s ease, outline 0.15s ease;
+  outline: none;
+}
+
+.email-form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 1.1rem;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+[dir="rtl"] .email-form-select {
+  background-position: left 0.85rem center;
+  padding-right: 0.875rem;
+  padding-left: 2.5rem;
+}
+
+.email-form-select option {
+  background-color: var(--modern-card, #ffffff);
+  color: var(--modern-text, #0f172a);
+}
+
+.email-form-control:focus,
+.email-form-select:focus {
+  border-color: var(--modern-violet, #7c3aed) !important;
+  outline: 2px solid var(--modern-violet-alpha, rgba(124, 58, 237, 0.25));
+}
+
+.email-form-control:disabled,
+.email-form-select:disabled {
+  background-color: var(--modern-raised, #f1f5f9) !important;
+  color: var(--modern-muted, #94a3b8) !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* ── Placeholder Legend Bar ────────────────────────────────────────────── */
+.placeholder-legend-box {
+  background-color: var(--modern-bg, #f8fafc);
+  border: 1px solid var(--modern-border-strong, #e2e8f0);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.placeholder-legend-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--modern-muted, #94a3b8);
+}
+
+.placeholder-legend-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* ── Immutable Placeholder Token Blot (ReactQuill) ─────────────────────── */
 .ql-placeholder-token {
   display: inline-block;
-  background-color: var(--bg-secondary, #e9ecef);
-  color: var(--text-secondary, #495057);
-  border: 1px solid var(--border-color, #ced4da);
-  border-radius: 4px;
-  padding: 1px 7px;
-  font-size: 0.85em;
+  background-color: rgba(124, 58, 237, 0.14);
+  color: var(--modern-violet, #7c3aed);
+  border: 1px solid rgba(124, 58, 237, 0.35);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.82rem;
   font-weight: 600;
+  font-family: inherit;
   cursor: default;
   user-select: none;
   -webkit-user-select: none;
   pointer-events: none;
   white-space: nowrap;
-
-  /* Quill-specific: prevent the cursor from entering */
+  vertical-align: middle;
   contenteditable: false;
 }
 
-/* Inside the live editor, give a slightly warmer tint so users notice it's locked */
 .ql-editor .ql-placeholder-token {
-  background-color: #fff3cd;
-  border-color: #ffc107;
-  color: #664d03;
+  background-color: rgba(124, 58, 237, 0.16);
+  border-color: rgba(124, 58, 237, 0.45);
+  color: var(--modern-violet, #7c3aed);
   pointer-events: none;
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* Legend row above the editor */
-.placeholder-legend {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
-  font-size: 0.82rem;
+/* ── ReactQuill Editor Modern Styling & Dark Theme Compatibility ───────── */
+.ql-toolbar.ql-snow {
+  background-color: var(--modern-card, #f8fafc);
+  border: 1px solid var(--modern-border-strong, #cbd5e1) !important;
+  border-bottom: 1px solid var(--modern-border-strong, #cbd5e1) !important;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 8px 12px;
 }
 
-.placeholder-legend .ql-placeholder-token {
-  /* Make legend chips slightly muted compared to the editor versions */
-  opacity: 0.8;
-  font-size: 0.8em;
+.ql-container.ql-snow {
+  background-color: var(--modern-bg, #ffffff) !important;
+  border: 1px solid var(--modern-border-strong, #cbd5e1) !important;
+  border-top: none !important;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  color: var(--modern-text, #0f172a);
+  font-family: var(--modern-font-ui, inherit);
+  font-size: 0.925rem;
+  min-height: 230px;
 }
 
-/* Preview in the modal — entire area is read-only */
+.ql-editor {
+  min-height: 230px;
+  color: var(--modern-text, #0f172a);
+  line-height: 1.6;
+}
+
+.ql-editor.ql-blank::before {
+  color: var(--modern-muted, #94a3b8);
+  font-style: normal;
+}
+
+/* Quill SVG icons theme-awareness */
+.ql-snow .ql-stroke {
+  stroke: var(--modern-text, #475569) !important;
+}
+
+.ql-snow .ql-fill {
+  fill: var(--modern-text, #475569) !important;
+}
+
+.ql-snow .ql-picker {
+  color: var(--modern-text, #475569) !important;
+}
+
+.ql-snow .ql-picker-label {
+  color: var(--modern-text, #475569) !important;
+}
+
+.ql-snow .ql-picker-options {
+  background-color: var(--modern-card, #ffffff) !important;
+  border: 1px solid var(--modern-border-strong, #cbd5e1) !important;
+  color: var(--modern-text, #0f172a) !important;
+  border-radius: 8px;
+  box-shadow: none !important;
+}
+
+.ql-snow .ql-picker-item {
+  color: var(--modern-text, #0f172a) !important;
+}
+
+.ql-snow .ql-picker-item:hover {
+  background-color: var(--modern-raised, #f1f5f9) !important;
+  color: var(--modern-violet, #7c3aed) !important;
+}
+
+/* ── Template Preview in Modal ─────────────────────────────────────────── */
 .template-preview-disabled {
-  border: 1px solid var(--border-color, #ced4da);
-  padding: 12px;
-  border-radius: 6px;
-  color: var(--text-primary);
+  border: 1px solid var(--modern-border-strong, #cbd5e1);
+  padding: 1rem;
+  border-radius: 8px;
+  color: var(--modern-text, #0f172a);
+  background-color: var(--modern-bg, #f8fafc);
   pointer-events: none;
-  cursor: not-allowed;
-  opacity: 0.9;
   user-select: none;
-  min-height: 100px;
-  background-color: var(--bg-secondary, #f8f9fa);
+  min-height: 120px;
+  line-height: 1.6;
 }
 
-/* Old DB-stored spans (legacy) — keep styled in case they appear in read-only views */
+/* ── Legacy placeholder support ────────────────────────────────────────── */
 .immutable-placeholder {
   display: inline-block;
-  background-color: #fff3cd;
-  border: 1px solid #ffc107;
-  color: #664d03;
-  border-radius: 4px;
-  padding: 1px 7px;
-  font-size: 0.85em;
+  background-color: rgba(124, 58, 237, 0.14);
+  border: 1px solid rgba(124, 58, 237, 0.35);
+  color: var(--modern-violet, #7c3aed);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: not-allowed;
   pointer-events: none;
   user-select: none;
   -webkit-user-select: none;
   white-space: nowrap;
+}
+
+/* ── Modal styling ─────────────────────────────────────────────────────── */
+.modal-content {
+  background-color: var(--modern-card, #ffffff);
+  border: 1px solid var(--modern-border-strong, #e2e8f0);
+  border-radius: 14px;
+  color: var(--modern-text, #0f172a);
+  box-shadow: none !important;
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--modern-border-strong, #e2e8f0);
+  padding: 1.25rem 1.5rem;
+}
+
+.modal-footer {
+  border-top: 1px solid var(--modern-border-strong, #e2e8f0);
+  padding: 1rem 1.5rem;
 }
