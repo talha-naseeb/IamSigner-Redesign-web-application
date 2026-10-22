@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
-import ReactQuill from "react-quill";
+import ReactQuill from "react-quill-new";
 import { toast } from "react-toastify";
 import { Icons } from "@/assets/Icons";
 import { useUser } from "@/Context/UserContext";

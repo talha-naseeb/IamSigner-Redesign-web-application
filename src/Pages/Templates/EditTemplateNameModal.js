@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import templateService from "@/services/templateService";
-import { Offcanvas, Form, Button } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import { AppDrawer } from "@/Components/Common/AppDrawer";
+import { Loader2 } from "lucide-react";
 import "./templates.css";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 
 const EditTemplateNameOffcanvas = ({ originalTemplateName, show, onHide, templateID, onSave }) => {
   const { t } = useTranslation();
-  const [editedTemplateName, setEditedTemplateName] = useState(originalTemplateName);
+  const [editedTemplateName, setEditedTemplateName] = useState(originalTemplateName || "");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setEditedTemplateName(originalTemplateName);
+    setEditedTemplateName(originalTemplateName || "");
   }, [originalTemplateName]);
 
   const handleSave = async () => {
@@ -22,52 +23,62 @@ const EditTemplateNameOffcanvas = ({ originalTemplateName, show, onHide, templat
         TemplateID: templateID,
         TemplateName: editedTemplateName,
       });
-      if (response.data.statusCode === "1") {
+      if (response.data?.statusCode === "1") {
         toast.success(t("editTemplateNameModal.updateTempNameSuccess"));
-        onSave(editedTemplateName);
+        if (onSave) onSave(editedTemplateName);
         onHide();
-        setIsLoading(false);
+      } else {
+        toast.error(t("editTemplateNameModal.errUpdateTempNameSuccess"));
       }
     } catch (error) {
-      setIsLoading(false);
       toast.error(t("editTemplateNameModal.errUpdateTempNameSuccess"));
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const isDisabled = editedTemplateName.trim() === "";
+  const isDisabled = !editedTemplateName || editedTemplateName.trim() === "";
 
   return (
-    <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
+    <AppDrawer
+      open={show}
+      onClose={onHide}
+      title={t("editTemplateNameModal.editTemplateName")}
+      showClose={!isLoading}
+      footer={
+        <div className="flex items-center justify-between w-full pt-4 border-t border-[var(--modern-border,#e2e8f0)]">
+          <Button variant="none" className="modalCancelButton" onClick={onHide} disabled={isLoading}>
+            {t("editTemplateNameModal.cancel")}
+          </Button>
+          <Button
+            variant="none"
+            className="applyBtn d-flex align-items-center gap-2"
+            disabled={isDisabled || isLoading}
+            onClick={handleSave}
+          >
+            {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+            {t("editTemplateNameModal.save")}
+          </Button>
         </div>
-      )}
-
-      <Offcanvas show={show} onHide={onHide} placement={document.documentElement.dir === "rtl" ? "start" : "end"} scroll={true}>
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>{t("editTemplateNameModal.editTemplateName")}</Offcanvas.Title>
-        </Offcanvas.Header>
-        <hr style={{ margin: " auto 0", borderColor: "black" }} />
-        <Offcanvas.Body style={{ padding: "10px" }}>
-          <Form.Group controlId='formEditedTemplateName'>
-            <Form.Label>
-              {t("editTemplateNameModal.templateName")}
-              <span className='text-danger mx-1'>*</span>
-            </Form.Label>
-            <Form.Control type='text' value={editedTemplateName} onChange={(e) => setEditedTemplateName(e.target.value)} placeholder={t("editTemplateNameModal.enterTemplateName")} />
-          </Form.Group>
-          <div className='newComment d-flex align-items-center justify-content-between w-100 p-3 py-4'>
-            <Button variant='none' className='modalCancelButton' onClick={onHide}>
-              {t("editTemplateNameModal.cancel")}
-            </Button>
-            <Button variant='none' className='applyBtn' disabled={isDisabled} onClick={handleSave}>
-              {t("editTemplateNameModal.save")}
-            </Button>
-          </div>
-        </Offcanvas.Body>
-      </Offcanvas>
-    </>
+      }
+    >
+      <div className="space-y-4 py-2">
+        <Form.Group controlId="formEditedTemplateName">
+          <Form.Label className="text-sm font-medium text-[var(--modern-text,#0f172a)]">
+            {t("editTemplateNameModal.templateName")}
+            <span className="text-danger mx-1">*</span>
+          </Form.Label>
+          <Form.Control
+            type="text"
+            value={editedTemplateName}
+            onChange={(e) => setEditedTemplateName(e.target.value)}
+            placeholder={t("editTemplateNameModal.enterTemplateName")}
+            disabled={isLoading}
+            autoFocus
+          />
+        </Form.Group>
+      </div>
+    </AppDrawer>
   );
 };
 

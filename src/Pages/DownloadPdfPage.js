@@ -10,7 +10,6 @@ const DownloadPdfPage = () => {
   const [auth, setAuth] = useState();
   const mainDocumentRef = useRef(null);
 
-  // const masterDocPagesID = "1eb9d7a5-a660-4ec6-a0b6-d5d2a00b06df";
   const masterDocPagesID = "990997c2-e1a9-4d08-9093-dc73b156d96d";
 
   const currentUrl = window.location.href;

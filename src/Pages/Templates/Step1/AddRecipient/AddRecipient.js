@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Button, Col, Form, Row, Dropdown, Offcanvas, Tab, Tabs } from "react-bootstrap";
 import uploadFlowService from "@/services/uploadFlowService";
 import templateService from "@/services/templateService";

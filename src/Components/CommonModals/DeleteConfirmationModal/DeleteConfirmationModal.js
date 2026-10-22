@@ -1,10 +1,11 @@
 import React from "react";
-import { Modal, Button } from "react-bootstrap";
+import { AppModal } from "@/Components/Common/AppModal";
+import { Trash2 } from "lucide-react";
 
 const DeleteConfirmationModal = ({
   show,
   onHide,
-  title,
+  title = "Delete Confirmation",
   subtitle,
   warningText,
   itemTitle,
@@ -16,71 +17,61 @@ const DeleteConfirmationModal = ({
   itemIconSrc,
   headerIcon,
   itemIcon,
-  className,
+  className = "",
+  isLoading = false,
 }) => {
   return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      backdrop="static"
-      keyboard={false}
-      dialogClassName={`custom-modal-width ${className}`}
-    >
-      <Modal.Header closeButton className="pb-2">
-        <div className="header-content">
-          {(headerIcon || headerIconSrc) && (
-            <div className="header-icon
-">
-              {headerIcon ? (
-                headerIcon
-              ) : typeof headerIconSrc === "string" ? (
-                <img src={headerIconSrc} alt="Headericon" />
-              ) : (
-                React.createElement(headerIconSrc, { size: 22 })
-              )}
-            </div>
-          )}
-          <div className="header-text">
-            <Modal.Title>{title}</Modal.Title>
-            {/* {subtitle && <p className='header-subtitle'>{subtitle}</p>} */}
-          </div>
+    <AppModal
+      open={show}
+      onClose={onHide}
+      size="sm"
+      className={className}
+      showClose={!isLoading}
+      footer={
+        <div className="flex w-full justify-between items-center gap-2 pt-2">
+          <button
+            type="button"
+            className="modalCancelButton btn btn-secondary px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            onClick={onHide}
+            disabled={isLoading}
+          >
+            {cancelText}
+          </button>
+          <button
+            type="button"
+            className="applyBtn btn btn-danger px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 min-w-[90px] transition-colors"
+            onClick={onConfirm}
+            disabled={isLoading}
+          >
+            {confirmText}
+          </button>
         </div>
-      </Modal.Header>
-
-      <Modal.Body className="px-4 py-3">
-        {/* {(itemTitle || itemName || itemIcon || itemIconSrc) && (
-          <div className='document-info mb-3'>
-            {(itemIcon || itemIconSrc) && (
-              <div className='document-icon'>
-                {itemIcon ? itemIcon : typeof itemIconSrc === "string" ? <img src={itemIconSrc} alt={itemTitle || "Item"} height={20} width={20} /> : React.createElement(itemIconSrc, { size: 20 })}
-              </div>
-            )}
-            <div className='document-details'>
-              {itemTitle && <h6 className='document-title'>{itemTitle}</h6>}
-              {itemName && <p className='document-name'>{itemName}</p>}
-            </div>
-          </div>
-        )} */}
-        <p className="mb-0">{warningText}</p>
-
-        {/* {warningText && (
-          <div className='transfer-warning'>
-            <div className='warning-text'>
-              <p>{warningText}</p>
-            </div>
-          </div>
-        )} */}
-      </Modal.Body>
-
-      <Modal.Footer className="d-flex justify-content-between">
-        <Button variant="none" className="modalCancelButton" onClick={onHide}>
-          {cancelText}
-        </Button>
-        <Button variant="none" className="applyBtn" onClick={onConfirm}>
-          {confirmText}
-        </Button>
-      </Modal.Footer>
-    </Modal>
+      }
+    >
+      <div className="flex flex-col items-center text-center p-2 gap-3">
+        <div className="p-3 rounded-full border bg-red-500/10 text-red-500 border-red-500/20">
+          {headerIcon ? (
+            headerIcon
+          ) : typeof headerIconSrc === "string" ? (
+            <img src={headerIconSrc} alt="Header icon" className="h-6 w-6 object-contain" />
+          ) : headerIconSrc ? (
+            React.createElement(headerIconSrc, { size: 24 })
+          ) : (
+            <Trash2 className="h-6 w-6" />
+          )}
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-base font-semibold text-[var(--modern-text,#0f172a)]">{title}</h3>
+          {(itemTitle || itemName) && (
+            <p className="text-sm font-medium text-[var(--modern-text,#0f172a)]">
+              {itemTitle} {itemName ? ` - ${itemName}` : ""}
+            </p>
+          )}
+          {warningText && <p className="text-sm text-[var(--modern-muted,#64748b)]">{warningText}</p>}
+          {subtitle && <p className="text-xs text-[var(--modern-muted,#64748b)]">{subtitle}</p>}
+        </div>
+      </div>
+    </AppModal>
   );
 };
 

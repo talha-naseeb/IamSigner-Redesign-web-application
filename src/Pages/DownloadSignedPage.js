@@ -25,8 +25,6 @@ const DownloadSignedPage = () => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    // console.log("Canvas width:", canvas.width);
-    // console.log("Canvas height:", canvas.height);
   }, [imagesData]);
 
   useEffect(() => {
@@ -85,7 +83,7 @@ const DownloadSignedPage = () => {
   }, [auth]);
 
   return (
-    <div className=''>
+    <div>
       <Row className='d-none justify-content-lg-center align-items-center m-3'>
         <div className='button' style={{ background: "white" }}>
           <div class='button-wrapper'>

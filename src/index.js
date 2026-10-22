@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "react-phone-input-2/lib/style.css";
 import "./index.css";
 import "./styles/themeAwareForm.css";
-import "react-quill/dist/quill.snow.css";
+import "react-quill-new/dist/quill.snow.css";
 
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";

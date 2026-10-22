@@ -1,74 +1,50 @@
 import React from "react";
-import { Button, Modal } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { Icons } from "@/assets/Icons";
+import { AppModal } from "@/Components/Common/AppModal";
+import { CheckCircle2 } from "lucide-react";
 
-const ConfirmationModal = ({ show, onHide, onClick, className }) => {
+const ConfirmationModal = ({ show, onHide, onClick, className = "" }) => {
   const { t } = useTranslation();
+
   return (
-    <Modal show={show} onHide={onHide} dialogClassName={`custom-modal-width ${className}`}>
-      <Modal.Header closeButton className='pb-2'>
-        {/* <div className='header-content d-flex align-items-start gap-2'>
-          <div
-            className='header-icon d-flex align-items-center justify-content-center'
-            style={{
-              height: 40,
-              width: 40,
-              borderRadius: 8,
-              background: '#E6F7FB',
-              border: '1px solid #BFE9F6',
-            }}
+    <AppModal
+      open={show}
+      onClose={onHide}
+      size="sm"
+      className={className}
+      footer={
+        <div className="flex w-full justify-between items-center gap-2 pt-2">
+          <button
+            type="button"
+            onClick={onHide}
+            className="modalCancelButton btn btn-secondary px-4 py-2 rounded-lg text-sm font-medium transition-colors"
           >
-            <span style={{ color: '#0C9AD7', fontWeight: 700 }}>✓</span>
-          </div>
-          <div className='header-text'>
-          <small className='text-muted'>{t('signaturePage.proceed')}</small>
-          </div>
-          </div> */}
-        <Modal.Title className='d-flex align-items-center gap-2'>
-          {/* <Icons.SignatureDefault /> */}
-          {t("signaturePage.confirmCompleted")}
-        </Modal.Title>
-      </Modal.Header>
-
-      <Modal.Body className='px-4 py-3'>
-        {/* <div
-          className='document-info p-3'
-          style={{ borderRadius: 12, border: '1px solid #eee', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
-        >
-          <div className='d-flex align-items-start gap-3'>
-            <div className='document-icon d-flex align-items-center justify-content-center'
-              style={{ height: 40, width: 40, borderRadius: 10, background: '#F3F6F8', border: '1px solid #E6EAED' }}
-            >
-              <Icons.SignatureDefault />
-            </div>
-            <div className='document-details'>
-              <small className='text-uppercase text-muted fw-semibold'>
-                {t('signaturePage.sendAndSign')}
-              </small>
-              <div className='fw-semibold mt-1'>
-                {t('signaturePage.sendDescription')}
-              </div>
-            </div>
-          </div>
-        </div> */}
-
-        {/* <div className='transfer-warning mt-3'>
-          <div className='warning-text'> */}
-        <p className='mb-0'>{t("signaturePage.proceed")}</p>
-        {/* </div>
-        </div> */}
-      </Modal.Body>
-
-      <Modal.Footer className='d-flex justify-content-between'>
-        <Button onClick={onHide} variant='none' className='modalCancelButton'>
-          {t("signaturePage.no")}
-        </Button>
-        <Button onClick={onClick} variant='none' className='applyBtn'>
-          {t("signaturePage.yes")}
-        </Button>
-      </Modal.Footer>
-    </Modal>
+            {t("signaturePage.no")}
+          </button>
+          <button
+            type="button"
+            onClick={onClick}
+            className="applyBtn btn btn-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            {t("signaturePage.yes")}
+          </button>
+        </div>
+      }
+    >
+      <div className="flex flex-col items-center text-center p-2 gap-3">
+        <div className="p-3 rounded-full border bg-emerald-500/10 text-emerald-500 border-emerald-500/20">
+          <CheckCircle2 className="h-6 w-6" />
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-base font-semibold text-[var(--modern-text,#0f172a)]">
+            {t("signaturePage.confirmCompleted")}
+          </h3>
+          <p className="text-sm text-[var(--modern-muted,#64748b)]">
+            {t("signaturePage.proceed")}
+          </p>
+        </div>
+      </div>
+    </AppModal>
   );
 };
 

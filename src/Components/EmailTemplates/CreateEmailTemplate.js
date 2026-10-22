@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import ReactQuill, { Quill } from "react-quill";
+import ReactQuill, { Quill } from "react-quill-new";
 import { Col, Form, Row, Modal, Spinner } from "react-bootstrap";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-toastify";

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Signatories.css";
 import { Form, Button, Row, Col, Dropdown, Accordion, Offcanvas, Tab, Tabs, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
 import uploadFlowService from "@/services/uploadFlowService";
