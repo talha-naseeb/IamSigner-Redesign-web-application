@@ -1,0 +1,23 @@
+{
+  "source_path": "docs/DMS_FileUpload_PRD.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "PRD: DMS File Upload Feature",
+  "summary": "Centralized file upload capability within DMS supporting any file type, metadata capture (title, description, tags), size limits, drag-and-drop dropzone, upload progress indicator, and validation feedback.",
+  "scope": [
+    "DMS",
+    "File Upload",
+    "Any File Type",
+    "Metadata Capture",
+    "Upload Progress",
+    "File Validation"
+  ],
+  "cross_refs": [
+    "docs/DMS_Remaining_APIs.md",
+    "DMS_API_Requirements.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": "Status: Draft"
+}

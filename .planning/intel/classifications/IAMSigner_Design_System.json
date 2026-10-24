@@ -1,0 +1,19 @@
+{
+  "source_path": "docs/IAMSigner-Design-System.md",
+  "type": "SPEC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "IAMSigner Design System",
+  "summary": "Design specifications for modern workspace aesthetics, dark and light mode color roles, typography, glass treatments, and status badge semantics.",
+  "scope": [
+    "Design System",
+    "Theme Tokens",
+    "Dark Mode",
+    "Color Roles",
+    "Typography"
+  ],
+  "cross_refs": [],
+  "locked": true,
+  "precedence": null,
+  "notes": "Covers dark mode, light mode, typography, and card rules"
+}

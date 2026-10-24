@@ -1,0 +1,23 @@
+{
+  "source_path": "docs/PRD_Refactoring_RBAC_Token_Security.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Frontend Modernization: File Deduplication, Component Reusability, RBAC Auth Guards & Token Security Architecture",
+  "summary": "Modernize frontend architecture by eliminating file duplication, creating unified Stepper and Status Table engines, enforcing multi-factor declarative RBAC guards, and implementing memory-first token management.",
+  "scope": [
+    "File Deduplication",
+    "Stepper Wizard Engine",
+    "Document Status Table Engine",
+    "Declarative RBAC",
+    "RoleGuard",
+    "AuthGuard",
+    "Token Security",
+    "tokenManager",
+    "State Cleanup"
+  ],
+  "cross_refs": [],
+  "locked": true,
+  "precedence": null,
+  "notes": "Status: APPROVED / READY FOR SPRINT EXECUTION"
+}

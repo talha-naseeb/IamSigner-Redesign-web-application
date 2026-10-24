@@ -1,0 +1,21 @@
+{
+  "source_path": "docs/DMS_Remaining_APIs.md",
+  "type": "SPEC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "DMS — Remaining APIs (Not Yet Implemented)",
+  "summary": "Technical inventory of 15 remaining DMS backend APIs required by the frontend client (document upload, metadata, search, download, rename, delete, access control, audit activity).",
+  "scope": [
+    "DMS APIs",
+    "File Upload API",
+    "Document Search API",
+    "Folder API",
+    "Permissions API"
+  ],
+  "cross_refs": [
+    "DMS_API_Requirements.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": "Reference: DMS_API_Requirements.md"
+}
