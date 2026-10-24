@@ -25,6 +25,8 @@ A phased journey modernizing IAMSigner (`Macquires-ESign-FE`): starting with fou
   2. Silent token refresh triggers automatically prior to JWT expiration without interrupting the user.
   3. Browser page reloads preserve active user sessions without leaking tokens to disk storage.
 **Plans**: 2 plans
+- [ ] `01-01`: Harden centralized token manager service and build unit test suite (Wave 1)
+- [ ] `01-02`: Migrate direct sessionStorage token removals and standardize session expiry (Wave 2)
 
 ### Phase 2: Multi-Factor Declarative RBAC Route Guards
 **Goal**: Enforce declarative route authorization preventing address-bar privilege escalation across account types, roles, and subscriptions.
