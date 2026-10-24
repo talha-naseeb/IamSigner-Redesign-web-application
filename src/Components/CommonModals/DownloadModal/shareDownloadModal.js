@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal } from "react-bootstrap";
+import { Modal } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";

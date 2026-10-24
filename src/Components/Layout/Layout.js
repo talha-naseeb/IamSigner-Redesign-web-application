@@ -40,7 +40,7 @@ const Layout = () => {
       {hideSidebar && !showDashboardCard ? (
         <div
           ref={fullWidthLayoutRef}
-          className='mainbody mainbody--full-width'
+          className='mainbody mainbody--full-width modern-theme-shell'
           style={{ "--editor-header-height": `${headerHeight || 67}px` }}
         >
           <Header />

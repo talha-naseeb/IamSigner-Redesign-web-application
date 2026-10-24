@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import { Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 
 const PageNavigations = ({ imagesData, selectedImage, setSelectedImage, onImageSelect }) => {

@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
-import { Button, Form, InputGroup, ListGroup, Offcanvas } from "react-bootstrap";
+import { Button, Form, InputGroup, ListGroup, Offcanvas } from "@/Components/UI/shadcnCompat";
 import { useUser } from "@/Context/UserContext";
-import "./DashboardComments.css";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import uploadFlowService from "@/services/uploadFlowService";
 

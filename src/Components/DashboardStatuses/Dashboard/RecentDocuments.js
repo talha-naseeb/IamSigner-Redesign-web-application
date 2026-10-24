@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@mui/material";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import RecentDocsFilter from "./RecentDocsFilter";
 import Loader from "@/Components/CommonModals/Loader/Loader";
@@ -7,11 +7,10 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { FaDownload } from "react-icons/fa6";
 import { PiMicrosoftExcelLogo } from "react-icons/pi";
-import Dropdown from "react-bootstrap/Dropdown";
+import { Dropdown as Dropdown } from "@/Components/UI/shadcnCompat";
 import { useUser } from "@/Context/UserContext";
 import documentService from "@/services/documentService";
 import { Icons } from "@/assets/Icons";
-import "./RecentDocuments.css";
 
 const RecentDocuments = () => {
   const { t } = useTranslation();
@@ -149,8 +148,8 @@ const RecentDocuments = () => {
   };
 
   return (
-    <Grid className='recent-documents-page'>
-      <Grid>
+    <div className='w-full max-w-none m-0 py-6 px-4 sm:px-6 bg-[var(--modern-bg)] text-[var(--modern-text)] font-sans'>
+      <div>
         {/* Loader overlay */}
         {isLoading && (
           <div className='loader-overlay'>
@@ -159,14 +158,14 @@ const RecentDocuments = () => {
         )}
 
         {user.AccountType === "B" && (user.RoleID === 1 || user.RoleID === 4) && userAccess.remainingDays >= 0 ? (
-          <div className='recent-documents-card'>
-            <div className='recent-documents-toolbar'>
-              <h1 className='recent-documents-title'>{t("menuButtons.Alldocs")}</h1>
+          <div className='w-full max-w-[1560px] mx-auto p-5 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)]'>
+            <div className='flex flex-wrap items-center justify-between gap-4 mb-4'>
+              <h1 className='m-0 text-xl sm:text-2xl font-bold tracking-tight text-[var(--modern-text)]'>{t("menuButtons.Alldocs")}</h1>
 
-              <div className='recent-documents-actions'>
-                <div className='recent-documents-export'>
+              <div className='flex items-center justify-end gap-2.5 ml-auto'>
+                <div>
                   <Dropdown>
-                    <Dropdown.Toggle variant='primary' size='sm' className='recent-documents-export-btn d-flex align-items-center gap-2'>
+                    <Dropdown.Toggle variant='primary' size='sm' className='inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg bg-[var(--modern-violet)] hover:bg-[var(--modern-violet-hover)] text-white border-0 transition-colors'>
                       <FaDownload size={14} />
                       {t("createTeam.Export")}
                     </Dropdown.Toggle>
@@ -179,7 +178,7 @@ const RecentDocuments = () => {
                     </Dropdown.Menu>
                   </Dropdown>
                 </div>
-                <div className='search-filters-container recent-documents-filter'>
+                <div className='search-filters-container'>
                   <RecentDocsFilter
                     startDate={startDate}
                     endDate={endDate}
@@ -200,14 +199,14 @@ const RecentDocuments = () => {
             {/* Table */}
             <TableContainer
               component={Paper}
-              className='custom-table-scrollbar recent-documents-table-container'
+              className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
               style={{
                 maxWidth: "100%",
                 overflowX: "auto",
                 height: "70vh",
               }}
             >
-              <Table stickyHeader className='recent-documents-table' style={{ border: "none", minWidth: "800px" }}>
+              <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
                 {/* Table Headers */}
                 <TableHead>
                   <TableRow>
@@ -223,7 +222,7 @@ const RecentDocuments = () => {
                 <TableBody>
                   {searchResults.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={columns.length} className='recent-documents-empty-state'>
+                      <TableCell colSpan={columns.length} className='h-48 text-center text-[var(--modern-muted)]'>
                         <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                           <Icons.BulkDocuments size={50} />
                           {t("dashboardCardStatuses.notDocsFound")}
@@ -232,35 +231,42 @@ const RecentDocuments = () => {
                     </TableRow>
                   )}
 
-                  {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                    <TableRow key={index}>
-                      {/* Table Cells */}
-                      <TableCell className='TableCell truncate-cell' onClick={(e) => handleCellClick(e)}>
-                        {row.docName}
-                      </TableCell>
-                      <TableCell className='TableCell'>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
-                      <TableCell className='TableCell'>{row.referenceNumber}</TableCell>
-                      <TableCell className='TableCell'>
-                        <span
-                          className='recent-documents-status-pill'
-                          style={{ "--status-color": statusColors[String(row.docStatus || "bulk").toLowerCase()] || "var(--share-status)" }}
-                        >
-                          {row.docStatus || "Bulk"}
-                        </span>
-                      </TableCell>
-                      <TableCell className='TableCell'>{row.createdByName}</TableCell>
-                    </TableRow>
-                  ))}
+                  {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+                    const statusColor = statusColors[String(row.docStatus || "bulk").toLowerCase()] || "var(--share-status)";
+                    return (
+                      <TableRow key={index} className='hover:bg-[var(--modern-raised)]'>
+                        {/* Table Cells */}
+                        <TableCell className='TableCell truncate max-w-[150px]' onClick={(e) => handleCellClick(e)}>
+                          {row.docName}
+                        </TableCell>
+                        <TableCell className='TableCell'>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
+                        <TableCell className='TableCell'>{row.referenceNumber}</TableCell>
+                        <TableCell className='TableCell'>
+                          <span
+                            className='inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold'
+                            style={{
+                              color: statusColor,
+                              backgroundColor: `color-mix(in srgb, ${statusColor} 12%, var(--modern-card))`,
+                              border: `1px solid color-mix(in srgb, ${statusColor} 35%, var(--modern-border))`,
+                            }}
+                          >
+                            {row.docStatus || "Bulk"}
+                          </span>
+                        </TableCell>
+                        <TableCell className='TableCell'>{row.createdByName}</TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </TableContainer>
 
             {/* Pagination */}
-            <div className='recent-documents-pagination-bar'>
-              <div className='recent-documents-pagination-copy'>
+            <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4'>
+              <div className='text-xs text-[var(--modern-muted)]'>
                 {searchResults.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, searchResults.length)} {t("tablesLabel.documentsof")} {searchResults.length} {t("tablesLabel.document")}
               </div>
-              <Stack spacing={2} className='recent-documents-pagination'>
+              <Stack spacing={2}>
                 <Pagination count={Math.max(1, Math.ceil(searchResults.length / rowsPerPage))} variant='outlined' shape='rounded' page={Math.min(page + 1, Math.max(1, Math.ceil(searchResults.length / rowsPerPage)))} onChange={(event, newPage) => handleChangePage(event, newPage - 1)} />
               </Stack>
             </div>
@@ -268,10 +274,10 @@ const RecentDocuments = () => {
         ) : (
           <></>
         )}
-      </Grid>
+      </div>
 
       {/* Share and View modals */}
-    </Grid>
+    </div>
   );
 };
 

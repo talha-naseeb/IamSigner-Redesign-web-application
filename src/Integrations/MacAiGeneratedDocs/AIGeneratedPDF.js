@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import verificationService from "@/services/verificationService";
 import DOMPurify from "dompurify";
-import "@/Components/DashboardStatuses/Draftstatus/style.css";
-import "./style.css";
 
 function AIGeneratedPDF() {
   const [aiGeneratedTextResp, setAiGeneratedTextResp] = useState("");
@@ -36,7 +34,7 @@ function AIGeneratedPDF() {
     GetAITextForPage();
   }, []);
 
-  return <div className='openAITable'>{!isLoading && aiGeneratedTextResp && <div dangerouslySetInnerHTML={{ __html: aiGeneratedTextResp }} />}</div>;
+  return <div className='bg-white text-black p-4 [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-slate-300 [&_th]:p-2 [&_td]:border [&_td]:border-slate-300 [&_td]:p-2'>{!isLoading && aiGeneratedTextResp && <div dangerouslySetInnerHTML={{ __html: aiGeneratedTextResp }} />}</div>;
 }
 
 export default AIGeneratedPDF;

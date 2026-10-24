@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Container, Form, InputGroup, ListGroup, Modal, Row, Dropdown, Accordion } from "react-bootstrap";
+import { Button, Col, Container, Form, InputGroup, ListGroup, Modal, Row, Dropdown, Accordion } from "@/Components/UI/shadcnCompat";
 import { useUser } from "@/Context/UserContext";
-import "./Thirdstep.css";
 import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +15,7 @@ import { Icons } from "@/assets/Icons";
 import DateRangePicker from "@/Components/Common/DateRangePicker/DateRangePicker";
 import { DateObject } from "react-multi-date-picker";
 import { startOfToday } from "date-fns";
+import UploadSourceCard from "@/Components/Common/CloudPickers/UploadSourceCard";
 
 const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
   const { t } = useTranslation();
@@ -709,45 +709,39 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
         <div>
           {userAccess.supportDocs === true ? (
             <>
-              <div style={{ marginTop: "1rem" }}>
-                <Row>
-                  <Col>
-                    <div className='uplad_box'>
-                      <Form.Group controlId='file-input-add' className='file-upload_temp'>
-                        <div {...getRootProps({ className: "dropzoneUploadFile" })}>
-                          <input {...getInputProps()} className='temp_file-input-additional d-none' />
-                          <Icons.UploadCloud size={40} color='var(--theme-color)' />
-                          <br />
-                          <div className='upload_doc_part'>
-                            <Form.Label>{t("uploadDocFlow.UploadsupportedDoc")}</Form.Label>
-                            <Form.Label style={{ color: "var(--theme-color)", margin: "0px 5px", textDecoration: "underline" }}>{t("uploadDocFlow.here")}</Form.Label>
-                          </div>
-                        </div>
-                      </Form.Group>
-                    </div>
-                  </Col>
-                </Row>
+              <div className="mt-4">
+                <UploadSourceCard {...getRootProps()}>
+                  <input {...getInputProps()} className="sr-only" />
+                  <Icons.UploadCloud size={32} className="text-[var(--modern-primary,#6366f1)]" />
+                  <span className="text-sm font-medium">{t("uploadDocFlow.UploadsupportedDoc")}</span>
+                  <span className="text-sm font-medium text-[var(--modern-primary,#6366f1)] underline underline-offset-2">
+                    {t("uploadDocFlow.here")}
+                  </span>
+                </UploadSourceCard>
                 {errorMessage && (
-                  <p className='error-message'>
-                    <Icons.AlertCircle className='mb-1 mx-2' />
+                  <p className="mt-2 flex items-start gap-2 text-sm text-[var(--modern-danger,#ef4444)]">
+                    <Icons.AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                     {errorMessage}
                   </p>
                 )}
-                <div className='upload_file_box' id='upload_file_bx '>
+                <div className='mt-3 space-y-2' id='upload_file_bx '>
                   {uploadedFiles.map((fileName, index, file) => (
-                    <div key={index} className='mb-2 uploaded-file'>
-                      <p className='m-0 d-flex align-items-center gap-2'>
+                    <div
+                      key={index}
+                      className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-md border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] px-3 py-2 text-[var(--modern-text,#0f172a)]"
+                    >
+                      <p className='m-0 flex min-w-0 items-center gap-2 break-words text-sm'>
                         <Icons.PDFs size={22} />
                         {fileName}
                       </p>
                       <Dropdown>
                         <Dropdown.Toggle as={CustomToggle}>
                           <Dropdown.Menu>
-                            <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileview(supportingDocIDs[index])}>
+                            <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(supportingDocIDs[index])}>
                               <Icons.View size={18} />
                               {t("uploadDocFlow.view")}
                             </Dropdown.Item>
-                            <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
+                            <Dropdown.Item className='flex items-center gap-2' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
                               <Icons.DeleteAction size={18} />
                               {t("uploadDocFlow.delete")}
                             </Dropdown.Item>
@@ -804,18 +798,17 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
                     {/* Email CC */}
                     <CCEmail />
                     {/*Comment  */}
-                    <label className='mt-3 mb-2'>{t("uploadDocFlow.comment")}</label>
-                    <div className='d-flex align-items-center justify-content-between mb-3 gap-2'>
-                      <InputGroup>
+                    <div className='flex items-center justify-between mb-3 gap-2'>
+                      <InputGroup className='flex-1'>
                         <Form.Control type='text' placeholder={t("Comments.addCommentHere")} value={newComment} onChange={handleCommentChange} onKeyPress={handleCommentChange} />
                       </InputGroup>
-                      <Button onClick={addComment} className='comment-button' variant='none'>
+                      <Button onClick={addComment} variant='primary' size='sm' className='min-h-9 px-3'>
                         <Icons.Send />
                       </Button>
                     </div>
                     <ListGroup>
                       {comments.map((comment, index) => (
-                        <ListGroup.Item key={index} className='comment-list-third'>
+                        <ListGroup.Item key={index} className='bg-[var(--modern-raised)] border border-[var(--modern-border)] rounded-md mb-2 p-3 text-[var(--modern-text)]'>
                           <Row>
                             <Col md={6} className='pe-0 d-flex align-items-center gap-3'>
                               {/* User Avatar - Initials Only */}
@@ -988,12 +981,19 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
             </Accordion>
           </div>
 
-          <div className='fixed-button-container'>
-            <Button className='backBtn' id='hide_part_one' onClick={handleBack}>
+          <div className='fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-3 border-t border-[var(--modern-border)] bg-[var(--modern-card)]'>
+            <Button variant='outline' id='hide_part_one' onClick={handleBack} disabled={isLoading}>
               {t("uploadDocFlow.back")}
             </Button>
-            <Button className='Continue-btn' id='hide_part_one' onClick={openConfirmationModal}>
-              {t("uploadDocFlow.sendAndSign")}
+            <Button variant='primary' id='hide_part_one' onClick={openConfirmationModal} disabled={isLoading}>
+              {isLoading ? (
+                <span className='flex items-center gap-2'>
+                  <span className='inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' />
+                  {t("uploadDocFlow.sendAndSign")}
+                </span>
+              ) : (
+                t("uploadDocFlow.sendAndSign")
+              )}
             </Button>
           </div>
 
@@ -1054,7 +1054,7 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
             </Modal.Header>
             <Modal.Body className='px-3 py-2'>{t("uploadDocFlow.requestProceed")}</Modal.Body>
             <Modal.Footer>
-              <Button onClick={closeSuccessModal} className='applyBtn'>
+              <Button onClick={closeSuccessModal} variant='primary'>
                 {t("uploadDocFlow.close")}
               </Button>
             </Modal.Footer>

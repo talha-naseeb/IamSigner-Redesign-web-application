@@ -3,7 +3,7 @@ import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { FcGoogle } from "react-icons/fc";
 import "./style.css";
-import { Button } from "react-bootstrap";
+import { Button } from "@/Components/UI/shadcnCompat";
 
 function GoogleLogin() {
   const [user, setUser] = useState(null);

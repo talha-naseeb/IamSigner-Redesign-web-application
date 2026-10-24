@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Modal, Form, Button } from "react-bootstrap";
+import { Modal, Form, Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons/index";
 

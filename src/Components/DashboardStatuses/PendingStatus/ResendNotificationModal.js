@@ -1,8 +1,7 @@
 import React from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
-import "./TransferOwner/TransferOwnershipModal.css";
 
 const ResendNotificationModal = ({ show, handleClose, onConfirm, docName, isLoading }) => {
   const { t } = useTranslation();
@@ -10,41 +9,23 @@ const ResendNotificationModal = ({ show, handleClose, onConfirm, docName, isLoad
   return (
     <Modal show={show} onHide={handleClose} dialogClassName='custom-modal-width' backdrop='static' keyboard={false}>
       <Modal.Header closeButton>
-        <div className='header-content'>
-          <div className='header-icon'>
-            <Icons.Resend size={22} />
+        <div className='flex items-center gap-3'>
+          <div className='flex items-center justify-center w-10 h-10 rounded-lg bg-[var(--modern-raised)] text-[var(--modern-text)] border border-[var(--modern-border)]'>
+            <Icons.Resend size={20} />
           </div>
-          <div className='header-text'>
-            <Modal.Title>{t("dashboardCardStatuses.confirmResend")}</Modal.Title>
-            {/* <p className="header-subtitle">{t("dashboardCardStatuses.resendNotificationSubtitle")}</p> */}
+          <div className='flex-1'>
+            <Modal.Title className='text-base font-semibold text-[var(--modern-text)] m-0'>{t("dashboardCardStatuses.confirmResend")}</Modal.Title>
           </div>
         </div>
       </Modal.Header>
-      <Modal.Body className='px-4 py-3'>
-        {/* {docName && (
-        
-           <div className="document-info">
-          <div className="document-icon">
-            <img src={documentIcon} alt="Document" />
-          </div>
-          <div className="document-details">
-            <h6 className="document-title">{t("dashboardCardStatuses.document")}</h6>
-            <p className="document-name">{docName}</p>
-          </div>
-        </div>
-        )}
-        <div className="transfer-warning">
-          <div className="warning-text">
-            <p>{t("dashboardCardStatuses.sureResend")}</p>
-          </div>
-        </div> */}
-        <p className='mb-0'>{t("dashboardCardStatuses.sureResend")}</p>
+      <Modal.Body className='px-4 py-4'>
+        <p className='text-sm text-[var(--modern-muted)] mb-0'>{t("dashboardCardStatuses.sureResend")}</p>
       </Modal.Body>
-      <Modal.Footer className='d-flex justify-content-between'>
-        <Button variant='none' className='modalCancelButton' onClick={handleClose} disabled={isLoading}>
+      <Modal.Footer className='flex justify-between pt-3 border-t border-[var(--modern-border)]'>
+        <Button variant='outline' onClick={handleClose} disabled={isLoading}>
           {t("dashboardCardStatuses.cancel")}
         </Button>
-        <Button className='applyBtn' variant='none' onClick={onConfirm} disabled={isLoading}>
+        <Button variant='primary' onClick={onConfirm} disabled={isLoading}>
           {t("dashboardCardStatuses.confirm")}
         </Button>
       </Modal.Footer>

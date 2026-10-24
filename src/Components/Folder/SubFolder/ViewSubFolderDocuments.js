@@ -2,17 +2,16 @@ import React, { useEffect, useState } from "react";
 import userService from "@/services/userService";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import Dropdown from "react-bootstrap/Dropdown";
+import { Dropdown as Dropdown } from "@/Components/UI/shadcnCompat";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
 import SignOrder from "@/Components/CommonModals/SignOrder/SignOrder";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@mui/material";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
 import DownloadModal from "@/Components/CommonModals/DownloadModal/DownloadModal";
 import { Icons } from "@/assets/Icons";
 import { useParams, useNavigate } from "react-router-dom";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
-import "../style.css";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import AddDocToSubFolder from "./AddDocToSubFolder";
 import ShareModal from "@/Components/CommonModals/ShareModal/ShareModal";
@@ -217,7 +216,7 @@ const ViewSubFolderDocuments = () => {
   };
 
   return (
-    <Grid className='container my-3'>
+    <Grid className='folder-route folder-document-route container my-3 text-foreground [font-family:var(--modern-font-ui)]'>
       <Grid>
         {isLoading && (
           <div className='loader-overlay'>
@@ -225,17 +224,17 @@ const ViewSubFolderDocuments = () => {
           </div>
         )}
 
-        <div className='py-3 p-3 container pendingtable '>
+        <div className='container mt-3 rounded-2xl border border-border bg-card p-3 py-3 text-foreground max-sm:p-4'>
           <div className=' d-flex align-items-center justify-content-between mb-2'>
             <div className='d-flex align-items-center gap-2'>
-              <Icons.Back className={document.documentElement.dir === "rtl" ? "rtl-icon" : ""} onClick={goBack} style={{ cursor: "pointer" }} />
+              <Icons.Back className={document.documentElement.dir === "rtl" ? "scale-x-[-1]" : ""} onClick={goBack} style={{ cursor: "pointer" }} />
               {data.length === 0 ? (
                 <>
                   <Icons.Folders size={30} />
                 </>
               ) : (
                 <>
-                  <Icons.FoldersFill size={30} color='var(--theme-color)' />
+                  <Icons.FoldersFill size={30} color='var(--modern-violet)' />
                 </>
               )}
 
@@ -246,7 +245,10 @@ const ViewSubFolderDocuments = () => {
               </span>
             </div>
 
-            <div className='addFileIcon' onClick={() => handleAddDocumentClick()}>
+            <div
+              className='flex cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border border-border bg-card px-2 py-[3px] text-foreground transition-colors hover:border-[var(--modern-violet)] hover:bg-[var(--modern-violet-soft)] hover:text-[var(--modern-violet)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--modern-violet)]'
+              onClick={() => handleAddDocumentClick()}
+            >
               {t("Folder.add")}
             </div>
           </div>
@@ -266,7 +268,7 @@ const ViewSubFolderDocuments = () => {
               <TableHead className='customTableHead'>
                 <TableRow>
                   {columns.map((column) => (
-                    <TableCell key={column.label} style={{ backgroundColor: "#e7ebee" }} className='TableHeaderCell'>
+                    <TableCell key={column.label} className='TableHeaderCell'>
                       {column.label}
                     </TableCell>
                   ))}
@@ -275,8 +277,8 @@ const ViewSubFolderDocuments = () => {
               <TableBody>
                 {data.length === 0 && (
                   <TableRow>
-                    <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <td colSpan='6' className='p-5 text-center text-muted-foreground'>
+                      <div className='flex flex-col items-center gap-2'>
                         <Icons.Folders size={50} />
                         {t("dashboardCardStatuses.notDocsFound")}
                       </div>
@@ -294,13 +296,7 @@ const ViewSubFolderDocuments = () => {
                     <TableCell className='TableCell'>{row.referenceNumber}</TableCell>
                     <TableCell className='TableCell '>
                       <label
-                        style={{
-                          padding: "2px 12px",
-                          borderRadius: "12px",
-                          color: "#19d157",
-                          border: `1px solid #19d157`,
-                          fontWeight: "bold",
-                        }}
+                        className='inline-flex min-h-6 items-center rounded-full border border-[color-mix(in_srgb,var(--modern-success,#16a34a)_55%,transparent)] bg-[color-mix(in_srgb,var(--modern-success,#16a34a)_10%,transparent)] px-3 py-0.5 text-xs font-semibold text-[var(--modern-success,#16a34a)]'
                       >
                         {row.docStatus}
                       </label>

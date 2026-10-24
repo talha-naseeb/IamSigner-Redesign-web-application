@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@mui/material";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { Dropdown, Button, Modal } from "react-bootstrap";
+import { Dropdown, Button, Modal } from "@/Components/UI/shadcnCompat";
 import { useUser } from "@/Context/UserContext";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import DocumentSearchFilters from "@/Components/CommonModals/SearchFilters/DocSearchFilter";
@@ -27,7 +27,6 @@ import { normalizeSigningLink } from "@/Helpers/signingLink";
 import SignCompletedScreen from "@/Components/SignCompletedScreen/SignCompletedScreen";
 import { API_STATUS } from "@/Constants/apiStatuses";
 import { tokenManager } from "@/services/tokenManager";
-import "./style.css";
 
 const PendingDocs = () => {
   const { t } = useTranslation();
@@ -424,7 +423,7 @@ const PendingDocs = () => {
           <div className='py-3 p-3 container pendingtable'>
             <h4>{t("dashboardCardStatuses.pendingDocs")}</h4>
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div className="document-status-toolbar">
               <div>
                 <div className='d-flex gap-3 '>
                   <Button className={`SignButton ${viewMode === "pendingWithMe" ? "active" : ""}`} onClick={handlePendingwithme}>
@@ -480,7 +479,7 @@ const PendingDocs = () => {
                     <TableBody>
                       {searchResults.length === 0 && (
                         <TableRow>
-                          <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
+                          <td colSpan='6' className='p-5 text-center'>
                             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                               <Icons.BulkDocuments size={50} />
                               {t("dashboardCardStatuses.notDocsFound")}
@@ -612,7 +611,7 @@ const PendingDocs = () => {
                     <TableBody>
                       {pendingWithOtherRes.length === 0 && (
                         <TableRow>
-                          <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
+                          <td colSpan='6' className='p-5 text-center'>
                             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                               <Icons.BulkDocuments size={50} />
                               {t("dashboardCardStatuses.notDocsFound")}

@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import Papa from "papaparse";
 import { Icons } from "@/assets/Icons";
-import { Button } from "react-bootstrap";
+import { Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@mui/material";
-import "./style.css";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
 import uploadFlowService from "@/services/uploadFlowService";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import { toast } from "react-toastify";
@@ -186,47 +185,57 @@ function PlaceBulkSignatories({ setActiveStep, setCompletedSteps }) {
   }, [data]);
 
   return (
-    <div className='container mt-3'>
+    <div className='container max-w-5xl mx-auto px-4 mt-4'>
       {isLoading && (
-        <div className='loader-overlay'>
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm'>
           <Loader />
         </div>
       )}
 
-      <div className='upload-csv' onClick={downloadSampleCSV}>
+      <div
+        className='flex items-center justify-center gap-2 p-3.5 rounded-md cursor-pointer bg-[var(--modern-primary,#6366f1)] text-white font-semibold hover:opacity-90 transition-opacity'
+        onClick={downloadSampleCSV}
+      >
         <Icons.DownloadAction size={22} />
-        <label className='m-0'>{t("uploadDocFlow.DownloadCSV")}</label>
+        <label className='m-0 cursor-pointer'>{t("uploadDocFlow.DownloadCSV")}</label>
       </div>
 
       {!fileName && (
-        <div {...getRootProps()} className='csv-drag-container'>
+        <div
+          {...getRootProps()}
+          className='border-2 border-dashed border-[var(--modern-border-strong)] rounded-lg p-10 bg-[var(--modern-card)] flex flex-col items-center justify-center gap-2 text-center mt-4 transition-colors hover:border-[var(--modern-primary)] cursor-pointer'
+        >
           <input {...getInputProps()} />
-          <Icons.UploadCSV size={45} color='var(--theme-color)' />
-          <label>
-            {t("uploadDocFlow.DragCsv")} <label className='drag-here'>{t("uploadDocFlow.here")}</label>
-          </label>
+          <Icons.UploadCSV size={45} color='var(--modern-primary,#6366f1)' />
+          <p className='text-base text-[var(--modern-text)] m-0'>
+            {t("uploadDocFlow.DragCsv")}{" "}
+            <span className='text-[var(--modern-primary,#6366f1)] underline mx-1 font-medium'>{t("uploadDocFlow.here")}</span>
+          </p>
         </div>
       )}
 
       {fileName && (
-        <div className='file-info'>
-          <label className='file-name'>
+        <div className='flex items-center justify-between p-3.5 rounded-md border border-[var(--modern-border)] bg-[var(--modern-raised)] mt-4'>
+          <label className='flex items-center gap-2 text-sm font-medium text-[var(--modern-text)] m-0'>
             <Icons.UploadCSV size={24} />
             {fileName}
           </label>
-          <Icons.DeleteAction size={22} className='delete-icon' onClick={handleDelete} />
+          <Icons.DeleteAction size={22} className='cursor-pointer text-[var(--modern-danger,#ef4444)] hover:opacity-80' onClick={handleDelete} />
         </div>
       )}
 
       {fileName && (
-        <Grid className='my-3'>
-          <div style={{ marginBottom: "5rem" }} className='py-3 p-3 container pendingtable'>
-            <TableContainer component={Paper} className='custom-table-scrollbar'>
+        <Grid className='my-4'>
+          <div className='mb-20 p-4 rounded-lg border border-[var(--modern-border)] bg-[var(--modern-card)]'>
+            <TableContainer component={Paper} className='border border-[var(--modern-border)] rounded-md bg-[var(--modern-card)] shadow-none'>
               <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
-                <TableHead className='customTableHead'>
+                <TableHead>
                   <TableRow>
                     {columns.map((column) => (
-                      <TableCell key={column.label} style={{ backgroundColor: "#eee" }} className='TableHeaderCell'>
+                      <TableCell
+                        key={column.label}
+                        className='bg-[var(--modern-raised)] text-[var(--modern-text)] border-b border-[var(--modern-border)] font-semibold'
+                      >
                         {column.label}
                       </TableCell>
                     ))}
@@ -234,35 +243,27 @@ function PlaceBulkSignatories({ setActiveStep, setCompletedSteps }) {
                 </TableHead>
                 <TableBody>
                   {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                    <TableRow key={index}>
-                      <TableCell className='TableCell'>{row.name}</TableCell>
-                      <TableCell className='TableCell'>{row.email}</TableCell>
-                      <TableCell className='TableCell'>
-                        <label
-                          style={{
-                            padding: "2px 12px",
-                            borderRadius: "12px",
-                            fontWeight: "bold",
-                            color: row.emailStatus === "Valid" ? "#19d157" : "#6c757d",
-                            border: `1px solid ${row.emailStatus === "Valid" ? "#19d157" : "#6c757d"}`,
-                          }}
+                    <TableRow key={index} className='hover:bg-[var(--modern-raised)]/50 transition-colors'>
+                      <TableCell className='text-[var(--modern-text)] border-b border-[var(--modern-border)]'>{row.name}</TableCell>
+                      <TableCell className='text-[var(--modern-text)] border-b border-[var(--modern-border)]'>{row.email}</TableCell>
+                      <TableCell className='border-b border-[var(--modern-border)]'>
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                            row.emailStatus === "Valid"
+                              ? "bg-[var(--modern-success,#16a34a)]/15 text-[var(--modern-success,#16a34a)] border border-[var(--modern-success,#16a34a)]/30"
+                              : "bg-[var(--modern-muted,#64748b)]/15 text-[var(--modern-muted,#64748b)] border border-[var(--modern-muted,#64748b)]/30"
+                          }`}
                         >
                           {row.emailStatus}
-                        </label>
+                        </span>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: "1rem",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
+            <div className='flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 text-sm text-[var(--modern-muted)]'>
+              <div>
                 {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.signatoriesof")} {data.length} {t("tablesLabel.signatories")}
               </div>
               <Stack spacing={2}>
@@ -288,13 +289,20 @@ function PlaceBulkSignatories({ setActiveStep, setCompletedSteps }) {
         itemIconSrc={Icons.Upload}
       />
 
-      <div className='fixed-button-container'>
-        <Button className='backBtn' id='hide_part_one' onClick={handleBack}>
+      <div className='fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-3 border-t border-[var(--modern-border)] bg-[var(--modern-card)]'>
+        <Button variant='outline' id='hide_part_one' onClick={handleBack} disabled={isLoading}>
           {t("uploadDocFlow.back")}
         </Button>
 
-        <Button className='Continue-btn' onClick={handleContinue} id='hide_part_one' disabled={!isFileValid}>
-          {t("uploadDocFlow.Continue")}
+        <Button variant='primary' onClick={handleContinue} id='hide_part_one' disabled={!isFileValid || isLoading}>
+          {isLoading ? (
+            <span className='flex items-center gap-2'>
+              <span className='inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' />
+              {t("uploadDocFlow.Continue")}
+            </span>
+          ) : (
+            t("uploadDocFlow.Continue")
+          )}
         </Button>
       </div>
     </div>

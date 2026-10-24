@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./FirstStep.css";
-import { Button, Col, Container, Form, Modal, Row, Dropdown, Accordion } from "react-bootstrap";
+import { Button, Col, Container, Form, Modal, Row, Dropdown, Accordion } from "@/Components/UI/shadcnCompat";
 import uploadFlowService from "@/services/uploadFlowService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +13,7 @@ import Loader from "@/Components/CommonModals/Loader/Loader";
 import { useDropzone } from "react-dropzone";
 import { Icons } from "@/assets/Icons";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
+import { uploadSourceCardClassName } from "@/Components/Common/CloudPickers/UploadSourceCard";
 
 const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
   const { t } = useTranslation();
@@ -384,53 +384,44 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
   return (
     <>
       <Container className='upload-container'>
-        <div style={{ marginTop: "1rem" }}>
-          <Row
-            className='justify-content-center m-0'
-            style={{
-              border: "3px dashed var(--theme-color)",
-              padding: "40px",
-              borderRadius: "10px",
-              background: "var(--bg-primary)",
-              gap: "5px",
-            }}
-            {...getRootProps()}
+        <div className='mt-4'>
+          <div
+            {...getRootProps({
+              className: "m-0 flex flex-col justify-center gap-[5px] rounded-lg border-[3px] border-dashed border-[var(--modern-border-strong)] bg-card p-10 transition-colors hover:border-primary",
+            })}
           >
-            <div className='drag-file'>
-              <Icons.UploadCloud size={35} color='var(--theme-color)' />
-              <label style={{ fontSize: "18px", fontWeight: "400" }}>{t("uploadDocFlow.easilyUpload")}</label>
+            <div className='my-4 flex flex-col items-center justify-center gap-4'>
+              <Icons.UploadCloud size={35} color='var(--modern-primary)' />
+              <label className='text-lg font-normal text-foreground'>{t("uploadDocFlow.easilyUpload")}</label>
             </div>
-            <Col md={3}>
-              <div className='uplad_box'>
-                <Form.Group controlId='file-input-add' className='file-upload_temp'>
+            <div className='grid grid-cols-1 gap-2 md:grid-cols-4'>
+              <div className='min-w-0'>
+                <Form.Group controlId='file-input-add' className='space-y-0'>
                   <div
                     {...getRootProps({
-                      className: "upload_trigger_bx",
+                      className: uploadSourceCardClassName,
                       onClick: (e) => {
                         e.stopPropagation();
                       },
                     })}
                   >
                     <Icons.Local />
-                    <Form.Label>{t("uploadDocFlow.local")}</Form.Label>
+                    <Form.Label className='m-0 cursor-pointer whitespace-nowrap text-sm font-medium'>{t("uploadDocFlow.local")}</Form.Label>
                     <Form.Control
                       {...getInputProps()}
-                      className='temp_file-input-additional'
+                      className='!sr-only'
                       type='file'
                       name='file'
                       accept='.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx'
                       multiple
-                      style={{ display: "none" }}
                     />
-                    <div className='upload_doc_part'></div>
                   </div>
                 </Form.Group>
               </div>
-            </Col>
 
             {user.isDropbox &&
               (userAccess.dropbox ? (
-                <Col md={3}>
+                <div className='min-w-0'>
                   <Dropbox
                     onFileSelected={handleDropboxFileSelected}
                     uploadedFiles={uploadedFiles}
@@ -443,12 +434,12 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                     setRegisterSignID={setRegisterSignID}
                     email={user.email}
                   />
-                </Col>
+                </div>
               ) : null)}
 
             {user.isGoogleDrive &&
               (userAccess.googDrive ? (
-                <Col md={3}>
+                <div className='min-w-0'>
                   <UploadFromGoogleDrive
                     uploadedFiles={uploadedFiles}
                     setUploadedFiles={setUploadedFiles}
@@ -460,12 +451,13 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                     setRegisterSignID={setRegisterSignID}
                     email={user.email}
                   />
-                </Col>
+                </div>
               ) : null)}
-          </Row>
+            </div>
+          </div>
 
           {uploadErrorMessage && (
-            <p className='error-message'>
+            <p className='flex items-start gap-2 text-sm italic text-[var(--modern-danger)]'>
               <Icons.AlertCircle className='mb-1 mx-2' />
               {uploadErrorMessage}
             </p>
@@ -478,24 +470,24 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
               </div>
             ))}
 
-          <div className='upload_file_box mt-3' id='upload_file_bx '>
+          <div className='mt-3 space-y-2' id='upload_file_bx '>
             {uploadedFiles.map((fileName, index, file) => (
-              <div key={index} className='uploaded-file'>
-                <p className='m-0 d-flex align-items-center gap-2'>
+              <div key={index} className='flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-card px-3 py-3 text-foreground'>
+                <p className='m-0 flex min-w-0 items-center gap-2 break-all text-sm'>
                   <Icons.PDFs size={22} />
                   {fileName}
                 </p>
 
-                <div className='d-flex align-items-center'>
+                <div className='flex shrink-0 items-center'>
                   <Dropdown>
                     <Dropdown.Toggle as={CustomToggle} />
                     <Dropdown.Menu>
-                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileview(masterDocIDs[index], fileName)}>
+                      <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(masterDocIDs[index], fileName)}>
                         <Icons.View size={18} />
                         {t("uploadDocFlow.view")}
                       </Dropdown.Item>
 
-                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleShowConfirmModal(masterDocIDs[index], index)}>
+                      <Dropdown.Item className='flex items-center gap-2' onClick={() => handleShowConfirmModal(masterDocIDs[index], index)}>
                         <Icons.DeleteAction size={18} />
                         {t("uploadDocFlow.delete")}
                       </Dropdown.Item>
@@ -508,18 +500,18 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
 
           {/* Document View */}
           <Modal show={showModal} onHide={handleCloseModal}>
-            <Modal.Header className='btn'>
+            <Modal.Header>
               <Modal.Title>{docName}</Modal.Title>
             </Modal.Header>
-            <Modal.Body className='d-flex'>
+            <Modal.Body className='flex'>
               <Col>
                 {isLoading ? (
-                  <div className='loader d-flex justify-content-center  align-items-center'>Loading...</div>
+                  <div className="flex min-h-24 items-center justify-center text-sm text-[var(--modern-muted,#64748b)]" role="status">Loading...</div>
                 ) : (
                   Object.values(documentPages).map((page, index) => (
-                    <div key={index} style={{ position: "relative" }}>
-                      <img src={page.pagesPath} alt={page.pagesName} style={{ width: "100%", height: "auto" }} />
-                      <div className='page-name-footer'>{page.pagesName}</div>
+                    <div key={index} className="relative">
+                      <img src={page.pagesPath} alt={page.pagesName} className="h-auto w-full" />
+                      <div className="border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] px-3 py-2 text-center text-sm font-semibold text-[var(--modern-text,#0f172a)]">{page.pagesName}</div>
                     </div>
                   ))
                 )}
@@ -533,20 +525,20 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
             <Accordion defaultActiveKey='0'>
               <Accordion.Item eventKey='0'>
                 <Accordion.Header>
-                  <div className='d-flex align-items-center gap-2'>
+                  <div className='flex items-center gap-2'>
                     <Icons.CraftDocument size={25} />
-                    <label style={{ fontSize: "20px", fontWeight: "500" }}>{t("uploadDocFlow.docInfo")}</label>
+                    <span className="text-lg font-medium">{t("uploadDocFlow.docInfo")}</span>
                   </div>
                 </Accordion.Header>
                 <Accordion.Body className='p-3'>
-                  <Row className='px-0'>
-                    <Col md={6}>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
                       <ReferenceNumber fetchedData={fetchedData} setFetchedData={setFetchedData} setReferenceNumber={setReferenceNumber} />
-                    </Col>
-                    <Col md={6}>
+                    </div>
+                    <div>
                       <Description fetchedData={fetchedData} setFetchedData={setFetchedData} setDescription={setDescription} />
-                    </Col>
-                  </Row>
+                    </div>
+                  </div>
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
@@ -554,14 +546,15 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
         )}
 
         {recipientErrorMessage && (
-          <p className='error-message'>
-            <Icons.AlertCircle className='mb-1 ms-5 me' />
+          <p className='flex items-start gap-2 text-sm text-[var(--modern-danger,#ef4444)]'>
+            <Icons.AlertCircle className='mt-0.5 h-4 w-4 shrink-0' />
             {recipientErrorMessage}
           </p>
         )}
 
-        <div className='step_button_holder mt-3'>
-          <Button className='mb-3 Continue-btn' id='hide_part_one' onClick={handleContinue} disabled={!isFileUploaded}>
+        <div className='mt-3 flex justify-end'>
+          <Button className='mb-3 min-h-10 px-5 font-semibold' id='hide_part_one' onClick={handleContinue} disabled={!isFileUploaded}>
+            {isLoading && <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" />}
             {t("uploadDocFlow.Continue")}
           </Button>
         </div>

@@ -1,10 +1,8 @@
 import React, { useEffect } from "react";
-import { Dropdown } from "react-bootstrap";
+import { Dropdown } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "../../assets/Icons/index";
-import NavDropdown from "react-bootstrap/NavDropdown";
-import "./LanguageSelector.css";
-
+import { NavDropdown as NavDropdown } from "@/Components/UI/shadcnCompat";
 function LanguageSelector() {
   const { t, i18n } = useTranslation();
 
@@ -25,15 +23,15 @@ function LanguageSelector() {
   }, []);
 
   return (
-    <Dropdown className='language-selector'>
-      <Dropdown.Toggle style={{ padding: "0px", border: "none" }} variant='none' id='dropdownMenuButton4'>
-        <div style={{ color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "5px" }}>
+    <Dropdown className='relative inline-flex items-center [&_.dropdown-toggle]:flex [&_.dropdown-toggle]:items-center [&_.dropdown-toggle]:leading-none [&_.dropdown-toggle::after]:hidden'>
+      <Dropdown.Toggle className='p-0 border-0 bg-transparent flex items-center cursor-pointer' variant='none' id='dropdownMenuButton4'>
+        <div className='text-[var(--modern-text)] flex items-center gap-1.5 text-sm whitespace-nowrap leading-none'>
           <Icons.Language size={20} />
           <span>{t("header.language")}</span>
         </div>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu style={{ left: "auto", right: 0, minWidth: "unset", padding: "0px" }}>
+      <Dropdown.Menu className='right-0 left-auto min-w-[120px] p-1 bg-[var(--modern-card)] border border-[var(--modern-border)] rounded-lg shadow-sm'>
         <Dropdown.Item onClick={() => changeLanguage("en")}>{t("languageSelector.english")}</Dropdown.Item>
         <NavDropdown.Divider />
         <Dropdown.Item onClick={() => changeLanguage("ar")}>{t("languageSelector.arabic")}</Dropdown.Item>

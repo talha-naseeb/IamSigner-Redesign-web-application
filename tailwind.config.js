@@ -6,7 +6,7 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   corePlugins: {
-    // Preserve existing Bootstrap base styles and avoid resetting global elements
+    // Keep legacy browser defaults stable while routes move onto the shared UI layer.
     preflight: false,
   },
   theme: {

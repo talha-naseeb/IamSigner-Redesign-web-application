@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Accordion, Dropdown } from "react-bootstrap";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination, Stack } from "@mui/material";
+import { Accordion, Dropdown } from "@/Components/UI/shadcnCompat";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination, Stack } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
 import { Icons } from "@/assets/Icons";
@@ -10,6 +10,7 @@ import DocStatusFilter from "./DocStatusFilter";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import documentService from "@/services/documentService";
 import userService from "@/services/userService";
+import "../CompanyAdminPanel/style.css";
 
 function UserDocReport() {
   const { t } = useTranslation();
@@ -222,27 +223,27 @@ function UserDocReport() {
         </div>
       )}
       {user.AccountType === "B" && (user.RoleID === 1 || user.RoleID === 4) && userAccess.remainingDays >= 0 ? (
-        <div className='my-3 container'>
-          <Accordion defaultActiveKey='0'>
+        <div className='my-3 container users-report-page user-document-report'>
+          <Accordion defaultActiveKey='0' className='users-report-accordion'>
             <Accordion.Item eventKey='0'>
               <Accordion.Header>
                 <div className='d-flex align-items-center justify-content-between w-100'>
                   <div className='d-flex align-items-center gap-3'>
                     <Icons.Users size={30} />
-                    <label style={{ fontSize: "20px", fontWeight: "500" }}>{t("createTeam.userDocStatus")}</label>
+                    <label className='users-report-title'>{t("createTeam.userDocStatus")}</label>
                   </div>
                 </div>
               </Accordion.Header>
-              <Accordion.Body>
-                <div className='d-flex justify-content-between align-items-center mb-3 flex-wrap'>
+              <Accordion.Body className='users-report-accordion-body'>
+                <div className='users-report-toolbar'>
                   {showCompanyName && (
-                    <div className='text-muted'>
+                    <div className='users-report-company'>
                       <span className='fw-semibold'>{showCompanyName}</span> {t("createTeam.userDocs")}
                     </div>
                   )}
-                  <div className='d-flex align-items-center flex-wrap'>
+                  <div className='users-report-actions'>
                     <Dropdown>
-                      <Dropdown.Toggle variant='success' size='sm' className='d-flex align-items-center gap-2'>
+                      <Dropdown.Toggle variant='success' size='sm' className='users-report-export-button d-flex align-items-center gap-2'>
                         <Icons.Download size={14} />
                         {t("createTeam.Export")}
                       </Dropdown.Toggle>
@@ -259,7 +260,7 @@ function UserDocReport() {
                         </Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
-                    <div className='search-filters-container'>
+                      <div className='search-filters-container doc-report-filter-container'>
                       <DocStatusFilter fullName={fullName} emailID={emailID} setFullName={setFullName} setEmailID={setEmailID} handleSearch={handleUserSearch} clearSearch={clearUserSearch} />
                     </div>
                   </div>
@@ -271,18 +272,18 @@ function UserDocReport() {
                       <div>
                         <TableContainer
                           component={Paper}
-                          className='custom-table-scrollbar'
+                          className='custom-table-scrollbar report-table-wrap'
                           style={{
                             maxWidth: "100%",
                             overflowX: "auto",
                             height: "57vh",
                           }}
                         >
-                          <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
+                          <Table stickyHeader className='report-table'>
                             <TableHead>
                               <TableRow>
                                 {columns.map((column) => (
-                                  <TableCell key={column.label} style={{ backgroundColor: "#F0F3F4" }} className='TableHeaderCell'>
+                                    <TableCell key={column.label} className='TableHeaderCell'>
                                     {column.label}
                                   </TableCell>
                                 ))}
@@ -292,7 +293,7 @@ function UserDocReport() {
                               {searchResults.length === 0 && (
                                 <TableRow>
                                   <td colSpan={columns.length} className='p-5 text-center'>
-                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                    <div className='report-empty-content'>
                                       <Icons.Users size={50} />
                                       {t("createTeam.noUserFound")}
                                     </div>
@@ -306,37 +307,37 @@ function UserDocReport() {
                                   <TableCell className='TableCell'>{row.fullName}</TableCell>
                                   <TableCell className='TableCell'>{row.emailID}</TableCell>
                                   <TableCell className='TableCell'>
-                                    <span className='docsCounts' style={{ border: "1px solid #0d6efd", color: "#0d6efd" }}>
+                                    <span className='docsCounts report-count report-count--draft'>
                                       {row.draft}
                                     </span>
                                   </TableCell>
                                   <TableCell className='TableCell'>
-                                    <span className='docsCounts' style={{ border: "1px solid #19d157", color: "#19d157" }}>
+                                    <span className='docsCounts report-count report-count--completed'>
                                       {row.completed}
                                     </span>
                                   </TableCell>
                                   <TableCell className='TableCell'>
-                                    <span className='docsCounts' style={{ border: "1px solid #f9ba05", color: "#f9ba05" }}>
+                                    <span className='docsCounts report-count report-count--pending'>
                                       {row.pending}
                                     </span>
                                   </TableCell>
                                   <TableCell className='TableCell'>
-                                    <span className='docsCounts' style={{ border: "1px solid #6cc4f2", color: "#6cc4f2" }}>
+                                    <span className='docsCounts report-count report-count--shared'>
                                       {row.shared}
                                     </span>
                                   </TableCell>
                                   <TableCell className='TableCell'>
-                                    <span className='docsCounts' style={{ border: "1px solid #e32626", color: "#e32626" }}>
+                                    <span className='docsCounts report-count report-count--declined'>
                                       {row.declined}
                                     </span>
                                   </TableCell>
                                   <TableCell className='TableCell'>
-                                    <span className='docsCounts' style={{ border: "1px solid rgb(188, 196, 200)", color: "rgb(188, 196, 200)" }}>
+                                    <span className='docsCounts report-count report-count--inactive'>
                                       {row.inactive}
                                     </span>
                                   </TableCell>
                                   <TableCell className='TableCell'>
-                                    <span className='docsCounts' style={{ border: "1px solid rgb(122, 229, 244)", color: "rgb(122, 229, 244)" }}>
+                                    <span className='docsCounts report-count report-count--recalled'>
                                       {row.recalled}
                                     </span>
                                   </TableCell>
@@ -347,7 +348,7 @@ function UserDocReport() {
                         </TableContainer>
 
                         {/* Pagination */}
-                        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
+                        <div className='users-report-pagination'>
                           <div className='showHideNoDocs'>
                             {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, searchResults.length)} {t("tablesLabel.existing")} {searchResults.length} {t("tablesLabel.existingUser")}
                           </div>

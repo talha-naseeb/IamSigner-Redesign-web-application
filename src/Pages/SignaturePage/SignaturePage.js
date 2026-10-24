@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import verificationService from "@/services/verificationService";
-import "./SignaturePage.css";
-import { Button, Col, Dropdown, DropdownButton, Form, Modal, Row } from "react-bootstrap";
+import { Button, Col, Dropdown, DropdownButton, Form, Modal, Row } from "@/Components/UI/shadcnCompat";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Comments from "@/Components/Comments/Comments";

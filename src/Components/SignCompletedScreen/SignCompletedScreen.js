@@ -1,9 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import PATHS from "@/routes/paths";
-import "@/Pages/SignedMessage/SignedMessage.css";
 import thankyouIcon from "@/assets/images/thankyouIcon.svg";
 
 const SignCompletedScreen = () => {
@@ -21,14 +20,25 @@ const SignCompletedScreen = () => {
   };
 
   return (
-    <div className='signed-message-container'>
-      <div className='message-box d-flex flex-column justify-content-center align-items-center'>
-        <img src={thankyouIcon} alt='signed' className='success-icon' />
-        <h4 style={{ color: "#24B032", marginTop: "5px" }}>{t("signCompletedScreen.title")}</h4>
-        <div className='mt-3'>
-          <p className='m-0'>{t("signCompletedScreen.message")}</p>
+    <div className='min-h-screen w-full flex items-center justify-center p-4 bg-[var(--modern-bg,#f8fafc)] text-[var(--modern-text,#0f172a)]'>
+      <div className='w-full max-w-md rounded-2xl border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] p-8 sm:p-10 flex flex-col items-center text-center shadow-none'>
+        <div className='mb-4 flex items-center justify-center'>
+          <img src={thankyouIcon} alt='signed' className='h-16 w-16 object-contain' />
         </div>
-        <Button className='ImageDoneBtn mt-4' onClick={handleGoToLogin}>
+        <h1 className='text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 mb-3'>
+          {t("signCompletedScreen.title")}
+        </h1>
+        <div className='mb-6'>
+          <p className='text-sm text-[var(--modern-muted,#64748b)] leading-relaxed m-0'>
+            {t("signCompletedScreen.message")}
+          </p>
+        </div>
+        <Button
+          variant='primary'
+          size='lg'
+          className='w-full justify-center font-medium shadow-none'
+          onClick={handleGoToLogin}
+        >
           {t("signCompletedScreen.goToLogin")}
         </Button>
       </div>

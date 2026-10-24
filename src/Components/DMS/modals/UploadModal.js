@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { startOfToday } from "date-fns";
-import { Modal, Button, Form } from "react-bootstrap";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { Modal, Button, Form } from "@/Components/UI/shadcnCompat";
+import { CloudUploadIcon as CloudUploadIcon } from "@/Components/UI/iconCompat";
 import { useTranslation } from "react-i18next";
 import DateRangePicker, { formatPickerDate } from "@/Components/Common/DateRangePicker/DateRangePicker";
 import TagsInput from "../components/TagsInput";

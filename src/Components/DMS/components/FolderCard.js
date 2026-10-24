@@ -1,4 +1,4 @@
-import { Dropdown } from "react-bootstrap";
+import { Dropdown } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons/index";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";

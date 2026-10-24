@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@mui/material";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { Dropdown, Modal } from "react-bootstrap";
+import { Dropdown, Modal } from "@/Components/UI/shadcnCompat";
 import { useUser } from "@/Context/UserContext";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import DocumentSearchFilters from "@/Components/CommonModals/SearchFilters/DocSearchFilter";
@@ -22,7 +22,6 @@ import { Icons } from "@/assets/Icons";
 import dashboardService from "@/services/dashboardService";
 import documentService from "@/services/documentService";
 import Loader from "@/Components/CommonModals/Loader/Loader";
-import "./style.css";
 
 const PendingWithOthers = () => {
   const { t } = useTranslation();
@@ -310,7 +309,7 @@ const PendingWithOthers = () => {
           )}
 
           <div className='py-3 p-3 container pendingtable '>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div className="document-status-toolbar">
               <label className='fs-16'>{t("menuButtons.pendingWithOthers")}</label>
               <div className='search-filters-container'>
                 <DocumentSearchFilters
@@ -355,7 +354,7 @@ const PendingWithOthers = () => {
                 <TableBody>
                   {searchResults.length === 0 && (
                     <TableRow>
-                      <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
+                      <td colSpan='6' className='p-5 text-center'>
                         <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                           <Icons.BulkDocuments size={50} />
                           {t("dashboardCardStatuses.notDocsFound")}

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form } from "@/Components/UI/shadcnCompat";
 import "./style.css";
-import Dropdown from "react-bootstrap/Dropdown";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination, Stack } from "@mui/material";
+import { Dropdown as Dropdown } from "@/Components/UI/shadcnCompat";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination, Stack } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import CreateTeamForm from "./CreateTeamForm";
 import { Icons } from "@/assets/Icons";
 import { useUser } from "@/Context/UserContext";
-import Offcanvas from "react-bootstrap/Offcanvas";
+import { Offcanvas as Offcanvas } from "@/Components/UI/shadcnCompat";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import UserLisence from "@/Components/UserLisence/UserLisence";
 
@@ -448,7 +448,7 @@ function CreateTeam() {
                     <CreateTeamForm fetchTeam={fetchTeamMembers} />
                   </div>
 
-                  <div className='py-3 p-3 container pendingtable'>
+                  <div className='py-3 p-3 pendingtable'>
                     <Grid>
                       <Grid item xs={12}>
                         <div>
@@ -484,11 +484,11 @@ function CreateTeam() {
                               height: "60vh",
                             }}
                           >
-                            <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
+                            <Table stickyHeader className='team-members-table-content'>
                               <TableHead className=''>
                                 <TableRow>
                                   {columns.map((column) => (
-                                    <TableCell key={column.label} style={{ backgroundColor: "#F0F3F4" }} className='TableHeaderCell'>
+                                    <TableCell key={column.label} className='TableHeaderCell'>
                                       {column.label}
                                     </TableCell>
                                   ))}
@@ -497,8 +497,8 @@ function CreateTeam() {
                               <TableBody>
                                 {searchResults.length === 0 && (
                                   <TableRow>
-                                    <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color)" }}>
-                                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                    <td colSpan='6' className='team-empty-state p-5 text-center'>
+                                      <div className='report-empty-content'>
                                         <Icons.Users size={50} />
                                         {t("tablesLabel.notTeamFound")}
                                       </div>
@@ -515,15 +515,7 @@ function CreateTeam() {
                                     <TableCell className='TableCell'>{row.department}</TableCell>
 
                                     <TableCell className='TableCell'>
-                                      <label
-                                        style={{
-                                          padding: "2px 12px",
-                                          borderRadius: "12px",
-                                          color: row.isActive ? "#19d157" : "#6c757d",
-                                          border: `1px solid ${row.isActive ? "#19d157" : "#6c757d"}`,
-                                          fontWeight: "bold",
-                                        }}
-                                      >
+                                    <label className={`team-status-pill ${row.isActive ? "is-active" : "is-inactive"}`}>
                                         {row.isActive ? "Active" : "Inactive"}
                                       </label>
                                     </TableCell>
@@ -538,7 +530,7 @@ function CreateTeam() {
                                             </Dropdown.Item>
                                           ) : (
                                             <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleActiveAgain(row.emailID, row.isActive)}>
-                                              <Icons.Active size={20} color='#19d157' />
+                                              <Icons.Active size={20} color='var(--modern-success, #16a34a)' />
                                               {t("createTeam.activateUser")}
                                             </Dropdown.Item>
                                           )}
@@ -589,11 +581,11 @@ function CreateTeam() {
         </>
       )}
       {/* Update user  */}
-      <Offcanvas show={showUpdateModal} onHide={handleCloseUpdateModal} placement={document.documentElement.dir === "rtl" ? "start" : "end"} scroll={true}>
+      <Offcanvas show={showUpdateModal} className='team-form-panel' onHide={handleCloseUpdateModal} placement={document.documentElement.dir === "rtl" ? "start" : "end"} scroll={true}>
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>{t("createTeam.updateUser")}</Offcanvas.Title>
         </Offcanvas.Header>
-        <hr style={{ margin: " auto 0", borderColor: "black" }} />
+        <hr className='team-form-divider' />
         <Offcanvas.Body>
           <Form>
             <Form.Group controlId='updateEmailID'>
@@ -658,26 +650,14 @@ function CreateTeam() {
                 country={"sa"}
                 value={updatePhoneNumber}
                 onChange={handleUpdatePhoneChange}
-                inputStyle={{
-                  width: "100%",
-                  height: "38px",
-                  fontSize: "16px",
-                  border: "1px solid #ced4da",
-                  borderRadius: "0.375rem",
-                }}
-                containerStyle={{
-                  width: "100%",
-                }}
-                buttonStyle={{
-                  border: "1px solid #ced4da",
-                  borderRight: "none",
-                  borderRadius: "0.375rem 0 0 0.375rem",
-                }}
+                containerClass='team-phone-control'
+                inputClass='team-phone-input'
+                buttonClass='team-phone-country'
               />
               {errors.MobileNumber && <div className='text-danger'>{errors.MobileNumber}</div>}
             </Form.Group>
 
-            <div className='newComment d-flex align-items-center justify-content-between w-100 p-3 py-4'>
+            <div className='team-form-actions'>
               <Button variant='none' className='modalCancelButton ' onClick={handleCloseUpdateModal}>
                 {t("createTeam.cancel")}
               </Button>
@@ -690,13 +670,8 @@ function CreateTeam() {
       </Offcanvas>
 
       {/* deactivate User */}
-      <Modal show={showDeactivateModal} backdrop='static' keyboard={false} onHide={closeDeactivateModal} dialogClassName='custom-modal-width'>
-        <Modal.Header
-          closeButton
-          style={{
-            padding: "20px 24px",
-          }}
-        >
+      <Modal show={showDeactivateModal} className='team-confirm-dialog team-confirm-dialog--deactivate' backdrop='static' keyboard={false} onHide={closeDeactivateModal} dialogClassName='custom-modal-width'>
+        <Modal.Header closeButton>
           <Modal.Title>
             <div className='header-content'>
               <div className='header-icon'>
@@ -710,44 +685,14 @@ function CreateTeam() {
         </Modal.Header>
         <Modal.Body className='px-4 py-3'>
           <div>
-            <p
-              style={{
-                fontSize: "16px",
-                lineHeight: "1.6",
-                color: "var(--primary-color)",
-              }}
-            >
+            <p className='team-confirm-copy'>
               {t("createTeam.confirmDeactivate")}
             </p>
-            <div
-              style={{
-                backgroundColor: "var(--bg-primary)",
-                padding: "16px",
-                borderRadius: "8px",
-                border: "1px solid var(--border-color)",
-                color: "var(--text-secondary)",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "14px",
-                  color: "var(--text-secondary)",
-                  marginBottom: "6px",
-                  textTransform: "uppercase",
-                  fontWeight: "500",
-                  letterSpacing: "0.5px",
-                }}
-              >
+            <div className='team-confirm-email'>
+              <div className='team-confirm-email-label'>
                 {t("createTeam.email")}
               </div>
-              <div
-                style={{
-                  fontSize: "16px",
-                  color: "var(--text-secondary)",
-                  fontWeight: "600",
-                  wordBreak: "break-all",
-                }}
-              >
+              <div className='team-confirm-email-value'>
                 {selectedEmail}
               </div>
             </div>
@@ -764,11 +709,11 @@ function CreateTeam() {
       </Modal>
 
       {/* activate user */}
-      <Modal show={showActiveModal} backdrop='static' keyboard={false} onHide={closeActiveModal} dialogClassName='custom-modal-width'>
+      <Modal show={showActiveModal} className='team-confirm-dialog team-confirm-dialog--activate' backdrop='static' keyboard={false} onHide={closeActiveModal} dialogClassName='custom-modal-width'>
         <Modal.Header closeButton>
           <div className='header-content'>
             <div className='header-icon'>
-              <Icons.Active size={25} color='#19d157' />
+              <Icons.Active size={25} color='var(--modern-success, #16a34a)' />
             </div>
             <div className='header-text'>
               <Modal.Title>{t("AuthIntegration.Confirmation")}</Modal.Title>
@@ -778,34 +723,11 @@ function CreateTeam() {
         <Modal.Body className='px-4 py-3'>
           <div>
             <p>{t("createTeam.confirmActivate")}</p>
-            <div
-              style={{
-                padding: "16px",
-                borderRadius: "8px",
-                border: "1px solid var(--border-color)",
-                backgroundColor: "var(--bg-primary)",
-                marginBottom: "16px",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "14px",
-                  marginBottom: "6px",
-                  textTransform: "uppercase",
-                  fontWeight: "500",
-                  letterSpacing: "0.5px",
-                }}
-              >
+            <div className='team-confirm-email'>
+              <div className='team-confirm-email-label'>
                 {t("createTeam.email")}
               </div>
-              <div
-                style={{
-                  fontSize: "16px",
-                  color: "var(--text-secondary)",
-                  fontWeight: "600",
-                  wordBreak: "break-all",
-                }}
-              >
+              <div className='team-confirm-email-value'>
                 {selectedEmail}
               </div>
             </div>

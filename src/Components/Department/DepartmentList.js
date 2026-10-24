@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@mui/material";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { Icons } from "@/assets/Icons";
 import CreateDepartment from "./CreateDepartment";
 import UpdateDepartment from "./UpdateDepartment";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import { useParams } from "react-router-dom";
-import { Button, Dropdown, Modal } from "react-bootstrap";
+import { Button, Dropdown, Modal } from "@/Components/UI/shadcnCompat";
 import DepartmentSearchFilters from "./DepartmentSearchFilters";
 import UserLisence from "@/Components/UserLisence/UserLisence";
 import { useUser } from "@/Context/UserContext";
 import userService from "@/services/userService";
+import "@/Components/CreateTeam/style.css";
 
 const DepartmentList = () => {
   const { t } = useTranslation();
@@ -194,7 +195,7 @@ const DepartmentList = () => {
         <>
           {userAccess.teams === true ? (
             <>
-              <Grid className='container mt-3'>
+              <Grid className='department-admin-page container mt-3'>
                 {isLoading && (
                   <div className='loader-overlay'>
                     <Loader />
@@ -205,8 +206,8 @@ const DepartmentList = () => {
                   <CreateDepartment accountID={accountId} fetchDepartments={fetchDepartments} showOffcanvas={showDepartCanvas} setShowOffcanvas={setShowDepartCanvas} />
                 </div>
 
-                <div className='py-3 p-3 mt-3 container pendingtable'>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "5px" }}>
+                <div className='py-3 p-3 mt-3 pendingtable department-list-surface'>
+                  <div className='document-status-toolbar'>
                     <h4>{t("departmentList.departmentListTitle")}</h4>
                     <div className='search-filters-container'>
                       <DepartmentSearchFilters
@@ -235,7 +236,7 @@ const DepartmentList = () => {
                       <TableHead>
                         <TableRow>
                           {columns.map((column) => (
-                            <TableCell key={column.label} style={{ backgroundColor: "#F0F3F4" }} className='TableHeaderCell'>
+                            <TableCell key={column.label} className='TableHeaderCell'>
                               {column.label}
                             </TableCell>
                           ))}
@@ -244,7 +245,7 @@ const DepartmentList = () => {
                       <TableBody>
                         {departments.length === 0 ? (
                           <TableRow>
-                            <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
+                            <td colSpan='6' className='p-5 text-center'>
                               <Icons.Department size={50} />
                               <p>{t("departmentList.noDepartmentsFound")}</p>
                             </td>
@@ -264,15 +265,7 @@ const DepartmentList = () => {
                               </TableCell>
                               <TableCell className='TableCell'>{department.createdOnFormatted ? formatDate(department.createdOnFormatted) : ""}</TableCell>
                               <TableCell className='TableCell'>
-                                <label
-                                  style={{
-                                    padding: "2px 12px",
-                                    borderRadius: "12px",
-                                    color: department.isActive ? "#19d157" : "#6c757d",
-                                    border: `1px solid ${department.isActive ? "#19d157" : "#6c757d"}`,
-                                    fontWeight: "bold",
-                                  }}
-                                >
+                                <label className={`department-status-pill ${department.isActive ? "is-active" : "is-inactive"}`}>
                                   {department.isActive ? "Active" : "Inactive"}
                                 </label>
                               </TableCell>
@@ -289,7 +282,7 @@ const DepartmentList = () => {
                                       </Dropdown.Item>
                                     ) : (
                                       <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleOpenConfirmModal(department)}>
-                                        <Icons.Active size={20} color='#19d157' />
+                                        <Icons.Active size={20} color='var(--modern-success, #16a34a)' />
                                         {t("departmentList.activate")}
                                       </Dropdown.Item>
                                     )}
@@ -308,7 +301,7 @@ const DepartmentList = () => {
                   </TableContainer>
 
                   {/* Pagination */}
-                  <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
+                  <div className='department-pagination-row'>
                     <div className='showHideNoDocs'>
                       {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, departments.length)} {t("departmentList.departmentof")} {departments.length} {t("departmentList.department")}
                     </div>
@@ -332,7 +325,7 @@ const DepartmentList = () => {
                 <Modal.Header>
                   <Modal.Title>
                     <div className='header-content'>
-                      <div className='header-icon'>{templateToToggle && templateToToggle.isActive ? <Icons.InactiveAction size={25} /> : <Icons.Active size={25} color='#19d157' />}</div>
+                      <div className='header-icon'>{templateToToggle && templateToToggle.isActive ? <Icons.InactiveAction size={25} /> : <Icons.Active size={25} color='var(--modern-success, #16a34a)' />}</div>
 
                       <div className='header-text'>
                         <Modal.Title>{t("emailTemplates.Confirmation")}</Modal.Title>

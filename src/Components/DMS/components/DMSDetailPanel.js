@@ -1,7 +1,7 @@
-import { Dropdown, Offcanvas, Spinner } from "react-bootstrap";
-import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
-import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
-import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
+import { Dropdown, Offcanvas, Spinner } from "@/Components/UI/shadcnCompat";
+import { InsertDriveFileOutlinedIcon as InsertDriveFileOutlinedIcon } from "@/Components/UI/iconCompat";
+import { PeopleOutlineIcon as PeopleOutlineIcon } from "@/Components/UI/iconCompat";
+import { PersonAddAltIcon as PersonAddAltIcon } from "@/Components/UI/iconCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons/index";
 import FileTypeIcon from "./FileTypeIcon";

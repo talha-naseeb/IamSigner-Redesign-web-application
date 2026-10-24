@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import "./FirstStep.css";
-import { Button, Col, Container, Form, Modal, Row, Dropdown } from "react-bootstrap";
+import { Button, Col, Container, Form, Modal, Row, Dropdown } from "@/Components/UI/shadcnCompat";
 import uploadFlowService from "@/services/uploadFlowService";
 import templateService from "@/services/templateService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { DropboxPicker as Dropbox, GoogleDrivePicker as UploadFromGoogleDrive } from "@/Components/Common/CloudPickers";
+import { uploadSourceCardClassName } from "@/Components/Common/CloudPickers/UploadSourceCard";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
 import { Icons } from "@/assets/Icons";
@@ -287,31 +287,31 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
   return (
     <>
       <Container className='uploadDoc-container'>
-        <div style={{ padding: "15px", backgroundColor: "var(--bg-primary)", borderRadius: "10px", marginTop: "1rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <div className="mt-4 rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] p-4">
+          <div className="flex items-center gap-2">
             <Icons.DocumentReport size={25} />
-            <label style={{ fontSize: "20px", fontWeight: "500" }}>{t("templateUploadFlow.templateInfo")}</label>
+            <span className="text-lg font-medium text-[var(--modern-text,#0f172a)]">{t("templateUploadFlow.templateInfo")}</span>
           </div>
 
-          <Row className='d-flex flex-column my-4 gap-3'>
-            <Col md={6}>
-              <Form.Group controlId='templateName' className=' mx-2'>
+          <div className="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <Form.Group controlId='templateName' className='space-y-2'>
                 <Form.Label>
-                  {t("templateUploadFlow.templateName")} <span className='required mx-1'>*</span>
+                  {t("templateUploadFlow.templateName")} <span className="mx-1 text-[var(--modern-danger,#ef4444)]">*</span>
                 </Form.Label>
                 <Form.Control type='text' value={templateName} onChange={(e) => setTemplateName(e.target.value)} placeholder={t("templateUploadFlow.enterTemplateName")} />
               </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group controlId='templateName' className='mx-2'>
-                <Form.Label>
+            </div>
+            <div>
+              <fieldset className="space-y-2">
+                <legend className="text-sm font-medium text-[var(--modern-text,#0f172a)]">
                   {t("templateUploadFlow.templateScope")}
-                  <span className='required mx-1'>*</span>
-                </Form.Label>
-                <div>
-                  <div className='form-check form-check-inline particles-checkbox-container'>
+                  <span className="mx-1 text-[var(--modern-danger,#ef4444)]">*</span>
+                </legend>
+                <div className="flex flex-wrap gap-4">
+                  <div className="inline-flex items-center gap-2">
                     <input
-                      className='temp-particles-checkbox'
+                      className="h-4 w-4 accent-[var(--modern-primary,#6366f1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--modern-primary,#6366f1)]"
                       type='radio'
                       name='templateScope'
                       id='individual'
@@ -321,13 +321,13 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                         setTemplateScope(e.target.value);
                       }}
                     />
-                    <label className='mx-2' htmlFor='individual'>
+                    <label className="text-sm text-[var(--modern-text,#0f172a)]" htmlFor='individual'>
                       {t("templateUploadFlow.Individual")}
                     </label>
                   </div>
-                  <div className='form-check form-check-inline particles-checkbox-container'>
+                  <div className="inline-flex items-center gap-2">
                     <input
-                      className='temp-particles-checkbox'
+                      className="h-4 w-4 accent-[var(--modern-primary,#6366f1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--modern-primary,#6366f1)]"
                       type='radio'
                       name='templateScope'
                       id='business'
@@ -337,65 +337,53 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                         setTemplateScope(e.target.value);
                       }}
                     />
-                    <label className='mx-2' htmlFor='business'>
+                    <label className="text-sm text-[var(--modern-text,#0f172a)]" htmlFor='business'>
                       {t("templateUploadFlow.Company")}
                     </label>
                   </div>
                 </div>
-              </Form.Group>
-            </Col>
-          </Row>
+              </fieldset>
+            </div>
+          </div>
         </div>
 
-        <div style={{ marginTop: "1rem" }}>
+        <div className="mt-4">
           <>
-            <Row
-              className='justify-content-center m-0'
-              style={{
-                border: "3px dashed var(--theme-color)",
-                padding: "40px",
-                borderRadius: "10px",
-                background: "var(--bg-primary)",
-                gap: "5px",
-              }}
-              {...getRootProps()}
+            <div
+              {...getRootProps({
+                className:
+                  "m-0 flex flex-col justify-center gap-3 rounded-lg border-[3px] border-dashed border-[var(--modern-border-strong,#cbd5e1)] bg-[var(--modern-card,#fff)] p-6 text-[var(--modern-text,#0f172a)] transition-colors hover:border-[var(--modern-primary,#6366f1)] md:p-10",
+              })}
             >
-              <div className='drag-file'>
-                <Icons.UploadCloud size={35} color='var(--theme-color)' />
-                <label style={{ fontSize: "18px", fontWeight: "400" }}>{t("uploadDocFlow.easilyUpload")}</label>
+              <div className="flex items-center justify-center gap-3 text-center text-base text-[var(--modern-muted,#64748b)]">
+                <Icons.UploadCloud size={35} className="text-[var(--modern-primary,#6366f1)]" />
+                <label className="font-normal">{t("uploadDocFlow.easilyUpload")}</label>
               </div>
 
-              <Col md={3}>
-                <div className='uplad_box'>
-                  <Form.Group controlId='file-input-add' className='file-upload_temp'>
-                    <div
-                      {...getRootProps({
-                        className: "upload_trigger_bx",
-                        onClick: (e) => {
-                          e.stopPropagation();
-                        },
-                      })}
-                    >
-                      <Icons.Local />
-                      <Form.Label>{t("uploadDocFlow.local")}</Form.Label>
-                      <Form.Control
-                        {...getInputProps()}
-                        className='temp_file-input-additional'
-                        type='file'
-                        name='file'
-                        accept='.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx'
-                        multiple
-                        style={{ display: "none" }}
-                      />
-                      <div className='upload_doc_part'></div>
-                    </div>
-                  </Form.Group>
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+                <div
+                  {...getRootProps({
+                    className: uploadSourceCardClassName,
+                    onClick: (e) => {
+                      e.stopPropagation();
+                    },
+                  })}
+                >
+                  <Icons.Local />
+                  <span className="text-sm font-medium">{t("uploadDocFlow.local")}</span>
+                  <input
+                    {...getInputProps()}
+                    className="sr-only"
+                    type="file"
+                    name="file"
+                    accept=".pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx"
+                    multiple
+                  />
                 </div>
-              </Col>
 
               {user.isDropbox &&
                 (userAccess.dropbox ? (
-                  <Col md={3}>
+                  <div className="w-full">
                     <Dropbox
                       onFileSelected={handleDropboxFileSelected}
                       uploadedFiles={uploadedFiles}
@@ -409,12 +397,12 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                       templateScope={templateScope}
                       templateName={templateName}
                     />
-                  </Col>
+                  </div>
                 ) : null)}
 
               {user.isGoogleDrive &&
                 (userAccess.googDrive ? (
-                  <Col md={3}>
+                  <div className="w-full">
                     <UploadFromGoogleDrive
                       uploadedFiles={uploadedFiles}
                       setUploadedFiles={setUploadedFiles}
@@ -427,16 +415,17 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                       templateScope={templateScope}
                       templateName={templateName}
                     />
-                  </Col>
+                  </div>
                 ) : null)}
 
               {uploadErrorMessage && (
-                <p className='error-message'>
-                  <Icons.AlertCircle className='mb-1 mx-2' />
+                <p className="col-span-full flex items-start gap-2 text-sm text-[var(--modern-danger,#ef4444)]">
+                  <Icons.AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                   {uploadErrorMessage}
                 </p>
               )}
-            </Row>
+              </div>
+            </div>
 
             {isLoading && (
               <div className='loader-overlay'>
@@ -444,27 +433,29 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
               </div>
             )}
 
-            <div className='upload_file_box mt-3' id='upload_file_bx '>
+            <div className='mt-3 space-y-2' id='upload_file_bx '>
               {uploadedFiles.map((fileName, index, file) => (
-                <div key={index} className='uploaded-file '>
-                  <p className='m-0 d-flex align-items-center gap-2'>
+                <div
+                  key={index}
+                  className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-md border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] px-3 py-2 text-[var(--modern-text,#0f172a)]"
+                >
+                  <p className='m-0 flex min-w-0 items-center gap-2 break-words text-sm'>
                     <Icons.PDFs />
                     {fileName}
                   </p>
 
                   <Dropdown>
-                    <Dropdown.Toggle as={CustomToggle}>
-                      <Dropdown.Menu>
-                        <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileview(masterDocIDs[index], fileName)}>
-                          <Icons.View size={20} />
-                          {t("uploadDocFlow.view")}
-                        </Dropdown.Item>
-                        <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleShowConfirmModal(masterDocIDs[index], index)}>
-                          <Icons.DeleteAction size={18} />
-                          {t("uploadDocFlow.delete")}
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown.Toggle>
+                    <Dropdown.Toggle as={CustomToggle} />
+                    <Dropdown.Menu>
+                      <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(masterDocIDs[index], fileName)}>
+                        <Icons.View size={20} />
+                        {t("uploadDocFlow.view")}
+                      </Dropdown.Item>
+                      <Dropdown.Item className='flex items-center gap-2' onClick={() => handleShowConfirmModal(masterDocIDs[index], index)}>
+                        <Icons.DeleteAction size={18} />
+                        {t("uploadDocFlow.delete")}
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
                   </Dropdown>
                 </div>
               ))}
@@ -486,18 +477,18 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
             />
 
             <Modal show={showModal} onHide={handleCloseModal}>
-              <Modal.Header closeButton className='btn'>
+              <Modal.Header closeButton>
                 <Modal.Title>{docName}</Modal.Title>
               </Modal.Header>
-              <Modal.Body className='d-flex'>
+              <Modal.Body className='flex'>
                 <Col>
                   {isLoading ? (
-                    <div className='loader d-flex justify-content-center  align-items-center'>Loading...</div>
+                    <div className="flex min-h-24 items-center justify-center text-sm text-[var(--modern-muted,#64748b)]" role="status">Loading...</div>
                   ) : (
                     Object.values(documentPages).map((page, index) => (
-                      <div key={index} style={{ position: "relative" }}>
-                        <img src={page.pagesPath} alt={page.pagesName} style={{ width: "100%", height: "auto" }} />
-                        <div className='page-name-footer'>{page.pagesName}</div>
+                      <div key={index} className="relative">
+                        <img src={page.pagesPath} alt={page.pagesName} className="h-auto w-full" />
+                        <div className="border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] px-3 py-2 text-center text-sm font-semibold text-[var(--modern-text,#0f172a)]">{page.pagesName}</div>
                       </div>
                     ))
                   )}
@@ -507,8 +498,9 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
           </>
         </div>
 
-        <div className='d-flex justify-content-end mt-3 mb-0'>
-          <Button className='Continue-btn' onClick={handleContinue}>
+        <div className='mt-3 mb-0 flex justify-end'>
+          <Button className='min-h-10 px-5 font-semibold' onClick={handleContinue}>
+            {isLoading && <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" />}
             {t("uploadDocFlow.Continue")}
           </Button>
         </div>

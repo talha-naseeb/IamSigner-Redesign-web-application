@@ -4,7 +4,7 @@ import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
 import DateRangePicker from "@/Components/Common/DateRangePicker/DateRangePicker";
 import { DateObject } from "react-multi-date-picker";
-import "./TemplateFilter.css";
+import { Button } from "@/Components/UI/shadcnCompat";
 
 function TemplatesSearchFilters({
   templateName,
@@ -62,7 +62,7 @@ function TemplatesSearchFilters({
     <>
       <button
         type="button"
-        className="filterOpenBtn btn p-0 border-0 bg-transparent"
+        className="p-2 rounded-lg border border-[var(--modern-border,#cbd5e1)] text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)] transition-colors"
         onClick={() => setIsOpen(true)}
         aria-label={t("templateUploadFlow.Filter")}
       >
@@ -75,17 +75,16 @@ function TemplatesSearchFilters({
         title={t("templateUploadFlow.Filter")}
         footer={
           <div className="flex items-center justify-between w-full pt-4 border-t border-[var(--modern-border,#e2e8f0)]">
-            <button type="button" className="resetBtn btn" onClick={handleReset}>
+            <Button variant="outline" onClick={handleReset}>
               {t("templateUploadFlow.Reset")}
-            </button>
-            <button
-              type="button"
-              className="applyBtn btn"
+            </Button>
+            <Button
+              variant="primary"
               onClick={onApply}
               disabled={!canApply}
             >
               {t("templateUploadFlow.Apply")}
-            </button>
+            </Button>
           </div>
         }
       >
@@ -98,7 +97,7 @@ function TemplatesSearchFilters({
               name="templateName"
               type="text"
               placeholder={t("editTemplateNameModal.enterTemplateName")}
-              className={`input-field form-control ${templateName ? "active" : ""}`}
+              className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--modern-border,#cbd5e1)] bg-[var(--modern-bg,#ffffff)] text-[var(--modern-text,#0f172a)] focus:outline-none focus:ring-2 focus:ring-[var(--theme-color,#0284c7)]"
               value={templateName}
               onChange={(e) => setTemplateName(e.target.value)}
             />

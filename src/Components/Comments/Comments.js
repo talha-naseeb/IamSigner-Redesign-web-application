@@ -1,5 +1,4 @@
 import React, { useEffect, useCallback } from "react";
-import "./Comments.css";
 import { toast } from "react-toastify";
 import verificationService from "@/services/verificationService";
 import { useState } from "react";
@@ -10,7 +9,7 @@ import {
   Form,
   InputGroup,
   ListGroup,
-} from "react-bootstrap";
+} from "@/Components/UI/shadcnCompat";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import { useTranslation } from "react-i18next";
 import AddSupportingDocSignNow from "./AddSupportingDoc/AddSupportingDocSignNow";

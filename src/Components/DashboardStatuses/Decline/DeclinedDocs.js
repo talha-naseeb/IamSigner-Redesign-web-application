@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Dropdown } from "react-bootstrap";
+import { Dropdown } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import SignOrder from "@/Components/CommonModals/SignOrder/SignOrder";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
 import DocumentSearchFilters from "@/Components/CommonModals/SearchFilters/DocSearchFilter";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@mui/material";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
-import "./style.css";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { useUser } from "@/Context/UserContext";
 import Loader from "@/Components/CommonModals/Loader/Loader";
@@ -167,7 +166,7 @@ const DeclinedDocs = () => {
         )}
 
         <div className='py-3 p-3 container pendingtable'>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div className="document-status-toolbar">
             <h4>{t("menuButtons.declinedDocs")}</h4>
 
             <DocumentSearchFilters
@@ -200,7 +199,7 @@ const DeclinedDocs = () => {
               <TableHead className='customTableHead'>
                 <TableRow>
                   {columns.map((column) => (
-                    <TableCell key={column.label} style={{ backgroundColor: "#FDE7E7" }} className='TableHeaderCell'>
+                    <TableCell key={column.label} className='TableHeaderCell'>
                       {column.label}
                     </TableCell>
                   ))}
@@ -211,7 +210,7 @@ const DeclinedDocs = () => {
               <TableBody>
                 {searchResults.length === 0 && (
                   <TableRow>
-                    <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
+                    <td colSpan='6' className='p-5 text-center'>
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                         <Icons.BulkDocuments size={50} />
                         {t("dashboardCardStatuses.notDocsFound")}

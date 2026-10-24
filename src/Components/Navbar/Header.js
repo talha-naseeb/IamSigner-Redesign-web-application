@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { Nav, Dropdown, Navbar } from "react-bootstrap";
+import { Nav, Dropdown, Navbar } from "@/Components/UI/shadcnCompat";
 import { useUser } from "@/Context/UserContext";
 import { useTranslation } from "react-i18next";
 import LangSelector from "../Language/LangSelector";
@@ -9,7 +9,7 @@ import { Icons } from "@/assets/Icons/index";
 import "./style.css";
 import userService from "@/services/userService";
 import Loader from "@/Components/CommonModals/Loader/Loader";
-import ReactSwitch from "react-switch";
+import AppSwitch from "@/Components/Common/AppSwitch/AppSwitch";
 import { useTheme } from "@/Context/ThemeContext";
 import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
 import { SIDEBAR_COLLAPSED_STORAGE_KEY, useSidebarNavigation } from "./SidebarNavigationContext";
@@ -184,7 +184,7 @@ function Header() {
       )}
 
       <div className='theme-toggle-container d-flex align-items-center px-2 gap-2'>
-        <ReactSwitch
+        <AppSwitch
           onChange={handleThemeChange}
           checked={theme === "dark"}
           aria-label={t(theme === "dark" ? "header.switchToLightMode" : "header.switchToDarkMode")}

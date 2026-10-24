@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import Navbar from "react-bootstrap/Navbar";
-import Container from "react-bootstrap/Container";
-import Offcanvas from "react-bootstrap/Offcanvas";
+import { Navbar as Navbar } from "@/Components/UI/shadcnCompat";
+import { Container as Container } from "@/Components/UI/shadcnCompat";
+import { Offcanvas as Offcanvas } from "@/Components/UI/shadcnCompat";
 import { CiFilter } from "react-icons/ci";
 import { useTranslation } from "react-i18next";
-import { Form } from "react-bootstrap";
+import { Form } from "@/Components/UI/shadcnCompat";
 import "./style.css";
 
-function UserSearchFilter({ fullName, emailID, role, isActive, department, setFullName, setEmailID, setRole, setIsActive, setDepartment, handleSearch, clearSearch, userRoles, departments }) {
+function UserSearchFilter({ fullName, emailID, role, isActive, department, setFullName, setEmailID, setRole, setIsActive, setDepartment, handleSearch, clearSearch, userRoles, departments, className }) {
   const { t } = useTranslation();
   const [isDisabled, setIsDisabled] = useState(true);
   const [showOffcanvas, setShowOffcanvas] = useState(false);
@@ -50,10 +50,10 @@ function UserSearchFilter({ fullName, emailID, role, isActive, department, setFu
   };
 
   return (
-    <Navbar expand={false}>
+    <Navbar expand={false} className={className}>
       <Container fluid>
         <Navbar.Toggle
-          className='filterOpenBtn'
+          className='filterOpenBtn user-report-filter-trigger'
           aria-controls={`offcanvasNavbar`}
           onClick={() => setShowOffcanvas(true)} // Open Offcanvas
         >
@@ -61,6 +61,7 @@ function UserSearchFilter({ fullName, emailID, role, isActive, department, setFu
         </Navbar.Toggle>
         <Navbar.Offcanvas
           id={`offcanvasNavbar`}
+          className={className ? `${className}-panel` : undefined}
           placement={document.documentElement.dir === "rtl" ? "start" : "end"}
           show={showOffcanvas} // Control visibility based on the state
           onHide={() => setShowOffcanvas(false)} // Close Offcanvas when it's closed by the user
@@ -69,7 +70,7 @@ function UserSearchFilter({ fullName, emailID, role, isActive, department, setFu
             <Offcanvas.Title className='fw-bold'>{t("searchFilter.Filter")}</Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
-            <div className='d-flex flex-column gap-3'>
+            <div className='user-filter-fields'>
               <Form.Group controlId='fullName'>
                 <Form.Label>{t("createTeam.fullName")}</Form.Label>
                 <Form.Control name='fullName' type='text' className='input-field' placeholder={t("logScreens.name")} value={fullName} onChange={handleInputChange} />
@@ -104,7 +105,7 @@ function UserSearchFilter({ fullName, emailID, role, isActive, department, setFu
                 </Form.Select>
               </Form.Group>
 
-              <div>
+              <div className='user-filter-status'>
                 <label className='mb-2'>{t("tablesLabel.status")}</label>
                 <div style={{ display: "flex", gap: "1rem" }}>
                   <div className='radio-container'>
@@ -134,7 +135,7 @@ function UserSearchFilter({ fullName, emailID, role, isActive, department, setFu
                 </div>
               </div>
 
-              <div className='newComment d-flex align-items-center justify-content-between w-100 p-3 py-4'>
+              <div className='user-filter-actions'>
                 <button className='resetBtn' onClick={handleClearSearch}>
                   {t("searchFilter.reset")}
                 </button>

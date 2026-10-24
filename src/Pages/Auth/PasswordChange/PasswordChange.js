@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import "./style.css";
 import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
 import { useTranslation } from "react-i18next";
-import { Form, Button, Spinner } from "react-bootstrap";
+import { Form, Button, Spinner } from "@/Components/UI/shadcnCompat";
 import { useUser } from "@/Context/UserContext";
 import userService from "@/services/userService";
 import { Icons } from "@/assets/Icons";

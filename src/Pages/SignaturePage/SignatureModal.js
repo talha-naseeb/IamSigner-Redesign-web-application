@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Button, Col, Modal, Row, Form, Dropdown } from "react-bootstrap";
+import { Button, Col, Modal, Row, Form, Dropdown } from "@/Components/UI/shadcnCompat";
 import verificationService from "@/services/verificationService";
 import ReactSignatureCanvas from "react-signature-canvas";
 import html2canvas from "html2canvas";

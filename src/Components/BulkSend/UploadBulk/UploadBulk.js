@@ -44,7 +44,7 @@ const UploadBulk = () => {
 
   return (
     <UserProvider>
-      <div className='uploadDoc-container'>
+      <div className='relative h-full'>
         {(user.AccountType === "B" && user.RoleID === 3) || userAccess.remainingDays <= 0 ? (
           <UserLisence />
         ) : (
@@ -52,7 +52,7 @@ const UploadBulk = () => {
             {userAccess.isbulkCSVflow === true ? (
                 <div>
                   <BulkStepper activeStep={activeStep} completedSteps={completedSteps} />
-                  <div className='formSteps'>
+                  <div className='ms-[15%] max-md:ms-0'>
                     {activeStep === 1 && <FirstStep setActiveStep={handleSetActiveStep} setCompletedSteps={handleSetCompletedSteps} />}
                     {activeStep === 2 && <PlaceBulkSignatories setActiveStep={handleSetActiveStep} setCompletedSteps={handleSetCompletedSteps} />}
                     {activeStep === 3 && <SecondStep setActiveStep={handleSetActiveStep} setCompletedSteps={handleSetCompletedSteps} />}

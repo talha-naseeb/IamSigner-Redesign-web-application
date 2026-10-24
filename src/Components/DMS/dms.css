@@ -3,7 +3,7 @@
 .dms-root {
   display: flex;
   height: calc(100vh - 58px); /* 58px = sticky header height */
-  background: var(--bg-secondary);
+  background: var(--modern-bg);
   overflow: hidden;
 }
 
@@ -11,8 +11,8 @@
 .dms-tree-panel {
   width: 240px;
   min-width: 240px;
-  background: var(--card-bg);
-  border-right: 1px solid var(--border-color);
+  background: var(--modern-card);
+  border-right: 1px solid var(--modern-border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -29,19 +29,19 @@
 
 .dms-tree-footer {
   flex-shrink: 0;
-  border-top: 1px solid var(--border-color);
-  background: var(--card-bg);
+  border-top: 1px solid var(--modern-border);
+  background: var(--modern-card);
 }
 
 .dms-tree-header {
   padding: 16px 14px 10px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--modern-border);
 }
 
 .dms-tree-title {
   font-size: 13px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--modern-text);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -58,26 +58,26 @@
   border-radius: 6px;
   margin: 1px 6px;
   transition: background 0.15s ease;
-  color: var(--text-primary);
+  color: var(--modern-text);
 }
 
 .dms-tree-item:hover {
-  background: var(--bg-secondary);
+  background: var(--modern-bg);
 }
 
 .dms-tree-item.active {
-  background: color-mix(in srgb, var(--theme-color) 12%, transparent);
-  color: var(--theme-color);
+  background: color-mix(in srgb, var(--modern-violet) 12%, transparent);
+  color: var(--modern-violet);
 }
 
 [data-theme="dark"] .dms-tree-item.active {
-  background: color-mix(in srgb, var(--theme-color) 20%, transparent);
+  background: color-mix(in srgb, var(--modern-violet) 20%, transparent);
 }
 
 .dms-tree-arrow {
   display: flex;
   align-items: center;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   flex-shrink: 0;
   width: 16px;
   cursor: pointer;
@@ -103,7 +103,7 @@
 
 .dms-tree-divider {
   height: 1px;
-  background: var(--border-color);
+  background: var(--modern-border);
   margin: 8px 14px;
 }
 
@@ -120,20 +120,20 @@
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   margin-bottom: 5px;
 }
 
 .dms-storage-bar {
   height: 8px;
-  background: color-mix(in srgb, var(--theme-color) 15%, transparent);
+  background: color-mix(in srgb, var(--modern-violet) 15%, transparent);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .dms-storage-fill {
   height: 100%;
-  background: var(--theme-color);
+  background: var(--modern-violet);
   border-radius: 4px;
   transition: width 0.4s ease;
 }
@@ -155,9 +155,9 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--card-bg);
+  background: var(--modern-card);
   border-radius: 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   min-height: 0;
 }
 
@@ -168,7 +168,7 @@
   gap: 4px;
   padding: 0 4px;
   font-size: 12.5px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   flex-wrap: wrap;
 }
 
@@ -177,7 +177,7 @@
   align-items: center;
   gap: 3px;
   cursor: pointer;
-  color: var(--theme-color);
+  color: var(--modern-violet);
   font-weight: 500;
   transition: opacity 0.15s;
 }
@@ -188,16 +188,16 @@
 
 .dms-breadcrumb-item {
   cursor: pointer;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   transition: color 0.15s;
 }
 
 .dms-breadcrumb-item:hover {
-  color: var(--theme-color);
+  color: var(--modern-violet);
 }
 
 .dms-breadcrumb-item.active {
-  color: var(--text-primary);
+  color: var(--modern-text);
   font-weight: 600;
   cursor: default;
 }
@@ -211,7 +211,7 @@
   padding: 12px 16px;
   gap: 12px;
   flex-wrap: nowrap;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--modern-border);
 }
 
 .dms-toolbar-head {
@@ -231,7 +231,7 @@
 .dms-page-title {
   font-size: 20px;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--modern-text);
   margin: 0;
   line-height: 1.3;
   min-width: 0;
@@ -273,14 +273,14 @@
   width: 100%;
   padding: 8px 12px;
   border-radius: 8px;
-  background: color-mix(in srgb, var(--theme-color) 8%, var(--card-bg));
-  border: 1px solid color-mix(in srgb, var(--theme-color) 25%, var(--border-color));
+  background: color-mix(in srgb, var(--modern-violet) 8%, var(--modern-card));
+  border: 1px solid color-mix(in srgb, var(--modern-violet) 25%, var(--modern-border));
 }
 
 .dms-bulk-count {
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--modern-text);
 }
 
 .dms-bulk-actions {
@@ -301,41 +301,41 @@
   height: 16px;
   flex-shrink: 0;
   cursor: pointer;
-  accent-color: var(--theme-color);
+  accent-color: var(--modern-violet);
 }
 
 .dms-doc-card-selected {
-  outline: 2px solid color-mix(in srgb, var(--theme-color) 55%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--modern-violet) 55%, transparent);
   outline-offset: -2px;
 }
 
 .dms-table-row-selected {
-  background: color-mix(in srgb, var(--theme-color) 6%, var(--card-bg)) !important;
+  background: color-mix(in srgb, var(--modern-violet) 6%, var(--modern-card)) !important;
 }
 
 .dms-folder-filter-btn {
-  border-color: var(--border-color) !important;
-  color: var(--text-secondary) !important;
-  background: var(--card-bg) !important;
+  border-color: var(--modern-border) !important;
+  color: var(--modern-muted) !important;
+  background: var(--modern-card) !important;
 }
 
 .dms-folder-filter-btn:hover {
-  border-color: var(--theme-color) !important;
-  color: var(--theme-color) !important;
+  border-color: var(--modern-violet) !important;
+  color: var(--modern-violet) !important;
 }
 
 .dms-folder-filter-btn.active {
-  border-color: var(--theme-color) !important;
-  color: var(--theme-color) !important;
-  background: color-mix(in srgb, var(--theme-color) 10%, var(--card-bg)) !important;
+  border-color: var(--modern-violet) !important;
+  color: var(--modern-violet) !important;
+  background: color-mix(in srgb, var(--modern-violet) 10%, var(--modern-card)) !important;
 }
 
 .dms-folder-filters-panel {
   width: 100%;
   padding: 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   border-radius: 10px;
-  background: color-mix(in srgb, var(--theme-color) 4%, var(--card-bg));
+  background: color-mix(in srgb, var(--modern-violet) 4%, var(--modern-card));
 }
 
 .dms-folder-filters-form {
@@ -353,7 +353,7 @@
   margin-bottom: 4px;
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-folder-filter-actions {
@@ -425,16 +425,16 @@
 }
 
 .dms-team-storage-modal .modal-content {
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   border-radius: 12px;
   overflow: hidden;
-  background: var(--bg-primary);
+  background: var(--modern-card);
 }
 
 .dms-team-storage-header {
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--modern-border);
   padding: 1rem 1.25rem;
-  background: var(--bg-primary);
+  background: var(--modern-card);
 }
 
 .dms-team-storage-header-inner {
@@ -450,20 +450,20 @@
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: color-mix(in srgb, var(--theme-color) 12%, var(--card-bg));
-  color: var(--theme-color);
+  background: color-mix(in srgb, var(--modern-violet) 12%, var(--modern-card));
+  color: var(--modern-violet);
   flex-shrink: 0;
 }
 
 .dms-team-storage-title {
   font-size: 1.15rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--modern-text);
 }
 
 .dms-team-storage-subtitle {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   margin-top: 2px;
 }
 
@@ -478,7 +478,7 @@
   justify-content: center;
   gap: 10px;
   padding: 3rem 1rem;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   font-size: 13px;
 }
 
@@ -489,16 +489,15 @@
   margin-bottom: 14px;
   padding: 18px;
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--theme-color) 22%, var(--border-color));
+  border: 1px solid color-mix(in srgb, var(--modern-violet) 22%, var(--modern-border));
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--theme-color) 12%, var(--card-bg)), var(--card-bg)),
-    var(--card-bg);
-  box-shadow: 0 12px 28px color-mix(in srgb, var(--theme-color) 8%, transparent);
+    linear-gradient(135deg, color-mix(in srgb, var(--modern-violet) 12%, var(--modern-card)), var(--modern-card)),
+    var(--modern-card);
 }
 
 .dms-team-storage-overview--critical {
   border-color: rgba(220, 38, 38, 0.35);
-  background: linear-gradient(135deg, rgba(220, 38, 38, 0.08), var(--card-bg));
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.08), var(--modern-card));
 }
 
 .dms-team-storage-overview-main {
@@ -512,13 +511,12 @@
   width: 54px;
   height: 54px;
   border-radius: 16px;
-  background: var(--theme-color);
+  background: var(--modern-violet);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 12px 24px color-mix(in srgb, var(--theme-color) 24%, transparent);
 }
 
 .dms-team-storage-overview-copy {
@@ -533,19 +531,19 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--theme-color);
+  color: var(--modern-violet);
 }
 
 .dms-team-storage-overview-copy strong {
   font-size: 1.45rem;
   line-height: 1.2;
-  color: var(--text-primary);
+  color: var(--modern-text);
   word-break: break-word;
 }
 
 .dms-team-storage-overview-copy span:last-child {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-team-storage-overview-meter {
@@ -618,14 +616,14 @@
   gap: 10px;
   padding: 12px;
   border-radius: 10px;
-  border: 1px solid var(--border-color);
-  background: var(--card-bg);
+  border: 1px solid var(--modern-border);
+  background: var(--modern-card);
   min-width: 0;
 }
 
 .dms-team-storage-summary-card--primary {
-  border-color: color-mix(in srgb, var(--theme-color) 35%, var(--border-color));
-  background: color-mix(in srgb, var(--theme-color) 6%, var(--card-bg));
+  border-color: color-mix(in srgb, var(--modern-violet) 35%, var(--modern-border));
+  background: color-mix(in srgb, var(--modern-violet) 6%, var(--modern-card));
 }
 
 .dms-team-storage-summary-icon {
@@ -635,8 +633,8 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: var(--bg-secondary);
-  color: var(--theme-color);
+  background: var(--modern-bg);
+  color: var(--modern-violet);
   flex-shrink: 0;
 }
 
@@ -650,7 +648,7 @@
 .dms-team-storage-summary-value {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--modern-text);
   line-height: 1.25;
   word-break: break-word;
 }
@@ -660,7 +658,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-team-storage-summary-bar {
@@ -689,7 +687,7 @@
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   pointer-events: none;
 }
 
@@ -697,8 +695,8 @@
   padding-left: 36px;
   font-size: 13px;
   border-radius: 8px;
-  border-color: var(--border-color);
-  background: var(--card-bg);
+  border-color: var(--modern-border);
+  background: var(--modern-card);
 }
 
 .dms-team-storage-toolbar-actions {
@@ -710,7 +708,7 @@
 
 .dms-team-storage-count {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   white-space: nowrap;
 }
 
@@ -729,15 +727,15 @@
   gap: 8px;
   padding: 2.5rem 1rem;
   text-align: center;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   font-size: 14px;
 }
 
 /* MUI table wrapper variants (Team Storage modal) */
 .dms-team-storage-table-card {
-  border: 1px solid color-mix(in srgb, var(--theme-color) 12%, var(--border-color));
+  border: 1px solid color-mix(in srgb, var(--modern-violet) 12%, var(--modern-border));
   border-radius: 16px;
-  background: var(--card-bg);
+  background: var(--modern-card);
   overflow: hidden;
 }
 
@@ -746,7 +744,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--modern-border);
 }
 
 .dms-team-storage-table-head div {
@@ -757,16 +755,16 @@
 
 .dms-team-storage-table-head strong {
   font-size: 14px;
-  color: var(--text-primary);
+  color: var(--modern-text);
 }
 
 .dms-team-storage-table-head span {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-table-wrap--bordered {
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   border-radius: 10px;
   overflow: auto;
   max-height: min(42vh, 380px);
@@ -777,7 +775,7 @@
 }
 
 .dms-team-storage-row:hover {
-  background: color-mix(in srgb, var(--theme-color) 4%, transparent) !important;
+  background: color-mix(in srgb, var(--modern-violet) 4%, transparent) !important;
 }
 
 .dms-team-storage-user {
@@ -794,8 +792,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--theme-color) 14%, var(--bg-secondary));
-  color: var(--theme-color);
+  background: color-mix(in srgb, var(--modern-violet) 14%, var(--modern-bg));
+  color: var(--modern-violet);
   font-size: 12px;
   font-weight: 700;
   flex-shrink: 0;
@@ -810,7 +808,7 @@
 
 .dms-team-storage-user-name {
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--modern-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -818,7 +816,7 @@
 
 .dms-team-storage-user-email {
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -840,7 +838,7 @@
 .dms-team-storage-usage-value {
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--modern-text);
 }
 
 .dms-team-storage-usage-pct {
@@ -864,12 +862,12 @@
   min-width: 2ch;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  color: var(--text-primary);
+  color: var(--modern-text);
 }
 
 /* Folder access panel (People with access) */
 .dms-folder-access-panel {
-  --bs-offcanvas-width: min(420px, 100vw);
+  --ui-offcanvas-width: min(420px, 100vw);
 }
 
 .dms-folder-access-header {
@@ -890,21 +888,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(var(--theme-color-rgb, 180, 83, 9), 0.12);
-  color: var(--theme-color);
+  background: color-mix(in srgb, var(--modern-violet) 12%, transparent);
+  color: var(--modern-violet);
   flex-shrink: 0;
 }
 
 .dms-folder-access-subtitle {
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--modern-text);
   margin-top: 4px;
 }
 
 .dms-folder-access-hint {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   margin-top: 4px;
   line-height: 1.4;
 }
@@ -919,7 +917,7 @@
   justify-content: center;
   gap: 10px;
   padding: 3rem 1rem;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   font-size: 13px;
 }
 
@@ -929,13 +927,13 @@
   align-items: center;
   text-align: center;
   padding: 2.5rem 1rem;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-folder-access-empty-title {
   font-size: 15px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--modern-text);
   margin: 12px 0 6px;
 }
 
@@ -952,10 +950,10 @@
 }
 
 .dms-access-card {
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   border-radius: 10px;
   padding: 14px;
-  background: var(--bg-secondary);
+  background: var(--modern-bg);
 }
 
 .dms-access-card-top {
@@ -969,7 +967,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--theme-color);
+  background: var(--modern-violet);
   color: #fff;
   font-size: 14px;
   font-weight: 700;
@@ -982,7 +980,7 @@
 .dms-access-email {
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--modern-text);
   word-break: break-all;
   line-height: 1.35;
 }
@@ -992,7 +990,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   margin-bottom: 4px;
 }
 
@@ -1001,7 +999,7 @@
 }
 
 .dms-access-reshare-check .form-check-label {
-  color: var(--text-primary);
+  color: var(--modern-text);
 }
 
 .dms-access-card-actions {
@@ -1010,7 +1008,7 @@
   gap: 8px;
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--modern-border);
 }
 
 .dms-folder-access-footer {
@@ -1019,8 +1017,8 @@
   align-items: center;
   gap: 10px;
   padding: 12px 1.25rem 1.25rem;
-  border-top: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border-top: 1px solid var(--modern-border);
+  background: var(--modern-card);
 }
 
 .dms-share-manage-access-link {
@@ -1028,10 +1026,10 @@
   width: 100%;
   margin-bottom: 1rem;
   padding: 10px 12px;
-  border: 1px dashed var(--border-color);
+  border: 1px dashed var(--modern-border);
   border-radius: 8px;
-  background: var(--bg-secondary);
-  color: var(--theme-color);
+  background: var(--modern-bg);
+  color: var(--modern-violet);
   font-size: 13px;
   font-weight: 600;
   text-align: center;
@@ -1040,12 +1038,12 @@
 }
 
 .dms-share-manage-access-link:hover {
-  background: rgba(var(--theme-color-rgb, 180, 83, 9), 0.08);
-  border-color: var(--theme-color);
+  background: color-mix(in srgb, var(--modern-violet) 8%, transparent);
+  border-color: var(--modern-violet);
 }
 
 .dms-folder-shares-section {
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--modern-border);
   padding-bottom: 1rem;
 }
 
@@ -1053,7 +1051,7 @@
   font-size: 13px;
   font-weight: 700;
   margin-bottom: 10px;
-  color: var(--text-primary);
+  color: var(--modern-text);
 }
 
 .dms-folder-shares-loading {
@@ -1061,7 +1059,7 @@
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-folder-shares-list {
@@ -1078,8 +1076,8 @@
   gap: 8px;
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-secondary);
+  border: 1px solid var(--modern-border);
+  background: var(--modern-bg);
 }
 
 .dms-folder-share-email {
@@ -1126,16 +1124,16 @@
   position: absolute;
   left: 8px;
   pointer-events: none;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-search-input {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
+  background: var(--modern-card);
+  border: 1px solid var(--modern-border);
   border-radius: 6px;
   padding: 5px 10px 5px 30px;
   font-size: 13px;
-  color: var(--text-primary);
+  color: var(--modern-text);
   width: 100%;
   height: 32px;
   outline: none;
@@ -1143,21 +1141,21 @@
 }
 
 .dms-search-input:focus {
-  border-color: var(--theme-color);
+  border-color: var(--modern-violet);
 }
 
 .dms-search-input::placeholder {
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 /* Content type quick filter */
 .dms-content-filter {
   display: inline-flex;
   align-items: stretch;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   border-radius: 6px;
   overflow: hidden;
-  background: var(--bg-primary);
+  background: var(--modern-card);
   flex-shrink: 0;
 }
 
@@ -1165,7 +1163,7 @@
   appearance: none;
   border: 0;
   background: transparent;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   font-size: 12px;
   font-weight: 600;
   line-height: 1;
@@ -1176,17 +1174,17 @@
 }
 
 .dms-content-filter-btn + .dms-content-filter-btn {
-  border-left: 1px solid var(--border-color);
+  border-left: 1px solid var(--modern-border);
 }
 
 .dms-content-filter-btn:hover {
-  color: var(--theme-color);
-  background: color-mix(in srgb, var(--theme-color) 6%, transparent);
+  color: var(--modern-violet);
+  background: color-mix(in srgb, var(--modern-violet) 6%, transparent);
 }
 
 .dms-content-filter-btn.active {
-  color: var(--theme-color);
-  background: color-mix(in srgb, var(--theme-color) 12%, transparent);
+  color: var(--modern-violet);
+  background: color-mix(in srgb, var(--modern-violet) 12%, transparent);
 }
 
 /* Filter button */
@@ -1195,42 +1193,42 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  border-color: var(--border-color) !important;
-  color: var(--text-primary) !important;
-  background: var(--bg-primary) !important;
+  border-color: var(--modern-border) !important;
+  color: var(--modern-text) !important;
+  background: var(--modern-card) !important;
   padding: 5px 10px !important;
 }
 
 .dms-filter-btn:hover,
 .dms-filter-btn:focus {
-  border-color: var(--theme-color) !important;
-  color: var(--theme-color) !important;
+  border-color: var(--modern-violet) !important;
+  color: var(--modern-violet) !important;
 }
 
 /* View toggle */
 .dms-view-toggle {
   display: flex;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   border-radius: 6px;
   overflow: hidden;
-  background: var(--bg-primary);
+  background: var(--modern-card);
   flex-shrink: 0;
 }
 
-.dms-view-toggle .MuiIconButton-root {
+.dms-view-toggle .ui-icon-button {
   border-radius: 0 !important;
   padding: 5px 8px !important;
-  color: var(--text-secondary) !important;
+  color: var(--modern-muted) !important;
   transition: background 0.15s !important;
 }
 
-.dms-view-toggle .MuiIconButton-root:hover {
-  background: var(--bg-secondary) !important;
+.dms-view-toggle .ui-icon-button:hover {
+  background: var(--modern-bg) !important;
 }
 
 .dms-view-toggle .dms-view-active {
-  color: var(--theme-color) !important;
-  background: color-mix(in srgb, var(--theme-color) 10%, transparent) !important;
+  color: var(--modern-violet) !important;
+  background: color-mix(in srgb, var(--modern-violet) 10%, transparent) !important;
 }
 
 /* Action buttons */
@@ -1239,16 +1237,16 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  border-color: var(--border-color) !important;
-  color: var(--text-primary) !important;
-  background: var(--bg-primary) !important;
+  border-color: var(--modern-border) !important;
+  color: var(--modern-text) !important;
+  background: var(--modern-card) !important;
   padding: 5px 12px !important;
   white-space: nowrap;
 }
 
 .dms-action-btn:hover {
-  border-color: var(--theme-color) !important;
-  color: var(--theme-color) !important;
+  border-color: var(--modern-violet) !important;
+  color: var(--modern-violet) !important;
 }
 
 .dms-upload-btn {
@@ -1256,8 +1254,8 @@
   display: flex !important;
   align-items: center;
   gap: 4px;
-  background: var(--theme-color) !important;
-  border-color: var(--theme-color) !important;
+  background: var(--modern-violet) !important;
+  border-color: var(--modern-violet) !important;
   color: #fff !important;
   padding: 5px 14px !important;
   white-space: nowrap;
@@ -1265,7 +1263,7 @@
 }
 
 .dms-upload-btn:hover {
-  background: var(--theme-hover) !important;
+  background: var(--modern-violet-hover) !important;
 }
 
 /* ── Content Area ─────────────────────────────────────────── */
@@ -1285,7 +1283,7 @@
 .dms-section-label {
   font-size: 11.5px;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   text-transform: uppercase;
   letter-spacing: 0.6px;
   margin-bottom: 10px;
@@ -1300,28 +1298,25 @@
 
 /* Folder Card */
 .dms-folder-card {
-  --dms-folder-color: var(--theme-color);
+  --dms-folder-color: var(--modern-violet);
   background:
     linear-gradient(
       90deg,
       color-mix(in srgb, var(--dms-folder-color) 10%, transparent) 0%,
-      var(--bg-primary) 44%
+      var(--modern-card) 44%
     );
-  border: 1px solid color-mix(in srgb, var(--dms-folder-color) 22%, var(--border-color));
+  border: 1px solid color-mix(in srgb, var(--dms-folder-color) 22%, var(--modern-border));
   border-radius: 10px;
   padding: 14px;
   cursor: pointer;
-  transition: box-shadow 0.15s, border-color 0.15s, transform 0.1s;
+  transition: background-color 0.15s, border-color 0.15s;
   position: relative;
-  box-shadow: inset 4px 0 0 var(--dms-folder-color);
+  border-inline-start: 4px solid var(--dms-folder-color);
 }
 
 .dms-folder-card:hover {
   border-color: var(--dms-folder-color);
-  box-shadow:
-    inset 4px 0 0 var(--dms-folder-color),
-    0 2px 12px color-mix(in srgb, var(--dms-folder-color) 14%, transparent);
-  transform: translateY(-1px);
+  background: var(--modern-raised);
 }
 
 .dms-folder-card:has(.dropdown-menu.show),
@@ -1344,7 +1339,7 @@
 .dms-folder-card-name {
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--modern-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1352,13 +1347,13 @@
 
 .dms-folder-card-count {
   font-size: 11.5px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   margin-top: 3px;
 }
 
 .dms-folder-card-desc {
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1370,7 +1365,7 @@
 
 .dms-folder-card-created {
   font-size: 10.5px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   margin-top: 4px;
   white-space: nowrap;
   overflow: hidden;
@@ -1379,12 +1374,12 @@
 
 /* Document Card */
 .dms-doc-card {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
+  background: var(--modern-card);
+  border: 1px solid var(--modern-border);
   border-radius: 10px;
   padding: 14px;
   cursor: pointer;
-  transition: box-shadow 0.15s, border-color 0.15s, transform 0.1s;
+  transition: background-color 0.15s, border-color 0.15s;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1392,9 +1387,8 @@
 }
 
 .dms-doc-card:hover {
-  border-color: var(--theme-color);
-  box-shadow: 0 2px 12px rgba(9, 121, 169, 0.1);
-  transform: translateY(-1px);
+  border-color: var(--modern-violet);
+  background: var(--modern-raised);
 }
 
 .dms-doc-card-header {
@@ -1406,7 +1400,7 @@
 .dms-doc-card-name {
   font-size: 12.5px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--modern-text);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -1424,7 +1418,7 @@
 
 .dms-doc-size {
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-doc-card-path {
@@ -1432,7 +1426,7 @@
   align-items: center;
   gap: 3px;
   font-size: 10.5px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   overflow: hidden;
 }
 
@@ -1447,7 +1441,7 @@
   align-items: center;
   gap: 4px;
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-doc-card-shared {
@@ -1456,7 +1450,7 @@
 
 .dms-doc-card-share-line {
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   line-height: 1.35;
   margin-top: 2px;
   white-space: nowrap;
@@ -1465,7 +1459,7 @@
 }
 
 .dms-doc-card-share-line strong {
-  color: var(--text-primary);
+  color: var(--modern-text);
   font-weight: 600;
 }
 
@@ -1478,7 +1472,7 @@
 
 .dms-list-doc-share-meta {
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1493,14 +1487,14 @@
   height: 26px;
   border-radius: 5px;
   cursor: pointer;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   transition: background 0.15s;
   flex-shrink: 0;
 }
 
 .dms-card-menu-btn:hover {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: var(--modern-bg);
+  color: var(--modern-text);
 }
 
 /* ── File type icon ───────────────────────────────────────── */
@@ -1526,7 +1520,7 @@
 /* ── Table extras (not covered by global styles) ──────────── */
 .dms-table-subfolder-count {
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   font-weight: 400;
 }
 
@@ -1542,8 +1536,8 @@
 }
 
 .dms-folder-label {
-  color: var(--theme-color);
-  background: color-mix(in srgb, var(--theme-color) 12%, transparent);
+  color: var(--modern-violet);
+  background: color-mix(in srgb, var(--modern-violet) 12%, transparent);
 }
 
 /* ── Pagination ───────────────────────────────────────────── */
@@ -1552,13 +1546,13 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 0 4px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--modern-border);
   margin-top: 8px;
 }
 
 .dms-pagination-info {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 /* ── Empty State ──────────────────────────────────────────── */
@@ -1569,7 +1563,7 @@
   justify-content: center;
   gap: 10px;
   padding: 60px 20px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   font-size: 14px;
 }
 
@@ -1580,12 +1574,12 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--bg-secondary);
-  border: 1px dashed var(--border-color);
+  background: var(--modern-bg);
+  border: 1px dashed var(--modern-border);
   border-radius: 8px;
   padding: 28px 16px;
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-detail-title-row {
@@ -1605,7 +1599,7 @@
 .dms-detail-filename {
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--modern-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1634,25 +1628,25 @@
   font-size: 12px;
   font-weight: 500;
   padding: 7px 10px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   border-radius: 7px;
   cursor: pointer;
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: var(--modern-card);
+  color: var(--modern-text);
   transition: border-color 0.15s, color 0.15s, background 0.15s;
   white-space: nowrap;
 }
 
 .dms-detail-action-btn:hover {
-  border-color: var(--theme-color);
-  color: var(--theme-color);
-  background: color-mix(in srgb, var(--theme-color) 5%, transparent);
+  border-color: var(--modern-violet);
+  color: var(--modern-violet);
+  background: color-mix(in srgb, var(--modern-violet) 5%, transparent);
 }
 
 .dms-detail-action-btn-primary {
-  border-color: var(--theme-color);
-  color: var(--theme-color);
-  background: color-mix(in srgb, var(--theme-color) 8%, transparent);
+  border-color: var(--modern-violet);
+  color: var(--modern-violet);
+  background: color-mix(in srgb, var(--modern-violet) 8%, transparent);
 }
 
 .dms-action-danger:hover {
@@ -1668,19 +1662,19 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--bg-secondary);
-  border: 1px dashed var(--border-color);
+  background: var(--modern-bg);
+  border: 1px dashed var(--modern-border);
   border-radius: 8px;
   padding: 28px 16px;
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-preview-open-btn {
   font-size: 12px;
-  color: var(--theme-color);
+  color: var(--modern-violet);
   background: none;
-  border: 1px solid var(--theme-color);
+  border: 1px solid var(--modern-violet);
   border-radius: 6px;
   padding: 5px 14px;
   cursor: pointer;
@@ -1689,19 +1683,19 @@
 }
 
 .dms-preview-open-btn:hover {
-  background: color-mix(in srgb, var(--theme-color) 10%, transparent);
+  background: color-mix(in srgb, var(--modern-violet) 10%, transparent);
 }
 
 .dms-preview-loading {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-preview-frame-wrap {
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid var(--border-color);
-  background: var(--bg-secondary);
+  border: 1px solid var(--modern-border);
+  background: var(--modern-bg);
   height: 220px;
 }
 
@@ -1721,7 +1715,7 @@
 
 .dms-detail-description-text {
   font-size: 12px;
-  color: var(--text-primary);
+  color: var(--modern-text);
   margin: 0;
   line-height: 1.5;
   white-space: pre-wrap;
@@ -1740,11 +1734,11 @@
   gap: 5px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding-bottom: 4px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--modern-border);
 }
 
 .dms-detail-row {
@@ -1755,11 +1749,11 @@
 }
 
 .dms-detail-key {
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-detail-val {
-  color: var(--text-primary);
+  color: var(--modern-text);
   font-weight: 500;
 }
 
@@ -1772,7 +1766,7 @@
 
 .dms-detail-empty {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 /* Shared users */
@@ -1781,14 +1775,14 @@
   align-items: center;
   gap: 8px;
   font-size: 12.5px;
-  color: var(--text-primary);
+  color: var(--modern-text);
 }
 
 .dms-avatar {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: var(--theme-color);
+  background: var(--modern-violet);
   color: #fff;
   font-size: 11px;
   font-weight: 700;
@@ -1803,9 +1797,9 @@
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  color: var(--theme-color);
+  color: var(--modern-violet);
   background: none;
-  border: 1px dashed var(--theme-color);
+  border: 1px dashed var(--modern-violet);
   border-radius: 6px;
   padding: 5px 10px;
   cursor: pointer;
@@ -1814,7 +1808,7 @@
 }
 
 .dms-add-share-btn:hover {
-  background: color-mix(in srgb, var(--theme-color) 8%, transparent);
+  background: color-mix(in srgb, var(--modern-violet) 8%, transparent);
 }
 
 /* Activity */
@@ -1828,7 +1822,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--text-secondary);
+  background: var(--modern-muted);
   margin-top: 4px;
   flex-shrink: 0;
 }
@@ -1839,13 +1833,13 @@
 
 .dms-activity-text {
   font-size: 12.5px;
-  color: var(--text-primary);
+  color: var(--modern-text);
   display: block;
 }
 
 .dms-activity-time {
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   display: block;
 }
 
@@ -1863,9 +1857,9 @@
   grid-template-columns: auto 1fr;
   gap: 12px;
   padding: 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   border-radius: 10px;
-  background: var(--bg-secondary);
+  background: var(--modern-bg);
 }
 
 .dms-folder-activity-marker {
@@ -1881,9 +1875,9 @@
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
-  color: var(--text-primary);
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
+  color: var(--modern-text);
+  background: var(--modern-card);
+  border: 1px solid var(--modern-border);
 }
 
 .dms-folder-activity-badge.created {
@@ -1893,9 +1887,9 @@
 }
 
 .dms-folder-activity-badge.updated {
-  color: var(--theme-color);
-  background: color-mix(in srgb, var(--theme-color) 12%, transparent);
-  border-color: color-mix(in srgb, var(--theme-color) 35%, transparent);
+  color: var(--modern-violet);
+  background: color-mix(in srgb, var(--modern-violet) 12%, transparent);
+  border-color: color-mix(in srgb, var(--modern-violet) 35%, transparent);
 }
 
 .dms-folder-activity-badge.deleted {
@@ -1910,7 +1904,7 @@
 
 .dms-folder-activity-details {
   margin: 0;
-  color: var(--text-primary);
+  color: var(--modern-text);
   font-size: 12.5px;
   line-height: 1.5;
   word-break: break-word;
@@ -1922,7 +1916,7 @@
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 6px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   font-size: 11px;
 }
 
@@ -1937,8 +1931,8 @@
   gap: 12px;
   margin-top: 14px;
   padding-top: 12px;
-  border-top: 1px solid var(--border-color);
-  color: var(--text-secondary);
+  border-top: 1px solid var(--modern-border);
+  color: var(--modern-muted);
   font-size: 12px;
 }
 
@@ -1950,16 +1944,16 @@
 
 .dms-folder-activity-page-btn {
   padding: 4px 10px !important;
-  border: 1px solid var(--border-color) !important;
+  border: 1px solid var(--modern-border) !important;
   border-radius: 6px !important;
-  color: var(--text-primary) !important;
-  background: var(--bg-primary) !important;
+  color: var(--modern-text) !important;
+  background: var(--modern-card) !important;
   font-size: 12px !important;
 }
 
 .dms-folder-activity-page-btn:hover:not(:disabled) {
-  border-color: var(--theme-color) !important;
-  color: var(--theme-color) !important;
+  border-color: var(--modern-violet) !important;
+  color: var(--modern-violet) !important;
 }
 
 .dms-folder-activity-page-btn:disabled {
@@ -1970,7 +1964,7 @@
 .dms-folder-activity-page-count {
   min-width: 44px;
   text-align: center;
-  color: var(--text-primary);
+  color: var(--modern-text);
   font-weight: 600;
 }
 
@@ -1988,7 +1982,7 @@
 
 /* ── Dropzone ─────────────────────────────────────────────── */
 .dms-dropzone {
-  border: 2px dashed var(--border-color);
+  border: 2px dashed var(--modern-border);
   border-radius: 10px;
   padding: 36px 20px;
   text-align: center;
@@ -1998,22 +1992,22 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  background: var(--bg-secondary);
+  background: var(--modern-bg);
 }
 
 .dms-dropzone.active {
-  border-color: var(--theme-color);
-  background: color-mix(in srgb, var(--theme-color) 6%, transparent);
+  border-color: var(--modern-violet);
+  background: color-mix(in srgb, var(--modern-violet) 6%, transparent);
 }
 
 .dms-dropzone-text {
   font-size: 13.5px;
-  color: var(--text-primary);
+  color: var(--modern-text);
   margin: 0;
 }
 
 .dms-dropzone-browse {
-  color: var(--theme-color);
+  color: var(--modern-violet);
   font-weight: 600;
   cursor: pointer;
   text-decoration: underline;
@@ -2021,7 +2015,7 @@
 
 .dms-dropzone-hint {
   font-size: 11.5px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 /* DMS date fields use `DateRangePicker` + `.delegation-date-picker` — themed via index.css `.range-picker-container` */
@@ -2032,7 +2026,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   border-radius: 8px;
   padding: 6px 10px;
   cursor: text;
@@ -2043,9 +2037,9 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: color-mix(in srgb, var(--theme-color) 12%, transparent);
-  color: var(--theme-color);
-  border: 1px solid color-mix(in srgb, var(--theme-color) 30%, transparent);
+  background: color-mix(in srgb, var(--modern-violet) 12%, transparent);
+  color: var(--modern-violet);
+  border: 1px solid color-mix(in srgb, var(--modern-violet) 30%, transparent);
   border-radius: 20px;
   padding: 2px 8px 2px 10px;
   font-size: 11.5px;
@@ -2061,7 +2055,7 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  color: var(--theme-color);
+  color: var(--modern-violet);
   opacity: 0.7;
   line-height: 1;
 }
@@ -2075,13 +2069,13 @@
   outline: none;
   background: transparent;
   font-size: 12.5px;
-  color: var(--text-primary);
+  color: var(--modern-text);
   flex: 1;
   min-width: 80px;
 }
 
 .dms-tags-input::placeholder {
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-selected-files {
@@ -2093,9 +2087,9 @@
 
 .dms-selected-file-name {
   font-size: 12px;
-  color: var(--text-primary);
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
+  color: var(--modern-text);
+  background: var(--modern-card);
+  border: 1px solid var(--modern-border);
   border-radius: 6px;
   padding: 4px 10px;
   text-align: left;
@@ -2114,14 +2108,14 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 2px solid var(--border-color);
-  background: var(--bg-primary);
+  border: 2px solid var(--modern-border);
+  background: var(--modern-card);
   padding: 3px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  transition: background-color 0.15s, border-color 0.15s, outline-color 0.15s;
 }
 
 .dms-folder-color-swatch span {
@@ -2135,8 +2129,8 @@
 .dms-folder-color-swatch:hover,
 .dms-folder-color-swatch.active {
   border-color: var(--dms-folder-swatch-color);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dms-folder-swatch-color) 18%, transparent);
-  transform: translateY(-1px);
+  outline: 2px solid color-mix(in srgb, var(--dms-folder-swatch-color) 65%, transparent);
+  outline-offset: 2px;
 }
 
 .dms-folder-color-swatch:disabled {
@@ -2155,7 +2149,7 @@
 .dms-tree-scroll::-webkit-scrollbar-thumb,
 .dms-content-area::-webkit-scrollbar-thumb,
 .dms-detail-body::-webkit-scrollbar-thumb {
-  background: var(--border-color);
+  background: var(--modern-border);
   border-radius: 4px;
 }
 
@@ -2183,7 +2177,7 @@
 .dms-page-count {
   font-size: 12px;
   font-weight: 400;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   margin-left: 8px;
 }
 
@@ -2199,11 +2193,11 @@
 .dms-folder-permission-tag {
   font-size: 10px;
   font-weight: 600;
-  color: var(--theme-color);
-  background: color-mix(in srgb, var(--theme-color) 10%, transparent);
+  color: var(--modern-violet);
+  background: color-mix(in srgb, var(--modern-violet) 10%, transparent);
   padding: 1px 6px;
   border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--theme-color) 20%, transparent);
+  border: 1px solid color-mix(in srgb, var(--modern-violet) 20%, transparent);
   white-space: nowrap;
 }
 
@@ -2219,8 +2213,8 @@
 
 /* ── Add Folder Card ──────────────────────────────────────── */
 .dms-add-folder-card {
-  background: var(--bg-primary);
-  border: 2px dashed var(--border-color);
+  background: var(--modern-card);
+  border: 2px dashed var(--modern-border);
   border-radius: 10px;
   padding: 14px;
   cursor: pointer;
@@ -2231,14 +2225,14 @@
   gap: 6px;
   min-height: 90px;
   transition: border-color 0.15s, background 0.15s;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   font-size: 12.5px;
 }
 
 .dms-add-folder-card:hover {
-  border-color: var(--theme-color);
-  background: color-mix(in srgb, var(--theme-color) 4%, transparent);
-  color: var(--theme-color);
+  border-color: var(--modern-violet);
+  background: color-mix(in srgb, var(--modern-violet) 4%, transparent);
+  color: var(--modern-violet);
 }
 
 /* ── Tree stats ───────────────────────────────────────────── */
@@ -2259,23 +2253,23 @@
 .dms-tree-stat-num {
   font-size: 15px;
   font-weight: 700;
-  color: var(--theme-color);
+  color: var(--modern-violet);
 }
 
 .dms-tree-stat-label {
   font-size: 10.5px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 /* ── Share Modal ──────────────────────────────────────────── */
 .dms-share-target-name {
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--modern-text);
   padding: 8px 12px;
-  background: var(--bg-secondary);
+  background: var(--modern-bg);
   border-radius: 7px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   word-break: break-all;
 }
 
@@ -2297,18 +2291,18 @@
   align-items: center;
   gap: 8px;
   padding: 5px 10px;
-  background: var(--bg-secondary);
+  background: var(--modern-bg);
   border-radius: 6px;
   font-size: 12.5px;
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  color: var(--modern-text);
+  border: 1px solid var(--modern-border);
 }
 
 .dms-chip-remove {
   margin-left: auto;
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -2346,13 +2340,13 @@
 .dms-delete-title {
   font-size: 15px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--modern-text);
   margin: 0;
 }
 
 .dms-delete-desc {
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   margin: 0;
 }
 
@@ -2366,7 +2360,7 @@
 /* ── Shared-with-me folder card label ─────────────────────── */
 .dms-folder-shared-by {
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
@@ -2374,13 +2368,13 @@
 }
 
 .dms-folder-shared-by strong {
-  color: var(--theme-color);
+  color: var(--modern-violet);
   font-weight: 600;
 }
 
 .dms-list-owner-cell {
   max-width: 180px;
-  color: var(--text-primary);
+  color: var(--modern-text);
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
@@ -2393,13 +2387,13 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   margin-bottom: 8px;
 }
 
 .dms-shares-empty {
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   margin: 4px 0 0;
 }
 
@@ -2439,7 +2433,7 @@
 .dms-share-email {
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--modern-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2447,7 +2441,7 @@
 
 .dms-share-perm {
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-share-revoke-btn {
@@ -2455,7 +2449,7 @@
   border: none;
   padding: 4px;
   cursor: pointer;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   border-radius: 4px;
   transition: color 0.15s, background 0.15s;
   display: flex;
@@ -2475,12 +2469,12 @@
 
 /* ── Mobile tree drawer ───────────────────────────────────── */
 .dms-mobile-tree-offcanvas {
-  --bs-offcanvas-width: min(300px, 88vw);
+  --ui-offcanvas-width: min(300px, 88vw);
   z-index: 1065;
 }
 
 .dms-mobile-tree-header {
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--modern-border);
 }
 
 .dms-mobile-tree-body {
@@ -2497,7 +2491,7 @@
   flex: 1;
   min-height: 0;
   height: 100%;
-  background: var(--card-bg);
+  background: var(--modern-card);
 }
 
 /* ── Responsive ───────────────────────────────────────────── */
@@ -2534,12 +2528,12 @@
     max-height: min(52vh, 480px);
   }
 
-  .dms-list-table .MuiTable-root {
+  .dms-list-table .ui-table {
     min-width: 640px !important;
   }
 
   .dms-mobile-tree-offcanvas {
-    --bs-offcanvas-width: min(320px, 90vw);
+    --ui-offcanvas-width: min(320px, 90vw);
   }
 
   .dms-tree-drawer .dms-tree-item {
@@ -2569,7 +2563,7 @@
   }
 
   .dms-mobile-tree-offcanvas {
-    --bs-offcanvas-width: min(340px, 92vw);
+    --ui-offcanvas-width: min(340px, 92vw);
   }
 
   .dms-tree-panel {
@@ -2731,12 +2725,12 @@
     width: 100%;
   }
 
-  .dms-pagination-bar .MuiStack-root {
+  .dms-pagination-bar .ui-stack {
     align-items: self-end;
     width: 100%;
   }
 
-  .dms-pagination-bar .MuiPagination-ul {
+  .dms-pagination-bar .ui-pagination {
     justify-content: center;
     flex-wrap: wrap;
   }
@@ -2744,7 +2738,7 @@
   .dms-detail-panel,
   .dms-form-offcanvas,
   .dms-folder-access-panel {
-    --bs-offcanvas-width: min(420px, 100vw);
+    --ui-offcanvas-width: min(420px, 100vw);
   }
 
   .dms-bulk-bar {
@@ -2771,11 +2765,11 @@
 }
 
 .dms-detail-panel {
-  --bs-offcanvas-width: min(380px, 100vw);
+  --ui-offcanvas-width: min(380px, 100vw);
 }
 
 .dms-form-offcanvas {
-  --bs-offcanvas-width: min(420px, 100vw);
+  --ui-offcanvas-width: min(420px, 100vw);
 }
 
 .dms-detail-panel .offcanvas-title,
@@ -2892,7 +2886,7 @@
     border-radius: 8px;
   }
 
-  .dms-view-toggle .MuiIconButton-root {
+  .dms-view-toggle .ui-icon-button {
     min-width: 38px;
     min-height: 36px;
   }
@@ -2949,7 +2943,7 @@
     box-shadow: none !important;
   }
 
-  .dms-list-table .MuiTable-root {
+  .dms-list-table .ui-table {
     display: block;
     min-width: 0 !important;
   }
@@ -2958,7 +2952,7 @@
     display: none;
   }
 
-  .dms-list-table .MuiTableBody-root {
+  .dms-list-table .ui-table-body {
     display: grid;
     gap: 10px;
   }
@@ -2968,16 +2962,16 @@
     grid-template-columns: auto minmax(0, 1fr) auto;
     gap: 4px 10px;
     padding: 12px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--modern-border);
     border-radius: 12px;
-    background: var(--bg-primary);
+    background: var(--modern-card);
   }
 
   .dms-list-table .dms-list-row:hover {
-    border-color: var(--theme-color);
+    border-color: var(--modern-violet);
   }
 
-  .dms-list-table .dms-list-row > .MuiTableCell-root {
+  .dms-list-table .dms-list-row > .ui-table-cell {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -2985,16 +2979,16 @@
     grid-column: 1 / -1;
     padding: 2px 0 !important;
     border: 0;
-    color: var(--text-primary);
+    color: var(--modern-text);
     min-width: 0;
     font-size: 12.5px;
   }
 
-  .dms-list-table .dms-list-row > .MuiTableCell-root[data-label]::before {
+  .dms-list-table .dms-list-row > .ui-table-cell[data-label]::before {
     content: attr(data-label);
     flex: 0 0 auto;
     max-width: 44%;
-    color: var(--text-secondary);
+    color: var(--modern-muted);
     font-size: 11px;
     font-weight: 600;
   }
@@ -3048,7 +3042,7 @@
   }
 
   .dms-list-table .dms-list-empty-row,
-  .dms-list-table .dms-list-empty-row > .MuiTableCell-root {
+  .dms-list-table .dms-list-empty-row > .ui-table-cell {
     display: block;
     width: 100%;
   }
@@ -3062,7 +3056,7 @@
   .dms-form-offcanvas,
   .dms-folder-access-panel,
   .dms-mobile-tree-offcanvas {
-    --bs-offcanvas-width: 100vw;
+    --ui-offcanvas-width: 100vw;
   }
 
   .dms-detail-body,
@@ -3182,7 +3176,7 @@
     width: 100%;
   }
 
-  .dms-view-toggle .MuiIconButton-root {
+  .dms-view-toggle .ui-icon-button {
     flex: 1 1 0;
   }
 }
@@ -3196,7 +3190,7 @@
     gap: 6px;
   }
 
-  .dms-view-toggle .MuiIconButton-root {
+  .dms-view-toggle .ui-icon-button {
     min-width: 34px;
     padding: 5px 6px !important;
   }
@@ -3211,7 +3205,7 @@
     padding: 10px;
   }
 
-  .dms-pagination-bar .MuiPaginationItem-root {
+  .dms-pagination-bar .ui-pagination-item {
     min-width: 28px;
     height: 28px;
     margin: 0 1px;
@@ -3221,7 +3215,7 @@
 /* Upload flow — DMS document picker */
 .dms-upload-picker-hint {
   margin-bottom: 1rem;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   font-size: 0.9rem;
 }
 
@@ -3233,12 +3227,12 @@
 }
 
 .dms-upload-picker-tree {
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   border-radius: 10px;
   overflow: hidden;
   max-width: 220px;
   height: 100%;
-  background: var(--bg-secondary);
+  background: var(--modern-bg);
 }
 
 .dms-upload-picker-tree .dms-tree-drawer {
@@ -3248,7 +3242,7 @@
 }
 
 .dms-upload-picker-docs {
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   border-radius: 10px;
   padding: 1rem;
   min-width: 0;
@@ -3256,7 +3250,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--bg-primary);
+  background: var(--modern-card);
 }
 
 .dms-upload-picker-docs .dms-search-wrap {
@@ -3282,7 +3276,7 @@
 .dms-upload-picker-empty p {
   margin: 0.75rem 0 0;
   text-align: center;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
 }
 
 .dms-upload-picker-list {
@@ -3298,18 +3292,18 @@
   gap: 0.75rem;
   width: 100%;
   padding: 0.75rem 0.9rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--modern-border);
   border-radius: 8px;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: var(--modern-bg);
+  color: var(--modern-text);
   text-align: start;
   transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .dms-upload-picker-item:hover,
 .dms-upload-picker-item.active {
-  border-color: var(--theme-color);
-  background: color-mix(in srgb, var(--theme-color) 8%, var(--bg-secondary));
+  border-color: var(--modern-violet);
+  background: color-mix(in srgb, var(--modern-violet) 8%, var(--modern-bg));
 }
 
 .dms-upload-picker-item-name {
@@ -3321,7 +3315,7 @@
 
 .dms-upload-picker-item-meta {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--modern-muted);
   white-space: nowrap;
 }
 
@@ -3345,26 +3339,26 @@
 
 .ModalPickerCancel {
   display: flex;
-  background-color: var(--card-bg);
-  color: var(--theme-color);
+  background-color: var(--modern-card);
+  color: var(--modern-violet);
   align-items: center;
-  border: 1px solid var(--theme-color) !important;
+  border: 1px solid var(--modern-violet) !important;
   gap: 5px;
 }
 
 .ModalPickerCancel:hover {
-  background-color: var(--theme-hover);
+  background-color: var(--modern-violet-hover);
   color: white;
-  border: 1px solid var(--theme-color);
+  border: 1px solid var(--modern-violet);
 }
 
 .ModalPickerSelected {
-  background-color: var(--theme-color);
+  background-color: var(--modern-violet);
   color: white;
-  border: 1px solid var(--theme-color);
+  border: 1px solid var(--modern-violet);
 }
 .ModalPickerSelected:hover {
-  background-color: var(--theme-hover);
+  background-color: var(--modern-violet-hover);
   color: #fff;
 }
 .ModalPickerSelected:disabled{

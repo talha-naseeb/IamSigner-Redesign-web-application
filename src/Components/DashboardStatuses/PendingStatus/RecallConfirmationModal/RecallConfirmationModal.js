@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { FiRefreshCw } from "react-icons/fi";

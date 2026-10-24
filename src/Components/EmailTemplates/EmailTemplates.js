@@ -10,13 +10,13 @@ import {
   TableRow,
   Stack,
   Pagination,
-} from "@mui/material";
+} from "@/Components/UI/dataPrimitives";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import { useUser } from "@/Context/UserContext";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
-import { Button, Dropdown, Modal, Spinner } from "react-bootstrap";
+import { Button, Dropdown, Modal, Spinner } from "@/Components/UI/shadcnCompat";
 import { useNavigate } from "react-router-dom";
 import UserLisence from "@/Components/UserLisence/UserLisence";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";

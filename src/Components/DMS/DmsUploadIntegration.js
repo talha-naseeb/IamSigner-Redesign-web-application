@@ -1,11 +1,12 @@
 import React, { useState, useRef, useCallback } from "react";
-import { Form } from "react-bootstrap";
+import { Form } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import { registerDmsDocumentForUploadFlow } from "./utils/dmsSignBridge";
 import { useUser } from "@/Context/UserContext";
+import UploadSourceCard from "@/Components/Common/CloudPickers/UploadSourceCard";
 
 const buildDocDisplayName = (doc) => {
   const raw = (doc?.fileName || doc?.name || "document").trim();
@@ -113,23 +114,17 @@ const DmsUploadIntegration = ({ onOpenPicker, isDmsUploading = false }) => {
           <Loader />
         </div>
       )}
-      <div
-        className="uplad_box"
+      <UploadSourceCard
         onClick={(e) => {
           e.stopPropagation();
           onOpenPicker?.();
         }}
       >
-        <div className="upload_trigger_bx">
-      
-          <Icons.MacDrive size={28} color="var(--theme-color)" />
-          <div className="upload_doc_part">
-            <Form.Group controlId="dms-file-input" className="file-upload_temp">
-              <Form.Label>{t("uploadDocFlow.dmsDocuments")}</Form.Label>
-            </Form.Group>
-          </div>
-        </div>
-      </div>
+        <Icons.MacDrive size={28} color="var(--modern-primary)" />
+        <Form.Group controlId="dms-file-input" className="space-y-0">
+          <Form.Label className="m-0 cursor-pointer whitespace-nowrap text-sm font-medium">{t("uploadDocFlow.dmsDocuments")}</Form.Label>
+        </Form.Group>
+      </UploadSourceCard>
     </>
   );
 };

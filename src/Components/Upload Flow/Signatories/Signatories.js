@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
-import "./Signatories.css";
-import { Form, Button, Row, Col, Dropdown, Accordion, Offcanvas, Tab, Tabs, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Form, Button, Row, Col, Dropdown, Accordion, Offcanvas, Tab, Tabs, OverlayTrigger, Tooltip } from "@/Components/UI/shadcnCompat";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
@@ -11,7 +9,7 @@ import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmatio
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/Context/UserContext";
-import { Chips } from "primereact/chips";
+import { Chips } from "@/Components/UI/EmailChips";
 import PhoneInput from "react-phone-input-2";
 
 const Signatories = ({ setActiveStep, setCompletedSteps }) => {
@@ -663,7 +661,7 @@ const Signatories = ({ setActiveStep, setCompletedSteps }) => {
                           <Row className='d-flex justify-content-start align-items-start'>
                             {showSignOrder && (
                               <Col md={1} className='pe-0'>
-                                <div className='signOrder' style={{ border: `1px solid ${form.signatureColor}` }} onClick={() => setEditingIndex(index)}>
+                                <div className='w-12 h-10 rounded flex justify-center items-center bg-[var(--modern-card,#fff)] text-[var(--modern-text,#0f172a)] font-semibold text-sm cursor-pointer' style={{ border: `1px solid ${form.signatureColor}` }} onClick={() => setEditingIndex(index)}>
                                   {editingIndex === index ? (
                                     <Form.Control
                                       type='text'
@@ -685,7 +683,7 @@ const Signatories = ({ setActiveStep, setCompletedSteps }) => {
                               </Col>
                             )}
                             <Col md={11}>
-                              <div className='signatory-form mt-3' style={{ border: `1px solid ${form.signatureColor}` }}>
+                              <div className='p-5 rounded-xl border bg-[var(--modern-card,#fff)] text-[var(--modern-text,#0f172a)] mt-3' style={{ border: `1px solid ${form.signatureColor}` }}>
                                 <Row>
                                   <Col md={4} className='d-flex gap-3 align-items-center signatory-form-col'>
                                     {showSignOrder && <Icons.DragHandle style={{ cursor: "grab" }} {...provided.dragHandleProps} />}
@@ -697,7 +695,7 @@ const Signatories = ({ setActiveStep, setCompletedSteps }) => {
                                   <Col md={6} className='signatory-form-col action-buttons d-flex justify-content-end align-items-center flex-wrap gap-1'>
                                     <Button
                                       variant='none'
-                                      className='AddUsers'
+                                      className='flex items-center gap-1.5 px-2.5 py-1 text-xs rounded border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)] transition-colors'
                                       onClick={() => {
                                         setSelectedIndex(index); // Store the index of the selected form
                                         setShowOffcanvas(true); // Open the Offcanvas
@@ -925,12 +923,12 @@ const Signatories = ({ setActiveStep, setCompletedSteps }) => {
 
         <Col md={11}>
           <div className='add-signatory-btns  d-flex justify-content-start mb-5 pb-5 gap-3'>
-            <Button variant='' className='ImageCancelBtn p-2' onClick={handleAddRecipient}>
+            <Button variant='outline' className='gap-2' onClick={handleAddRecipient}>
               <Icons.AddCircle size={22} />
               <span> {t("uploadDocFlow.addRecipient")}</span>
             </Button>
 
-            <Button variant='' className='ImageCancelBtn p-2' onClick={handleAddYourself}>
+            <Button variant='outline' className='gap-2' onClick={handleAddYourself}>
               <Icons.AddCircle size={22} />
               <span> {t("uploadDocFlow.addYourself")}</span>
             </Button>
@@ -938,12 +936,12 @@ const Signatories = ({ setActiveStep, setCompletedSteps }) => {
         </Col>
       </Row>
 
-      <div className='fixed-button-container'>
-        <Button className='backBtn' id='hide_part_one' onClick={handleBack}>
+      <div className='fixed bottom-0 left-0 z-[1040] flex w-full items-center justify-between border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] px-5 py-2.5'>
+        <Button variant='outline' className='min-h-10 px-5 font-semibold' id='hide_part_one' onClick={handleBack}>
           {t("uploadDocFlow.back")}
         </Button>
 
-        <Button className='Continue-btn' id='hide_part_one' onClick={handleContinue} disabled={isContinueDisabled}>
+        <Button variant='primary' className='min-h-10 px-5 font-semibold' id='hide_part_one' onClick={handleContinue} disabled={isContinueDisabled}>
           {t("uploadDocFlow.Continue")}
         </Button>
       </div>
@@ -990,7 +988,7 @@ const Signatories = ({ setActiveStep, setCompletedSteps }) => {
                   {filteredTeamMembers.length > 0 ? (
                     filteredTeamMembers.map((member, idx) => (
                       <li key={idx} style={{ marginBottom: "10px" }}>
-                        <button className='Addrecepient' onClick={() => handleRecipientSelection(member.name, member.email)}>
+                        <button className='w-full flex items-center justify-between p-2.5 rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] hover:bg-[var(--modern-border,#e2e8f0)] text-[var(--modern-text,#0f172a)] text-left transition-colors' onClick={() => handleRecipientSelection(member.name, member.email)}>
                           <span style={{ fontSize: "0.9rem" }}>{member.name}</span>
                           <span style={{ fontSize: "0.9rem" }}>{member.email}</span>
                         </button>
@@ -1010,7 +1008,7 @@ const Signatories = ({ setActiveStep, setCompletedSteps }) => {
                   {filteredAdhockUsers.length > 0 ? (
                     filteredAdhockUsers.map((user, idx) => (
                       <li key={idx} style={{ marginBottom: "10px" }}>
-                        <button className='Addrecepient' onClick={() => handleRecipientSelection(user.name, user.email)}>
+                        <button className='w-full flex items-center justify-between p-2.5 rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] hover:bg-[var(--modern-border,#e2e8f0)] text-[var(--modern-text,#0f172a)] text-left transition-colors' onClick={() => handleRecipientSelection(user.name, user.email)}>
                           <span style={{ fontSize: "0.9rem" }}>{user.name}</span>
                           <span style={{ fontSize: "0.9rem" }}>{user.email}</span>
                         </button>

@@ -1,13 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Modal } from "react-bootstrap";
+import { Modal } from "@/Components/UI/shadcnCompat";
 import { Link, useLocation } from "react-router-dom";
 import { useUser } from "@/Context/UserContext";
 import { useTranslation } from "react-i18next";
 import { FiChevronLeft, FiX } from "react-icons/fi";
 import brandMark from "@/assets/images/logoIcon.svg";
 import "./sidebarStyle.css";
-import { useTour } from "@/Context/useTour";
-import Tour from "reactour";
 import { Icons } from "@/assets/Icons";
 import { toast } from "react-toastify";
 import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
@@ -40,23 +38,9 @@ const Sidebar = ({ children }) => {
   const [viewModal, setViewModal] = useState(false);
   const { accountId, user, userAccess } = useUser();
   const { t } = useTranslation();
-  const { isTourOpen, tourSteps, closeTour } = useTour();
   const location = useLocation();
   const menuConfig = useMenuConfig(user, userAccess, t, accountId);
   const isOpen = isMobile || !isCollapsed;
-  const usesModernShell = [
-    "/home",
-    "/user-profile",
-    "/account-settings",
-    "/email-templates",
-    "/create-email-template",
-    "/completed-docs",
-    "/declined-docs",
-    "/draft-docs",
-    "/inactive",
-    "/recall-documents",
-  ].some((path) => location.pathname.startsWith(path));
-
   const closeMobileSidebar = useCallback(() => setIsMobileOpen(false), []);
   const openMobileSidebar = useCallback(() => setIsMobileOpen(true), []);
   const sidebarNavigation = useMemo(
@@ -161,7 +145,7 @@ const Sidebar = ({ children }) => {
 
   return (
     <SidebarNavigationProvider value={sidebarNavigation}>
-      <div className={`Parentcontainer${usesModernShell ? " modern-theme-shell" : ""}`}>
+      <div className="Parentcontainer modern-theme-shell">
         {isMobileOpen && (
           <button
             type="button"
@@ -311,13 +295,6 @@ const Sidebar = ({ children }) => {
           </Modal.Body>
         </Modal>
 
-        <Tour
-          steps={tourSteps}
-          isOpen={isTourOpen}
-          onRequestClose={closeTour}
-          rounded={5}
-          accentColor="var(--theme-color)"
-        />
       </div>
     </SidebarNavigationProvider>
   );

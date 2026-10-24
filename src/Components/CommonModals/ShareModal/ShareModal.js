@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button } from "react-bootstrap";
-import Form from "react-bootstrap/Form";
+import { Modal, Button } from "@/Components/UI/shadcnCompat";
+import { Form as Form } from "@/Components/UI/shadcnCompat";
 import "./modal.css";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";

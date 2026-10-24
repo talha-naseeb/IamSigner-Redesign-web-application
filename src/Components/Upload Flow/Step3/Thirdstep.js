@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Form, Col, Button, Container, InputGroup, ListGroup, Modal, Row, Dropdown, Accordion } from "react-bootstrap";
+import { Form, Col, Button, Container, InputGroup, ListGroup, Modal, Row, Dropdown, Accordion } from "@/Components/UI/shadcnCompat";
 import { useUser } from "@/Context/UserContext";
-import "./Thirdstep.css";
 import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +16,7 @@ import FolderSelection from "./FolderSelection";
 import DateRangePicker from "@/Components/Common/DateRangePicker/DateRangePicker";
 import { DateObject } from "react-multi-date-picker";
 import { startOfToday } from "date-fns";
+import UploadSourceCard from "@/Components/Common/CloudPickers/UploadSourceCard";
 
 const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
   const { t } = useTranslation();
@@ -722,45 +722,39 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
         <div>
           {userAccess.supportDocs === true ? (
             <>
-              <div style={{ marginTop: "1rem" }}>
-                <Row>
-                  <Col>
-                    <div className='uplad_box'>
-                      <Form.Group controlId='file-input-add' className='file-upload_temp'>
-                        <div {...getRootProps({ className: "dropzoneUploadFile" })}>
-                          <input {...getInputProps()} className='temp_file-input-additional d-none' />
-                          <Icons.UploadCloud size={40} color='var(--theme-color)' />
-                          <br />
-                          <div className='upload_doc_part'>
-                            <Form.Label>{t("uploadDocFlow.UploadsupportedDoc")}</Form.Label>
-                            <Form.Label style={{ color: "var(--theme-color)", margin: "0px 5px", textDecoration: "underline" }}>{t("uploadDocFlow.here")}</Form.Label>
-                          </div>
-                        </div>
-                      </Form.Group>
-                    </div>
-                  </Col>
-                </Row>
+              <div className="mt-4">
+                <UploadSourceCard {...getRootProps()}>
+                  <input {...getInputProps()} className="sr-only" />
+                  <Icons.UploadCloud size={32} className="text-[var(--modern-primary,#6366f1)]" />
+                  <span className="text-sm font-medium">{t("uploadDocFlow.UploadsupportedDoc")}</span>
+                  <span className="text-sm font-medium text-[var(--modern-primary,#6366f1)] underline underline-offset-2">
+                    {t("uploadDocFlow.here")}
+                  </span>
+                </UploadSourceCard>
                 {errorMessage && (
-                  <p className='error-message'>
-                    <Icons.AlertCircle className='mb-1 mx-2' />
+                  <p className="mt-2 flex items-start gap-2 text-sm text-[var(--modern-danger,#ef4444)]">
+                    <Icons.AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                     {errorMessage}
                   </p>
                 )}
-                <div className='upload_file_box' id='upload_file_bx '>
+                <div className='mt-3 space-y-2' id='upload_file_bx '>
                   {uploadedFiles.map((fileName, index, file) => (
-                    <div key={index} className='mb-2 uploaded-file d-flex align-items-center justify-content-between px-3 border-bottom '>
-                      <p className='m-0 d-flex align-items-center gap-2'>
+                    <div
+                      key={index}
+                      className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-md border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] px-3 py-2 text-[var(--modern-text,#0f172a)]"
+                    >
+                      <p className='m-0 flex min-w-0 items-center gap-2 break-words text-sm'>
                         <Icons.PDFs size={22} />
                         {fileName}
                       </p>
                       <Dropdown>
                         <Dropdown.Toggle as={CustomToggle}>
                           <Dropdown.Menu>
-                            <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileview(supportingDocIDs[index])}>
+                            <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(supportingDocIDs[index])}>
                               <Icons.View size={18} />
                               {t("uploadDocFlow.view")}
                             </Dropdown.Item>
-                            <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
+                            <Dropdown.Item className='flex items-center gap-2' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
                               <Icons.DeleteAction size={18} />
                               {t("uploadDocFlow.delete")}
                             </Dropdown.Item>
@@ -829,13 +823,13 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
                           className='comment-input py-2'
                         />
                       </InputGroup>
-                      <Button onClick={addComment} className='comment-button'>
+                      <Button onClick={addComment} variant='primary' className='h-10 px-4'>
                         <Icons.Send />
                       </Button>
                     </div>
                     <ListGroup>
                       {comments.map((comment, index) => (
-                        <ListGroup.Item key={index} className='comment-list-third'>
+                        <ListGroup.Item key={index} className='border-none bg-[var(--modern-raised,#f1f5f9)] rounded-lg p-3 my-2 text-[var(--modern-text,#0f172a)]'>
                           <Row>
                             <Col md={6} className='pe-0 d-flex align-items-center gap-3'>
                               {/* User Avatar - Initials Only */}
@@ -858,9 +852,9 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
                               >
                                 {getInitials(user.fullName)}
                               </div>
-                              <div className='comment-header mb-0'>
+                              <div className='flex items-center font-bold mb-0 flex-wrap text-[var(--modern-text,#0f172a)]'>
                                 {user.fullName}
-                                <span className='timestamp'>
+                                <span className='ml-2.5 text-xs text-[var(--modern-muted,#64748b)]'>
                                   {comment.date}
                                   <span className='mx-2'></span>
                                   {comment.time}
@@ -915,7 +909,7 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
                                 // Viewing mode
                                 <>
                                   <div className='comment-body'>
-                                    <div className='comment-text'>{comment.text}</div>
+                                    <div className='text-sm mb-2.5 p-2 rounded-md border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] text-[var(--modern-text,#0f172a)]'>{comment.text}</div>
                                   </div>
                                 </>
                               )}
@@ -932,8 +926,8 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
 
           {/*Advanced Settings  */}
 
-          <div className='ThirdpaginationDivs my-3 '>
-            <Accordion defaultActiveKey='0' className='comments-container'>
+          <div className='ThirdpaginationDivs my-3 mb-24'>
+            <Accordion defaultActiveKey='0'>
               <Accordion.Item eventKey='2'>
                 <Accordion.Header className='m-0'>
                   <div className='d-flex align-items-center gap-2'>
@@ -1017,7 +1011,7 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
                       <p>{t("uploadDocFlow.noFolderSelected")}</p>
                     )}
                     {/* Button to open Folder Selection Offcanvas */}
-                    <Button onClick={() => setIsCanvasVisible(true)} className='selectFolder'>
+                    <Button variant='outline' onClick={() => setIsCanvasVisible(true)} className='mt-2'>
                       {t("uploadDocFlow.SelectFolder")}
                     </Button>
                   </Form>
@@ -1026,11 +1020,11 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
             </Accordion>
           </div>
 
-          <div className=' fixed-button-container'>
-            <Button className='backBtn' id='hide_part_one' onClick={handleBack}>
+          <div className='fixed bottom-0 left-0 z-[1040] flex w-full items-center justify-between border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] px-5 py-2.5'>
+            <Button variant='outline' className='min-h-10 px-5 font-semibold' id='hide_part_one' onClick={handleBack}>
               {t("uploadDocFlow.back")}
             </Button>
-            <Button className='Continue-btn' id='hide_part_one' onClick={openConfirmationModal}>
+            <Button variant='primary' className='min-h-10 px-5 font-semibold' id='hide_part_one' onClick={openConfirmationModal}>
               {t("uploadDocFlow.sendAndSign")}
             </Button>
           </div>

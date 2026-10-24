@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@mui/material";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
 import { Icons } from "@/assets/Icons";
 import { toast } from "react-toastify";
-import { Button, Modal, Dropdown } from "react-bootstrap";
+import { Button, Modal, Dropdown } from "@/Components/UI/shadcnCompat";
 import { useNavigate } from "react-router-dom";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { useUser } from "@/Context/UserContext";

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Navbar from "react-bootstrap/Navbar";
-import Container from "react-bootstrap/Container";
-import Offcanvas from "react-bootstrap/Offcanvas";
+import { Navbar as Navbar } from "@/Components/UI/shadcnCompat";
+import { Container as Container } from "@/Components/UI/shadcnCompat";
+import { Offcanvas as Offcanvas } from "@/Components/UI/shadcnCompat";
 import { CiFilter } from "react-icons/ci";
 import "./style.css";
 import { useTranslation } from "react-i18next";

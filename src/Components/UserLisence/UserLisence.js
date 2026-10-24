@@ -11,16 +11,15 @@ function UserLisence() {
   return (
     <div className='lisenceExpire'>
       <div className='LisenceImage'>
+        <img className='license-expire-image' src={expireImage} alt='imageExpire' />
         {userAccess.packageName === "Trial" ? (
-          <h3>
+          <h3 className='license-expire-heading'>
             {userAccess.packageName} {""}
             {t("home.hasExpired")}
           </h3>
         ) : (
-          <h3>{t("home.Expire")}</h3>
+          <h3 className='license-expire-heading'>{t("home.Expire")}</h3>
         )}
-
-        <img src={expireImage} alt='imageExpire' style={{ mixBlendMode: "multiply", height: "120px", width: "120px" }} />
       </div>
     </div>
   );

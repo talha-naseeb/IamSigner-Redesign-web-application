@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./Secondstep.css";
-import { Button, Col, Dropdown, DropdownButton, Row } from "react-bootstrap";
+import { Button, Col, Dropdown, DropdownButton, Row } from "@/Components/UI/shadcnCompat";
 import { Icons } from "@/assets/Icons";
 import uploadFlowService from "@/services/uploadFlowService";
 import templateService from "@/services/templateService";
@@ -173,100 +172,113 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
   };
 
   return (
-    <>
+    <div className='w-full'>
       {isLoading && (
-        <div className='loader-overlay'>
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm'>
           <Loader />
         </div>
       )}
 
-      <div className='secondstep-container'>
-        <Row className='main-content p-0 m-0'>
-          {/* <Col md={10} className='p-0 m ' style={{ marginRight: "15%" }}> */}
-          <Col md={10} className='p-0 m'>
+      <div className='w-full'>
+        <Row className='p-0 m-0'>
+          <Col md={10} className='p-0 bg-[var(--modern-bg)]'>
             <Row
-              className='signatories-row m-0 p-0 row-signatories-wrapper'
+              className='m-0 p-0 overflow-x-auto w-full px-3 py-2 cursor-pointer flex items-center'
               style={{
                 position: "fixed",
                 top: "var(--editor-header-height, 67px)",
                 width: "100%",
                 zIndex: "30",
+                background: "var(--modern-card)",
+                borderBottom: "1px solid var(--modern-border)",
               }}
             >
-              <div className='signatories-container'>
+              <div className='flex flex-row justify-start gap-2.5 overflow-x-auto max-w-[71%] whitespace-nowrap pb-1'>
                 {formData &&
                   formData.templateSignatory.map((signatory) => {
                     const isHovered = hoveredSignatory === signatory.signatoriesID;
                     const originalColor = signatory.signatureColor;
-                    const hoverColor = colorMapping[originalColor];
+                    const hoverColor = colorMapping[originalColor] || originalColor;
+                    const isSelected = selectedSignatoryID === signatory.templateSignatoryID;
                     return (
                       <div
                         key={signatory.templateSignatoryID}
-                        className={`d-flex align-items-center flex-row ${selectedSignatoryID === signatory.templateSignatoryID ? "selected-item" : "not-selected-item"}`}
+                        className={`inline-flex items-center gap-2 rounded-lg py-1.5 px-3 cursor-pointer transition-all text-xs font-medium text-[var(--modern-text)] ${
+                          isSelected
+                            ? "bg-[var(--modern-raised)] font-semibold"
+                            : "bg-[var(--modern-card)] border border-[var(--modern-border)] hover:bg-[var(--modern-raised)]"
+                        }`}
                         onClick={() => handleNameSelect(signatory.templateSignatoryID, signatory.name)}
                         onMouseEnter={() => setHoveredSignatory(signatory.templateSignatoryID)}
                         onMouseLeave={() => setHoveredSignatory(null)}
                         style={{
-                          display: "inline-block",
-                          border: selectedSignatoryID === signatory.templateSignatoryID ? `1px solid ${originalColor}` : "",
+                          border: isSelected ? `1px solid ${originalColor}` : undefined,
                         }}
                       >
-                        <div className='signatory-item' style={{ backgroundColor: isHovered ? hoverColor : originalColor }}>
-                          <Icons.Profile className='mx-2' size={18} />
+                        <div
+                          className='w-[32px] h-[32px] rounded-full flex items-center justify-center text-white shrink-0'
+                          style={{ backgroundColor: isHovered ? hoverColor : originalColor }}
+                        >
+                          <Icons.Profile size={17} />
                         </div>
-                        {signatory.name}
+                        <span className='truncate max-w-[120px]'>{signatory.name}</span>
                       </div>
                     );
                   })}
               </div>
             </Row>
 
-            <Row className='draggable-content mb-3 m-0  ' style={{ position: "fixed", top: "calc(var(--editor-header-height, 67px) + 69px)", width: "71%", zIndex: "30" }}>
-              {/* <Col md={1} className='left-sidebar p-0'> */}
-              <div className='menu-list'>
-                <SearchControls t={t} searchTerm={searchTerm} setSearchTerm={setSearchTerm} searchClicked={searchClicked} setSearchClicked={setSearchClicked} />
+            <Row
+              className='mb-3 m-0'
+              style={{
+                position: "fixed",
+                top: "calc(var(--editor-header-height, 67px) + 69px)",
+                width: "71%",
+                zIndex: "30",
+                background: "var(--modern-card)",
+                borderBottom: "1px solid var(--modern-border)",
+              }}
+            >
+              <Col xs={12} className='p-0'>
+                <div className='h-full flex justify-start items-center bg-[var(--modern-card)]'>
+                  <SearchControls t={t} searchTerm={searchTerm} setSearchTerm={setSearchTerm} searchClicked={searchClicked} setSearchClicked={setSearchClicked} />
 
-                <div className='list d-flex px-1 overflow-x-auto'>
-                  {filteredFields.length > 0 ? (
-                    filteredFields.map((field, index) => (
-                      <DraggableButton
-                        key={index}
-                        index={index}
-                        icon={field.icon}
-                        label={field.label}
-                        controlID={field.controlID}
-                        data={field.label}
-                        // selectedColorIndex={selectedColorIndex}
-                        signatoryColors={signatoryColors}
-                        selectedSignatoryID={selectedSignatoryID}
-                        MasterDocPagesId={masterDocPagesId}
-                        signatureType={signatureType}
-                        onButtonClick={handleDraggbleButtonClick}
-                        controlUniqueIdentifier={field.controlUniqueIdentifier}
-                      />
-                    ))
-                  ) : (
-                    <p className='error-message'>{t("uploadDocFlow.notItemsFound")}</p>
-                  )}
+                  <div className='flex px-1 overflow-x-auto max-[576px]:w-full max-[576px]:flex-row max-[576px]:justify-evenly max-[576px]:gap-[15px] max-[576px]:border-b max-[576px]:border-[var(--modern-border)] max-[576px]:border-r-0 max-[576px]:pb-[13px]'>
+                    {filteredFields.length > 0 ? (
+                      filteredFields.map((field, index) => (
+                        <DraggableButton
+                          key={index}
+                          index={index}
+                          icon={field.icon}
+                          label={field.label}
+                          controlID={field.controlID}
+                          data={field.label}
+                          signatoryColors={signatoryColors}
+                          selectedSignatoryID={selectedSignatoryID}
+                          MasterDocPagesId={masterDocPagesId}
+                          signatureType={signatureType}
+                          onButtonClick={handleDraggbleButtonClick}
+                          controlUniqueIdentifier={field.controlUniqueIdentifier}
+                        />
+                      ))
+                    ) : (
+                      <p className='flex items-center my-3 text-[var(--modern-muted)] text-sm'>{t("uploadDocFlow.notItemsFound")}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-
-              {/* </Col> */}
+              </Col>
             </Row>
 
-            <Row className='center-doc-image  image-col mx-0 mb-0' style={{ marginTop: "calc(var(--editor-header-height, 67px) + 68px)" }}>
-              {/* <Col md={11} className='p-0'> */}
-              <div className='scrollable-content px-0' ref={mainDocumentRef}>
+            <Row className='mx-0 mb-0' style={{ marginTop: "calc(var(--editor-header-height, 67px) + 68px)" }}>
+              <div className='px-0 mb-[78px] overflow-auto w-full' ref={mainDocumentRef}>
                 {!imagesData ? (
-                  <div className='image-loader-container'>
-                    {" "}
-                    <div className='image-loader'></div>
+                  <div className='flex items-center justify-center p-8'>
+                    <div className='w-8 h-8 rounded-full border-2 border-[var(--modern-primary)] border-t-transparent animate-spin' />
                   </div>
                 ) : (
                   imagesData && (
                     <ImageWithDropZone
                       selectedImage={selectedImage}
-                      // selectedColorIndex={selectedColorIndex}
                       imageButtonsMap={imageButtonsMap}
                       setImageButtonsMap={setImageButtonsMap}
                       signatoryColors={signatoryColors}
@@ -274,8 +286,6 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
                       selectedMasterDocID={selectedMasterDocID}
                       masterDocPagesId={masterDocPagesId}
                       TemplateID={storedTemplateID}
-                      // defaultMasterDocID={defaultMasterDocID}
-                      // imagesData={imagesData}
                       setControls={setControls}
                       buttonClicked={buttonClicked}
                       setButtonClicked={setButtonClicked}
@@ -285,66 +295,74 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
                   )
                 )}
               </div>
-              {/* </Col> */}
             </Row>
           </Col>
 
-          <Col md={2} className='page-display p-0' style={{ position: "fixed", top: "var(--editor-header-height, 67px)", zIndex: "30" }}>
-            <>
-              <div className='documents-dropdown'>
-                <DropdownButton
-                  title={selectedFolder || ""}
-                  onSelect={(eventKey) => {
-                    const [masterDocID, selectedFolderName] = eventKey.split(",");
-                    handleDocSelect(masterDocID, selectedFolderName);
-                  }}
-                  id='doc-dropdown'
-                  className='border border-0 w-100'
-                  variant='none'
-                >
-                  {formData &&
-                    formData.primaryDocs.map((doc) => {
-                      const truncatedName = doc.docName.length > 10 ? doc.docName.slice(0, 7) + ".." : doc.docName;
-                      return (
-                        <Dropdown.Item key={doc.masterDocID} eventKey={`${doc.masterDocID},${doc.docName}`} className='truncate-text'>
-                          {doc.docName}
-                        </Dropdown.Item>
-                      );
-                    })}
-                </DropdownButton>
-              </div>
+          <Col
+            md={2}
+            className='p-0 border-l border-[var(--modern-border)] rtl:border-r rtl:border-l-0 bg-[var(--modern-card)]'
+            style={{ position: "fixed", top: "var(--editor-header-height, 67px)", zIndex: "30" }}
+          >
+            <div className='m-2 p-1.5 rounded-md border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] flex items-center'>
+              <DropdownButton
+                title={selectedFolder || ""}
+                onSelect={(eventKey) => {
+                  const [masterDocID, selectedFolderName] = eventKey.split(",");
+                  handleDocSelect(masterDocID, selectedFolderName);
+                }}
+                id='doc-dropdown'
+                className='border-0 w-full flex justify-between items-center text-[var(--modern-text)]'
+                variant='none'
+              >
+                {formData &&
+                  formData.primaryDocs.map((doc) => {
+                    const truncatedName = doc.docName.length > 10 ? doc.docName.slice(0, 7) + ".." : doc.docName;
+                    return (
+                      <Dropdown.Item key={doc.masterDocID} eventKey={`${doc.masterDocID},${doc.docName}`} className='truncate text-[var(--modern-text)]'>
+                        {doc.docName}
+                      </Dropdown.Item>
+                    );
+                  })}
+              </DropdownButton>
+            </div>
 
-              <hr className='m-0' />
+            <hr className='m-0 border-[var(--modern-border)]' />
 
-              <div className='doc-pages d-none d-md-block'>
-                <ImageThumbnails
-                  controls={controls}
-                  t={t}
-                  selectedImage={selectedImage}
-                  setSelectedImage={setSelectedImage}
-                  setMasterDocPagesId={setMasterDocPagesId}
-                  imagesData={imagesData}
-                  setImagesData={setImagesData}
-                  buttons={true}
-                />
-              </div>
-            </>
+            <div className='hidden md:block'>
+              <ImageThumbnails
+                controls={controls}
+                t={t}
+                selectedImage={selectedImage}
+                setSelectedImage={setSelectedImage}
+                setMasterDocPagesId={setMasterDocPagesId}
+                imagesData={imagesData}
+                setImagesData={setImagesData}
+                buttons={true}
+              />
+            </div>
           </Col>
         </Row>
 
-        <div className='fixed-button-container'>
-          <Button className='backBtn' id='hide_part_one' onClick={handleBack}>
+        <div className='fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-3 border-t border-[var(--modern-border)] bg-[var(--modern-card)]'>
+          <Button variant='outline' id='hide_part_one' onClick={handleBack} disabled={isLoading}>
             {t("uploadDocFlow.back")}
           </Button>
 
           <PageNavigations imagesData={imagesData} selectedImage={selectedImage} setSelectedImage={setSelectedImage} onImageSelect={handleImageSelect} />
 
-          <Button className='Continue-btn' id='hide_part_one' onClick={handleFinish}>
-            {t("uploadDocFlow.finish")}
+          <Button variant='primary' id='hide_part_one' onClick={handleFinish} disabled={isLoading}>
+            {isLoading ? (
+              <span className='flex items-center gap-2'>
+                <span className='inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' />
+                {t("uploadDocFlow.finish")}
+              </span>
+            ) : (
+              t("uploadDocFlow.finish")
+            )}
           </Button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

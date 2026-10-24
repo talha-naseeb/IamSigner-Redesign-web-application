@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import RecentDocsFilter from "./RecentDocsFilter";
 import Loader from "@/Components/CommonModals/Loader/Loader";
-import { useTour } from "@/Context/useTour";
-import Tour from "reactour";
 import documentService from "@/services/documentService";
 import { Icons } from "@/assets/Icons";
 import { FiSearch, FiX, FiFileText } from "react-icons/fi";
@@ -23,7 +21,6 @@ const RecentDocsHome = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState(false);
-  const { isTourOpen, tourSteps, closeTour } = useTour();
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -382,7 +379,6 @@ const RecentDocsHome = () => {
         </TableContainer>
       </section>
 
-      <Tour steps={tourSteps} isOpen={isTourOpen} onRequestClose={closeTour} rounded={5} accentColor='var(--theme-color)' />
     </div>
   );
 };

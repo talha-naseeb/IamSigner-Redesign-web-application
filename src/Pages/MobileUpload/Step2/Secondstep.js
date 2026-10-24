@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./Secondstep.css";
-import { Col, Dropdown, DropdownButton, Row } from "react-bootstrap";
+import { Col, Dropdown, DropdownButton, Row } from "@/Components/UI/shadcnCompat";
 import mobileService from "@/services/mobileService";
 import { toast } from "react-toastify";
 import { DraggableButton, PageNavigations, SearchControls } from "@/Components/DocumentPreparation";

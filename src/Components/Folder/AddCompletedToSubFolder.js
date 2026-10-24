@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import userService from "@/services/userService";
-import { Offcanvas, Form, Button } from "react-bootstrap";
-import "./style.css";
+import { Offcanvas, Form, Button } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
@@ -85,22 +84,29 @@ const AddCompletedToSubFolder = ({ show, handleClose, subFolderID }) => {
       <Offcanvas.Header closeButton>
         <Offcanvas.Title>{t("Folder.addCompletedDocs")}</Offcanvas.Title>
       </Offcanvas.Header>
-      <hr style={{ margin: " auto 0", borderColor: "black" }} />
+      <hr className='m-0 border-[var(--modern-border)] opacity-100' />
 
       <Offcanvas.Body>
         <Form onSubmit={handleSubmit}>
           <Form.Control type='text' placeholder={t("Folder.searchDocs")} value={filter} onChange={handleSearch} />
           {filteredDocuments.map((doc) => (
-            <div className={`DocsOffcanvas ${selectedDocuments.includes(doc.masterDocID) ? "active" : ""}`} key={doc.masterDocID}>
+            <div
+              className={`my-2.5 flex items-center gap-4 rounded-xl border bg-card p-2.5 font-medium text-foreground transition-colors [&_.form-check-label]:mx-[5px] [&_.form-check-label]:mt-0.5 ${
+                selectedDocuments.includes(doc.masterDocID)
+                  ? "border-[var(--modern-violet)] bg-[var(--modern-violet-soft)] text-[var(--modern-violet)]"
+                  : "border-border"
+              }`}
+              key={doc.masterDocID}
+            >
               <Form.Check type='checkbox' id={`doc-checkbox-${doc.masterDocId}`} onChange={() => handleDocumentSelection(doc.masterDocID)} checked={selectedDocuments.includes(doc.masterDocID)} />
               <div className='d-flex gap-1 align-items-center'>
-                {selectedDocuments.includes(doc.masterDocID) ? <Icons.PDFCheck size={24} color='#19d157' /> : <Icons.PDF size={24} />}
+                {selectedDocuments.includes(doc.masterDocID) ? <Icons.PDFCheck size={24} color='var(--modern-success, #16a34a)' /> : <Icons.PDF size={24} />}
                 {doc.docName}
               </div>
             </div>
           ))}
 
-          <div className='newComment d-flex align-items-center justify-content-between w-100 p-3 py-4 bg-white'>
+          <div className='newComment d-flex align-items-center justify-content-between w-100 p-3 py-4'>
             <Button variant='none' className='resetBtn' onClick={handleCancel}>
               {t("Folder.Cancel")}
             </Button>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import Loader from "@/Components/CommonModals/Loader/Loader";

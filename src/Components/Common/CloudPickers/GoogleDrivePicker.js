@@ -3,11 +3,12 @@ import useDrivePicker from "react-google-drive-picker";
 import axios from "axios";
 import uploadFlowService from "@/services/uploadFlowService";
 import templateService from "@/services/templateService";
-import { Form } from "react-bootstrap";
+import { Form } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import { Icons } from "@/assets/Icons";
+import UploadSourceCard from "./UploadSourceCard";
 
 function GoogleDrivePicker({
   uploadedFiles = [],
@@ -168,23 +169,19 @@ function GoogleDrivePicker({
           <Loader />
         </div>
       )}
-      <div className='uplad_box' onClick={handleOpenPicker} style={{ cursor: "pointer" }} role='button' tabIndex={0}>
-        <div className='upload_trigger_bx'>
-          <Icons.GoogleDrive alt='Google Drive Image' />
-          <div className='upload_doc_part'>
-            <Form.Group controlId='file-input-add-gdrive' className='file-upload_temp'>
-              <Form.Label>{t("uploadDocFlow.googledrive")}</Form.Label>
-              <Form.Control
-                className='temp_file-input-additional'
-                type='file'
-                name='file'
-                accept='.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx'
-                readOnly
-              />
-            </Form.Group>
-          </div>
-        </div>
-      </div>
+      <UploadSourceCard onClick={handleOpenPicker} role='button' tabIndex={0}>
+        <Icons.GoogleDrive alt='Google Drive Image' />
+        <Form.Group controlId='file-input-add-gdrive' className='space-y-0'>
+          <Form.Label className='m-0 cursor-pointer whitespace-nowrap text-sm font-medium'>{t("uploadDocFlow.googledrive")}</Form.Label>
+          <Form.Control
+            className='!sr-only'
+            type='file'
+            name='file'
+            accept='.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx'
+            readOnly
+          />
+        </Form.Group>
+      </UploadSourceCard>
     </>
   );
 }

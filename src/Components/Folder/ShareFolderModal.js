@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form } from "@/Components/UI/shadcnCompat";
 import userService from "@/services/userService";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { Button, Form, Col, Row, Accordion, Spinner } from "react-bootstrap";
+import { Button, Form, Col, Row, Accordion, Spinner } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import { useUser } from "@/Context/UserContext";

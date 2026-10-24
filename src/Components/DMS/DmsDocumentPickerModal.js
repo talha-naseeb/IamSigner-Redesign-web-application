@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Button, Modal } from "react-bootstrap";
-import SearchIcon from "@mui/icons-material/Search";
-import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
+import { Button, Modal } from "@/Components/UI/shadcnCompat";
+import { SearchIcon as SearchIcon } from "@/Components/UI/iconCompat";
+import { InsertDriveFileOutlinedIcon as InsertDriveFileOutlinedIcon } from "@/Components/UI/iconCompat";
 import { useTranslation } from "react-i18next";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import FolderTree from "./components/FolderTree";

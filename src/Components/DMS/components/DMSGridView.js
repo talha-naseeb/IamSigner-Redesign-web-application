@@ -1,5 +1,5 @@
-import { Button } from "react-bootstrap";
-import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
+import { Button } from "@/Components/UI/shadcnCompat";
+import { InsertDriveFileOutlinedIcon as InsertDriveFileOutlinedIcon } from "@/Components/UI/iconCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons/index";
 import FolderCard from "./FolderCard";

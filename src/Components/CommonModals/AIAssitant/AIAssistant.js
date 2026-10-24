@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Offcanvas } from "react-bootstrap";
+import { Button, Offcanvas } from "@/Components/UI/shadcnCompat";
 import "./AIAssistant.css";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";

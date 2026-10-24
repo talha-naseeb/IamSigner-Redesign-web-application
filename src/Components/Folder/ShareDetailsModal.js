@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal } from "react-bootstrap";
+import { Modal } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 
 const ShareDetailsModal = ({ show, handleClose, shareWith }) => {

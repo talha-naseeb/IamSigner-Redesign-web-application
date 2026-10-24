@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
 import Loader from "@/Components/CommonModals/Loader/Loader";
-import "./TransferOwnershipModal.css";
 import userService from "@/services/userService";
 import dashboardService from "@/services/dashboardService";
-import {Icons} from "@/assets/Icons/index";
+import { Icons } from "@/assets/Icons/index";
 
 const TransferOwnershipModal = ({ show, handleClose, masterDocID, docName }) => {
   const { t } = useTranslation();
@@ -116,31 +115,20 @@ const TransferOwnershipModal = ({ show, handleClose, masterDocID, docName }) => 
       )}
       <Modal show={show} onHide={handleCloseModal} dialogClassName='custom-modal-width' backdrop='static' keyboard={false}>
         <Modal.Header closeButton>
-          <div className='header-content'>
-            <div className='header-icon'>
-              <Icons.TransferOwner size={25} />
+          <div className='flex items-center gap-3'>
+            <div className='flex items-center justify-center w-10 h-10 rounded-lg bg-[var(--modern-raised)] text-[var(--modern-text)] border border-[var(--modern-border)]'>
+              <Icons.TransferOwner size={22} />
             </div>
-            <div className='header-text'>
-              <Modal.Title>{t("dashboardCardStatuses.TransferOwnerShip")}</Modal.Title>
-              {/* <p className="header-subtitle">{t("dashboardCardStatuses.transferOwnershipSubtitle")}</p> */}
+            <div className='flex-1'>
+              <Modal.Title className='text-base font-semibold text-[var(--modern-text)] m-0'>{t("dashboardCardStatuses.TransferOwnerShip")}</Modal.Title>
             </div>
           </div>
         </Modal.Header>
 
-        <Modal.Body className='transfer-modal-body'>
-          {/* <div className="document-info">
-          <div className="document-icon">
-            <Icons.PDFs size={25} />
-          </div>
-          <div className="document-details">
-            <h6 className="document-title">{t("dashboardCardStatuses.document")}</h6>
-            <p className="document-name">{docName}</p>
-          </div>
-        </div> */}
-
-          <div className='transfer-section'>
-            <h6 className='section-title'>{t("dashboardCardStatuses.TransferTo")}</h6>
-            <div className='email-input-container'>
+        <Modal.Body className='px-4 py-4 space-y-4'>
+          <div className='space-y-1.5'>
+            <label className='block text-xs font-semibold uppercase tracking-wider text-[var(--modern-muted)]'>{t("dashboardCardStatuses.TransferTo")}</label>
+            <div className='relative'>
               <Form.Control
                 type='text'
                 placeholder={t("dashboardCardStatuses.searchTeamMembers")}
@@ -152,49 +140,49 @@ const TransferOwnershipModal = ({ show, handleClose, masterDocID, docName }) => 
                     setTimeout(() => setShowSuggestions(false), 150);
                   }
                 }}
-                className='email-input'
+                className='w-full px-3 py-2 text-sm rounded-lg border border-[var(--modern-border)] bg-[var(--modern-bg)] text-[var(--modern-text)]'
               />
 
               {showSuggestions && filteredEmails.length > 0 && (
-                <div className='email-suggestions'>
+                <div className='email-suggestions absolute z-50 w-full mt-1 bg-[var(--modern-card)] border border-[var(--modern-border)] rounded-lg shadow-none overflow-hidden max-h-48 overflow-y-auto'>
                   {filteredEmails.slice(0, 5).map((option, index) => (
                     <div
                       key={index}
-                      className='email-suggestion-item'
+                      className='p-2.5 hover:bg-[var(--modern-raised)] cursor-pointer text-sm border-b border-[var(--modern-border)] last:border-b-0'
                       onMouseDown={(e) => {
                         e.preventDefault();
                         handleEmailSelect(option);
                       }}
                     >
-                      <div className='suggestion-info'>
-                        <div className='suggestion-name'>{option.fullName || t("dashboardCardStatuses.unknown")}</div>
-                        <div className='suggestion-email'>{option.emailID}</div>
+                      <div className='flex flex-col'>
+                        <span className='font-medium text-[var(--modern-text)]'>{option.fullName || t("dashboardCardStatuses.unknown")}</span>
+                        <span className='text-xs text-[var(--modern-muted)]'>{option.emailID}</span>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
 
-              {emailError && <div className='error-message'>{emailError}</div>}
+              {emailError && <div className='text-xs text-rose-500 mt-1'>{emailError}</div>}
             </div>
           </div>
 
-          <div className='transfer-warning'>
-            <div className='warning-icon'>
+          <div className='flex items-start gap-3 p-3.5 rounded-lg border border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs leading-relaxed'>
+            <div className='mt-0.5 shrink-0'>
               <Icons.AlertCircle />
             </div>
-            <div className='warning-text'>
-              <p>{t("dashboardCardStatuses.transferWarningTitle")}</p>
-              <p>{t("dashboardCardStatuses.transferWarningSubtitle")}</p>
+            <div className='space-y-0.5'>
+              <p className='font-semibold m-0'>{t("dashboardCardStatuses.transferWarningTitle")}</p>
+              <p className='m-0 opacity-90'>{t("dashboardCardStatuses.transferWarningSubtitle")}</p>
             </div>
           </div>
         </Modal.Body>
 
-        <Modal.Footer className='mt-4 d-flex justify-content-between'>
-          <Button variant='none' className='modalCancelButton' onClick={handleCloseModal} disabled={isLoading}>
+        <Modal.Footer className='flex justify-between pt-3 border-t border-[var(--modern-border)]'>
+          <Button variant='outline' onClick={handleCloseModal} disabled={isLoading}>
             {t("dashboardCardStatuses.cancel")}
           </Button>
-          <Button className='applyBtn' variant='none' onClick={handleTransfer} disabled={isLoading || !newOwner || !validateEmail(newOwner)}>
+          <Button variant='primary' onClick={handleTransfer} disabled={isLoading || !newOwner || !validateEmail(newOwner)}>
             {t("dashboardCardStatuses.confirm")}
           </Button>
         </Modal.Footer>

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import userService from "@/services/userService";
-import Offcanvas from "react-bootstrap/Offcanvas";
-import { Button, Form, Dropdown } from "react-bootstrap";
+import { Offcanvas as Offcanvas } from "@/Components/UI/shadcnCompat";
+import { Button, Form, Dropdown } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { Modal } from "react-bootstrap";
+import { Modal } from "@/Components/UI/shadcnCompat";
 import { Icons } from "@/assets/Icons";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import AddCompletedDocuments from "./AddCompletedDocuments";
@@ -12,7 +12,7 @@ import { useUser } from "@/Context/UserContext";
 import UserLisence from "@/Components/UserLisence/UserLisence";
 import { useTranslation } from "react-i18next";
 import Loader from "@/Components/CommonModals/Loader/Loader";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Pagination } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Pagination } from "@/Components/UI/dataPrimitives";
 import FolderFilter from "./FolderFilter";
 import ShareFolderModal from "./ShareFolderModal";
 import ShareDetailsModal from "./ShareDetailsModal";
@@ -403,7 +403,7 @@ function Folder() {
         <>
           {userAccess.folders === true ? (
             <>
-              <div className='container mt-3'>
+              <div className='folder-route container mt-3 text-foreground [font-family:var(--modern-font-ui)]'>
                 {isLoading && (
                   <div className='loader-overlay'>
                     <Loader />
@@ -414,7 +414,7 @@ function Folder() {
                   {t("Folder.createFolder")}
                 </button>
 
-                <div className='userProfile-form container mt-3'>
+                <div className='container mt-3 rounded-2xl border border-border bg-card p-[clamp(1rem,2.5vw,1.5rem)] text-foreground max-sm:p-4'>
                   <div className='d-flex align-items-center justify-content-between'>
                     <div className='d-flex gap-3'>
                       {searchResults.length === 0 ? (
@@ -423,7 +423,7 @@ function Folder() {
                         </>
                       ) : (
                         <>
-                          <Icons.FoldersFill size={30} color='var(--theme-color)' />
+                          <Icons.FoldersFill size={30} color='var(--modern-violet)' />
                         </>
                       )}
 
@@ -447,10 +447,20 @@ function Folder() {
                   </div>
 
                   <div className='d-flex gap-3 '>
-                    <Button className={`SignButton ${activeTab === "allFolders" ? "active" : ""}`} onClick={handleAllfoler}>
+                    <Button
+                      className={`min-h-10 rounded-[10px] border border-border bg-[var(--modern-raised)] px-3 text-[var(--modern-muted)] transition-colors hover:border-[var(--modern-violet)] hover:bg-[var(--modern-violet-soft)] hover:text-[var(--modern-violet)] ${
+                        activeTab === "allFolders" ? "border-[var(--modern-violet)] bg-[var(--modern-violet-soft)] text-[var(--modern-violet)]" : ""
+                      }`}
+                      onClick={handleAllfoler}
+                    >
                       {t("Folder.Allfolders")}
                     </Button>
-                    <Button className={`SignButton ${activeTab === "shareFolders" ? "active" : ""}`} onClick={handleShareFolders}>
+                    <Button
+                      className={`min-h-10 rounded-[10px] border border-border bg-[var(--modern-raised)] px-3 text-[var(--modern-muted)] transition-colors hover:border-[var(--modern-violet)] hover:bg-[var(--modern-violet-soft)] hover:text-[var(--modern-violet)] ${
+                        activeTab === "shareFolders" ? "border-[var(--modern-violet)] bg-[var(--modern-violet-soft)] text-[var(--modern-violet)]" : ""
+                      }`}
+                      onClick={handleShareFolders}
+                    >
                       {t("dashboardCardStatuses.sharedWithMe")}
                     </Button>
                   </div>
@@ -472,7 +482,7 @@ function Folder() {
                           <TableHead className='customTableHead'>
                             <TableRow>
                               {columns.map((column) => (
-                                <TableCell className='TableHeaderCell' style={{ backgroundColor: "#e7ebee" }} key={column.key}>
+                                <TableCell className='TableHeaderCell' key={column.key}>
                                   {column.label}
                                 </TableCell>
                               ))}
@@ -481,8 +491,8 @@ function Folder() {
                           <TableBody>
                             {searchResults.length === 0 && (
                               <TableRow>
-                                <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
-                                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                <td colSpan='6' className='p-5 text-center text-muted-foreground'>
+                                  <div className='flex flex-col items-center gap-2'>
                                     <Icons.Folders size={50} />
                                     {t("dashboardCardStatuses.notFolerFound")}
                                   </div>
@@ -496,7 +506,7 @@ function Folder() {
                                   <div className='d-flex align-items-center gap-2'>
                                     {row.numberOfSubFolders > 0 || row.numberOfFiles > 0 ? (
                                       <>
-                                        <Icons.FoldersFill size={30} color='var(--theme-color)' />
+                                        <Icons.FoldersFill size={30} color='var(--modern-violet)' />
                                       </>
                                     ) : (
                                       <>
@@ -520,7 +530,7 @@ function Folder() {
                                       <label>{row.sharedWith}</label>
                                     ) : (
                                       <label
-                                        style={{ cursor: "pointer", padding: "5px", borderRadius: "8px", backgroundColor: "var(--bg-secondary)" }}
+                                        className='inline-flex cursor-pointer items-center rounded-lg border border-border bg-[var(--modern-raised)] p-[5px] text-[var(--modern-violet)]'
                                         onClick={() => handleShareDetailsClick(row.folderID)}
                                       >
                                         <Icons.Share size={22} />
@@ -611,7 +621,7 @@ function Folder() {
                           <TableHead className='customTableHead'>
                             <TableRow>
                               {SharedColumns.map((column) => (
-                                <TableCell className='TableHeaderCell' style={{ backgroundColor: "#e7ebee" }} key={column.key}>
+                                <TableCell className='TableHeaderCell' key={column.key}>
                                   {column.label}
                                 </TableCell>
                               ))}
@@ -620,8 +630,8 @@ function Folder() {
                           <TableBody>
                             {shareFolderData.length === 0 && (
                               <TableRow>
-                                <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
-                                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                <td colSpan='6' className='p-5 text-center text-muted-foreground'>
+                                  <div className='flex flex-col items-center gap-2'>
                                     <Icons.Folders size={60} />
                                     {t("dashboardCardStatuses.notFolerFound")}
                                   </div>
@@ -635,7 +645,7 @@ function Folder() {
                                   <div className='d-flex align-items-center gap-2'>
                                     {row.numberOfSubFolders > 0 || row.numberOfFiles > 0 ? (
                                       <>
-                                        <Icons.FoldersFill size={30} color='var(--theme-color)' />
+                                        <Icons.FoldersFill size={30} color='var(--modern-violet)' />
                                       </>
                                     ) : (
                                       <>
@@ -659,7 +669,7 @@ function Folder() {
                                     row.sharedBy.split(",").length === 1 ? (
                                       <label>{row.sharedBy}</label>
                                     ) : (
-                                      <label style={{ cursor: "pointer", padding: "5px", borderRadius: "8px", backgroundColor: "#eeeeee" }} onClick={() => handleShareDetailsClick(row.folderID)}>
+                                      <label className='inline-flex cursor-pointer items-center rounded-lg border border-border bg-[var(--modern-raised)] p-[5px] text-[var(--modern-violet)]' onClick={() => handleShareDetailsClick(row.folderID)}>
                                         <Icons.Share size={22} />
                                       </label>
                                     )
@@ -755,7 +765,7 @@ function Folder() {
                   <Offcanvas.Header closeButton>
                     <Offcanvas.Title>{t("Folder.createFolder")}</Offcanvas.Title>
                   </Offcanvas.Header>
-                  <hr style={{ margin: " auto 0", borderColor: "black" }} />
+                  <hr className='m-0 border-[var(--modern-border)] opacity-100' />
                   <Offcanvas.Body>
                     <Form onSubmit={handleSubmit}>
                       <Form.Group className='mb-3' controlId='folderName'>
@@ -790,7 +800,7 @@ function Folder() {
                   <Offcanvas.Header closeButton>
                     <Offcanvas.Title>{t("Folder.updateFolder")}</Offcanvas.Title>
                   </Offcanvas.Header>
-                  <hr style={{ margin: " auto 0", borderColor: "black" }} />
+                  <hr className='m-0 border-[var(--modern-border)] opacity-100' />
                   <Offcanvas.Body>
                     <Form onSubmit={handleUpdateFormSubmit}>
                       <Form.Group className='mb-3' controlId='updateFolderName'>
@@ -834,7 +844,7 @@ function Folder() {
                   <Offcanvas.Header closeButton>
                     <Offcanvas.Title>{t("Folder.CreateFolder")}</Offcanvas.Title>
                   </Offcanvas.Header>
-                  <hr style={{ margin: "auto 0", borderColor: "black" }} />
+                  <hr className='m-0 border-[var(--modern-border)] opacity-100' />
                   <Offcanvas.Body>
                     <Form onSubmit={handleCreateSubFolder}>
                       <Form.Group className='mb-3' controlId='folderName'>

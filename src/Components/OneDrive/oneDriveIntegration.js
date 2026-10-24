@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { useMsal } from "@azure/msal-react";
 import { loginRequest } from "./authConfig";
 import oneDriveIcon from "../../assets/images/oneDriveIntegrate.svg";
-import { Form } from "react-bootstrap";
+import { Form } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import axios from "../../Api/api";
 import Loader from "../CommonModals/Loader/Loader";
 import uploadFlowService from "@/services/uploadFlowService";
+import UploadSourceCard from "@/Components/Common/CloudPickers/UploadSourceCard";
 
 // Function to convert blob to Base64
 const blobToBase64 = (blob) => {
@@ -170,17 +171,13 @@ export default function OneDriveIntegration({ uploadedFiles, setUploadedFiles, m
           <Loader />
         </div>
       )}
-      <div className='uplad_box' onClick={handleLogin}>
-        <div className='upload_trigger_bx'>
-          <img alt='oneDriveIcon' src={oneDriveIcon} />
-          <div className='upload_doc_part'>
-            <Form.Group controlId='file-input-add' className='file-upload_temp'>
-              <Form.Label>{t("uploadDocFlow.OneDriveDocuments")}</Form.Label>
-              <Form.Control className='temp_file-input-additional' name='file' accept='.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx' multiple />
-            </Form.Group>
-          </div>
-        </div>
-      </div>
+      <UploadSourceCard onClick={handleLogin}>
+        <img alt='oneDriveIcon' src={oneDriveIcon} className='h-7 w-7 shrink-0 object-contain' />
+        <Form.Group controlId='file-input-add' className='space-y-0'>
+          <Form.Label className='m-0 cursor-pointer whitespace-nowrap text-sm font-medium'>{t("uploadDocFlow.OneDriveDocuments")}</Form.Label>
+          <Form.Control className='!sr-only' name='file' accept='.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx' multiple />
+        </Form.Group>
+      </UploadSourceCard>
     </div>
   );
 }

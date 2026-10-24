@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Dropdown from "react-bootstrap/Dropdown";
+import { Dropdown as Dropdown } from "@/Components/UI/shadcnCompat";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
 import ShareModal from "@/Components/CommonModals/ShareModal/ShareModal";
-import "./style.css";
 import SignOrder from "@/Components/CommonModals/SignOrder/SignOrder";
 import { useForm } from "react-hook-form";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@mui/material";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
 import DocumentSearchFilters from "@/Components/CommonModals/SearchFilters/DocSearchFilter";
 import { useTranslation } from "react-i18next";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
@@ -246,7 +245,7 @@ const CompleteDocs = () => {
         )}
 
         <div className='py-3 p-3 container pendingtable'>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div className="document-status-toolbar">
             <h4>{t("dashboardCardStatuses.completedStatus")}</h4>
 
             <DocumentSearchFilters
@@ -279,7 +278,7 @@ const CompleteDocs = () => {
               <TableHead className='customTableHead'>
                 <TableRow>
                   {columns.map((column) => (
-                    <TableCell key={column.label} style={{ backgroundColor: "#E6FFEF" }} className='TableHeaderCell'>
+                    <TableCell key={column.label} className='TableHeaderCell'>
                       {column.label}
                     </TableCell>
                   ))}
@@ -290,7 +289,7 @@ const CompleteDocs = () => {
               <TableBody>
                 {searchResults.length === 0 && (
                   <TableRow>
-                    <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
+                    <td colSpan='6' className='p-5 text-center'>
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                         <Icons.BulkDocuments size={50} />
                         {t("dashboardCardStatuses.notDocsFound")}
@@ -313,8 +312,8 @@ const CompleteDocs = () => {
                         style={{
                           padding: "2px 12px",
                           borderRadius: "12px",
-                          color: "#19d157",
-                          border: `1px solid #19d157`,
+                          color: "var(--modern-success, #16a34a)",
+                          border: "1px solid var(--modern-success, #16a34a)",
                           fontWeight: "bold",
                         }}
                       >

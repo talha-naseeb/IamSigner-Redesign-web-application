@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Offcanvas } from "react-bootstrap";
+import { Offcanvas } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useDropzone } from "react-dropzone";
 import { Icons } from "@/assets/Icons";
@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import { useNavigate } from "react-router-dom";
 import verificationService from "@/services/verificationService";
+import UploadSourceCard from "@/Components/Common/CloudPickers/UploadSourceCard";
 
 const AddSupportingDocSignNow = ({ show, onClose, signAuth, getSupportingDocs, className }) => {
   const { t } = useTranslation();
@@ -126,20 +127,17 @@ const AddSupportingDocSignNow = ({ show, onClose, signAuth, getSupportingDocs, c
             </div>
           )}
 
-          <Form.Group controlId='file-input-add' className='file-upload-temp'>
-            <div {...getRootProps({ className: "dropzoneUploadFile" })}>
-              <input {...getInputProps()} className='temp-file-input-additional d-none' />
-              <Icons.UploadCloud color='#0C9AD7' size={40} />
-              <br />
-              <div className='upload-doc-part'>
-                <Form.Label>{t("uploadDocFlow.UploadsupportedDoc")}</Form.Label>
-                <Form.Label style={{ color: "#0C9AD7", margin: "0px 5px", textDecoration: "underline" }}>{t("uploadDocFlow.here")}</Form.Label>
-              </div>
-            </div>
-          </Form.Group>
+          <UploadSourceCard {...getRootProps()}>
+            <input {...getInputProps()} className="sr-only" />
+            <Icons.UploadCloud size={32} className="text-[var(--modern-primary,#6366f1)]" />
+            <span className="text-sm font-medium">{t("uploadDocFlow.UploadsupportedDoc")}</span>
+            <span className="text-sm font-medium text-[var(--modern-primary,#6366f1)] underline underline-offset-2">
+              {t("uploadDocFlow.here")}
+            </span>
+          </UploadSourceCard>
           {errorMessage && (
-            <p className='error-message'>
-              <Icons.AlertCircle className='mb-1 mx-2' />
+            <p className="mt-2 flex items-start gap-2 text-sm text-[var(--modern-danger,#ef4444)]">
+              <Icons.AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
               {errorMessage}
             </p>
           )}

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import bulkService from "@/services/bulkService";
-import { Button, Dropdown, Modal } from "react-bootstrap";
+import { Button, Dropdown, Modal } from "@/Components/UI/shadcnCompat";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@mui/material";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
 import DocumentSearchFilters from "@/Components/CommonModals/SearchFilters/DocSearchFilter";
 import { useTranslation } from "react-i18next";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";

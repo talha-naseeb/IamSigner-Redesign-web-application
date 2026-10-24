@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Button, Col, Form, Row, Dropdown, Offcanvas, Tab, Tabs } from "react-bootstrap";
+import { Button, Col, Form, Row, Dropdown, Offcanvas, Tab, Tabs } from "@/Components/UI/shadcnCompat";
 import uploadFlowService from "@/services/uploadFlowService";
 import templateService from "@/services/templateService";
 import { toast } from "react-toastify";
@@ -12,7 +12,6 @@ import "react-phone-input-2/lib/style.css";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import userService from "@/services/userService";
-import "./AddRecipient.css";
 
 const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
   const [recipientForms, setRecipientForms] = useState([
@@ -526,14 +525,15 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
                                       <Col md={2} className='signatory-form-col'></Col>
                                       <Col md={6} className='signatory-form-col action-buttons d-flex justify-content-end align-items-center flex-wrap gap-1'>
                                         <Button
-                                          variant='none'
-                                          className='AddUsers'
+                                          variant='outline'
+                                          size='sm'
+                                          className='inline-flex items-center gap-1.5'
                                           onClick={() => {
-                                            setSelectedIndex(index); // Store the index of the selected form
-                                            setShowOffcanvas(true); // Open the Offcanvas
+                                            setSelectedIndex(index);
+                                            setShowOffcanvas(true);
                                           }}
                                         >
-                                          <Icons.UserSearch className='mx-2' />
+                                          <Icons.UserSearch className='mx-1' size={16} />
                                           {t("uploadDocFlow.existingUser")}
                                         </Button>
                                         <div>
@@ -665,27 +665,34 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
 
       <Row>
         <Col md={11}>
-          <div className='add-signatory-btns'>
-            <Button variant='' className='ImageCancelBtn p-2' onClick={handleAddRecipient}>
-              <Icons.AddCircle size={22} />
-              <span> {t("uploadDocFlow.addRecipient")}</span>
+          <div className='flex flex-wrap items-center gap-3 my-4'>
+            <Button variant='outline' className='inline-flex items-center gap-2' onClick={handleAddRecipient}>
+              <Icons.AddCircle size={20} />
+              <span>{t("uploadDocFlow.addRecipient")}</span>
             </Button>
 
-            <Button variant='' className='ImageCancelBtn p-2' onClick={handleAddYourself}>
-              <Icons.AddCircle size={22} />
-              <span> {t("uploadDocFlow.addYourself")}</span>
+            <Button variant='outline' className='inline-flex items-center gap-2' onClick={handleAddYourself}>
+              <Icons.AddCircle size={20} />
+              <span>{t("uploadDocFlow.addYourself")}</span>
             </Button>
           </div>
         </Col>
       </Row>
 
-      <div className='fixed-button-container'>
-        <Button className='backBtn' id='hide_part_one' onClick={handleBack}>
+      <div className='fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-3 border-t border-[var(--modern-border)] bg-[var(--modern-card)]'>
+        <Button variant='outline' id='hide_part_one' onClick={handleBack} disabled={isLoading}>
           {t("uploadDocFlow.back")}
         </Button>
 
-        <Button className='Continue-btn' id='hide_part_one' onClick={handleContinue} disabled={isContinueDisabled}>
-          {t("uploadDocFlow.Continue")}
+        <Button variant='primary' id='hide_part_one' onClick={handleContinue} disabled={isContinueDisabled || isLoading}>
+          {isLoading ? (
+            <span className='flex items-center gap-2'>
+              <span className='inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' />
+              {t("uploadDocFlow.Continue")}
+            </span>
+          ) : (
+            t("uploadDocFlow.Continue")
+          )}
         </Button>
       </div>
 

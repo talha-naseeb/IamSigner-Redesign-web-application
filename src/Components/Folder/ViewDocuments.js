@@ -2,23 +2,21 @@ import React, { useEffect, useState } from "react";
 import userService from "@/services/userService";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import { Button, Form, Dropdown, Offcanvas, Modal } from "react-bootstrap";
+import { Button, Form, Dropdown, Offcanvas, Modal } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { Icons } from "@/assets/Icons";
-import "./style.css";
-
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import ShareModal from "@/Components/CommonModals/ShareModal/ShareModal";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
 import SignOrder from "@/Components/CommonModals/SignOrder/SignOrder";
-import { Pagination } from "@mui/material";
+import { Pagination } from "@/Components/UI/dataPrimitives";
 import DownloadModal from "@/Components/CommonModals/DownloadModal/DownloadModal";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import AddCompletedDocuments from "@/Components/Folder/AddCompletedDocuments";
 import AddCompletedToSubFolder from "@/Components/Folder/AddCompletedToSubFolder";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@/Components/UI/dataPrimitives";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 
 const ViewDocuments = () => {
@@ -367,7 +365,7 @@ const ViewDocuments = () => {
   ];
 
   return (
-    <div className='container my-3'>
+    <div className='folder-route folder-document-route container my-3 text-foreground [font-family:var(--modern-font-ui)]'>
       {isLoading && (
         <div className='loader-overlay'>
           <Loader />
@@ -378,29 +376,32 @@ const ViewDocuments = () => {
         {t("Folder.addSubFolder")}
       </button>
 
-      <div className='py-3 p-3 mt-3 container pendingtable'>
+      <div className='container mt-3 rounded-2xl border border-border bg-card p-3 py-3 text-foreground max-sm:p-4'>
         <div className='d-flex align-items-center justify-content-between'>
           <div className='d-flex align-items-center gap-2'>
-            <Icons.Back className={document.documentElement.dir === "rtl" ? "rtl-icon" : ""} onClick={goBack} style={{ cursor: "pointer" }} />
+            <Icons.Back className={document.documentElement.dir === "rtl" ? "scale-x-[-1]" : ""} onClick={goBack} style={{ cursor: "pointer" }} />
             {data.length === 0 ? (
               <>
                 <Icons.Folders size={30} />
               </>
             ) : (
               <>
-                <Icons.FoldersFill size={30} color='var(--theme-color)' />
+                <Icons.FoldersFill size={30} color='var(--modern-violet)' />
               </>
             )}
 
             <span>
-              <label className='mx-2' style={{ fontSize: "20px", fontWeight: "600", color: "var(--text-primary)" }}>
+              <label className='mx-2 text-xl font-semibold text-foreground'>
                 {folderName}
               </label>
             </span>
           </div>
 
           <div className='d-flex align-items-center'>
-            <div className='addFileIcon' onClick={() => handleAddDocumentClick()}>
+            <div
+              className='flex cursor-pointer items-center justify-center gap-2.5 rounded-[10px] border border-border bg-card px-2 py-[3px] text-foreground transition-colors hover:border-[var(--modern-violet)] hover:bg-[var(--modern-violet-soft)] hover:text-[var(--modern-violet)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--modern-violet)]'
+              onClick={() => handleAddDocumentClick()}
+            >
               {t("Folder.add")}
             </div>
           </div>
@@ -420,7 +421,7 @@ const ViewDocuments = () => {
             <TableHead className='customTableHead'>
               <TableRow>
                 {columns.map((column) => (
-                  <TableCell style={{ backgroundColor: "var(--bg-primary)" }} className='TableHeaderCell' key={column.key}>
+                  <TableCell className='TableHeaderCell' key={column.key}>
                     {column.label}
                   </TableCell>
                 ))}
@@ -436,7 +437,6 @@ const ViewDocuments = () => {
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
-                        color: "var(--text-primary)",
                       }}
                     >
                       <Icons.Folders size={50} />
@@ -448,7 +448,7 @@ const ViewDocuments = () => {
                 searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                   <TableRow key={index}>
                     <TableCell
-                      style={{ cursor: row.subFolderID ? "pointer" : "default", color: "var(--text-primary)" }}
+                      style={{ cursor: row.subFolderID ? "pointer" : "default" }}
                       onClick={(e) => (row.subFolderID ? navigateToViewFiles(row.subFolderName, row.subFolderID) : handleCellClick(e))}
                       className='truncate-cell'
                     >
@@ -460,7 +460,7 @@ const ViewDocuments = () => {
                             </>
                           ) : (
                             <>
-                              <Icons.FoldersFill size={30} color='var(--theme-color)' />
+                              <Icons.FoldersFill size={30} color='var(--modern-violet)' />
                             </>
                           )}
 
@@ -473,17 +473,17 @@ const ViewDocuments = () => {
                         </div>
                       )}
                     </TableCell>
-                    <TableCell style={{ color: "var(--text-primary)" }}>{row.subFolderID ? formatDate(row.createdOnFormatted) : formatDate(row.completedDateFormatted)}</TableCell>
+                    <TableCell>{row.subFolderID ? formatDate(row.createdOnFormatted) : formatDate(row.completedDateFormatted)}</TableCell>
                     <TableCell
                       className={`TableCell truncate-cell ${row.subFolderDescription?.length > 50 ? "cursor-pointer" : ""}`}
                       onClick={(e) =>
                         row.subFolderDescription?.length > 50 ? handleDescriptionClick(row.subFolderDescription, row.subFolderID ? row.subFolderName : row.docName) : handleCellClick(e)
                       }
-                      style={{ cursor: row.subFolderDescription?.length > 50 ? "pointer" : "", color: "var(--text-primary)" }}
+                      style={{ cursor: row.subFolderDescription?.length > 50 ? "pointer" : "" }}
                     >
                       {row.subFolderDescription}
                     </TableCell>
-                    <TableCell style={{ color: "var(--text-primary)" }}>{row.subFolderID ? row.subFolderCreatedByName : row.createdByName}</TableCell>
+                    <TableCell>{row.subFolderID ? row.subFolderCreatedByName : row.createdByName}</TableCell>
                     <TableCell className='py-0'>
                       <Dropdown className='align-items-center'>
                         <Dropdown.Toggle as={CustomToggle} />
@@ -547,7 +547,7 @@ const ViewDocuments = () => {
         </TableContainer>
 
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-          <div className='showHideNoDocs' style={{ color: "var(--text-primary)" }}>
+          <div className='showHideNoDocs'>
             {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
           </div>
           <Pagination count={Math.ceil(data.length / rowsPerPage)} variant='outlined' shape='rounded' page={page + 1} onChange={(event, newPage) => handleChangePage(event, newPage - 1)} />
@@ -613,8 +613,8 @@ const ViewDocuments = () => {
           <Modal.Title>{selectedFolderTitle}</Modal.Title>
         </Modal.Header>
         <Modal.Body className='p-4'>
-          <h6 style={{ color: "var(--text-primary)" }}>{t("Folder.Description")}</h6>
-          <p style={{ whiteSpace: "pre-wrap", wordBreak: "break-word", color: "var(--text-primary)" }}>{selectedDescription}</p>
+          <h6>{t("Folder.Description")}</h6>
+          <p style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{selectedDescription}</p>
         </Modal.Body>
       </Modal>
 
@@ -623,20 +623,20 @@ const ViewDocuments = () => {
 
       <Offcanvas show={showUpdateOffcanvas} onHide={handleCloseUpdate} placement={document.documentElement.dir === "rtl" ? "start" : "end"} scroll={true}>
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title style={{ color: "var(--text-primary)" }}>{t("Folder.updateFolder")}</Offcanvas.Title>
+          <Offcanvas.Title>{t("Folder.updateFolder")}</Offcanvas.Title>
         </Offcanvas.Header>
-        <hr style={{ margin: " auto 0", borderColor: "var(--border-color)" }} />
+        <hr className='m-0 border-[var(--modern-border)] opacity-100' />
         <Offcanvas.Body>
           <Form onSubmit={handleUpdateFormSubmit}>
             <Form.Group className='mb-3' controlId='updateFolderName'>
-              <Form.Label style={{ color: "var(--text-primary)" }}>
+              <Form.Label>
                 {t("Folder.folderName")}
                 <span className='text-danger mx-1'>*</span>
               </Form.Label>
               <Form.Control type='text' name='FolderName' value={updateFormData.FolderName} onChange={handleUpdateInputChange} placeholder={t("Folder.enterfodlerName")} />
             </Form.Group>
             <Form.Group className='mb-3' controlId='updateDescription'>
-              <Form.Label style={{ color: "var(--text-primary)" }}>
+              <Form.Label>
                 {t("Folder.Description")}
                 <span className='text-muted mx-1'>({t("createTeam.optional")})</span>
               </Form.Label>
@@ -667,20 +667,20 @@ const ViewDocuments = () => {
 
       <Offcanvas show={showFolder} onHide={handleCloseOffcanvas} placement={document.documentElement.dir === "rtl" ? "start" : "end"} scroll={true}>
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title style={{ color: "var(--text-primary)" }}>{t("Folder.CreateFolder")}</Offcanvas.Title>
+          <Offcanvas.Title>{t("Folder.CreateFolder")}</Offcanvas.Title>
         </Offcanvas.Header>
-        <hr style={{ margin: "auto 0", borderColor: "var(--border-color)" }} />
+        <hr className='m-0 border-[var(--modern-border)] opacity-100' />
         <Offcanvas.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group className='mb-3' controlId='folderName'>
-              <Form.Label style={{ color: "var(--text-primary)" }}>
+              <Form.Label>
                 {t("Folder.folderName")}
                 <span className='text-danger mx-1'>*</span>
               </Form.Label>
               <Form.Control type='text' name='FolderName' value={formData.FolderName} onChange={handleInputChange} placeholder={t("Folder.enterfodlerName")} />
             </Form.Group>
             <Form.Group className='mb-3' controlId='description'>
-              <Form.Label style={{ color: "var(--text-primary)" }}>
+              <Form.Label>
                 {t("Folder.Description")}
                 <span className='text-muted mx-1'>({t("createTeam.optional")})</span>
               </Form.Label>

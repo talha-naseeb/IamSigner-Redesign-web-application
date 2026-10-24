@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
 import SignOrder from "@/Components/CommonModals/SignOrder/SignOrder";
-import Dropdown from "react-bootstrap/Dropdown";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination, Stack } from "@mui/material";
+import { Dropdown as Dropdown } from "@/Components/UI/shadcnCompat";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination, Stack } from "@/Components/UI/dataPrimitives";
 import DocumentSearchFilters from "@/Components/CommonModals/SearchFilters/DraftSearchFilter";
-import "./style.css";
 import { useTranslation } from "react-i18next";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
 import ShareDownloadModal from "@/Components/CommonModals/DownloadModal/shareDownloadModal";
-import { Button } from "react-bootstrap";
+import { Button } from "@/Components/UI/shadcnCompat";
 import { Icons } from "@/assets/Icons";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { useUser } from "@/Context/UserContext";
@@ -242,7 +241,7 @@ const ShareDocs = () => {
 
                 <div className='py-3 p-3 container pendingtable'>
                   <h4>{t("dashboardCardStatuses.Shareddoc")}</h4>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div className="document-status-toolbar">
                     <div className='d-flex gap-3 '>
                       <Button className={`SignButton ${viewMode === "shareWithMe" ? "active" : ""}`} onClick={handleShareWithMe}>
                         {t("dashboardCardStatuses.sharedWithMe")}
@@ -286,7 +285,7 @@ const ShareDocs = () => {
                           <TableHead>
                             <TableRow>
                               {shareWithMeColumns.map((shareWithMeColumns) => (
-                                <TableCell key={shareWithMeColumns.label} style={{ backgroundColor: "#E7F7FE" }} className='TableHeaderCell'>
+                                <TableCell key={shareWithMeColumns.label} className='TableHeaderCell'>
                                   {shareWithMeColumns.label}
                                 </TableCell>
                               ))}
@@ -296,7 +295,7 @@ const ShareDocs = () => {
                           <TableBody>
                             {searchResults.length === 0 && (
                               <TableRow>
-                                <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
+                                <td colSpan='6' className='p-5 text-center'>
                                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                                     <Icons.BulkDocuments size={50} />
                                     {t("dashboardCardStatuses.notDocsFound")}
@@ -395,7 +394,7 @@ const ShareDocs = () => {
                           <TableHead>
                             <TableRow>
                               {shareWithOthersColumns.map((shareWithOthersColumns) => (
-                                <TableCell key={shareWithOthersColumns.label} style={{ backgroundColor: "#E7F7FE" }} className='TableHeaderCell'>
+                                <TableCell key={shareWithOthersColumns.label} className='TableHeaderCell'>
                                   {shareWithOthersColumns.label}
                                 </TableCell>
                               ))}
@@ -406,7 +405,7 @@ const ShareDocs = () => {
                           <TableBody>
                             {shareOtherResults.length === 0 && (
                               <TableRow>
-                                <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
+                                <td colSpan='6' className='p-5 text-center'>
                                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                                     <Icons.BulkDocuments size={50} color='#F0F3F4' />
                                     {t("dashboardCardStatuses.notDocsFound")}

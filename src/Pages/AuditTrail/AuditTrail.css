@@ -1,90 +1,169 @@
-/* External Audit Trail (Signature Page) - Forced Light Mode */
 .audit-trail-container {
-  background-color: #ffffff !important;
-  color: #212529 !important;
-  padding: 20px;
-  font-family: "Times New Roman", Times, serif;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+  padding: clamp(1rem, 3vw, 2rem);
+  overflow-x: hidden;
+  background: var(--modern-bg);
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
 }
 
 .audit-trail-container .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
-  color: #212529 !important;
-  border-bottom: 1px solid #dee2e6 !important;
-  padding-bottom: 10px;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid var(--modern-border);
+  color: var(--modern-text);
 }
 
 .audit-trail-container .header > img {
-  height: 40px;
-}
-
-.audit-trail-container .header .iam-signer-full-logo {
   width: 140px;
   height: 40px;
+  object-fit: contain;
 }
 
 .audit-trail-container .header h4 {
   margin: 0;
-  color: #212529 !important;
-  font-weight: 600;
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+  font-size: 1.25rem;
+  font-weight: 650;
 }
 
-/* Aggressive Table Styling for external view */
-.audit-trail-container .MuiPaper-root,
-.audit-trail-container .MuiTable-root,
-.audit-trail-container .MuiTableContainer-root,
-.audit-trail-container .MuiTableCell-root,
-.audit-trail-container .MuiTableHead-root,
-.audit-trail-container .MuiTableBody-root,
-.audit-trail-container .MuiTableRow-root {
-  background-color: #ffffff !important;
-  color: #212529 !important;
-  border-color: #dee2e6 !important;
+.audit-trail-container .signers-info,
+.audit-trail-container .journal-info {
+  margin-bottom: 1.25rem;
 }
 
-.audit-trail-container .MuiTableHead-root .MuiTableCell-root {
-  background-color: #f0f3f4 !important;
-  font-weight: 600 !important;
+.audit-trail-container .info-title {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+  font-size: 1rem;
+  font-weight: 650;
 }
 
-.audit-trail-container .MuiTableCell-body {
-  border-bottom: 1px solid #dee2e6 !important;
+.audit-trail-container .ui-table-container,
+.audit-trail-container .custom-table-scrollbar {
+  max-width: 100%;
+  overflow: auto;
+  border: 1px solid var(--modern-border) !important;
+  border-radius: 0.75rem !important;
+  background: var(--modern-card) !important;
+  scrollbar-color: var(--modern-border-strong) transparent;
 }
 
-.audit-trail-container .fw-bold,
-.audit-trail-container span {
-  color: #212529 !important;
+.audit-trail-container .ui-table {
+  min-width: 50rem;
+  border: 0;
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui) !important;
+}
+
+.audit-trail-container .ui-table-cell-head,
+.audit-trail-container .TableHeaderCell {
+  background: var(--modern-raised) !important;
+  color: var(--modern-muted) !important;
+  border-color: var(--modern-border) !important;
+  font-family: var(--modern-font-ui) !important;
+  font-size: 0.72rem !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.audit-trail-container .ui-table-cell-body,
+.audit-trail-container .TableCell {
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
+  border-color: var(--modern-border) !important;
+  font-family: var(--modern-font-ui) !important;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.audit-trail-container .ui-table-body .ui-table-row:hover .ui-table-cell {
+  background: var(--modern-raised) !important;
 }
 
 .audit-trail-container .no-docs {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  color: var(--modern-muted) !important;
+  text-align: center;
 }
 
-/* Modal Specifics */
+.audit-trail-modal .modal-content,
 .force-light-modal .modal-content,
 .force-light-modal .modal-header,
 .force-light-modal .modal-footer {
-  background-color: #ffffff !important;
-  color: #212529 !important;
-  border-color: #dee2e6 !important;
+  border-color: var(--modern-border) !important;
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
 }
 
+.audit-trail-modal .modal-title,
 .force-light-modal .modal-title {
-  color: #212529 !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui);
 }
 
+.audit-trail-modal .modal-body,
 .force-light-modal .modal-body {
-  background-color: #ffffff !important;
+  background: var(--modern-card) !important;
+}
+
+.audit-trail-modal .modal-footer {
+  border-top: 1px solid var(--modern-border) !important;
+}
+
+.audit-trail-modal .applyBtn {
+  width: auto;
+  min-width: 7rem;
+  min-height: 2.5rem;
+  border-radius: 0.625rem;
+  background: var(--modern-violet);
+  color: #fff;
+  font-family: var(--modern-font-ui);
+}
+
+.audit-trail-modal .applyBtn:hover {
+  background: var(--modern-violet-hover);
+}
+
+.audit-trail-modal iframe,
+.force-light-modal iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: var(--modern-card);
 }
 
 @media print {
+  .audit-trail-container,
+  .audit-trail-container .ui-table-container,
+  .audit-trail-container .ui-table,
+  .audit-trail-container .TableHeaderCell,
+  .audit-trail-container .TableCell,
   .modal-body-white,
   .iframe-white {
-    background-color: white !important;
+    background: #fff !important;
+    color: #212529 !important;
+  }
+
+  .audit-trail-container .ui-table,
+  .audit-trail-container .TableCell,
+  .audit-trail-container .TableHeaderCell {
+    font-family: "Times New Roman", Times, serif !important;
   }
 }

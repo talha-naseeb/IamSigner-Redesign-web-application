@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Button, Row, Col, Dropdown, Accordion, Modal, OverlayTrigger, Popover } from "react-bootstrap";
+import { Form, Button, Row, Col, Dropdown, Accordion, Modal, OverlayTrigger, Popover } from "@/Components/UI/shadcnCompat";
 import moreIcon from "@/assets/images/moreIcon.png";
 import { useTranslation } from "react-i18next";
 import dashboardService from "@/services/dashboardService";
@@ -7,8 +7,7 @@ import uploadFlowService from "@/services/uploadFlowService";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import "./ChangeOrderModal.css";
-import { Chips } from "primereact/chips";
+import { Chips } from "@/Components/UI/EmailChips";
 import deleteSign from "@/assets/images/deleteSign.svg";
 import { Icons } from "@/assets/Icons";
 
@@ -719,11 +718,11 @@ const ChangeOrderModal = ({ show, handleClose, registerSignID, signedDocKey }) =
             </div>
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button className='modalCancelButton' onClick={handleClose}>
+        <Modal.Footer className='flex justify-between pt-3 border-t border-[var(--modern-border)]'>
+          <Button variant='outline' onClick={handleClose}>
             {t("uploadDocFlow.cancel")}
           </Button>
-          <Button className='applyBtn' onClick={handleContinue} disabled={isContinueDisabled || isFormUnchanged}>
+          <Button variant='primary' onClick={handleContinue} disabled={isContinueDisabled || isFormUnchanged}>
             {t("createTeam.confirm")}
           </Button>
         </Modal.Footer>

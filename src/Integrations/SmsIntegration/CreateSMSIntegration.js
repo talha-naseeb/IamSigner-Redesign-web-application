@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Offcanvas, Form, Accordion, Dropdown } from "react-bootstrap";
+import { Button, Offcanvas, Form, Accordion, Dropdown } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import integrationService from "@/services/integrationService";
 import { toast } from "react-toastify";
 import { useUser } from "@/Context/UserContext";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Grid } from "@mui/material";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Grid } from "@/Components/UI/dataPrimitives";
 import SMSIcon from "@/assets/images/sms-edit.svg";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 

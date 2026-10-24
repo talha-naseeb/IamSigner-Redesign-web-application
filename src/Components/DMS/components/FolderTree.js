@@ -1,5 +1,5 @@
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { ChevronRightIcon as ChevronRightIcon } from "@/Components/UI/iconCompat";
+import { ExpandMoreIcon as ExpandMoreIcon } from "@/Components/UI/iconCompat";
 import { useTranslation } from "react-i18next";
 import { FaRegFolder } from "react-icons/fa6";
 import { IoFolderOpenOutline } from "react-icons/io5";

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { Accordion } from "react-bootstrap";
-import Dropdown from "react-bootstrap/Dropdown";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination, Stack } from "@mui/material";
+import { Accordion } from "@/Components/UI/shadcnCompat";
+import { Dropdown as Dropdown } from "@/Components/UI/shadcnCompat";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination, Stack } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import { useUser } from "@/Context/UserContext";
@@ -12,6 +12,7 @@ import UserSearchFilter from "@/Components/CreateTeam/UserSearchFilter";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import UserLisence from "@/Components/UserLisence/UserLisence";
 import userService from "@/services/userService";
+import "../CompanyAdminPanel/style.css";
 
 function AppUserReport() {
   const { t } = useTranslation();
@@ -215,7 +216,7 @@ function AppUserReport() {
   };
 
   return (
-    <div className='container my-3'>
+    <div className='container my-3 users-report-page app-users-report'>
       {isLoading && (
         <div className='loader-overlay'>
           <Loader />
@@ -232,26 +233,26 @@ function AppUserReport() {
             <div>
               {userAccess.teams === true ? (
                 <>
-                  <Accordion defaultActiveKey='0'>
+                  <Accordion defaultActiveKey='0' className='users-report-accordion'>
                     <Accordion.Item eventKey='0'>
                       <Accordion.Header>
                         <div className='d-flex align-items-center justify-content-between w-100'>
                           <div className='d-flex align-items-center gap-3'>
                             <Icons.Users size={30} />
-                            <label style={{ fontSize: "20px", fontWeight: "500" }}>{t("createTeam.userLicenseDetails")}</label>
+                            <label className='users-report-title'>{t("createTeam.userLicenseDetails")}</label>
                           </div>
                         </div>
                       </Accordion.Header>
-                      <Accordion.Body>
-                        <div className='d-flex justify-content-between align-items-center mb-3 flex-wrap'>
+                      <Accordion.Body className='users-report-accordion-body'>
+                        <div className='users-report-toolbar'>
                           {showCompanyName && (
-                            <div className='text-muted'>
+                            <div className='users-report-company'>
                               <span className='fw-semibold'>{showCompanyName}</span> {t("createTeam.appUsers")}
                             </div>
                           )}
-                          <div className='d-flex align-items-center'>
+                          <div className='users-report-actions'>
                             <Dropdown>
-                              <Dropdown.Toggle variant='success' size='sm' className='d-flex align-items-center gap-2'>
+                              <Dropdown.Toggle variant='success' size='sm' className='users-report-export-button d-flex align-items-center gap-2'>
                                 <Icons.Download size={14} />
                                 {t("createTeam.Export")}
                               </Dropdown.Toggle>
@@ -283,6 +284,7 @@ function AppUserReport() {
                               clearSearch={clearUserSearch}
                               userRoles={roles} //pass roles
                               departments={departments} //pass departments
+                              className='app-user-report-filter'
                             />
                           </div>
                         </div>
@@ -292,18 +294,18 @@ function AppUserReport() {
                               <div>
                                 <TableContainer
                                   component={Paper}
-                                  className='custom-table-scrollbar'
+                                  className='custom-table-scrollbar report-table-wrap'
                                   style={{
                                     maxWidth: "100%",
                                     overflowX: "auto",
                                     height: "57vh",
                                   }}
                                 >
-                                  <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
+                                  <Table stickyHeader className='report-table'>
                                     <TableHead>
                                       <TableRow>
                                         {columns.map((column) => (
-                                          <TableCell key={column.label} style={{ backgroundColor: "#F0F3F4" }} className='TableHeaderCell'>
+                                          <TableCell key={column.label} className='TableHeaderCell'>
                                             {column.label}
                                           </TableCell>
                                         ))}
@@ -312,8 +314,8 @@ function AppUserReport() {
                                     <TableBody>
                                       {searchResults.length === 0 && (
                                         <TableRow>
-                                          <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
-                                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                          <td colSpan='6' className='report-empty-state p-5 text-center'>
+                                            <div className='report-empty-content'>
                                               <Icons.Users size={50} />
                                               {t("tablesLabel.notTeamFound")}
                                             </div>
@@ -330,15 +332,7 @@ function AppUserReport() {
                                           <TableCell className='TableCell'>{row.department}</TableCell>
 
                                           <TableCell className='TableCell'>
-                                            <label
-                                              style={{
-                                                padding: "2px 12px",
-                                                borderRadius: "12px",
-                                                color: row.isActive ? "#19d157" : "#6c757d",
-                                                border: `1px solid ${row.isActive ? "#19d157" : "#6c757d"}`,
-                                                fontWeight: "bold",
-                                              }}
-                                            >
+                                            <label className={`report-status-pill ${row.isActive ? "is-active" : "is-inactive"}`}>
                                               {row.isActive ? "Active" : "Inactive"}
                                             </label>
                                           </TableCell>
@@ -348,7 +342,7 @@ function AppUserReport() {
                                   </Table>
                                 </TableContainer>
                                 {/* Pagination */}
-                                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
+                                <div className='users-report-pagination'>
                                   <div className='showHideNoDocs'>
                                     {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.existing")} {data.length} {t("tablesLabel.existingUser")}
                                   </div>

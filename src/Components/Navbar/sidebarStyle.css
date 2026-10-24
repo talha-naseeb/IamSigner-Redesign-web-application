@@ -8,7 +8,7 @@
   background: var(--bg-secondary);
 }
 
-.Parentcontainer.modern-theme-shell {
+.modern-theme-shell {
   --bg-primary: var(--modern-bg);
   --bg-secondary: var(--modern-raised);
   --surface-0: var(--modern-bg);
@@ -54,6 +54,11 @@
 
 .modern-theme-shell .mainbody {
   background-color: var(--modern-bg);
+}
+
+.modern-theme-shell.mainbody {
+  background-color: var(--modern-bg);
+  color: var(--modern-text);
 }
 
 .modern-theme-shell .sidebar {

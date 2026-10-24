@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Dropdown, Offcanvas, Modal, Button } from "react-bootstrap";
+import { Dropdown, Offcanvas, Modal, Button } from "@/Components/UI/shadcnCompat";
 import uploadFlowService from "@/services/uploadFlowService";
 import { toast } from "react-toastify";
 import { useUser } from "@/Context/UserContext";
@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { AiOutlineDownload } from "react-icons/ai";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import { Icons } from "@/assets/Icons/index";
+import UploadSourceCard from "@/Components/Common/CloudPickers/UploadSourceCard";
 
 const UploadSupportingDocs = ({ show, onClose, masterDocID, registerSignID }) => {
   const { t } = useTranslation();
@@ -230,38 +231,38 @@ const UploadSupportingDocs = ({ show, onClose, masterDocID, registerSignID }) =>
             </div>
           )}
 
-          <Form.Group controlId='file-input-add' className='file-upload-temp'>
-            <div {...getRootProps({ className: "dropzoneUploadFile" })}>
-              <input {...getInputProps()} className='temp-file-input-additional d-none' />
-              <Icons.UploadCloud size={50} color='var(--theme-color)' />
-              <br />
-              <div className='upload-doc-part'>
-                <Form.Label>{t("uploadDocFlow.UploadsupportedDoc")}</Form.Label>
-                <Form.Label style={{ color: "var(--theme-color)", margin: "0px 5px", textDecoration: "underline" }}>{t("uploadDocFlow.here")}</Form.Label>
-              </div>
-            </div>
-          </Form.Group>
+          <UploadSourceCard {...getRootProps()}>
+            <input {...getInputProps()} className="sr-only" />
+            <Icons.UploadCloud size={32} className="text-[var(--modern-primary,#6366f1)]" />
+            <span className="text-sm font-medium">{t("uploadDocFlow.UploadsupportedDoc")}</span>
+            <span className="text-sm font-medium text-[var(--modern-primary,#6366f1)] underline underline-offset-2">
+              {t("uploadDocFlow.here")}
+            </span>
+          </UploadSourceCard>
           {errorMessage && (
-            <p className='error-message'>
-              <BiErrorCircle className='mb-1 mx-2' />
+            <p className="mt-2 flex items-start gap-2 text-sm text-[var(--modern-danger,#ef4444)]">
+              <BiErrorCircle className="mt-0.5 h-4 w-4 shrink-0" />
               {errorMessage}
             </p>
           )}
-          <div className='upload_file_box' id='upload_file_bx'>
+          <div className='mt-3 space-y-2' id='upload_file_bx'>
             {uploadedFiles.map((fileName, index) => (
-              <div key={index} className='mb-2 uploaded-file d-flex align-items-center justify-content-between px-3 border-bottom'>
-                <p className='m-0 d-flex align-items-center gap-2'>
+              <div
+                key={index}
+                className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-md border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] px-3 py-2 text-[var(--modern-text,#0f172a)]"
+              >
+                <p className='m-0 flex min-w-0 items-center gap-2 break-words text-sm'>
                   <Icons.PDFs size={20} />
                   {fileName}
                 </p>
                 <Dropdown>
                   <Dropdown.Toggle as={CustomToggle}>
                     <Dropdown.Menu>
-                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileview(supportingDocIDs[index])}>
+                      <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(supportingDocIDs[index])}>
                         <Icons.View size={20} />
                         {t("uploadDocFlow.view")}
                       </Dropdown.Item>
-                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
+                      <Dropdown.Item className='flex items-center gap-2' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
                         <Icons.DeleteAction size={20} />
                         {t("uploadDocFlow.delete")}
                       </Dropdown.Item>

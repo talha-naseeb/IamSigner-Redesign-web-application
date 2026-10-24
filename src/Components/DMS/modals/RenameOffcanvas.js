@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Offcanvas, Form, Button } from "react-bootstrap";
+import { Offcanvas, Form, Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import TagsInput from "../components/TagsInput";
 

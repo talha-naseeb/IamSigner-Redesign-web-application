@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Offcanvas } from "react-bootstrap";
+import { Button, Form, Offcanvas } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
@@ -240,11 +240,11 @@ function CreateTeamForm({ fetchTeam }) {
         </button>
       </div>
 
-      <Offcanvas show={showCreateTeam} onHide={handleCloseCreateTeam} scroll={true} placement={document.documentElement.dir === "rtl" ? "start" : "end"}>
+      <Offcanvas show={showCreateTeam} className='team-form-panel' onHide={handleCloseCreateTeam} scroll={true} placement={document.documentElement.dir === "rtl" ? "start" : "end"}>
         <Offcanvas.Header closeButton>
           <Offcanvas.Title className='fw-bold'>{t("createTeam.AddNewTeam")}</Offcanvas.Title>
         </Offcanvas.Header>
-        <hr style={{ margin: " auto 0", borderColor: "black" }} />
+        <hr className='team-form-divider' />
         <Offcanvas.Body>
           <Form>
             <Form.Group className='mt-2' controlId='FullName'>
@@ -307,26 +307,14 @@ function CreateTeamForm({ fetchTeam }) {
                 country={"sa"}
                 value={phoneNumber}
                 onChange={handlePhoneChange}
-                inputStyle={{
-                  width: "100%",
-                  height: "38px",
-                  fontSize: "16px",
-                  border: "1px solid #ced4da",
-                  borderRadius: "0.375rem",
-                }}
-                containerStyle={{
-                  width: "100%",
-                }}
-                buttonStyle={{
-                  border: "1px solid #ced4da",
-                  borderRight: "none",
-                  borderRadius: "0.375rem 0 0 0.375rem",
-                }}
+                containerClass='team-phone-control'
+                inputClass='team-phone-input'
+                buttonClass='team-phone-country'
               />
               {errors.MobileNumber && <div className='text-danger'>{errors.MobileNumber}</div>}
             </Form.Group>
 
-            <div className='newComment d-flex align-items-center justify-content-between w-100 p-3 py-4'>
+            <div className='team-form-actions'>
               <Button variant='none' className='modalCancelButton' onClick={handleCancel}>
                 {t("createTeam.cancel")}
               </Button>

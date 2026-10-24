@@ -1,5 +1,5 @@
 import React from "react";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import { NavigateNextIcon as NavigateNextIcon } from "@/Components/UI/iconCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons/index";
 

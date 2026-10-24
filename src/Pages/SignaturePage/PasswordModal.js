@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import verificationService from "@/services/verificationService";
 import Loader from "@/Components/CommonModals/Loader/Loader";

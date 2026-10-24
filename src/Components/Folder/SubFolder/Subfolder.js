@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import userService from "@/services/userService";
-import Offcanvas from "react-bootstrap/Offcanvas";
-import { Button, Form, Dropdown, Accordion } from "react-bootstrap";
+import { Offcanvas as Offcanvas } from "@/Components/UI/shadcnCompat";
+import { Button, Form, Dropdown, Accordion } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { Modal } from "react-bootstrap";
+import { Modal } from "@/Components/UI/shadcnCompat";
 import { Icons } from "@/assets/Icons";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 
@@ -187,7 +187,7 @@ function SubFolder() {
           {userAccess.folders === true ? (
             <>
               {showTotalFolder.length === 0 ? null : (
-                <Accordion defaultActiveKey='0' className='my-3'>
+                <Accordion defaultActiveKey='0' className='folder-route folder-subfolder-route my-3 text-foreground [font-family:var(--modern-font-ui)]'>
                   <Accordion.Item eventKey='2'>
                     <Accordion.Header>
                       <div className='d-flex align-items-center gap-3'>
@@ -207,7 +207,7 @@ function SubFolder() {
                           <Offcanvas.Header closeButton>
                             <Offcanvas.Title> {t("Folder.errDeleteFolder")}</Offcanvas.Title>
                           </Offcanvas.Header>
-                          <hr style={{ margin: " auto 0", borderColor: "black" }} />
+                          <hr className='m-0 border-[var(--modern-border)] opacity-100' />
                           <Offcanvas.Body>
                             <Form onSubmit={handleSubmit}>
                               <Form.Group className='mb-3' controlId='folderName'>
@@ -272,31 +272,34 @@ function SubFolder() {
                         </Offcanvas>
 
                         <div>
-                          <div className='d-flex justify-content-end mb-3'>
+                          <div className='mb-3 flex justify-end'>
                             <button className='templateButton' onClick={() => setShowFolder(true)}>
                               {t("Folder.createFolder")}
                             </button>
                           </div>
 
-                          <div className='folderStyles'>
+                          <div className='flex w-full flex-col items-start gap-4'>
                             {showTotalFolder.map((row, index) => (
-                              <div key={index} className='folderDivStyle'>
+                              <div
+                                key={index}
+                                className='flex w-full min-w-0 cursor-pointer items-center justify-between gap-4 rounded-xl border border-border bg-card px-4 py-3.5 text-foreground transition-colors hover:border-[var(--modern-violet)] hover:bg-[var(--modern-raised)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--modern-violet)] max-sm:items-start'
+                              >
                                 <div onClick={() => navigateToViewFiles(row.folderName, row.subFolderID)}>
-                                  <div className='d-flex align-items-center gap-2'>
+                                  <div className='flex items-center gap-2'>
                                     {row.numberOfFiles > 0 ? (
-                                      <div className='FolderDivSpan'>
+                                      <div className='flex flex-col items-start'>
                                         <Icons.Folders size={30} />
                                       </div>
                                     ) : (
                                       <Icons.Folders size={30} />
                                     )}
 
-                                    <span style={{ fontSize: "18px", fontWeight: "500", margin: "0px" }}>{row.folderName}</span>
+                                    <span className='m-0 text-lg font-medium'>{row.folderName}</span>
                                   </div>
-                                  <p className='mb-0 mx-5'>{row.description}</p>
+                                  <p className='mx-5 mb-0'>{row.description}</p>
                                 </div>
-                                <div className='d-flex align-items-center  justify-content-end gap-4'>
-                                  <span style={{ fontSize: "12px" }}>
+                                <div className='flex items-center justify-end gap-4 max-sm:gap-2'>
+                                  <span className='text-xs'>
                                     {row.numberOfFiles} {t("signaturePage.document")}
                                   </span>
                                   <Dropdown>

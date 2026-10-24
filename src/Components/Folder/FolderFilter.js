@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import Navbar from "react-bootstrap/Navbar";
-import Container from "react-bootstrap/Container";
-import Offcanvas from "react-bootstrap/Offcanvas";
+import { Navbar as Navbar } from "@/Components/UI/shadcnCompat";
+import { Container as Container } from "@/Components/UI/shadcnCompat";
+import { Offcanvas as Offcanvas } from "@/Components/UI/shadcnCompat";
 import { Icons } from "@/assets/Icons";
-import "./style.css";
 import { useTranslation } from "react-i18next";
 import DateRangePicker from "@/Components/Common/DateRangePicker/DateRangePicker";
 import { DateObject } from "react-multi-date-picker";
@@ -41,7 +40,7 @@ function FolderFilter({ fromDate, toDate, folderName, docName, setFromDate, setT
               {t("searchFilter.Filter")}
             </Offcanvas.Title>
           </Offcanvas.Header>
-          <hr style={{ margin: " auto 0", borderColor: "black" }} />
+          <hr className='m-0 border-[var(--modern-border)] opacity-100' />
           <Offcanvas.Body>
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
               <div>

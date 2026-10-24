@@ -35,7 +35,7 @@
   font-weight: 600;
 }
 
-.delegation-accordion .react-switch-bg {
+.delegation-accordion .react-switch .ui-switch-track {
   border: 1px solid var(--modern-border-strong);
 }
 

@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import "./Login.css";
 import "@/Pages/Auth/AuthPages.css";
-import { Container, Row, Col, Form, Button, Nav, InputGroup } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Nav, InputGroup, Spinner } from "@/Components/UI/shadcnCompat";
 import LoginCarousel from "@/Pages/Auth/Carousels/Login/LoginCarousel";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { MdRemoveRedEye } from "react-icons/md";
 import { FaEyeSlash } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import Otpinput from "@/Pages/Auth/VerifyOtp/VerifyOtpPage";
 import LangSelector from "@/Components/Language/LangSelector";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import authService from "@/services/authService";
 import { validate } from "@/utils/validators";
 import AuthThemeToggle from "@/Components/Auth/AuthThemeToggle";
@@ -119,12 +117,6 @@ const Login = ({ onLogin }) => {
                   <LangSelector style={{ padding: "0px" }} />
                 </div>
               </div>
-              {isLoading && (
-                <div className='loader-overlay'>
-                  <Loader />
-                </div>
-              )}
-
               <h1 className='form-heading fw-bold'>{t("logScreens.WelcomeImSigner")}</h1>
               <p className='form-heading-desc'>{t("logScreens.imSignerDesc")}</p>
               <Form className='mt-2' onSubmit={handleLogin} noValidate>
@@ -177,7 +169,8 @@ const Login = ({ onLogin }) => {
                     {t("logScreens.forgetPassword")}
                   </Nav.Link>
                 </div>
-                <Button type='submit' className='login-button' disabled={isLoginButtonDisabled}>
+                <Button type='submit' className='login-button' disabled={isLoginButtonDisabled} aria-busy={isLoading}>
+                  {isLoading && <Spinner animation='border' size='sm' className='inline-button-spinner' aria-hidden='true' />}
                   {t("logScreens.logIn")}
                 </Button>
                 {/* Available soon */}

@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { Offcanvas, Button, Form } from "react-bootstrap";
+import { Offcanvas, Button, Form } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import userService from "@/services/userService";
 
@@ -51,11 +51,11 @@ function CreateDepartment({ accountID, showOffcanvas, setShowOffcanvas, fetchDep
         {t("createDepartment.createDepartment")}
       </Button>
 
-      <Offcanvas show={showOffcanvas} onHide={() => setShowOffcanvas(false)} placement={document.documentElement.dir === "rtl" ? "start" : "end"}>
+      <Offcanvas show={showOffcanvas} className='department-form-panel' onHide={() => setShowOffcanvas(false)} placement={document.documentElement.dir === "rtl" ? "start" : "end"}>
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>{t("createDepartment.createDepartment")}</Offcanvas.Title>
         </Offcanvas.Header>
-        <hr style={{ margin: " auto 0", borderColor: "black" }} />
+        <hr className='department-form-divider' />
         <Offcanvas.Body>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Form.Group controlId='departmentTitle'>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal } from "@/Components/UI/shadcnCompat";
 import { SketchPicker } from "react-color";
 import colorIcon from "@/assets/images/color-wheel.webp";
 const colorOptions = ["black", "blue", "green", "red"];

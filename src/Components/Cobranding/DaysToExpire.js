@@ -2,7 +2,7 @@ import React from "react";
 import { useUser } from "@/Context/UserContext";
 import { Icons } from "@/assets/Icons";
 import "./style.css";
-import { Accordion } from "react-bootstrap";
+import { Accordion } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 
 function DaysToExpire() {

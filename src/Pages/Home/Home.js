@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import "./Home.css";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import DashboardCard from "@/Components/DashboardStatuses/DashboardCards/DashboardCard";
 import RecentDocsHome from "@/Components/DashboardStatuses/Dashboard/RecentDocsHome";
 import { useUser } from "@/Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import ExpireImage from "@/assets/images/ExpireImage.png";
-import { useTour } from "@/Context/useTour";
-import Tour from "reactour";
 import { FiShield, FiUploadCloud, FiEdit3, FiFileText, FiLayers } from "react-icons/fi";
 import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
 
@@ -17,7 +15,6 @@ const Home = () => {
   const { user, userAccess } = useUser("");
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isTourOpen, tourSteps, closeTour } = useTour();
 
   const closeViewModal = () => {
     setViewModal(false);
@@ -186,13 +183,6 @@ const Home = () => {
         </Modal.Body>
       </Modal>
 
-      <Tour
-        steps={tourSteps}
-        isOpen={isTourOpen}
-        onRequestClose={closeTour}
-        rounded={5}
-        accentColor='var(--theme-color)'
-      />
     </div>
   );
 };

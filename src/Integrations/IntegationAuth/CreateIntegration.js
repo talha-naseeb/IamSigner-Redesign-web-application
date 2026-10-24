@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { AppDrawer } from "@/Components/Common/AppDrawer";
 

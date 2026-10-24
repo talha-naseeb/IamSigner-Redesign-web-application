@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import userService from "@/services/userService";
 import { resizeImage, convertToBase64, checkImageLoad } from "@/utils/image";
-import { Button, Col, Row, Accordion, Form, Modal, Spinner } from "react-bootstrap";
+import { Button, Col, Row, Accordion, Form, Modal, Spinner } from "@/Components/UI/shadcnCompat";
 import "./style.css";
 import { useTranslation } from "react-i18next";
 import PasswordChange from "../Auth/PasswordChange/PasswordChange";

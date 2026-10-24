@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
+import { CloseIcon as CloseIcon } from "@/Components/UI/iconCompat";
 
 // value: comma-separated string (what gets sent to API)
 // onChange: called with comma-separated string on every change

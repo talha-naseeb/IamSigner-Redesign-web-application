@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Navbar,Container,Offcanvas } from "react-bootstrap";
+import { Form, Navbar,Container,Offcanvas } from "@/Components/UI/shadcnCompat";
 import { CiFilter } from "react-icons/ci";
 import { useTranslation } from "react-i18next";
 
@@ -40,20 +40,20 @@ function DocStatusFilter({ fullName, emailID, setFullName, setEmailID, handleSea
   };
 
   return (
-    <Navbar expand={false}>
+    <Navbar expand={false} className='doc-report-filter'>
       <Container fluid>
-        <Navbar.Toggle className='filterOpenBtn' aria-controls={`offcanvasNavbar`}>
+        <Navbar.Toggle className='filterOpenBtn doc-report-filter-trigger' aria-controls={`offcanvasNavbar`}>
           <CiFilter />
         </Navbar.Toggle>
-        <Navbar.Offcanvas id={`offcanvasNavbar-expand-${false}`} aria-labelledby={`offcanvasNavbarLabel-expand-${false}`} placement={document.documentElement.dir === "rtl" ? "start" : "end"}>
+        <Navbar.Offcanvas id={`offcanvasNavbar-expand-${false}`} className='doc-report-filter-panel' aria-labelledby={`offcanvasNavbarLabel-expand-${false}`} placement={document.documentElement.dir === "rtl" ? "start" : "end"}>
           <Offcanvas.Header closeButton>
             <Offcanvas.Title id={`offcanvasNavbarLabel-expand-${false}`} className='fw-bold'>
               {t("searchFilter.Filter")}
             </Offcanvas.Title>
           </Offcanvas.Header>
-          <hr style={{ margin: " auto 0", borderColor: "black" }} />
+          <hr className='report-filter-divider' />
           <Offcanvas.Body>
-            <div className='d-flex flex-column gap-3'>
+            <div className='user-filter-fields'>
               <Form.Group controlId='fullName'>
                 <Form.Label>{t("createTeam.fullName")}</Form.Label>
                 <Form.Control name='fullName' type='text' placeholder={t("logScreens.name")} value={fullName} onChange={handleInputChange} />
@@ -64,7 +64,7 @@ function DocStatusFilter({ fullName, emailID, setFullName, setEmailID, handleSea
                 <Form.Control name='emailID' type='email' placeholder={t("logScreens.email")} value={emailID} onChange={handleInputChange} />
               </Form.Group>
 
-              <div className='newComment d-flex align-items-center justify-content-between w-100 p-3 py-4'>
+              <div className='user-filter-actions'>
                 <button className='resetBtn' onClick={handleClearSearch}>
                   {t("searchFilter.reset")}
                 </button>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./FirstStep.css";
-import { Button, Col, Container, Form, Modal, Row, Dropdown, Accordion } from "react-bootstrap";
+import { Button, Col, Container, Form, Modal, Row, Dropdown, Accordion } from "@/Components/UI/shadcnCompat";
 import uploadFlowService from "@/services/uploadFlowService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +9,7 @@ import { DropboxPicker as Dropbox, GoogleDrivePicker as UploadFromGoogleDrive } 
 import { useDropzone } from "react-dropzone";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import ListOfDocuments from "@/Integrations/MacAiGeneratedDocs/ListOfDocuments";
 import ManualDosList from "@/Integrations/ManuallyGeneratedDocs/ManualDosList";
@@ -21,6 +20,7 @@ import DmsDocumentPickerModal from "@/Components/DMS/DmsDocumentPickerModal";
 import { canUserStartDmsSign } from "@/Components/DMS/utils/dmsSignBridge";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import { useUser } from "@/Context/UserContext";
+import { uploadSourceCardClassName } from "@/Components/Common/CloudPickers/UploadSourceCard";
 
 const isDmsEnabled = process.env.REACT_APP_ENABLE_DOCUMENT_MANAGER === "true";
 
@@ -489,63 +489,51 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
   return (
     <>
       <Container className='upload-container'>
-        <div style={{ marginTop: "1rem" }}>
+        <div className='mt-4'>
           <div
-            className='justify-content-center m-0'
-            style={{
-              border: "3px dashed var(--theme-color)",
-              padding: "40px",
-              borderRadius: "10px",
-              background: "var(--bg-primary)",
-              gap: "5px",
-              display: "flex",
-              flexDirection: "column",
-            }}
-            {...getRootProps()}
+            {...getRootProps({
+              className: "m-0 flex flex-col justify-center gap-[5px] rounded-lg border-[3px] border-dashed border-[var(--modern-border-strong)] bg-card p-10 transition-colors hover:border-primary",
+            })}
           >
-            <div className='drag-file'>
-              <Icons.UploadCloud size={35} color='var(--theme-color)' />
-              <label style={{ fontSize: "18px", fontWeight: "400" }}>{t("uploadDocFlow.easilyUpload")}</label>
+            <div className='my-4 flex flex-col items-center justify-center gap-4'>
+              <Icons.UploadCloud size={35} color='var(--modern-primary)' />
+              <label className='text-lg font-normal text-foreground'>{t("uploadDocFlow.easilyUpload")}</label>
             </div>
-            <Row className='d-flex justify-content-center gap-2'>
-              <Col md={3} className="p-0">
-                <div className='uplad_box'>
-                  <Form.Group controlId='file-input-add' className='file-upload_temp'>
-                    <div
-                      {...getRootProps({
-                        className: "upload_trigger_bx",
-                        onClick: (e) => {
-                          e.stopPropagation();
-                        },
-                      })}
-                    >
-                      <Icons.Local />
-                      <Form.Label>{t("uploadDocFlow.local")}</Form.Label>
-                      <Form.Control
-                        {...getInputProps()}
-                        className='temp_file-input-additional'
-                        type='file'
-                        name='file'
-                        accept='.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx'
-                        multiple
-                        style={{ display: "none" }}
-                      />
-                      <div className='upload_doc_part'></div>
-                    </div>
-                  </Form.Group>
-                </div>
-              </Col>
-               {isDmsEnabled && canUserStartDmsSign(user, userAccess) ? (
-                <Col md={3} className="p-0">
+            <div className='grid grid-cols-1 gap-2 md:grid-cols-4'>
+              <div className='min-w-0'>
+                <Form.Group controlId='file-input-add' className='space-y-0'>
+                  <div
+                    {...getRootProps({
+                      className: uploadSourceCardClassName,
+                      onClick: (e) => {
+                        e.stopPropagation();
+                      },
+                    })}
+                  >
+                    <Icons.Local />
+                    <Form.Label className='m-0 cursor-pointer whitespace-nowrap text-sm font-medium'>{t("uploadDocFlow.local")}</Form.Label>
+                    <Form.Control
+                      {...getInputProps()}
+                      className='!sr-only'
+                      type='file'
+                      name='file'
+                      accept='.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx'
+                      multiple
+                    />
+                  </div>
+                </Form.Group>
+              </div>
+              {isDmsEnabled && canUserStartDmsSign(user, userAccess) ? (
+                <div className='min-w-0'>
                   <DmsUploadIntegration
                     onOpenPicker={() => setIsDmsPickerOpen(true)}
                     isDmsUploading={isDmsUploading}
                   />
-                </Col>
+                </div>
               ) : null}
               {user.isDropbox &&
                 (userAccess.dropbox ? (
-                  <Col md={3} className="p-0">
+                  <div className='min-w-0'>
                     <Dropbox
                       onFileSelected={handleDropboxFileSelected}
                       uploadedFiles={uploadedFiles}
@@ -558,11 +546,11 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                       setRegisterSignID={setRegisterSignID}
                       email={user.email}
                     />
-                  </Col>
+                  </div>
                 ) : null)}
               {user.isGoogleDrive &&
                 (userAccess.googDrive ? (
-                  <Col md={3} className="p-0">
+                  <div className='min-w-0'>
                     <UploadFromGoogleDrive
                       uploadedFiles={uploadedFiles}
                       setUploadedFiles={setUploadedFiles}
@@ -574,11 +562,11 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                       setRegisterSignID={setRegisterSignID}
                       email={user.email}
                     />
-                  </Col>
+                  </div>
                 ) : null)}
               {user.isOneDrive &&
                 (userAccess.oneDrive ? (
-                  <Col md={3} className="p-0">
+                  <div className='min-w-0'>
                     <OneDriveIntegration
                       uploadedFiles={uploadedFiles}
                       setUploadedFiles={setUploadedFiles}
@@ -590,13 +578,13 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                       setRegisterSignID={setRegisterSignID}
                       email={user.email}
                     />
-                  </Col>
+                  </div>
                 ) : null)}
-            </Row>
+            </div>
           </div>
 
           {uploadErrorMessage && (
-            <p className='error-message'>
+            <p className='flex items-start gap-2 text-sm italic text-[var(--modern-danger)]'>
               <Icons.AlertCircle className='mb-1 mx-2' />
               {uploadErrorMessage}
             </p>
@@ -609,21 +597,21 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
               </div>
             ))}
 
-          <div className='upload_file_box mt-3' id='upload_file_bx '>
+          <div className='mt-3 space-y-2' id='upload_file_bx '>
             {uploadedFiles.map((fileName, index, file) => (
-              <div key={index} className='uploaded-file'>
-                <p className='m-0 d-flex align-items-center gap-2'>
+              <div key={index} className='flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-card px-3 py-3 text-foreground'>
+                <p className='m-0 flex min-w-0 items-center gap-2 break-all text-sm'>
                   <Icons.PDFs size={22} />
                   {fileName} {isTemplateApplied[index] && <Icons.Templates size={18} />}
                 </p>
 
-                <div className='d-flex align-items-center'>
+                <div className='flex shrink-0 items-center'>
                   <Dropdown>
                     <Dropdown.Toggle as={CustomToggle} />
                     <Dropdown.Menu>
                       {!isTemplateApplied[index] && (
                         <Dropdown.Item
-                          className='d-flex gap-2 align-items-center'
+                          className='flex items-center gap-2'
                           onClick={() => {
                             handleGetTemplate(masterDocIDs[index], totalPages[index], index, true);
                           }}
@@ -633,17 +621,17 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                         </Dropdown.Item>
                       )}
                       {isTemplateApplied[index] && (
-                        <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleRemoveTemplate(masterDocIDs[index], appliedTemplates[masterDocIDs[index]], index)}>
+                        <Dropdown.Item className='flex items-center gap-2' onClick={() => handleRemoveTemplate(masterDocIDs[index], appliedTemplates[masterDocIDs[index]], index)}>
                           <Icons.RemoveTemplate size={18} />
                           {t("uploadDocFlow.removeTemplate")}
                         </Dropdown.Item>
                       )}
-                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileview(masterDocIDs[index], fileName)}>
+                      <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(masterDocIDs[index], fileName)}>
                         <Icons.View size={18} />
                         {t("uploadDocFlow.view")}
                       </Dropdown.Item>
 
-                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleShowConfirmModal(masterDocIDs[index], index)}>
+                      <Dropdown.Item className='flex items-center gap-2' onClick={() => handleShowConfirmModal(masterDocIDs[index], index)}>
                         <Icons.DeleteAction size={18} />
                         {t("uploadDocFlow.delete")}
                       </Dropdown.Item>
@@ -689,18 +677,18 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
           />
 
           <Modal show={showModal} onHide={handleCloseModal}>
-            <Modal.Header className='btn' closeButton>
+            <Modal.Header closeButton>
               <Modal.Title>{docName}</Modal.Title>
             </Modal.Header>
-            <Modal.Body className='d-flex'>
+            <Modal.Body className='flex'>
               <Col>
                 {isLoading ? (
-                  <div className='loader d-flex justify-content-center  align-items-center'>Loading...</div>
+                  <div className="flex min-h-24 items-center justify-center text-sm text-[var(--modern-muted,#64748b)]" role="status">Loading...</div>
                 ) : (
                   Object.values(documentPages).map((page, index) => (
-                    <div key={index} style={{ position: "relative" }}>
-                      <img src={page.pagesPath} alt={page.pagesName} style={{ width: "100%", height: "auto" }} />
-                      <div className='page-name-footer'>{page.pagesName}</div>
+                    <div key={index} className="relative">
+                      <img src={page.pagesPath} alt={page.pagesName} className="h-auto w-full" />
+                      <div className="border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] px-3 py-2 text-center text-sm font-semibold text-[var(--modern-text,#0f172a)]">{page.pagesName}</div>
                     </div>
                   ))
                 )}
@@ -710,18 +698,18 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
 
           <Modal show={templatesModalShow} onHide={() => setTemplatesModalShow(false)}>
             <Modal.Header closeButton>
-              <Modal.Title className='d-flex align-items-center gap-2'>
+              <Modal.Title className='flex items-center gap-2'>
                 <Icons.ApplyTemplate size={25} />
                 {t("uploadDocFlow.chooseTemplate")}
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <div className='m-3'>
-                <div className='d-flex gap-3 '>
-                  <Button className={`SignButton ${viewMode === "allTemplates" ? "active" : ""}`} onClick={handleAllTemplates}>
+              <div className='p-3'>
+                <div className='flex flex-wrap gap-3'>
+                  <Button variant={viewMode === "allTemplates" ? "primary" : "outline"} aria-pressed={viewMode === "allTemplates"} onClick={handleAllTemplates}>
                     {t("uploadDocFlow.Applytemplate")}
                   </Button>
-                  <Button className={`SignButton ${viewMode === "matchingTemplates" ? "active" : ""}`} onClick={handleMatchingTemplates}>
+                  <Button variant={viewMode === "matchingTemplates" ? "primary" : "outline"} aria-pressed={viewMode === "matchingTemplates"} onClick={handleMatchingTemplates}>
                     {t("uploadDocFlow.matchTemplates")}
                   </Button>
                 </div>
@@ -729,18 +717,13 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
               {viewMode === "allTemplates" && (
                 <TableContainer
                   component={Paper}
-                  className='custom-table-scrollbar'
-                  style={{
-                    maxWidth: "100%",
-                    overflowX: "auto",
-                    height: "60vh",
-                  }}
+                  className='custom-table-scrollbar max-w-full overflow-x-auto h-[60vh]'
                 >
-                  <Table stickyHeader style={{ border: "none" }}>
+                  <Table stickyHeader className='border-0'>
                     <TableHead>
                       <TableRow>
                         {allTemplatesColumns.map((allTemplatesColumns) => (
-                          <TableCell key={allTemplatesColumns.label} style={{ backgroundColor: "#dee2e6" }} className='TableHeaderCell'>
+                          <TableCell key={allTemplatesColumns.label} className='bg-[var(--modern-raised,#f1f5f9)]'>
                             {allTemplatesColumns.label}
                           </TableCell>
                         ))}
@@ -750,8 +733,8 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                     <TableBody>
                       {allTemplates.length === 0 && (
                         <TableRow>
-                          <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
-                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                          <td colSpan='6' className='p-5 text-center text-[var(--modern-muted,#64748b)]'>
+                            <div className="flex flex-col items-center gap-2">
                               <Icons.BulkDocuments size={50} />
                               {t("dashboardCardStatuses.notDocsFound")}
                             </div>
@@ -777,19 +760,14 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
               {viewMode === "matchingTemplates" && (
                 <TableContainer
                   component={Paper}
-                  className='custom-table-scrollbar'
-                  style={{
-                    maxWidth: "100%",
-                    overflowX: "auto",
-                    height: "60vh",
-                  }}
+                  className='custom-table-scrollbar max-w-full overflow-x-auto h-[60vh]'
                 >
-                  <Table stickyHeader style={{ border: "none" }}>
+                  <Table stickyHeader className='border-0'>
                     <TableHead>
                       <TableRow>
                         {matchingTemplatesColumns &&
                           matchingTemplatesColumns.map((matchingTemplatesColumns) => (
-                            <TableCell key={matchingTemplatesColumns.label} style={{ backgroundColor: "#dee2e6" }} className='TableHeaderCell'>
+                            <TableCell key={matchingTemplatesColumns.label} className='bg-[var(--modern-raised,#f1f5f9)]'>
                               {matchingTemplatesColumns.label}
                             </TableCell>
                           ))}
@@ -799,8 +777,8 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                     <TableBody>
                       {matchingTemplates && matchingTemplates.length === 0 && (
                         <TableRow>
-                          <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
-                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                          <td colSpan='6' className='p-5 text-center text-[var(--modern-muted,#64748b)]'>
+                            <div className="flex flex-col items-center gap-2">
                               <Icons.BulkDocuments size={50} color='#F0F3F4' />
                               {t("dashboardCardStatuses.notDocsFound")}
                             </div>
@@ -833,35 +811,34 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
             <Accordion defaultActiveKey='0'>
               <Accordion.Item eventKey='0'>
                 <Accordion.Header>
-                  <div className='d-flex align-items-center gap-2'>
+                  <div className='flex items-center gap-2'>
                     <Icons.CraftDocument size={25} />
-                    <label style={{ fontSize: "20px", fontWeight: "500" }}>{t("uploadDocFlow.docInfo")}</label>
+                    <span className="text-lg font-medium">{t("uploadDocFlow.docInfo")}</span>
                   </div>
                 </Accordion.Header>
                 <Accordion.Body className='p-3'>
-                  <Row className='px-0'>
-                    <Col md={6}>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
                       <ReferenceNumber fetchedData={fetchedData} setFetchedData={setFetchedData} setReferenceNumber={setReferenceNumber} />
-                    </Col>
-                    <Col md={6}>
+                    </div>
+                    <div>
                       <Description fetchedData={fetchedData} setFetchedData={setFetchedData} setDescription={setDescription} />
-                    </Col>
-                  </Row>
+                    </div>
+                  </div>
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
           </div>
         )}
 
-        {/* <div className='d-flex justify-content-end mb-3'></div> */}
-
-        <div className='fixed-button-container justify-content-end'>
-          <Button className='Continue-btn' onClick={handleContinue} disabled={uploadedFiles.length === 0}>
+        <div className="fixed bottom-0 left-0 z-[1040] flex w-full items-center justify-end border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] px-5 py-2.5">
+          <Button className='min-h-10 px-5 font-semibold' onClick={handleContinue} disabled={uploadedFiles.length === 0}>
+            {isLoading && <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" />}
             {t("uploadDocFlow.Continue")}
           </Button>
         </div>
 
-        <div style={{ display: "none" }}>
+        <div className="hidden">
           <Col md={4}>
             <ListOfDocuments
               uploadedFiles={uploadedFiles}
@@ -877,7 +854,7 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
           </Col>
         </div>
 
-        <div style={{ display: "none" }}>
+        <div className="hidden">
           <Col md={4}>
             <ManualDosList
               uploadedFiles={uploadedFiles}

@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import Carousel from "react-bootstrap/Carousel";
+import { Carousel as Carousel } from "@/Components/UI/shadcnCompat";
 import { FiActivity, FiCheck, FiCheckCircle, FiCloud, FiFileText, FiFolder, FiKey, FiLock, FiMail, FiPenTool, FiSend, FiShield, FiUploadCloud, FiUser, FiUsers } from "react-icons/fi";
 import { useTheme } from "@/Context/ThemeContext";
 import "./AuthFeatureCarousel.css";

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "./UploadDoc.css";
 import FirstStep from "../Step1/FirstStep";
 import Secondstep from "../Step2/Secondstep";
 import Thirdstep from "../Step3/Thirdstep";
@@ -72,7 +71,7 @@ const UploadDoc = () => {
 
   return (
     <UserProvider>
-      <div className='uploadDoc-container'>
+      <div className='relative h-full'>
         {(user.AccountType === "B" && user.RoleID === 3) || userAccess.remainingDays <= 0 ? (
           <>
             <UserLisence />
@@ -87,7 +86,7 @@ const UploadDoc = () => {
               <div>
                 <Stepper activeStep={activeStep} t={t} completedSteps={completedSteps} />
 
-                <div className='formSteps'>
+                <div className='ms-[15%] max-md:ms-0'>
                   {activeStep === 1 && <FirstStep setActiveStep={setActiveStep} setCompletedSteps={setCompletedSteps} />}
                   {activeStep === 2 && <Signatories setActiveStep={setActiveStep} setCompletedSteps={setCompletedSteps} />}
                   {activeStep === 3 && <Secondstep setActiveStep={setActiveStep} setCompletedSteps={setCompletedSteps} />}

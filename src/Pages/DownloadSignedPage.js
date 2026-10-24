@@ -1,6 +1,6 @@
-import verificationService from "@/services/verificationService";
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import verificationService from "@/services/verificationService";
+import { Loader2 } from "lucide-react";
 
 const DownloadSignedPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,11 +21,7 @@ const DownloadSignedPage = () => {
       const pathAfterId = parts.slice(idIndex + 1).join("/");
       setAuth(pathAfterId);
     }
-  }, []);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-  }, [imagesData]);
+  }, [idIndex, parts]);
 
   useEffect(() => {
     const getControlsLocation = async () => {
@@ -42,18 +38,16 @@ const DownloadSignedPage = () => {
       }
     };
 
-    if (selectedMasterDocID) {
+    if (selectedMasterDocID && auth) {
       getControlsLocation();
     }
-  }, [selectedMasterDocID]);
+  }, [selectedMasterDocID, auth]);
 
   const getMasterDocPages = async (selectedMasterDocID) => {
     try {
       const response = await verificationService.getMasterDocPagesCompleted(selectedMasterDocID, auth);
 
       setImagesData(response.data.response);
-
-      response.data.response.map((doc) => doc.masterDocPagesID);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
@@ -61,7 +55,7 @@ const DownloadSignedPage = () => {
   };
 
   useEffect(() => {
-    const getRegisterSignDataComlpeted = async () => {
+    const getRegisterSignDataCompleted = async () => {
       setIsLoading(true);
       try {
         const response = await verificationService.getRegisterSignDataCompleted(auth);
@@ -78,141 +72,139 @@ const DownloadSignedPage = () => {
       }
     };
     if (auth) {
-      getRegisterSignDataComlpeted();
+      getRegisterSignDataCompleted();
     }
   }, [auth]);
 
   return (
-    <div>
-      <Row className='d-none justify-content-lg-center align-items-center m-3'>
-        <div className='button' style={{ background: "white" }}>
-          <div class='button-wrapper'>
-            <div class='text'>Download</div>
-            <span class='icon'>
-              <svg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' role='img' width='2em' height='2em' preserveAspectRatio='xMidYMid meet' viewBox='0 0 24 24'>
-                <path
-                  fill='none'
-                  stroke='currentColor'
-                  stroke-linecap='round'
-                  stroke-linejoin='round'
-                  stroke-width='2'
-                  d='M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 0 0 4.561 21h14.878a2 2 0 0 0 1.94-1.515L22 17'
-                ></path>
-              </svg>
-            </span>
-          </div>
-        </div>
-      </Row>
-      <Row className='my-2  mx-0 '>
-        <Col className='p-0 d-flex justify-content-lg-center align-items-center'>
-          <div
-            className='main-document  border-0 '
-            ref={mainDocumentRef}
-            style={{
-              position: "relative",
-            }}
-          >
-            <canvas ref={canvasRef} />
-            {imagesData &&
-              imagesData.map((imageData, index) => (
-                <div className='image'>
-                  <div className='large-image'>
-                    <>
-                      {isLoading && (
-                        <div className='loader-overlay'>
-                          <div className='loader'></div>
-                        </div>
-                      )}
-                      <img src={imageData.pagesPath} alt='' className='doc-image download-img' />
+    <div className='min-h-screen bg-white text-black p-0 m-0'>
+      <div className='flex justify-center items-center w-full'>
+        <div
+          className='relative w-full max-w-full flex flex-col items-center gap-4 py-4'
+          ref={mainDocumentRef}
+        >
+          <canvas ref={canvasRef} className='hidden' />
 
-                      {controlData
-                        .filter((control) => control.masterDocPagesID === imageData.masterDocPagesID && control.pagesName === imageData.pagesName)
-                        .map((control, index) => {
-                          if (control.controlStatus === "Signed") {
-                            return (
-                              <div
-                                key={index}
-                                className='draggable-button-container'
-                                style={{
-                                  position: "absolute",
-                                  left: control.controlLocationX,
-                                  top: control.controlLocationY,
-                                }}
-                              >
-                                {control.controlName === "Company" && control.company === "" ? null : (
-                                  <Button
-                                    className='field-button'
+          {isLoading && (
+            <div className='fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80'>
+              <Loader2 className='h-8 w-8 animate-spin text-[var(--modern-primary,#6366f1)]' />
+              <span className='mt-2 text-sm font-medium text-slate-600'>Loading document...</span>
+            </div>
+          )}
+
+          {imagesData &&
+            imagesData.map((imageData, pageIdx) => (
+              <div key={pageIdx} className='relative max-w-full print:m-0 print:p-0'>
+                <div className='relative inline-block select-none'>
+                  <img
+                    src={imageData.pagesPath}
+                    alt=''
+                    className='block max-w-full h-auto print:shadow-none'
+                    style={{ display: "block" }}
+                  />
+
+                  {controlData
+                    .filter(
+                      (control) =>
+                        control.masterDocPagesID === imageData.masterDocPagesID &&
+                        control.pagesName === imageData.pagesName
+                    )
+                    .map((control, index) => {
+                      if (control.controlStatus === "Signed") {
+                        if (control.controlName === "Company" && control.company === "") return null;
+
+                        return (
+                          <div
+                            key={index}
+                            className='draggable-button-container absolute pointer-events-none select-none print:absolute'
+                            style={{
+                              position: "absolute",
+                              left: control.controlLocationX,
+                              top: control.controlLocationY,
+                            }}
+                          >
+                            <div
+                              className='flex items-center'
+                              style={{
+                                width: control.width,
+                                height: control.height,
+                              }}
+                            >
+                              {control.controlName === "Signature" && (
+                                <img
+                                  src={control.signature}
+                                  alt='Signature'
+                                  style={{
+                                    width: control.width,
+                                    height: control.height,
+                                    border: "0px",
+                                    objectFit: "contain",
+                                  }}
+                                />
+                              )}
+                              {control.controlName === "Name" && (
+                                <span className='text-black text-sm font-medium'>{control.name}</span>
+                              )}
+                              {control.controlName === "Initial" && (
+                                <img
+                                  src={control.signature}
+                                  alt='Initial'
+                                  style={{
+                                    width: control.width,
+                                    height: control.height,
+                                    border: "0px",
+                                    objectFit: "contain",
+                                  }}
+                                />
+                              )}
+
+                              {control.controlName === "Email" && (
+                                <span className='text-black text-sm'>{control.email}</span>
+                              )}
+                              {control.controlName === "Company" && (
+                                <span className='text-black text-sm'>{control.company}</span>
+                              )}
+                              {control.controlName === "Date Signed" && (
+                                <span className='text-black text-sm'>{control.signDate}</span>
+                              )}
+                              {control.controlName === "Text" &&
+                                (control.signature ? (
+                                  <img
+                                    src={control.signature}
+                                    alt=''
                                     style={{
-                                      backgroundColor: "transparent",
-                                      color: "black",
                                       width: control.width,
                                       height: control.height,
+                                      border: "0px",
+                                      objectFit: "contain",
                                     }}
-                                  >
-                                    {control.controlName === "Signature" && (
-                                      <img
-                                        src={control.signature}
-                                        alt='Signature Image'
-                                        style={{
-                                          width: control.width,
-                                          height: control.height,
-                                          border: "0px",
-                                        }}
-                                      />
-                                    )}
-                                    {control.controlName === "Name" && control.name}
-                                    {control.controlName === "Initial" && (
-                                      <img
-                                        src={control.signature}
-                                        alt='Initial Image'
-                                        style={{
-                                          width: control.width,
-                                          height: control.height,
-                                          border: "0px",
-                                        }}
-                                      />
-                                    )}
-
-                                    {control.controlName === "Email" && control.email}
-                                    {control.controlName === "Company" && control.company}
-                                    {control.controlName === "Date Signed" && control.signDate}
-                                    {control.controlName === "Text" && (
-                                      <img
-                                        src={control.signature}
-                                        alt='stamp Image'
-                                        style={{
-                                          width: control.width,
-                                          height: control.height,
-                                          border: "0px",
-                                        }}
-                                      />
-                                    )}
-                                    {control.controlName === "Stamp" && (
-                                      <img
-                                        src={control.signature}
-                                        alt='stamp Image'
-                                        style={{
-                                          width: control.width,
-                                          height: control.height,
-                                          border: "0px",
-                                        }}
-                                      />
-                                    )}
-                                  </Button>
-                                )}
-                              </div>
-                            );
-                          }
-
-                          return null;
-                        })}
-                    </>
-                  </div>
+                                  />
+                                ) : (
+                                  <span className='text-black text-sm whitespace-pre-wrap'>{control.textEditor}</span>
+                                ))}
+                              {control.controlName === "Stamp" && (
+                                <img
+                                  src={control.signature}
+                                  alt='Stamp'
+                                  style={{
+                                    width: control.width,
+                                    height: control.height,
+                                    border: "0px",
+                                    objectFit: "contain",
+                                  }}
+                                />
+                              )}
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })}
                 </div>
-              ))}
-          </div>
-        </Col>
-      </Row>
+              </div>
+            ))}
+        </div>
+      </div>
     </div>
   );
 };

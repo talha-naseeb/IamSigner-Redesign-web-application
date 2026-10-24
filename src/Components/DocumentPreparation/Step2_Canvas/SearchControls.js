@@ -1,5 +1,5 @@
 import React from "react";
-import { InputGroup, Form, Button } from "react-bootstrap";
+import { InputGroup, Form, Button } from "@/Components/UI/shadcnCompat";
 import searchIcon from "@/assets/images/Search.svg";
 import clearIcon from "@/assets/images/close-circle.svg";
 

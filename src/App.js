@@ -4,6 +4,7 @@ import "./index.css";
 import { I18nextProvider } from "react-i18next";
 import i18n from "@/Components/Language/i18n.js";
 import { UserProvider } from "@/Context/UserContext";
+import AppTourProvider from "@/Context/AppTourProvider";
 import CustomToaster from "@/Components/CommonModals/CustomToast/CustomToast.js";
 import UserActivityStatus from "@/StatusActivity/UserActivityStatus.js";
 import AppRouter from "@/routes/AppRouter";
@@ -49,7 +50,9 @@ function App() {
   }, []);
 
   const handleLogin = (token) => {
-    tokenManager.setToken(token);
+    if (tokenManager.getToken() !== token) {
+      tokenManager.setToken(token);
+    }
     setIsToken(true);
   };
 
@@ -60,9 +63,11 @@ function App() {
       <I18nextProvider i18n={i18n}>
         <ThemeProvider>
           <UserProvider>
-            <CustomToaster />
-            {isToken && <UserActivityStatus />}
-            <AppRouter onLogin={handleLogin} />
+            <AppTourProvider>
+              <CustomToaster />
+              {isToken && <UserActivityStatus />}
+              <AppRouter onLogin={handleLogin} />
+            </AppTourProvider>
           </UserProvider>
         </ThemeProvider>
       </I18nextProvider>

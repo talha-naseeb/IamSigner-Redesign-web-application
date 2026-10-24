@@ -571,7 +571,7 @@
   background: var(--modern-raised) !important;
 }
 
-.homePageTable .MuiTableBody-root .MuiTableRow-root:last-child .TableCell {
+.homePageTable .ui-table-body .ui-table-row:last-child .TableCell {
   border-bottom: 0 !important;
 }
 

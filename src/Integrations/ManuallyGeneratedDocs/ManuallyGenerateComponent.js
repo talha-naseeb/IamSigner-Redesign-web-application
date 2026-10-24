@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "@/Components/UI/shadcnCompat";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { toast } from "react-toastify";
@@ -9,7 +9,6 @@ import { GoDownload } from "react-icons/go";
 import { Link, useLocation } from "react-router-dom";
 import { useUser } from "@/Context/UserContext";
 import Loader from "@/Components/CommonModals/Loader/Loader";
-import "./style.css";
 import integrationService from "@/services/integrationService";
 
 function ManuallyGenerateComponent() {
@@ -239,12 +238,12 @@ function ManuallyGenerateComponent() {
               <Col md={3}>
                 <div style={{ position: "relative", display: "inline-block" }}>
                   <img src={rectangleBox} alt='Rectangle' />
-                  <div className='MACACIIMAGE'>
+                  <div className='absolute left-[55%] rtl:left-[45%] top-[60%] -translate-x-1/2 -translate-y-1/2 w-[347px] h-[75px] font-semibold text-[15px]'>
                     <div>
                       <label>{t("macAi.generatingYourDoc")}</label>
                       <label>{t("macAi.seeHistory")}</label>
                       <Link className='mx-1' to='/craft-generated-documents'>
-                        <label className='AidocumentBtn'>{t("macAi.gotoList")}</label>
+                        <label className='text-[var(--theme-color)] font-semibold hover:underline cursor-pointer'>{t("macAi.gotoList")}</label>
                       </Link>
                     </div>
                   </div>

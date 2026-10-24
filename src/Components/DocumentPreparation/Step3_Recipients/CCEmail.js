@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { Chips } from "primereact/chips";
-import { Button } from "react-bootstrap";
+import React, { useId, useState } from "react";
+import { Chips } from "@/Components/UI/EmailChips";
+import { Button } from "@/Components/UI/shadcnCompat";
 import uploadFlowService from "@/services/uploadFlowService";
 import { Icons } from "@/assets/Icons";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import "./style.css";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 
 /**
@@ -14,6 +13,7 @@ import Loader from "@/Components/CommonModals/Loader/Loader";
  */
 export const CCEmail = () => {
   const { t } = useTranslation();
+  const emailInputId = useId();
   const [isLoading, setIsLoading] = useState(false);
 
   const [items, setItems] = useState([]);
@@ -68,16 +68,18 @@ export const CCEmail = () => {
   return (
     <div>
       {isLoading && <Loader />}
-      <div className='d-flex align-items-center mb-3 mt-3'>
-        <label className='email_label me-3'>{t("uploadDocFlow.addCCemail")}</label>
-        <span className='refer_note mb-0'>{t("uploadDocFlow.optionalCCemail")}</span>
+      <div className="mb-3 mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <label htmlFor={emailInputId} className="text-sm font-medium text-[var(--modern-text,#0f172a)]">
+          {t("uploadDocFlow.addCCemail")}
+        </label>
+        <span className="text-sm text-[var(--modern-muted,#64748b)]">{t("uploadDocFlow.optionalCCemail")}</span>
       </div>
-      <div className='card p-fluid'>
+      <div className="w-full">
         <Chips
+          id={emailInputId}
           value={items}
           onChange={(e) => setItems(e.value)}
           placeholder={t("uploadDocFlow.emailPlaceHolder")}
-          className='custom-chips'
           separator=','
           onAdd={(e) => {
             const email = e.value;
@@ -87,13 +89,13 @@ export const CCEmail = () => {
           }}
         />
       </div>
-      <div className='d-flex justify-content-end'>
+      <div className="flex justify-end">
         <Button
-          className='btn-global-primary mt-3'
-          style={{ width: "120px" }}
+          className="mt-3 w-[120px]"
           onClick={handleButtonClick}
           disabled={items.length === 0}
         >
+          {isLoading && <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" />}
           {t("uploadDocFlow.save")}
         </Button>
       </div>

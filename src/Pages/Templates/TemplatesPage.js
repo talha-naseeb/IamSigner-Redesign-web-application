@@ -3,9 +3,8 @@ import uploadFlowService from "@/services/uploadFlowService";
 import templateService from "@/services/templateService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-import { Col, Dropdown, Modal } from "react-bootstrap";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@mui/material";
-import "./templates.css";
+import { Button, Col, Dropdown, Modal } from "@/Components/UI/shadcnCompat";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
 import { Icons } from "@/assets/Icons";
 import TemplatesSearchFilter from "./TemplatesSearchFilter";
 import EditTemplateNameModal from "./EditTemplateNameModal";
@@ -344,14 +343,14 @@ const TemplatesPage = () => {
                   <Loader />
                 </div>
               )}
-              <div className='createTemplate mb-3'>
-                <button onClick={handleCreateTemplate} className='templateButton'>
+              <div className='flex justify-end mb-3'>
+                <Button variant='primary' onClick={handleCreateTemplate}>
                   {t("templateUploadFlow.createTemplate")}
-                </button>
+                </Button>
               </div>
-              <div className='py-3 p-3 container pendingtable'>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "5px" }}>
-                  <label style={{ fontWeight: "500", fontSize: "20px" }}>{t("templateUploadFlow.myTemplate")}</label>
+              <div className='py-4 px-4 rounded-xl border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)]'>
+                <div className='flex justify-between items-center p-1 mb-3'>
+                  <label className='font-semibold text-lg text-[var(--modern-text,#0f172a)] m-0'>{t("templateUploadFlow.myTemplate")}</label>
 
                   <div className='search-filters-container'>
                     <TemplatesSearchFilter
@@ -412,7 +411,7 @@ const TemplatesPage = () => {
                           <TableCell className='TableCell'>{row.createdByName}</TableCell>
                           <TableCell className='TableCell'>{row.scope === "I" ? "Individual" : "Company"}</TableCell>
                           <TableCell className='TableCell'>
-                            <span className={`template-status-badge template-status-badge--${row.isActive ? "active" : "inactive"}`}>
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${row.isActive ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800" : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700"}`}>
                               {row.isActive ? "Active" : "InActive"}
                             </span>
                           </TableCell>

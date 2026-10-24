@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "@/Components/UI/shadcnCompat";
 import ReactQuill from "react-quill-new";
 import { toast } from "react-toastify";
 import { Icons } from "@/assets/Icons";
 import { useUser } from "@/Context/UserContext";
-import "./style.css";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Loader from "@/Components/CommonModals/Loader/Loader";
@@ -310,12 +309,12 @@ function OpenAIComponent() {
                     <div style={{ position: "relative", display: "inline-block" }}>
                       <Icons.MacAiBackground />
 
-                      <div className='MACACIIMAGE'>
+                      <div className='absolute left-[55%] rtl:left-[45%] top-[60%] -translate-x-1/2 -translate-y-1/2 w-[347px] h-[75px] font-semibold text-[15px]'>
                         <div style={{ color: "var(--text-primary)" }}>
                           <label>{t("macAi.generatingYourDoc")}</label>
                           <label>{t("macAi.seeHistory")}</label>{" "}
                           <Link to='/mac-ai-docs'>
-                            <label className='AidocumentBtn'>{t("macAi.gotoList")}</label>
+                            <label className='text-[var(--theme-color)] font-semibold hover:underline cursor-pointer'>{t("macAi.gotoList")}</label>
                           </Link>
                         </div>
                       </div>

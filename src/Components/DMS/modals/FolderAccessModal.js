@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Offcanvas, Button, Form, Spinner } from "react-bootstrap";
+import { Offcanvas, Button, Form, Spinner } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons/index";

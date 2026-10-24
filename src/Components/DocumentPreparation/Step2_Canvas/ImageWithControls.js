@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { RxCross2 } from "react-icons/rx";
-import { Button } from "react-bootstrap";
+import { Button } from "@/Components/UI/shadcnCompat";
 import ResizableButtons from "./ResizableButtons";
 import Draggable from "react-draggable";
 import { RiEdit2Fill } from "react-icons/ri";

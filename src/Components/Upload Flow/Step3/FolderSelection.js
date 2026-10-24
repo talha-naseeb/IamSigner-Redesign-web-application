@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ListGroup, Offcanvas, Form, Button, InputGroup } from "react-bootstrap";
+import { ListGroup, Offcanvas, Form, Button, InputGroup } from "@/Components/UI/shadcnCompat";
 import userService from "@/services/userService";
 import { Icons } from "@/assets/Icons";
 import { toast } from "react-toastify";

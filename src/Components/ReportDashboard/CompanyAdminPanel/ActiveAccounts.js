@@ -13,9 +13,10 @@ const ActiveAccounts = ({ roleBreakdown }) => {
   const { t } = useTranslation();
   const { theme } = useTheme();
 
-  const textSecondary = getCssVar("--text-secondary", theme === "dark" ? "#94a3b8" : "#6c757d");
-  const borderColor = getCssVar("--border-color", theme === "dark" ? "#334155" : "#e2e8f0");
-  const inactiveColor = theme === "dark" ? "#64748b" : "#9aa4b2";
+  const textSecondary = getCssVar("--modern-muted", theme === "dark" ? "#9a98b8" : "#756f89");
+  const borderColor = getCssVar("--modern-border", theme === "dark" ? "rgba(190, 181, 255, 0.11)" : "rgba(52, 40, 100, 0.14)");
+  const activeColor = getCssVar("--modern-cyan", "#078b99");
+  const inactiveColor = getCssVar("--modern-muted", theme === "dark" ? "#9a98b8" : "#756f89");
 
   const chartOptions = useMemo(
     () => ({
@@ -70,9 +71,9 @@ const ActiveAccounts = ({ roleBreakdown }) => {
       tooltip: {
         theme: theme === "dark" ? "dark" : "light",
       },
-      colors: ["#0f8f95", inactiveColor],
+      colors: [activeColor, inactiveColor],
     }),
-    [borderColor, inactiveColor, roleBreakdown?.categories, t, textSecondary, theme]
+    [activeColor, borderColor, inactiveColor, roleBreakdown?.categories, t, textSecondary, theme]
   );
 
   return (

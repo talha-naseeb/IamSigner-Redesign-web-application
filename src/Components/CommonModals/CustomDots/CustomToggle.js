@@ -1,18 +1,18 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
-const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
-  <a
-    href=''
+const CustomToggle = React.forwardRef(({ children, onClick, className, ...props }, ref) => (
+  <button
+    {...props}
+    type="button"
     ref={ref}
-    onClick={(e) => {
-      e.preventDefault();
-      onClick(e);
-    }}
-    style={{ textDecoration: "none" }}
+    aria-label={props["aria-label"] || "More actions"}
+    onClick={onClick}
+    className={cn("inline-flex items-center justify-center rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--modern-primary,#6366f1)]", className)}
   >
     {children}
-    <span className='threedots' />
-  </a>
+    <span className='threedots' aria-hidden="true" />
+  </button>
 ));
 
 export default CustomToggle;

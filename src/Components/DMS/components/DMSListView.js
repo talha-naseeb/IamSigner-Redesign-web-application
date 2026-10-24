@@ -1,5 +1,5 @@
-import { Dropdown } from "react-bootstrap";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Dropdown } from "@/Components/UI/shadcnCompat";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { Icons } from "@/assets/Icons/index";

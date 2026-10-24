@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Button, Form, Accordion, Container, Row, Col } from "react-bootstrap";
+import { Button, Form, Accordion, Container, Row, Col } from "@/Components/UI/shadcnCompat";
 import { useUser } from "@/Context/UserContext";
 import { Icons } from "@/assets/Icons";
 import IntegrationAuth from "@/Integrations/IntegationAuth/IntegrationAuth";
-import ReactSwitch from "react-switch";
+import AppSwitch from "@/Components/Common/AppSwitch/AppSwitch";
 import { useTranslation } from "react-i18next";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import integrationService from "@/services/integrationService";
@@ -311,7 +311,8 @@ function CreateWebhook() {
                             </Form.Group>
 
                             <div style={{ display: "flex", gap: "10px", marginTop: "3px" }}>
-                              <ReactSwitch
+                              <AppSwitch
+                                id='webhook-active-toggle'
                                 checked={activeWebhook}
                                 onChange={handleToggleChange}
                                 onColor={themeColor}
@@ -322,7 +323,7 @@ function CreateWebhook() {
                                 height={20}
                                 width={50}
                               />
-                              <label className='password-protected'>{activeWebhook ? t("webhookIntegration.active") : t("webhookIntegration.deactivate")}</label>
+                              <label className='password-protected' htmlFor='webhook-active-toggle'>{activeWebhook ? t("webhookIntegration.active") : t("webhookIntegration.deactivate")}</label>
                             </div>
                           </div>
 

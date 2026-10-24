@@ -44,7 +44,7 @@ const SelfSignatureFlow = () => {
 
   return (
     <UserProvider>
-      <div className='uploadDoc-container'>
+      <div className='relative h-full'>
         {(user.AccountType === "B" && user.RoleID === 3) || userAccess.remainingDays <= 0 ? (
           <UserLisence />
         ) : (
@@ -52,7 +52,7 @@ const SelfSignatureFlow = () => {
             {userAccess.isbulkCSVflow === true ? (
               <div>
                 <SelfSignStepper activeStep={activeStep} t={t} completedSteps={completedSteps} />
-                <div className='formSteps'>
+                <div className='ms-[15%] max-md:ms-0'>
                   {activeStep === 1 && <FirstStep setActiveStep={handleSetActiveStep} setCompletedSteps={handleSetCompletedSteps} />}
                   {activeStep === 2 && <SecondStep setActiveStep={handleSetActiveStep} setCompletedSteps={handleSetCompletedSteps} />}
                   {activeStep === 3 && <SignaturePageSelf setActiveStep={handleSetActiveStep} setCompletedSteps={handleSetCompletedSteps} />}

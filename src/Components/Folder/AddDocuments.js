@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import userService from "@/services/userService";
-import { Offcanvas, Form, Button } from "react-bootstrap";
+import { Offcanvas, Form, Button } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { Icons } from "@/assets/Icons";
-import "./style.css";
 import { useTranslation } from "react-i18next";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 
@@ -81,7 +80,7 @@ const AddDocuments = ({ show, handleClose, MasterDocID }) => {
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>{t("Folder.assignDocFolder")}</Offcanvas.Title>
         </Offcanvas.Header>
-        <hr style={{ margin: " auto 0", borderColor: "var(--border-color)" }} />
+        <hr className='m-0 border-[var(--modern-border)] opacity-100' />
         <Offcanvas.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Control type='text' placeholder={t("Folder.filterFolderName")} value={filter} onChange={(e) => setFilter(e.target.value)} />
@@ -96,10 +95,18 @@ const AddDocuments = ({ show, handleClose, MasterDocID }) => {
             ) : (
               <>
                 {filteredFolders.map((folder) => (
-                  <div className={`DocsOffcanvas ${selectedFolder === folder.folderID ? "active" : ""}`} key={folder.folderID} onClick={() => handleFolderSelection(folder.folderID)}>
+                  <div
+                    className={`my-2.5 flex items-center gap-4 rounded-xl border bg-card p-2.5 font-medium text-foreground transition-colors [&_.form-check-label]:mx-[5px] [&_.form-check-label]:mt-0.5 ${
+                      selectedFolder === folder.folderID
+                        ? "border-[var(--modern-violet)] bg-[var(--modern-violet-soft)] text-[var(--modern-violet)]"
+                        : "border-border"
+                    }`}
+                    key={folder.folderID}
+                    onClick={() => handleFolderSelection(folder.folderID)}
+                  >
                     <Form.Check type='checkbox' id={`doc-checkbox-${folder.folderID}`} checked={selectedFolder === folder.folderID} readOnly />
                     <div className='d-flex gap-2 align-items-center'>
-                      {selectedFolder === folder.folderID ? <Icons.FolderCheck size={24} color="var(--theme-color)"/> : <Icons.Folders size={24} />}
+                      {selectedFolder === folder.folderID ? <Icons.FolderCheck size={24} color="var(--modern-violet)"/> : <Icons.Folders size={24} />}
                       {folder.folderName}
                     </div>
                   </div>

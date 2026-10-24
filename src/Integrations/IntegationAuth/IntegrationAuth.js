@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Button, Accordion, Container, Row, Col, Modal, Form, Dropdown } from "react-bootstrap";
+import { Button, Accordion, Container, Row, Col, Modal, Form, Dropdown } from "@/Components/UI/shadcnCompat";
 import { Icons } from "@/assets/Icons";
 import CreateIntegration from "./CreateIntegration";
 import UpdateIntegrationModal from "./UpdateIntegrationModal";
 import { useTranslation } from "react-i18next";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import integrationService from "@/services/integrationService";

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import DropboxChooser from "react-dropbox-chooser";
-import { Form } from "react-bootstrap";
+import { Form } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import templateService from "@/services/templateService";
 import { useTranslation } from "react-i18next";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import { Icons } from "@/assets/Icons";
+import UploadSourceCard from "./UploadSourceCard";
 
 function DropboxPicker({
   uploadedFiles = [],
@@ -166,23 +167,19 @@ function DropboxPicker({
         </div>
       )}
       <DropboxChooser appKey={APP_KEY} success={handleSuccess} cancel={handleCancel} multiselect={false}>
-        <div className='uplad_box'>
-          <div className='upload_trigger_bx'>
-            <Icons.Dropbox alt='Dropbox Image' />
-            <div className='upload_doc_part'>
-              <Form.Group controlId='file-input-add' className='file-upload_temp'>
-                <Form.Label>{t("uploadDocFlow.dropbox")}</Form.Label>
-                <Form.Control
-                  className='temp_file-input-additional'
-                  type='file'
-                  name='file'
-                  accept='.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx'
-                  readOnly
-                />
-              </Form.Group>
-            </div>
-          </div>
-        </div>
+        <UploadSourceCard>
+          <Icons.Dropbox alt='Dropbox Image' />
+          <Form.Group controlId='file-input-add' className='space-y-0'>
+            <Form.Label className='m-0 cursor-pointer whitespace-nowrap text-sm font-medium'>{t("uploadDocFlow.dropbox")}</Form.Label>
+            <Form.Control
+              className='!sr-only'
+              type='file'
+              name='file'
+              accept='.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx'
+              readOnly
+            />
+          </Form.Group>
+        </UploadSourceCard>
       </DropboxChooser>
     </>
   );

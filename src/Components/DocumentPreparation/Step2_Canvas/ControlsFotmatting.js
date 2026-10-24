@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Dropdown, Offcanvas } from "react-bootstrap";
+import { Button, Dropdown, Offcanvas } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useUser } from "@/Context/UserContext";
 import Loader from "@/Components/CommonModals/Loader/Loader";

@@ -40,7 +40,7 @@
 .login-container > .row {
   min-height: 100vh;
   min-height: 100dvh;
-  --bs-gutter-x: 0;
+  --ui-gutter-x: 0;
 }
 
 .login-container .login-col {

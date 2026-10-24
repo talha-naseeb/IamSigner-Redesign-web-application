@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import templateService from "@/services/templateService";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { AppDrawer } from "@/Components/Common/AppDrawer";
 import { Loader2 } from "lucide-react";
-import "./templates.css";
 
 const EditTemplateNameOffcanvas = ({ originalTemplateName, show, onHide, templateID, onSave }) => {
   const { t } = useTranslation();
@@ -47,12 +46,12 @@ const EditTemplateNameOffcanvas = ({ originalTemplateName, show, onHide, templat
       showClose={!isLoading}
       footer={
         <div className="flex items-center justify-between w-full pt-4 border-t border-[var(--modern-border,#e2e8f0)]">
-          <Button variant="none" className="modalCancelButton" onClick={onHide} disabled={isLoading}>
+          <Button variant="outline" onClick={onHide} disabled={isLoading}>
             {t("editTemplateNameModal.cancel")}
           </Button>
           <Button
-            variant="none"
-            className="applyBtn d-flex align-items-center gap-2"
+            variant="primary"
+            className="flex items-center gap-2"
             disabled={isDisabled || isLoading}
             onClick={handleSave}
           >

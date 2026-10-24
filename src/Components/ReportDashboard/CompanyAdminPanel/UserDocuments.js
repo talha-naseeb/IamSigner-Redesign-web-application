@@ -16,14 +16,24 @@ const UserDocuments = ({ documentMetrics = [] }) => {
   const activeDocumentMetrics = documentMetrics.filter((doc) => doc.value > 0);
   const totalDocs = documentMetrics.reduce((sum, doc) => sum + doc.value, 0);
 
-  const textPrimary = getCssVar("--text-primary", theme === "dark" ? "#e2e8f0" : "#1f2937");
-  const textSecondary = getCssVar("--text-secondary", theme === "dark" ? "#94a3b8" : "#64748b");
-  const cardBg = getCssVar("--card-bg", theme === "dark" ? "#0b1120" : "#ffffff");
+  const textPrimary = getCssVar("--modern-text", theme === "dark" ? "#e9e8f5" : "#201b32");
+  const textSecondary = getCssVar("--modern-muted", theme === "dark" ? "#9a98b8" : "#756f89");
+  const cardBg = getCssVar("--modern-card", theme === "dark" ? "#12102a" : "#ffffff");
+  const metricColors = useMemo(() => ({
+    completedCount: getCssVar("--modern-success", "#16a34a"),
+    pendingCount: getCssVar("--modern-warning", "#f59e0b"),
+    draftCount: getCssVar("--modern-blue", "#4c8bff"),
+    sharedCount: getCssVar("--modern-cyan", "#078b99"),
+    declineCount: getCssVar("--modern-danger", "#ef4444"),
+    recalledCount: getCssVar("--modern-pink", "#d8509b"),
+    inActiveCount: getCssVar("--modern-muted", "#756f89"),
+  }), [theme]);
+  const getMetricColor = (metric) => metricColors[metric.key] || metric.color;
 
   const chartOptions = useMemo(() => {
     const series = activeDocumentMetrics.map((doc) => doc.value);
     const labels = activeDocumentMetrics.map((doc) => doc.label);
-    const colors = activeDocumentMetrics.map((doc) => doc.color);
+    const colors = activeDocumentMetrics.map(getMetricColor);
 
     return {
       chart: {
@@ -79,7 +89,7 @@ const UserDocuments = ({ documentMetrics = [] }) => {
       },
       series,
     };
-  }, [activeDocumentMetrics, cardBg, t, textPrimary, textSecondary, theme, totalDocs]);
+  }, [activeDocumentMetrics, cardBg, metricColors, t, textPrimary, textSecondary, theme, totalDocs]);
 
   if (activeDocumentMetrics.length === 0) {
     return (
@@ -99,7 +109,7 @@ const UserDocuments = ({ documentMetrics = [] }) => {
           {documentMetrics.map((doc) => (
             <li key={doc.key} className='admin-lifecycle-item'>
               <div className='admin-lifecycle-label'>
-                <span className='admin-stat-dot' style={{ backgroundColor: doc.color }} />
+                <span className='admin-stat-dot' style={{ backgroundColor: getMetricColor(doc) }} />
                 <span className='admin-lifecycle-name'>{doc.label}</span>
               </div>
               <strong className='admin-lifecycle-value'>{doc.value}</strong>

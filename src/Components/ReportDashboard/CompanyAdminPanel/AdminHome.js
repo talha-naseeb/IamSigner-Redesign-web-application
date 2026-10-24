@@ -107,8 +107,9 @@ const AdminHome = () => {
   const completionRate =
     totalDocuments > 0 ? Math.round((completedDocs / totalDocuments) * 100) : 0;
 
-  const textSecondary = getCssVar("--text-secondary", theme === "dark" ? "#94a3b8" : "#6c757d");
-  const borderColor = getCssVar("--border-color", theme === "dark" ? "#334155" : "#e2e8f0");
+  const textSecondary = getCssVar("--modern-muted", theme === "dark" ? "#9a98b8" : "#756f89");
+  const borderColor = getCssVar("--modern-border", theme === "dark" ? "rgba(190, 181, 255, 0.11)" : "rgba(52, 40, 100, 0.14)");
+  const departmentSeriesColor = getCssVar("--modern-cyan", "#078b99");
 
   const departmentChartSeries = [
     {
@@ -125,7 +126,7 @@ const AdminHome = () => {
         background: "transparent",
         foreColor: textSecondary,
       },
-      colors: ["#2ca581"],
+      colors: [departmentSeriesColor],
       dataLabels: { enabled: false },
       xaxis: {
         categories: departmentMetrics.map((item) => item.name),
@@ -154,7 +155,7 @@ const AdminHome = () => {
         theme: theme === "dark" ? "dark" : "light",
       },
     }),
-    [borderColor, departmentMetrics, t, textSecondary, theme]
+    [borderColor, departmentMetrics, departmentSeriesColor, t, textSecondary, theme]
   );
 
   return (

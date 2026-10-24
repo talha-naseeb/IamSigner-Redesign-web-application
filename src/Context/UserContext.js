@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { useTheme } from "./ThemeContext";
 import { API_STATUS } from "@/Constants/apiStatuses";
 import userImg from "@/assets/images/defaultImg.svg";
@@ -14,6 +14,9 @@ export const useUser = () => {
 
 export const UserProvider = ({ children }) => {
   const { setTheme } = useTheme();
+  // Share overlapping auth refreshes from OTP completion and the token listener.
+  const profileRequestRef = useRef(null);
+  const recordCountsRequestRef = useRef(null);
   const [loading, setIsLoading] = useState(true);
   const [accountId, setAccountId] = useState(null);
   const [profile, setProfile] = useState(userImg);
@@ -36,48 +39,59 @@ export const UserProvider = ({ children }) => {
   const [userAccess, setUserAccess] = useState("");
 
   const fetchUserProfile = async () => {
-    try {
-      const response = await userService.getUserProfile();
-      if (response.data.statusCode === API_STATUS.SUCCESS) {
-        const { fullName, countryCode, mobileNumber, emailID, userPhotoPath, userPhoto, isDropbox, isGoogleDrive, isOneDrive, accountID, roleID, accountType, selectedTheme } = response.data.response;
-        const mobile = `${countryCode}-${mobileNumber}`;
+    if (profileRequestRef.current) return profileRequestRef.current;
 
-        if (selectedTheme) {
-          setTheme(selectedTheme);
+    const request = (async () => {
+      try {
+        const response = await userService.getUserProfile();
+        if (response.data.statusCode === API_STATUS.SUCCESS) {
+          const { fullName, countryCode, mobileNumber, emailID, userPhotoPath, userPhoto, isDropbox, isGoogleDrive, isOneDrive, accountID, roleID, accountType, selectedTheme } = response.data.response;
+          const mobile = `${countryCode}-${mobileNumber}`;
+
+          if (selectedTheme) {
+            setTheme(selectedTheme);
+          }
+
+          // Add cache-busting timestamp to prevent browser caching
+          const timestamp = new Date().getTime();
+          const profileImageWithCache = userPhoto ? `${userPhotoPath}?t=${timestamp}` : userImg;
+
+          setUser((prevUser) => ({
+            ...prevUser,
+            fullName,
+            mobileNumber: mobile,
+            email: emailID,
+            profilePic: profileImageWithCache,
+            isDropbox,
+            isGoogleDrive,
+            isOneDrive,
+            AccountID: accountID,
+            RoleID: roleID,
+            AccountType: accountType,
+            selectedTheme: selectedTheme,
+          }));
+
+          setProfile(profileImageWithCache);
+          setAccountType(accountType);
+          setAccountId(accountID);
+          setIsLoading(false);
+          setEmailId(emailID);
+
+          // After setting accountId, fetch user access
+          FetchUserAccess(accountID);
+          fetchCoBrandingData(accountID);
         }
-
-        // Add cache-busting timestamp to prevent browser caching
-        const timestamp = new Date().getTime();
-        const profileImageWithCache = userPhoto ? `${userPhotoPath}?t=${timestamp}` : userImg;
-
-        setUser((prevUser) => ({
-          ...prevUser,
-          fullName,
-          mobileNumber: mobile,
-          email: emailID,
-          profilePic: profileImageWithCache,
-          isDropbox,
-          isGoogleDrive,
-          isOneDrive,
-          AccountID: accountID,
-          RoleID: roleID,
-          AccountType: accountType,
-          selectedTheme: selectedTheme,
-        }));
-
-        setProfile(profileImageWithCache);
-        setAccountType(accountType);
-        setAccountId(accountID);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
         setIsLoading(false);
-        setEmailId(emailID);
-
-        // After setting accountId, fetch user access
-        FetchUserAccess(accountID);
-        fetchCoBrandingData(accountID);
       }
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      setIsLoading(false);
+    })();
+
+    profileRequestRef.current = request;
+    try {
+      return await request;
+    } finally {
+      if (profileRequestRef.current === request) profileRequestRef.current = null;
     }
   };
 
@@ -96,13 +110,24 @@ export const UserProvider = ({ children }) => {
   };
 
   const FetchRecordCounts = async () => {
-    try {
-      const response = await documentService.getRecordCounts();
-      if (response.data.statusCode === API_STATUS.SUCCESS) {
-        setRecordsCount(response.data.response);
+    if (recordCountsRequestRef.current) return recordCountsRequestRef.current;
+
+    const request = (async () => {
+      try {
+        const response = await documentService.getRecordCounts();
+        if (response.data.statusCode === API_STATUS.SUCCESS) {
+          setRecordsCount(response.data.response);
+        }
+      } catch (error) {
+        console.error("Error fetching record counts:", error);
       }
-    } catch (error) {
-      console.error("Error fetching record counts:", error);
+    })();
+
+    recordCountsRequestRef.current = request;
+    try {
+      return await request;
+    } finally {
+      if (recordCountsRequestRef.current === request) recordCountsRequestRef.current = null;
     }
   };
 

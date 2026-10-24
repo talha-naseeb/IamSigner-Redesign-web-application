@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Navbar from "react-bootstrap/Navbar";
-import Container from "react-bootstrap/Container";
-import Offcanvas from "react-bootstrap/Offcanvas";
+import { Navbar as Navbar } from "@/Components/UI/shadcnCompat";
+import { Container as Container } from "@/Components/UI/shadcnCompat";
+import { Offcanvas as Offcanvas } from "@/Components/UI/shadcnCompat";
 import { CiFilter } from "react-icons/ci";
 import { useTranslation } from "react-i18next";
 
@@ -41,29 +41,29 @@ const DepartmentSearchFilters = ({ title, setTitle, description, setDescription,
   };
 
   return (
-    <Navbar expand={false}>
+    <Navbar expand={false} className='department-filter-navbar'>
       <Container fluid>
-        <Navbar.Toggle className='filterOpenBtn' aria-controls={`offcanvasNavbar`} onClick={() => setShowOffcanvas(true)}>
+        <Navbar.Toggle className='filterOpenBtn department-filter-trigger' aria-controls={`offcanvasNavbar`} onClick={() => setShowOffcanvas(true)}>
           <CiFilter />
         </Navbar.Toggle>
-        <Navbar.Offcanvas id={`offcanvasNavbar`} placement={document.documentElement.dir === "rtl" ? "start" : "end"} show={showOffcanvas} onHide={() => setShowOffcanvas(false)}>
+        <Navbar.Offcanvas id={`offcanvasNavbar`} className='department-filter-panel' placement={document.documentElement.dir === "rtl" ? "start" : "end"} show={showOffcanvas} onHide={() => setShowOffcanvas(false)}>
           <Offcanvas.Header closeButton>
             <Offcanvas.Title className='fw-bold'>{t("searchFilter.Filter")}</Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
-            <div className='d-flex flex-column gap-3'>
+            <div className='department-filter-fields'>
               <div>
                 <label>{t("departmentList.title")}</label>
-                <input name='title' type='text' className='input-field' value={title} onChange={handleInputChange} />
+                <input name='title' type='text' className='department-filter-input' value={title} onChange={handleInputChange} />
               </div>
               <div>
                 <label>{t("departmentList.description")}</label>
-                <input name='description' type='text' className='input-field' value={description} onChange={handleInputChange} />
+                <input name='description' type='text' className='department-filter-input' value={description} onChange={handleInputChange} />
               </div>
 
               <div>
                 <label className='mb-2'>{t("tablesLabel.status")}</label>
-                <div style={{ display: "flex", gap: "1rem" }}>
+                <div className='department-status-options'>
                   <div className='radio-container'>
                     <input type='radio' id='active' className='input-radio' name='isActive' value='true' checked={isActive === "true"} onChange={handleInputChange} />
                     <label htmlFor='active'>{t("emailTemplates.active")}</label>
@@ -75,7 +75,7 @@ const DepartmentSearchFilters = ({ title, setTitle, description, setDescription,
                 </div>
               </div>
 
-              <div className='newComment d-flex align-items-center justify-content-between w-100 p-3 py-4'>
+              <div className='department-filter-actions'>
                 <button className='resetBtn' onClick={handleClearSearch}>
                   {t("searchFilter.reset")}
                 </button>

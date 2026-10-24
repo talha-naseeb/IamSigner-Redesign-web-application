@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { Button, Form, Accordion, Row, Col, Spinner } from "react-bootstrap";
+import { Button, Form, Accordion, Row, Col, Spinner } from "@/Components/UI/shadcnCompat";
 import { useForm } from "react-hook-form";
 import { useUser } from "@/Context/UserContext";
 import { useTranslation } from "react-i18next";
-import ReactSwitch from "react-switch";
+import AppSwitch from "@/Components/Common/AppSwitch/AppSwitch";
 import PhoneInput from "react-phone-input-2";
 import { Icons } from "@/assets/Icons";
 import "react-phone-input-2/lib/style.css";
@@ -321,8 +321,9 @@ function Delegation() {
 
                     <Col xs={12} md={6} xl={4}>
                       <div className='d-flex align-items-center gap-2 mt-4'>
-                        <span className='password-protected'>{t("userProfile.ActivateDelegation")}</span>
-                        <ReactSwitch
+                        <label className='password-protected' htmlFor='delegation-active-toggle'>{t("userProfile.ActivateDelegation")}</label>
+                        <AppSwitch
+                          id='delegation-active-toggle'
                           checked={activeDelegate}
                           onChange={handleToggleChange}
                           onColor={themeColor}
@@ -332,6 +333,7 @@ function Delegation() {
                           checkedIcon={false}
                           height={20}
                           width={50}
+                          className='react-switch'
                         />
                       </div>
                     </Col>

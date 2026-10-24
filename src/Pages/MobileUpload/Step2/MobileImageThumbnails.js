@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal } from "@/Components/UI/shadcnCompat";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import mobileService from "@/services/mobileService";
 import { toast } from "react-toastify";

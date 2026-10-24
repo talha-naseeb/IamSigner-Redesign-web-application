@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import "@/Pages/Templates/templates.css";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
 import Loader from "@/Components/CommonModals/Loader/Loader";
 import { Icons } from "@/assets/Icons";
 import templateService from "@/services/templateService";
 import { useTranslation } from "react-i18next";
-import { Button } from "react-bootstrap";
+import { Button } from "@/Components/UI/shadcnCompat";
 
 const DashboardTemplate = () => {
   const { t } = useTranslation();

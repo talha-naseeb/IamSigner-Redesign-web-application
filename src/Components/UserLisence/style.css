@@ -2,11 +2,50 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
+  min-height: 80vh;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  background: var(--modern-bg);
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
 }
 
-.LisenceImage{
-    display: flex;
-    flex-direction: column;
-    align-items: center
+.LisenceImage {
+  display: flex;
+  width: min(100%, 34rem);
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  border: 1px solid var(--modern-border);
+  border-radius: 1.125rem;
+  background: var(--modern-card);
+  text-align: center;
+}
+
+.license-expire-heading {
+  margin: 0;
+  color: var(--modern-text);
+  font-family: var(--modern-font-ui);
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.license-expire-image {
+  display: block;
+  width: 7.5rem;
+  height: 7.5rem;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+[data-theme="dark"] .license-expire-image {
+  filter: invert(1) hue-rotate(180deg);
+  mix-blend-mode: screen;
+}
+
+@media (max-width: 767px) {
+  .lisenceExpire {
+    min-height: 60vh;
+  }
 }

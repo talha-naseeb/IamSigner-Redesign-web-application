@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { Pagination, Stack } from "@mui/material";
-import { Offcanvas } from "react-bootstrap";
+import { Pagination, Stack } from "@/Components/UI/dataPrimitives";
+import { Offcanvas } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";

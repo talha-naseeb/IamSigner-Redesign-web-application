@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./AuditTrailInternal.css";
 import { useTheme } from "@/Context/ThemeContext";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
 import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
 import Loader from "@/Components/CommonModals/Loader/Loader";
@@ -104,9 +104,9 @@ export default function AuditTrail({ url }) {
             </TableHead>
             <TableBody>
               <TableRow>
-                <TableCell style={{ fontFamily: "Times New Roman" }}>{signatoryData.createdOn ? formatDate(signatoryData.createdOn) : ""}</TableCell>
-                <TableCell style={{ fontFamily: "Times New Roman" }}>{signatoryData.docNames}</TableCell>
-                <TableCell style={{ fontFamily: "Times New Roman" }}>{signatoryData.masterDocIDs}</TableCell>
+                <TableCell>{signatoryData.createdOn ? formatDate(signatoryData.createdOn) : ""}</TableCell>
+                <TableCell>{signatoryData.docNames}</TableCell>
+                <TableCell>{signatoryData.masterDocIDs}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -129,10 +129,10 @@ export default function AuditTrail({ url }) {
             </TableHead>
             <TableBody>
               <TableRow>
-                <TableCell style={{ fontFamily: "Times New Roman" }}>{signatoryData.createdOn ? formatDate(signatoryData.createdOn) : ""}</TableCell>
-                <TableCell style={{ fontFamily: "Times New Roman" }}>{signatoryData.senderName}</TableCell>
-                <TableCell style={{ fontFamily: "Times New Roman" }}>{signatoryData.senderEmail}</TableCell>
-                <TableCell style={{ fontFamily: "Times New Roman" }}>{anyPending ? "Pending" : allSigned ? "Signed" : signatoryData.docStatus}</TableCell>
+                <TableCell>{signatoryData.createdOn ? formatDate(signatoryData.createdOn) : ""}</TableCell>
+                <TableCell>{signatoryData.senderName}</TableCell>
+                <TableCell>{signatoryData.senderEmail}</TableCell>
+                <TableCell>{anyPending ? "Pending" : allSigned ? "Signed" : signatoryData.docStatus}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -156,17 +156,17 @@ export default function AuditTrail({ url }) {
               {receivers.length === 0 && (
                 <TableRow>
                   <TableCell colSpan='4' className='no-docs'>
-                    <Icons.BulkDocuments size={50} color='var(--border-color)' />
+                    <Icons.BulkDocuments size={50} color='var(--modern-border)' />
                     {t("dashboardCardStatuses.notDocsFound")}
                   </TableCell>
                 </TableRow> 
               )}
               {receivers.map((receiver, index) => (
                 <TableRow key={index}>
-                  <TableCell style={{ fontFamily: "Times New Roman" }}>{index + 1}</TableCell>
-                  <TableCell style={{ fontFamily: "Times New Roman" }}>{receiver.receiverName}</TableCell>
-                  <TableCell style={{ fontFamily: "Times New Roman" }}>{receiver.receiverEmail}</TableCell>
-                  <TableCell style={{ fontFamily: "Times New Roman" }}>{receiver.signStatus}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{receiver.receiverName}</TableCell>
+                  <TableCell>{receiver.receiverEmail}</TableCell>
+                  <TableCell>{receiver.signStatus}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -198,10 +198,10 @@ export default function AuditTrail({ url }) {
               )}
               {data.map((row, index) => (
                 <TableRow key={index}>
-                  <TableCell style={{ fontFamily: "Times New Roman" }}>{index + 1}</TableCell>
-                  <TableCell style={{ fontFamily: "Times New Roman" }}>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
-                  <TableCell style={{ fontFamily: "Times New Roman" }}>{row.status}</TableCell>
-                  <TableCell style={{ fontFamily: "Times New Roman" }}>{row.message}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
+                  <TableCell>{row.status}</TableCell>
+                  <TableCell>{row.message}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import uploadFlowService from "@/services/uploadFlowService";
-import "./SignaturePage.css";
-import { Button, Col, Dropdown, DropdownButton, Row } from "react-bootstrap";
+import { Button, Col, Dropdown, DropdownButton, Row } from "@/Components/UI/shadcnCompat";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import SignatureModal from "@/Pages/SignaturePage/SignatureModal";
@@ -578,55 +577,48 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
   };
 
   return (
-    <div className='selfSignaturePage'>
+    <div className='w-full'>
       {isLoading && (
-        <div className='loader-overlay'>
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm'>
           <Loader />
         </div>
       )}
 
       <div>
-        <div className='signaturePage-container'>
-          <Row className='main-content px-0 mx-0'>
-            <Col md={10} className='p-0' style={{ background: "var(--bg-secondary)" }}>
+        <div className='w-full'>
+          <Row className='px-0 mx-0'>
+            <Col md={10} className='p-0 bg-[var(--modern-bg)]'>
               <Row
-                className='signatories-row m-0'
+                className='m-0 px-4 py-2 flex items-center'
                 style={{
                   position: "fixed",
-                  top: "67px",
+                  top: "var(--editor-header-height, 67px)",
                   width: "100%",
-                  zIndex: "5",
-                  background: "var(--bg-primary)",
-                  borderBottom: "1px solid var(--border-color)",
+                  zIndex: "20",
+                  background: "var(--modern-card)",
+                  borderBottom: "1px solid var(--modern-border)",
                 }}
               >
-                <div className='self-image-col'>
+                <div className='flex items-center gap-2'>
                   <div>
                     <Button
                       onClick={scrollToNextControl}
-                      className={`signedBtn ${isLoading || !completedControls ? "disabled-button" : ""}`}
-                      style={{
-                        backgroundColor: isLoading ? "gray" : completedControls ? "#218838" : "var(--theme-color)",
-                      }}
+                      variant={completedControls ? "success" : "primary"}
+                      size='sm'
+                      className='inline-flex items-center gap-2 font-semibold'
                       disabled={isLoading}
                     >
                       {isLoading ? (
-                        t("signOrderDaigram.loading")
+                        <span className='flex items-center gap-2'>
+                          <span className='inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' />
+                          {t("signOrderDaigram.loading")}
+                        </span>
                       ) : completedControls ? (
-                        <>
-                          {/* <Icons.CheckIcon size={18} className='me-2' /> */}
-                          {t("uploadDocFlow.finish")}
-                        </>
+                        t("uploadDocFlow.finish")
                       ) : currentControlIndex === 0 ? (
-                        <>
-                          {/* <Icons.Play size={18} className='me-2' /> */}
-                          {t("signaturePage.Start")}
-                        </>
+                        t("signaturePage.Start")
                       ) : (
-                        <>
-                          {/* <Icons.Next size={18} className='me-2' /> */}
-                          {t("signaturePage.NextStep")}
-                        </>
+                        t("signaturePage.NextStep")
                       )}
                     </Button>
                   </div>
@@ -1086,8 +1078,12 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
               </Row>
             </Col>
 
-            <Col md={2} className='page-display p-0' style={{ position: "fixed", top: "67px", zIndex: "5", background: "var(--bg-primary)" }}>
-              <div className='documents-dropdown py-1 my-2 mx-2' style={{ color: "var(--text-primary) !important" }}>
+            <Col
+              md={2}
+              className='p-0 border-l border-[var(--modern-border)] rtl:border-r rtl:border-l-0 bg-[var(--modern-card)]'
+              style={{ position: "fixed", top: "var(--editor-header-height, 67px)", zIndex: "20" }}
+            >
+              <div className='m-2 p-1.5 rounded-md border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] flex items-center'>
                 <DropdownButton
                   title={selectedFolder || ""}
                   onSelect={(eventKey) => {
@@ -1095,21 +1091,21 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
                     handleDocSelect(masterDocID, selectedFolderName, signedDocKey);
                   }}
                   id='doc-dropdown'
-                  className='border border-0 w-100'
+                  className='border-0 w-full flex justify-between items-center text-[var(--modern-text)]'
                   variant='none'
                 >
                   {formData &&
                     formData.primaryDocs.map((doc) => {
                       return (
-                        <Dropdown.Item key={doc.masterDocID} eventKey={`${doc.masterDocID},${doc.docName},${doc.signedDocKey}`} className='truncate-text'>
+                        <Dropdown.Item key={doc.masterDocID} eventKey={`${doc.masterDocID},${doc.docName},${doc.signedDocKey}`} className='truncate text-[var(--modern-text)]'>
                           {doc.docName}
                         </Dropdown.Item>
                       );
                     })}
                 </DropdownButton>
               </div>
-              <hr className='m-0' />
-              <div className='doc-pages d-none d-md-block'>
+              <hr className='m-0 border-[var(--modern-border)]' />
+              <div className='hidden md:block'>
                 <ImageThumbnails
                   controls={allControlData}
                   t={t}
@@ -1128,15 +1124,14 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
 
           <SignatureModal {...SignatureModalProps} />
         </div>
-        <div className='fixed-button-container'>
-          <Button className='backBtn' id='hide_part_one' onClick={handleBack}>
+        <div className='fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-3 border-t border-[var(--modern-border)] bg-[var(--modern-card)]'>
+          <Button variant='outline' id='hide_part_one' onClick={handleBack} disabled={isLoading}>
             {t("uploadDocFlow.back")}
           </Button>
 
           <PageNavigations imagesData={imagesData} selectedImage={selectedImage} setSelectedImage={setSelectedImage} onImageSelect={handleImageSelect} />
 
-          <Button className='Continue-btn' id='hide_part_one' onClick={handleCheckCompletedButton}>
-            {/* <Icons.CheckSign size={18} className='mx-2' /> */}
+          <Button variant='primary' id='hide_part_one' onClick={handleCheckCompletedButton} disabled={isLoading}>
             {t("signaturePage.completed")}
           </Button>
         </div>

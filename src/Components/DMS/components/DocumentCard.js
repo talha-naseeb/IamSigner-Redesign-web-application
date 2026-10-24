@@ -1,6 +1,6 @@
-import { Dropdown } from "react-bootstrap";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
+import { Dropdown } from "@/Components/UI/shadcnCompat";
+import { AccessTimeIcon as AccessTimeIcon } from "@/Components/UI/iconCompat";
+import { FolderOutlinedIcon as FolderOutlinedIcon } from "@/Components/UI/iconCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons/index";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";

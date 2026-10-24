@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Offcanvas, Button, Form } from "react-bootstrap";
+import { Offcanvas, Button, Form } from "@/Components/UI/shadcnCompat";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -53,11 +53,11 @@ const UpdateDepartment = ({ show, handleClose, selectedDepartment, fetchDepartme
   };
 
   return (
-    <Offcanvas show={show} onHide={handleClose} placement='end'>
+    <Offcanvas show={show} className='department-form-panel' onHide={handleClose} placement='end'>
       <Offcanvas.Header closeButton>
         <Offcanvas.Title>{t("departmentList.updateDepartment")}</Offcanvas.Title>
       </Offcanvas.Header>
-      <hr style={{ margin: " auto 0", borderColor: "black" }} />
+      <hr className='department-form-divider' />
       <Offcanvas.Body>
         <Form onSubmit={handleSubmit(handleUpdateDepartment)}>
           <Form.Group controlId='departmentTitle'>
