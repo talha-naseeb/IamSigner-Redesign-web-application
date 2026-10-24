@@ -10,28 +10,59 @@ const recaptchaError = (cause) => {
   return error;
 };
 
-const loadRecaptcha = () => {
+export const loadRecaptcha = () => {
+  if (!SITE_KEY) return Promise.reject(recaptchaError());
+  if (typeof window === "undefined" || !document?.head) {
+    return Promise.reject(recaptchaError());
+  }
+
   if (window.grecaptcha?.execute && window.grecaptcha?.ready) {
     return Promise.resolve(window.grecaptcha);
   }
   if (scriptPromise) return scriptPromise;
 
   scriptPromise = new Promise((resolve, reject) => {
+    const existingScript = document.getElementById(SCRIPT_ID);
+    if (existingScript) {
+      if (window.grecaptcha?.execute && window.grecaptcha?.ready) {
+        return resolve(window.grecaptcha);
+      }
+      existingScript.addEventListener("load", () => {
+        if (window.grecaptcha?.execute && window.grecaptcha?.ready) {
+          resolve(window.grecaptcha);
+        } else {
+          existingScript.remove();
+          scriptPromise = undefined;
+          reject(recaptchaError());
+        }
+      });
+      existingScript.addEventListener("error", () => {
+        existingScript.remove();
+        scriptPromise = undefined;
+        reject(recaptchaError());
+      });
+      return;
+    }
+
     const script = document.createElement("script");
     script.id = SCRIPT_ID;
     script.src = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(SITE_KEY)}`;
     script.async = true;
     script.defer = true;
     script.onload = () => {
-      if (window.grecaptcha?.execute && window.grecaptcha?.ready) {
+      if (window.grecaptcha?.ready) {
+        window.grecaptcha.ready(() => resolve(window.grecaptcha));
+      } else if (window.grecaptcha?.execute) {
         resolve(window.grecaptcha);
       } else {
         script.remove();
+        scriptPromise = undefined;
         reject(recaptchaError());
       }
     };
     script.onerror = () => {
       script.remove();
+      scriptPromise = undefined;
       reject(recaptchaError());
     };
     document.head.appendChild(script);

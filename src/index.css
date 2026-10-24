@@ -967,6 +967,7 @@ textarea:disabled {
 }
 body:not(.recaptcha-auth-page) .grecaptcha-badge {
   visibility: hidden !important;
+  opacity: 0 !important;
   pointer-events: none !important;
 }
 
