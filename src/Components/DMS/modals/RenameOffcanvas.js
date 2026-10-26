@@ -106,7 +106,7 @@ const RenameOffcanvas = ({ show, target, onHide, onRename }) => {
               </Form.Label>
               <Form.Control
                 as="textarea"
-                rows={3}
+                rows={4}
                 placeholder={t("DMS.descriptionPlaceholder")}
                 maxLength={500}
                 isInvalid={Boolean(errors.description)}

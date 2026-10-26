@@ -19,13 +19,11 @@ import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider } from "@azure/msal-react";
 import { msalConfig } from "./Components/OneDrive/authConfig";
 import { applyThemeToDocument, getInitialTheme } from "./Context/themeUtils";
-import { loadRecaptcha } from "./utils/recaptcha";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 const GOOGLE_LOGIN_CLIENTID = process.env.REACT_APP_GOOGLE_LOGIN_CLIENTID;
 
 applyThemeToDocument(getInitialTheme());
-loadRecaptcha().catch(() => {});
 
 const HTML5toTouch = {
   backends: [

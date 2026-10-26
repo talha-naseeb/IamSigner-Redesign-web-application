@@ -8,7 +8,6 @@ import LangSelector from "../Language/LangSelector";
 import { Icons } from "@/assets/Icons/index";
 import "./style.css";
 import userService from "@/services/userService";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import AppSwitch from "@/Components/Common/AppSwitch/AppSwitch";
 import { useTheme } from "@/Context/ThemeContext";
 import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
@@ -120,11 +119,6 @@ function Header() {
 
   return (
     <Navbar className={`sticky-header ${isScrolled ? "scrolled" : ""}`} sticky='top'>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       {sidebarNavigation && (
         <div className="mobile-sidebar-brand">
@@ -192,16 +186,16 @@ function Header() {
           offColor={palette === "management" ? "#FFAD7D" : "#d9d1ff"}
           checkedIcon={
             <div className='d-flex justify-content-center align-items-center h-100'>
-              <Icons.Moon size={16} color='#f1c40f' />
+              <Icons.Moon size={13} color='#f1c40f' />
             </div>
           }
           uncheckedIcon={
             <div className='d-flex justify-content-center align-items-center h-100'>
-              <Icons.Sun size={16} color='#fff' />
+              <Icons.Sun size={13} color='#fff' />
             </div>
           }
-          height={22}
-          width={44}
+          height={24}
+          width={46}
           handleDiameter={18}
           className='react-switch'
         />
@@ -222,9 +216,9 @@ function Header() {
         <span>{t("header.home")}</span>
       </Nav.Link>
 
-      <Nav.Link className='user_settings'>
+      <div className='user_settings d-flex align-items-center'>
         <Dropdown>
-          <Dropdown.Toggle variant='none' style={{ border: "none" }} id='dropdownMenuButton4'>
+          <Dropdown.Toggle variant='none' className='p-0 border-0 bg-transparent rounded-full' style={{ border: "none", background: "transparent" }} id='dropdownMenuButton4'>
             <span>
               {!profile || imgError ? (
                 <div
@@ -251,7 +245,10 @@ function Header() {
             </span>
           </Dropdown.Toggle>
 
-          <Dropdown.Menu className={`slideDownIn animation ${document.documentElement.dir === "rtl" ? "dropdown-menu-start" : "dropdown-menu-end"}`}>
+          <Dropdown.Menu
+            align={document.documentElement.dir === "rtl" ? "start" : "end"}
+            className={`slideDownIn animation ${document.documentElement.dir === "rtl" ? "dropdown-menu-start" : "dropdown-menu-end"}`}
+          >
             <Dropdown.Item>
               <span className='user_name'>
                 {t("menuButtons.Welcome")}, {user.fullName}
@@ -291,7 +288,7 @@ function Header() {
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
-      </Nav.Link>
+      </div>
     </Navbar>
   );
 }

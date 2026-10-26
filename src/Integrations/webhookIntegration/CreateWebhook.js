@@ -6,7 +6,6 @@ import { Icons } from "@/assets/Icons";
 import IntegrationAuth from "@/Integrations/IntegationAuth/IntegrationAuth";
 import AppSwitch from "@/Components/Common/AppSwitch/AppSwitch";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import integrationService from "@/services/integrationService";
 
 function CreateWebhook() {
@@ -252,11 +251,6 @@ function CreateWebhook() {
             <></>
           )}
 
-          {isLoading && (
-            <div className='loader-overlay'>
-              <Loader />
-            </div>
-          )}
           {userAccess.webhookIntegration === true ? (
             <>
               <div className='my-3'>

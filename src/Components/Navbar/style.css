@@ -215,7 +215,7 @@
 
 .sticky-header.scrolled {
   background-color: var(--header-bg);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -268,23 +268,23 @@
   min-height: 64px;
   gap: 9px;
   padding: 9px 12px;
-  border: 0;
+  border: 1px solid var(--modern-border, var(--border-color));
   border-radius: 16px;
   font-family: var(--modern-font-ui);
   background:
     radial-gradient(130% 80% at 0% 0%, color-mix(in srgb, var(--theme-color) 10%, transparent), transparent 58%),
     linear-gradient(155deg, color-mix(in srgb, var(--theme-color) 4%, var(--bg-primary)), var(--bg-primary) 60%, color-mix(in srgb, var(--theme-color) 3%, var(--bg-primary)));
-  box-shadow: 0 8px 28px color-mix(in srgb, var(--theme-color) 7%, transparent), var(--shadow-sm);
+  box-shadow: none;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
 
 .sticky-header.scrolled {
-  border: 0;
+  border: 1px solid var(--modern-border, var(--border-color));
   background:
     radial-gradient(130% 80% at 0% 0%, color-mix(in srgb, var(--theme-color) 11%, transparent), transparent 58%),
     linear-gradient(155deg, color-mix(in srgb, var(--theme-color) 5%, var(--bg-primary)), var(--bg-primary) 60%, color-mix(in srgb, var(--theme-color) 4%, var(--bg-primary)));
-  box-shadow: 0 10px 30px color-mix(in srgb, var(--theme-color) 9%, transparent), var(--shadow-md);
+  box-shadow: none;
 }
 
 .sticky-header > .icon-wrapper {
@@ -341,25 +341,40 @@
   opacity: 1;
 }
 
+.sticky-header .user_settings {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
 .sticky-header .user_settings .dropdown-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 3px;
+  padding: 0;
   border: 0 !important;
-  border-radius: 12px;
-  background: transparent;
-  transition: background-color 160ms ease, box-shadow 160ms ease;
+  border-radius: 9999px;
+  background: transparent !important;
+  box-shadow: none !important;
+  transition: opacity 160ms ease;
 }
 
 .sticky-header .user_settings .dropdown-toggle:hover {
-  background: color-mix(in srgb, var(--theme-color) 10%, var(--bg-primary));
+  background: transparent !important;
+  opacity: 0.9;
 }
 
 .sticky-header .user_settings .dropdown-toggle span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  overflow: hidden;
 }
 
 .sticky-header .user_settings .accountImage {

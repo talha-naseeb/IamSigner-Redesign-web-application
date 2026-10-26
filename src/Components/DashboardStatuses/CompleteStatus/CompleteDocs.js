@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
+import PATHS from "@/routes/paths";
 import { Dropdown as Dropdown } from "@/Components/UI/shadcnCompat";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
 import ShareModal from "@/Components/CommonModals/ShareModal/ShareModal";
 import SignOrder from "@/Components/CommonModals/SignOrder/SignOrder";
 import { useForm } from "react-hook-form";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import DocumentSearchFilters from "@/Components/CommonModals/SearchFilters/DocSearchFilter";
 import { useTranslation } from "react-i18next";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
@@ -14,13 +16,15 @@ import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import documentService from "@/services/documentService";
 import AddDocuments from "@/Components/Folder/AddDocuments";
 import DashboardComments from "@/Components/CommonModals/DocumentsComments/DashboardComments";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { Icons } from "@/assets/Icons";
 import dashboardService from "@/services/dashboardService";
+import DocumentStatusTable, { StatusBadge, formatTableDate } from "@/Components/DashboardStatuses/DocumentStatusTable";
 import { useUser } from "@/Context/UserContext";
 
 const CompleteDocs = () => {
   const { t } = useTranslation();
+  const { pathname } = useLocation();
+  const isDashboardCardView = pathname === PATHS.COMPLETED;
   const { userAccess } = useUser("");
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -204,30 +208,14 @@ const CompleteDocs = () => {
   };
 
   const columns = [
-    { label: t("tablesLabel.date"), key: "completedDate" },
-    { label: t("tablesLabel.docName"), key: "docName" },
-    { label: t("tablesLabel.docNumber"), key: "docCompanyPrefixNo" },
-    { label: t("tablesLabel.refNumber"), key: "referenceNumber" },
-    { label: t("tablesLabel.status"), key: "docStatus" },
-    { label: t("tablesLabel.createdby"), key: "createdByName" },
-    { label: "", key: "actions" },
+    { label: t("tablesLabel.date"), key: "completedDate", width: "16%" },
+    { label: t("tablesLabel.docName"), key: "docName", width: "24%" },
+    { label: t("tablesLabel.docNumber"), key: "docCompanyPrefixNo", width: "16%" },
+    { label: t("tablesLabel.refNumber"), key: "referenceNumber", width: "16%" },
+    { label: t("tablesLabel.status"), key: "docStatus", width: "10%" },
+    { label: t("tablesLabel.createdby"), key: "createdByName", width: "12%" },
+    { label: "", key: "actions", width: "6%", align: "right" },
   ];
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-
-    const formattedMinutes = (minutes < 10 ? "0" : "") + minutes;
-
-    return `${day}/${month}/${year} ${hours}:${formattedMinutes} ${ampm}`;
-  };
 
   const handleCellClick = (event) => {
     const cell = event.target;
@@ -235,19 +223,12 @@ const CompleteDocs = () => {
   };
 
   return (
-    <Grid className='container' style={{ marginTop: "12px" }}>
-      <Grid>
-        {/* Loader overlay */}
-        {isLoading && (
-          <div className='loader-overlay'>
-            <Loader />
-          </div>
-        )}
-
-        <div className='py-3 p-3 container pendingtable'>
-          <div className="document-status-toolbar">
-            <h4>{t("dashboardCardStatuses.completedStatus")}</h4>
-
+    <Grid className='container'>
+      <Grid item xs={12}>
+        <DocumentStatusTable
+          title={t("dashboardCardStatuses.completedStatus")}
+          count={searchResults.length}
+          searchFilter={
             <DocumentSearchFilters
               startDate={startDate}
               endDate={endDate}
@@ -262,149 +243,84 @@ const CompleteDocs = () => {
               handleSearch={handleSearch}
               clearSearch={clearSearch}
             />
-          </div>
-          {/* Table */}
-          <TableContainer
-            component={Paper}
-            className='custom-table-scrollbar'
-            style={{
-              maxWidth: "100%",
-              overflowX: "auto",
-              height: "70vh",
-            }}
-          >
-            <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
-              {/* Table Headers */}
-              <TableHead className='customTableHead'>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell key={column.label} className='TableHeaderCell'>
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
+          }
+          columns={columns}
+          data={searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+          totalItems={searchResults.length}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handleChangePage}
+          tableContainerStyle={{ maxHeight: isDashboardCardView ? "38vh" : "calc(100vh - 280px)" }}
+          renderRow={(row, index) => (
+            <TableRow key={row.masterDocID || index} hover>
+              <TableCell className='TableCell text-[var(--modern-muted)]' style={{ width: "16%" }}>
+                {row.completedDate ? formatTableDate(row.completedDateFormatted || row.completedDate) : "—"}
+              </TableCell>
+              <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell font-medium text-[var(--modern-text)]' title={row.docName} style={{ width: "24%" }}>
+                {row.docName}
+              </TableCell>
+              <TableCell className='TableCell' style={{ width: "16%" }}>
+                {row.docCompanyPrefixNo || "—"}
+              </TableCell>
+              <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell truncate-ref-cell' title={row.referenceNumber} style={{ width: "16%" }}>
+                {row.referenceNumber || "—"}
+              </TableCell>
+              <TableCell className='TableCell' style={{ width: "10%" }}>
+                <StatusBadge status={row.docStatus || "Completed"} />
+              </TableCell>
+              <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell' style={{ width: "12%" }}>
+                <UserInitialsBadge name={row.createdByName} />
+              </TableCell>
+              <TableCell className='TableCell p-0 text-right' style={{ width: "6%" }}>
+                {userAccess.remainingDays <= 0 ? (
+                  <Dropdown>
+                    <Dropdown.Toggle as={CustomToggle} />
+                  </Dropdown>
+                ) : (
+                  <Dropdown>
+                    <Dropdown.Toggle as={CustomToggle} />
+                    <Dropdown.Menu>
+                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileDownload(row)}>
+                        <Icons.Download size={20} />
+                        {t("dashboardCardStatuses.download")}
+                      </Dropdown.Item>
 
-              {/* Table Body */}
-              <TableBody>
-                {searchResults.length === 0 && (
-                  <TableRow>
-                    <td colSpan='6' className='p-5 text-center'>
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                        <Icons.BulkDocuments size={50} />
-                        {t("dashboardCardStatuses.notDocsFound")}
-                      </div>
-                    </td>
-                  </TableRow>
+                      {userAccess.docShare === true && (
+                        <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleShareModalShow(row)}>
+                          <Icons.Share size={20} />
+                          {t("dashboardCardStatuses.share")}
+                        </Dropdown.Item>
+                      )}
+
+                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleView(row)}>
+                        <Icons.View size={20} />
+                        {t("dashboardCardStatuses.view")}
+                      </Dropdown.Item>
+                      <Dropdown.Item>
+                        <SignOrder masterDocID={row.masterDocID} />
+                      </Dropdown.Item>
+                      {userAccess.auditTrail === true && (
+                        <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewAuditTrail(row.signedDocKey)}>
+                          <Icons.AuditTrail size={20} />
+                          {t("dashboardCardStatuses.viewAuditTrail")}
+                        </Dropdown.Item>
+                      )}
+                      {userAccess.folders === true && (
+                        <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleAddDocumentClick(row.masterDocID)}>
+                          <Icons.Folders size={20} />
+                          {t("dashboardCardStatuses.addtoFolder")}
+                        </Dropdown.Item>
+                      )}
+                      <Dropdown.Item>
+                        <DashboardComments registerSignID={row.registerSignID} />
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                 )}
-
-                {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                  <TableRow key={index}>
-                    {/* Table Cells */}
-                    <TableCell className='TableCell'>{row.completedDate ? formatDate(row.completedDateFormatted) : ""}</TableCell>
-                    <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                      {row.docName}
-                    </TableCell>
-                    <TableCell className='TableCell'>{row.docCompanyPrefixNo}</TableCell>
-                    <TableCell className='TableCell'>{row.referenceNumber}</TableCell>
-                    <TableCell className='TableCell '>
-                      <label
-                        style={{
-                          padding: "2px 12px",
-                          borderRadius: "12px",
-                          color: "var(--modern-success, #16a34a)",
-                          border: "1px solid var(--modern-success, #16a34a)",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {row.docStatus}
-                      </label>
-                    </TableCell>
-                    <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                      {row.createdByName}
-                    </TableCell>
-
-                    {userAccess.remainingDays <= 0 ? (
-                      <>
-                        <TableCell className='TableCell p-0'>
-                          <Dropdown>
-                            <Dropdown.Toggle as={CustomToggle} />
-                          </Dropdown>
-                        </TableCell>
-                      </>
-                    ) : (
-                      <>
-                        <TableCell className='TableCell p-0'>
-                          <Dropdown>
-                            <Dropdown.Toggle as={CustomToggle} />
-
-                            <Dropdown.Menu>
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileDownload(row)}>
-                                <Icons.Download size={20} />
-                                {t("dashboardCardStatuses.download")}
-                              </Dropdown.Item>
-
-                              {userAccess.docShare === true ? (
-                                <>
-                                  <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleShareModalShow(row)}>
-                                    <Icons.Share size={20} />
-                                    {t("dashboardCardStatuses.share")}
-                                  </Dropdown.Item>
-                                </>
-                              ) : (
-                                <></>
-                              )}
-
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleView(row)}>
-                                <Icons.View size={20} />
-                                {t("dashboardCardStatuses.view")}
-                              </Dropdown.Item>
-                              <Dropdown.Item>
-                                <SignOrder masterDocID={row.masterDocID} />
-                              </Dropdown.Item>
-                              {userAccess.auditTrail === true ? (
-                                <>
-                                  <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewAuditTrail(row.signedDocKey)}>
-                                    <Icons.AuditTrail size={20} />
-                                    {t("dashboardCardStatuses.viewAuditTrail")}
-                                  </Dropdown.Item>
-                                </>
-                              ) : (
-                                <></>
-                              )}
-                              {userAccess.folders === true ? (
-                                <>
-                                  <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleAddDocumentClick(row.masterDocID)}>
-                                    <Icons.Folders size={20} />
-                                    {t("dashboardCardStatuses.addtoFolder")}
-                                  </Dropdown.Item>
-                                </>
-                              ) : (
-                                <></>
-                              )}
-                              <Dropdown.Item>
-                                <DashboardComments registerSignID={row.registerSignID} />
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </TableCell>
-                      </>
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-            <div className='showHideNoDocs'>
-              {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
-            </div>
-            <Stack spacing={2}>
-              <Pagination count={Math.ceil(data.length / rowsPerPage)} variant='outlined' shape='rounded' page={page + 1} onChange={(event, newPage) => handleChangePage(event, newPage - 1)} />
-            </Stack>
-          </div>
-        </div>
+              </TableCell>
+            </TableRow>
+          )}
+        />
       </Grid>
 
       {/* Share and View modals */}

@@ -11,8 +11,7 @@ import AddCompletedDocuments from "./AddCompletedDocuments";
 import { useUser } from "@/Context/UserContext";
 import UserLisence from "@/Components/UserLisence/UserLisence";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Pagination } from "@/Components/UI/dataPrimitives";
+import { Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Paper, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import FolderFilter from "./FolderFilter";
 import ShareFolderModal from "./ShareFolderModal";
 import ShareDetailsModal from "./ShareDetailsModal";
@@ -404,15 +403,15 @@ function Folder() {
           {userAccess.folders === true ? (
             <>
               <div className='folder-route container mt-3 text-foreground [font-family:var(--modern-font-ui)]'>
-                {isLoading && (
-                  <div className='loader-overlay'>
-                    <Loader />
-                  </div>
-                )}
 
-                <button className='templateButton' onClick={() => setShowFolder(true)}>
-                  {t("Folder.createFolder")}
-                </button>
+                <Button
+                  variant='primary'
+                  className='min-h-10 rounded-[10px] px-4 font-semibold'
+                  onClick={() => setShowFolder(true)}
+                >
+                  <Icons.FolderPlus size={18} aria-hidden='true' />
+                  <span>{t("Folder.createFolder")}</span>
+                </Button>
 
                 <div className='container mt-3 rounded-2xl border border-border bg-card p-[clamp(1rem,2.5vw,1.5rem)] text-foreground max-sm:p-4'>
                   <div className='d-flex align-items-center justify-content-between'>
@@ -446,36 +445,38 @@ function Folder() {
                     </div>
                   </div>
 
-                  <div className='d-flex gap-3 '>
+                  <div className='folder-view-tabs' role='tablist' aria-label={t("home.Folder")}>
                     <Button
-                      className={`min-h-10 rounded-[10px] border border-border bg-[var(--modern-raised)] px-3 text-[var(--modern-muted)] transition-colors hover:border-[var(--modern-violet)] hover:bg-[var(--modern-violet-soft)] hover:text-[var(--modern-violet)] ${
-                        activeTab === "allFolders" ? "border-[var(--modern-violet)] bg-[var(--modern-violet-soft)] text-[var(--modern-violet)]" : ""
-                      }`}
+                      variant='none'
+                      className={`folder-view-tab${activeTab === "allFolders" ? " is-active" : ""}`}
                       onClick={handleAllfoler}
+                      aria-pressed={activeTab === "allFolders"}
                     >
                       {t("Folder.Allfolders")}
                     </Button>
                     <Button
-                      className={`min-h-10 rounded-[10px] border border-border bg-[var(--modern-raised)] px-3 text-[var(--modern-muted)] transition-colors hover:border-[var(--modern-violet)] hover:bg-[var(--modern-violet-soft)] hover:text-[var(--modern-violet)] ${
-                        activeTab === "shareFolders" ? "border-[var(--modern-violet)] bg-[var(--modern-violet-soft)] text-[var(--modern-violet)]" : ""
-                      }`}
+                      variant='none'
+                      className={`folder-view-tab${activeTab === "shareFolders" ? " is-active" : ""}`}
                       onClick={handleShareFolders}
+                      aria-pressed={activeTab === "shareFolders"}
                     >
                       {t("dashboardCardStatuses.sharedWithMe")}
                     </Button>
                   </div>
 
-                  <hr />
+                  <div className='border-b border-[var(--modern-border)] my-4' />
 
                   {activeTab === "allFolders" && (
                     <>
                       <TableContainer
                         component={Paper}
-                        className='custom-table-scrollbar'
+                        className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
                         style={{
                           maxWidth: "100%",
                           overflowX: "auto",
-                          height: "50vh",
+                          minHeight: "440px",
+                          height: "calc(100vh - 280px)",
+                          maxHeight: "calc(100vh - 280px)",
                         }}
                       >
                         <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
@@ -491,12 +492,12 @@ function Folder() {
                           <TableBody>
                             {searchResults.length === 0 && (
                               <TableRow>
-                                <td colSpan='6' className='p-5 text-center text-muted-foreground'>
-                                  <div className='flex flex-col items-center gap-2'>
-                                    <Icons.Folders size={50} />
-                                    {t("dashboardCardStatuses.notFolerFound")}
-                                  </div>
-                                </td>
+                                <TableCell colSpan={columns.length} className='table-empty-state-cell'>
+                                  <TableEmptyState
+                                    icon={<Icons.Folders size={50} />}
+                                    title={t("dashboardCardStatuses.notFolerFound")}
+                                  />
+                                </TableCell>
                               </TableRow>
                             )}
 
@@ -542,7 +543,7 @@ function Folder() {
                                 </TableCell>
 
                                 <TableCell className='TableCell truncate-cell' onClick={(e) => handleCellClick(e)}>
-                                  {row.createdByName}
+                                  <UserInitialsBadge name={row.createdByName} />
                                 </TableCell>
 
                                 <TableCell className='py-0'>
@@ -591,15 +592,15 @@ function Folder() {
                         </Table>
                       </TableContainer>
 
-                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-                        <div className='showHideNoDocs'>
-                          {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, showTotalFolder.length)} {t("Folder.FolderOf")} {showTotalFolder.length} {t("home.Folder")}
+                      <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 text-xs text-[var(--modern-muted)]'>
+                        <div>
+                          {showTotalFolder.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, showTotalFolder.length)} {t("Folder.FolderOf")} {showTotalFolder.length} {t("home.Folder")}
                         </div>
                         <Pagination
-                          count={Math.ceil(showTotalFolder.length / rowsPerPage)}
+                          count={Math.max(1, Math.ceil(showTotalFolder.length / rowsPerPage))}
                           variant='outlined'
                           shape='rounded'
-                          page={page + 1}
+                          page={Math.min(page + 1, Math.max(1, Math.ceil(showTotalFolder.length / rowsPerPage)))}
                           onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
                         />
                       </div>
@@ -610,11 +611,13 @@ function Folder() {
                     <>
                       <TableContainer
                         component={Paper}
-                        className='custom-table-scrollbar'
+                        className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
                         style={{
                           maxWidth: "100%",
                           overflowX: "auto",
-                          height: "50vh",
+                          minHeight: "440px",
+                          height: "calc(100vh - 280px)",
+                          maxHeight: "calc(100vh - 280px)",
                         }}
                       >
                         <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
@@ -630,12 +633,12 @@ function Folder() {
                           <TableBody>
                             {shareFolderData.length === 0 && (
                               <TableRow>
-                                <td colSpan='6' className='p-5 text-center text-muted-foreground'>
-                                  <div className='flex flex-col items-center gap-2'>
-                                    <Icons.Folders size={60} />
-                                    {t("dashboardCardStatuses.notFolerFound")}
-                                  </div>
-                                </td>
+                                <TableCell colSpan={SharedColumns.length} className='table-empty-state-cell'>
+                                  <TableEmptyState
+                                    icon={<Icons.Folders size={50} />}
+                                    title={t("dashboardCardStatuses.notFolerFound")}
+                                  />
+                                </TableCell>
                               </TableRow>
                             )}
 
@@ -665,17 +668,7 @@ function Folder() {
                                   {row.description}
                                 </TableCell>
                                 <TableCell className='TableCell runcate-cell' onClick={(e) => handleCellClick(e)}>
-                                  {row.sharedBy ? (
-                                    row.sharedBy.split(",").length === 1 ? (
-                                      <label>{row.sharedBy}</label>
-                                    ) : (
-                                      <label className='inline-flex cursor-pointer items-center rounded-lg border border-border bg-[var(--modern-raised)] p-[5px] text-[var(--modern-violet)]' onClick={() => handleShareDetailsClick(row.folderID)}>
-                                        <Icons.Share size={22} />
-                                      </label>
-                                    )
-                                  ) : (
-                                    <></>
-                                  )}
+                                  <UserInitialsBadge name={row.sharedBy} />
                                 </TableCell>
 
                                 <TableCell className='py-0'>
@@ -708,15 +701,15 @@ function Folder() {
                         </Table>
                       </TableContainer>
 
-                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-                        <div className='showHideNoDocs'>
-                          {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, shareFolderData.length)} {t("Folder.FolderOf")} {showTotalFolder.length} {t("home.Folder")}
+                      <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 text-xs text-[var(--modern-muted)]'>
+                        <div>
+                          {shareFolderData.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, shareFolderData.length)} {t("Folder.FolderOf")} {showTotalFolder.length} {t("home.Folder")}
                         </div>
                         <Pagination
-                          count={Math.ceil(shareFolderData.length / rowsPerPage)}
+                          count={Math.max(1, Math.ceil(shareFolderData.length / rowsPerPage))}
                           variant='outlined'
                           shape='rounded'
-                          page={page + 1}
+                          page={Math.min(page + 1, Math.max(1, Math.ceil(shareFolderData.length / rowsPerPage)))}
                           onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
                         />
                       </div>

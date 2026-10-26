@@ -5,9 +5,8 @@ import { Icons } from "@/assets/Icons";
 import CreateIntegration from "./CreateIntegration";
 import UpdateIntegrationModal from "./UpdateIntegrationModal";
 import { useTranslation } from "react-i18next";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import integrationService from "@/services/integrationService";
 
 function IntegrationAuth() {
@@ -210,14 +209,9 @@ function IntegrationAuth() {
 
   return (
     <Container className='p-0 mb-3'>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       <Modal show={deleteModalVisible} dialogClassName='custom-modal-width' onHide={() => setDeleteModalVisible(false)} backdrop='static' keyboard={false}>
-        <Modal.Header>
+        <Modal.Header closeButton>
           <div className='header-content'>
             <div className='header-icon'>
               <Icons.DeleteAction size={25} />
@@ -375,7 +369,7 @@ function IntegrationAuth() {
                   <div className='pendingtable'>
                     <TableContainer
                       component={Paper}
-                      className='custom-table-scrollbar'
+                      className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
                       style={{
                         maxWidth: "100%",
                         overflowX: "auto",
@@ -385,7 +379,7 @@ function IntegrationAuth() {
                         <TableHead>
                           <TableRow>
                             {columns.map((column) => (
-                              <TableCell key={column.label} style={{ backgroundColor: "#f0f3f4" }} className='TableHeaderCell'>
+                              <TableCell key={column.label} className='TableHeaderCell'>
                                 {column.label}
                               </TableCell>
                             ))}
@@ -395,12 +389,12 @@ function IntegrationAuth() {
                         <TableBody>
                           {data.length === 0 && (
                             <TableRow>
-                              <td colSpan='6' className='p-4 text-center'>
-                                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                                  <Icons.Api size={50} />
-                                  {t("AuthIntegration.noKeyFound")}
-                                </div>
-                              </td>
+                              <TableCell colSpan={columns.length} className='table-empty-state-cell'>
+                                <TableEmptyState
+                                  icon={<Icons.Api size={50} />}
+                                  title={t("AuthIntegration.noKeyFound")}
+                                />
+                              </TableCell>
                             </TableRow>
                           )}
 

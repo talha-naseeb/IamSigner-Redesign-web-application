@@ -6,7 +6,6 @@ import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { Icons } from "@/assets/Icons";
 import CreateDepartment from "./CreateDepartment";
 import UpdateDepartment from "./UpdateDepartment";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { useParams } from "react-router-dom";
 import { Button, Dropdown, Modal } from "@/Components/UI/shadcnCompat";
 import DepartmentSearchFilters from "./DepartmentSearchFilters";
@@ -196,11 +195,6 @@ const DepartmentList = () => {
           {userAccess.teams === true ? (
             <>
               <Grid className='department-admin-page container mt-3'>
-                {isLoading && (
-                  <div className='loader-overlay'>
-                    <Loader />
-                  </div>
-                )}
 
                 <div className='createTemplate'>
                   <CreateDepartment accountID={accountId} fetchDepartments={fetchDepartments} showOffcanvas={showDepartCanvas} setShowOffcanvas={setShowDepartCanvas} />
@@ -229,7 +223,9 @@ const DepartmentList = () => {
                     style={{
                       maxWidth: "100%",
                       overflowX: "auto",
-                      height: "60vh",
+                      minHeight: "440px",
+                      height: "calc(100vh - 280px)",
+                      maxHeight: "calc(100vh - 280px)",
                     }}
                   >
                     <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
@@ -322,16 +318,14 @@ const DepartmentList = () => {
 
               {/* Confirmation Modal */}
               <Modal show={showConfirmModal} onHide={handleCloseConfirmModal} backdrop='static' keyboard={false} dialogClassName='custom-modal-width'>
-                <Modal.Header>
-                  <Modal.Title>
-                    <div className='header-content'>
-                      <div className='header-icon'>{templateToToggle && templateToToggle.isActive ? <Icons.InactiveAction size={25} /> : <Icons.Active size={25} color='var(--modern-success, #16a34a)' />}</div>
+                <Modal.Header closeButton>
+                  <div className='header-content'>
+                    <div className='header-icon'>{templateToToggle && templateToToggle.isActive ? <Icons.InactiveAction size={25} /> : <Icons.Active size={25} color='var(--modern-success, #16a34a)' />}</div>
 
-                      <div className='header-text'>
-                        <Modal.Title>{t("emailTemplates.Confirmation")}</Modal.Title>
-                      </div>
+                    <div className='header-text'>
+                      <Modal.Title>{t("emailTemplates.Confirmation")}</Modal.Title>
                     </div>
-                  </Modal.Title>
+                  </div>
                 </Modal.Header>
                 <Modal.Body className='p-3'>{templateToToggle && templateToToggle.isActive ? t("departmentList.sureDeactivate") : t("departmentList.sureActive")}</Modal.Body>
                 <Modal.Footer className='d-flex justify-content-end gap-5'>

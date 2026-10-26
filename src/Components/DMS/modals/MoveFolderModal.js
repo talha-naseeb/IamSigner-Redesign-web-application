@@ -66,9 +66,10 @@ const MoveFolderModal = ({
       show={show}
       onHide={handleClose}
       centered
+      size="md"
       backdrop={saving ? "static" : true}
       keyboard={!saving}
-      dialogClassName="custom-modal-width"
+      dialogClassName="dms-dialog-compact dms-move-modal"
     >
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Modal.Header closeButton={!saving} className="pb-2">
@@ -88,16 +89,18 @@ const MoveFolderModal = ({
         </Modal.Header>
 
         <Modal.Body className="px-4 py-3">
-          <div className="border rounded-3 p-3 mb-3 d-flex align-items-center gap-2">
-            {isDocument ? (
-              <Icons.DocumentReport size={24} color="var(--theme-color)" />
-            ) : (
-              <Icons.FoldersFill size={24} color="var(--theme-color)" />
-            )}
-            <div className="min-w-0">
-              <div className="text-muted small">{itemLabel}</div>
+          <div className="dms-target-preview-card">
+            <div className="dms-target-preview-icon">
+              {isDocument ? (
+                <Icons.DocumentReport size={22} className="text-[var(--modern-violet)]" />
+              ) : (
+                <Icons.FoldersFill size={22} className="text-[var(--modern-violet)]" />
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="dms-target-preview-type">{itemLabel}</div>
               <strong
-                className="d-block text-truncate text-wrap"
+                className="dms-target-preview-name"
                 title={target?.name}
               >
                 {target?.name ||
@@ -113,6 +116,7 @@ const MoveFolderModal = ({
               {t("DMS.moveTo")} <span className="text-danger">*</span>
             </Form.Label>
             <Form.Select
+              className="dms-select-field"
               isInvalid={Boolean(errors.newParentFolderId)}
               disabled={saving}
               {...register("newParentFolderId", {
@@ -121,12 +125,14 @@ const MoveFolderModal = ({
                   t("DMS.moveSameLocation"),
               })}
             >
-              {destinationFolders.map((folder) => (
-                <option key={folder.id} value={folder.id}>
-                  {"".repeat(folder.depth || 0)}
-                  {folder.name}
-                </option>
-              ))}
+              {destinationFolders.map((folder) => {
+                const indent = folder.depth > 0 ? `${"\u00A0\u00A0".repeat(folder.depth)}└─ ` : "";
+                return (
+                  <option key={folder.id} value={folder.id}>
+                    {indent}{folder.name}
+                  </option>
+                );
+              })}
             </Form.Select>
             {errors.newParentFolderId ? (
               <Form.Control.Feedback type="invalid">
@@ -137,7 +143,7 @@ const MoveFolderModal = ({
           </Form.Group>
         </Modal.Body>
 
-        <Modal.Footer className="d-flex justify-content-between">
+        <Modal.Footer className="d-flex justify-content-between gap-2">
           <Button
             type="button"
             variant="none"
@@ -153,6 +159,7 @@ const MoveFolderModal = ({
             className="applyBtn"
             disabled={saving}
           >
+            {saving ? <Icons.Loading className="animate-spin" size={16} /> : null}
             {t(titleKey)}
           </Button>
         </Modal.Footer>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import bulkService from "@/services/bulkService";
 import { Button, Dropdown, Modal } from "@/Components/UI/shadcnCompat";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Stack, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import DocumentSearchFilters from "@/Components/CommonModals/SearchFilters/DocSearchFilter";
 import { useTranslation } from "react-i18next";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
@@ -10,7 +10,6 @@ import { Icons } from "@/assets/Icons";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useUser } from "@/Context/UserContext";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import DashboardComments from "@/Components/CommonModals/DocumentsComments/DashboardComments";
 
@@ -28,6 +27,16 @@ const BulkDocuments = () => {
   const [docNumber, setDocNumber] = useState("");
   const [docName, setDocName] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+
+  const statusColors = {
+    completed: "var(--completed-status)",
+    draft: "var(--draft-status)",
+    declined: "var(--decline-status)",
+    inactive: "var(--inactive-status)",
+    pending: "var(--pending-status)",
+    share: "var(--share-status)",
+    recalled: "var(--recall-status)",
+  };
   const [showATModal, setShowATModal] = useState(false);
   const [auditTrailURL, setAuditTrailURL] = useState("");
   const [page, setPage] = useState(0);
@@ -173,40 +182,38 @@ const BulkDocuments = () => {
       {userAccess.isbulkCSVflow === true ? (
         <>
           <Grid>
-            {/* Loader overlay */}
-            {isLoading && (
-              <div className='loader-overlay'>
-                <Loader />
-              </div>
-            )}
 
             <div className='py-3 p-3 container pendingtable'>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={{ fontSize: "20px", fontWeight: "500" }}>{t("Sidebar.BulkDocuments")}</label>
+              <div className='document-status-toolbar'>
+                <h4>{t("Sidebar.BulkDocuments")}</h4>
 
-                <DocumentSearchFilters
-                  startDate={startDate}
-                  endDate={endDate}
-                  referenceNo={referenceNo}
-                  docNumber={docNumber}
-                  docName={docName}
-                  setStartDate={setStartDate}
-                  setEndDate={setEndDate}
-                  setReferenceNo={setReferenceNo}
-                  setDocNumber={setDocNumber}
-                  setDocName={setDocName}
-                  handleSearch={handleSearch}
-                  clearSearch={clearSearch}
-                />
+                <div className='search-filters-container'>
+                  <DocumentSearchFilters
+                    startDate={startDate}
+                    endDate={endDate}
+                    referenceNo={referenceNo}
+                    docNumber={docNumber}
+                    docName={docName}
+                    setStartDate={setStartDate}
+                    setEndDate={setEndDate}
+                    setReferenceNo={setReferenceNo}
+                    setDocNumber={setDocNumber}
+                    setDocName={setDocName}
+                    handleSearch={handleSearch}
+                    clearSearch={clearSearch}
+                  />
+                </div>
               </div>
               {/* Table */}
               <TableContainer
                 component={Paper}
-                className='custom-table-scrollbar'
+                className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
                 style={{
                   maxWidth: "100%",
                   overflowX: "auto",
-                  height: "70vh",
+                  minHeight: "440px",
+                  height: "calc(100vh - 280px)",
+                  maxHeight: "calc(100vh - 280px)",
                 }}
               >
                 <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
@@ -214,7 +221,7 @@ const BulkDocuments = () => {
                   <TableHead className='customTableHead'>
                     <TableRow>
                       {columns.map((column) => (
-                        <TableCell key={column.label} style={{ backgroundColor: "#e7f7fe" }} className='TableHeaderCell'>
+                        <TableCell key={column.label} className='TableHeaderCell'>
                           {column.label}
                         </TableCell>
                       ))}
@@ -225,76 +232,48 @@ const BulkDocuments = () => {
                   <TableBody>
                     {searchResults.length === 0 && (
                       <TableRow>
-                       <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
-
-                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                            <Icons.BulkDocuments size={50} color='#F0F3F4' />
-                            {t("dashboardCardStatuses.notDocsFound")}
-                          </div>
-                        </td>
+                        <TableCell colSpan={columns.length} className='table-empty-state-cell'>
+                          <TableEmptyState
+                            icon={<Icons.BulkDocuments size={50} />}
+                            title={t("dashboardCardStatuses.notDocsFound")}
+                          />
+                        </TableCell>
                       </TableRow>
                     )}
 
                     {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                       <TableRow key={index}>
                         {/* Table Cells */}
-                        <TableCell style={{ cursor: "pointer" }} onClick={() => navigateToViewSignatories(row.docName, row.registerSignID, row.masterDocID)} className='TableCell truncate-cell'>
+                        <TableCell style={{ cursor: "pointer" }} title={row.docName} onClick={() => navigateToViewSignatories(row.docName, row.registerSignID, row.masterDocID)} className='TableCell truncate-cell'>
                           {row.docName}
                         </TableCell>
                         <TableCell className='TableCell'>{row.docCompanyPrefixNo}</TableCell>
                         <TableCell className='TableCell'>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
-                        <TableCell className='TableCell'>{row.referenceNumber}</TableCell>
-                        <TableCell className='TableCell '>
-                          <label
-                            style={{
-                              padding: "2px 12px",
-                              borderRadius: "12px",
-                              fontWeight: "bold",
-                              color:
-                                row.docStatus === "Completed"
-                                  ? "#19d157"
-                                  : row.docStatus === "Draft"
-                                  ? "#4339f2"
-                                  : row.docStatus === "Declined"
-                                  ? "#dc3545"
-                                  : row.docStatus === "InActive"
-                                  ? "#bec4c8"
-                                  : row.docStatus === "Pending"
-                                  ? "#f9ba05"
-                                  : row.docStatus === "Share"
-                                  ? "#0c9ad7"
-                                  : row.docStatus === "Recalled"
-                                  ? "#47b7c5"
-                                  : row.docStatus === ""
-                                  ? "#bec4c8"
-                                  : "inherit",
-                              border: `1px solid ${
-                                row.docStatus === "Completed"
-                                  ? "#19d157"
-                                  : row.docStatus === "Draft"
-                                  ? "#4339f2"
-                                  : row.docStatus === "Declined"
-                                  ? "#dc3545"
-                                  : row.docStatus === "InActive"
-                                  ? "#bec4c8"
-                                  : row.docStatus === "Pending"
-                                  ? "#f9ba05"
-                                  : row.docStatus === "Share"
-                                  ? "#0c9ad7"
-                                  : row.docStatus === "Recalled"
-                                  ? "#47b7c5"
-                                  : row.docStatus === ""
-                                  ? "#bec4c8"
-                                  : "inherit"
-                              }`,
-                            }}
-                          >
-                            {row.docStatus === "" ? "Not Started" : row.docStatus}
-                          </label>
+                        <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell truncate-ref-cell' title={row.referenceNumber}>
+                          {row.referenceNumber}
+                        </TableCell>
+                        <TableCell className='TableCell'>
+                          {(() => {
+                            const rawStatus = (row.docStatus || "").toLowerCase();
+                            const statusColor = statusColors[rawStatus] || "var(--inactive-status)";
+                            const label = row.docStatus === "" ? "Not Started" : row.docStatus;
+                            return (
+                              <span
+                                className='inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold'
+                                style={{
+                                  color: statusColor,
+                                  backgroundColor: `color-mix(in srgb, ${statusColor} 12%, var(--modern-card))`,
+                                  border: `1px solid color-mix(in srgb, ${statusColor} 35%, var(--modern-border))`,
+                                }}
+                              >
+                                {label}
+                              </span>
+                            );
+                          })()}
                         </TableCell>
 
                         <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                          {row.createdByName}
+                          <UserInitialsBadge name={row.createdByName} />
                         </TableCell>
 
                         {userAccess.remainingDays <= 0 ? (
@@ -349,12 +328,18 @@ const BulkDocuments = () => {
                 </Table>
               </TableContainer>
 
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-                <div className='showHideNoDocs'>
-                  {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
+              <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 text-xs text-[var(--modern-muted)]'>
+                <div>
+                  {data.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
                 </div>
                 <Stack spacing={2}>
-                  <Pagination count={Math.ceil(data.length / rowsPerPage)} variant='outlined' shape='rounded' page={page + 1} onChange={(event, newPage) => handleChangePage(event, newPage - 1)} />
+                  <Pagination
+                    count={Math.max(1, Math.ceil(data.length / rowsPerPage))}
+                    variant='outlined'
+                    shape='rounded'
+                    page={Math.min(page + 1, Math.max(1, Math.ceil(data.length / rowsPerPage)))}
+                    onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
+                  />
                 </Stack>
               </div>
             </div>

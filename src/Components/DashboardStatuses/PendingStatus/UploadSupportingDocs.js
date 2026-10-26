@@ -6,7 +6,6 @@ import { useUser } from "@/Context/UserContext";
 import { useDropzone } from "react-dropzone";
 import { BiErrorCircle } from "react-icons/bi";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineDownload } from "react-icons/ai";
@@ -225,11 +224,6 @@ const UploadSupportingDocs = ({ show, onClose, masterDocID, registerSignID }) =>
           <Offcanvas.Title>{t("uploadDocFlow.UploadsupportedDocument")}</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          {isLoading && (
-            <div className='loader-overlay'>
-              <Loader />
-            </div>
-          )}
 
           <UploadSourceCard {...getRootProps()}>
             <input {...getInputProps()} className="sr-only" />
@@ -256,18 +250,17 @@ const UploadSupportingDocs = ({ show, onClose, masterDocID, registerSignID }) =>
                   {fileName}
                 </p>
                 <Dropdown>
-                  <Dropdown.Toggle as={CustomToggle}>
-                    <Dropdown.Menu>
-                      <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(supportingDocIDs[index])}>
-                        <Icons.View size={20} />
-                        {t("uploadDocFlow.view")}
-                      </Dropdown.Item>
-                      <Dropdown.Item className='flex items-center gap-2' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
-                        <Icons.DeleteAction size={20} />
-                        {t("uploadDocFlow.delete")}
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown.Toggle>
+                  <Dropdown.Toggle as={CustomToggle} />
+                  <Dropdown.Menu align='end'>
+                    <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(supportingDocIDs[index])}>
+                      <Icons.View size={20} />
+                      {t("uploadDocFlow.view")}
+                    </Dropdown.Item>
+                    <Dropdown.Item className='flex items-center gap-2' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
+                      <Icons.DeleteAction size={20} />
+                      {t("uploadDocFlow.delete")}
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
                 </Dropdown>
               </div>
             ))}

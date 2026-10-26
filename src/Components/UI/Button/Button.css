@@ -61,50 +61,51 @@
   background: var(--theme-color);
   color: #ffffff;
   border-color: var(--theme-color);
-  box-shadow: var(--shadow-xs);
+  box-shadow: none;
 }
 
 .ui-btn--primary:hover:not(:disabled) {
   background: var(--theme-hover);
   border-color: var(--theme-hover);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
+  box-shadow: none;
 }
 
 .ui-btn--primary:active:not(:disabled) {
   background: var(--theme-active);
-  transform: translateY(0);
 }
 
 .ui-btn--secondary {
   background: var(--surface-100);
   color: var(--text-primary);
   border-color: var(--border-color);
+  box-shadow: none;
 }
 
 .ui-btn--secondary:hover:not(:disabled) {
   background: var(--surface-200);
   border-color: var(--border-color);
   color: var(--text-primary);
-  transform: translateY(-1px);
+  box-shadow: none;
 }
 
 .ui-btn--outline {
   background: transparent;
   color: var(--theme-color);
   border-color: var(--theme-color);
+  box-shadow: none;
 }
 
 .ui-btn--outline:hover:not(:disabled) {
   background: color-mix(in srgb, var(--theme-color) 10%, transparent);
   color: var(--theme-hover);
-  transform: translateY(-1px);
+  box-shadow: none;
 }
 
 .ui-btn--ghost {
   background: transparent;
   color: var(--text-primary);
   border-color: transparent;
+  box-shadow: none;
 }
 
 .ui-btn--ghost:hover:not(:disabled) {
@@ -116,26 +117,26 @@
   background: var(--color-danger);
   color: #ffffff;
   border-color: var(--color-danger);
+  box-shadow: none;
 }
 
 .ui-btn--danger:hover:not(:disabled) {
   background: color-mix(in srgb, var(--color-danger) 85%, black);
   border-color: color-mix(in srgb, var(--color-danger) 85%, black);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
+  box-shadow: none;
 }
 
 .ui-btn--success {
   background: var(--color-success);
   color: #ffffff;
   border-color: var(--color-success);
+  box-shadow: none;
 }
 
 .ui-btn--success:hover:not(:disabled) {
   background: color-mix(in srgb, var(--color-success) 85%, black);
   border-color: color-mix(in srgb, var(--color-success) 85%, black);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
+  box-shadow: none;
 }
 
 /* Spinner */

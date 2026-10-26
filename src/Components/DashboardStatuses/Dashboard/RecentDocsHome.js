@@ -1,25 +1,23 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import RecentDocsFilter from "./RecentDocsFilter";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import documentService from "@/services/documentService";
 import { Icons } from "@/assets/Icons";
 import { FiSearch, FiX, FiFileText } from "react-icons/fi";
 
 const getStatusBucket = (value) => {
-  const status = String(value || "bulk").trim().toLowerCase();
+  const status = String(value ?? "").trim().toLowerCase();
+  if (!status) return "bulk";
   if (status.includes("pending")) return "pending";
   if (status.includes("draft")) return "draft";
-  if (status.includes("complet")) return "completed";
+  if (status.includes("complet") || status.includes("signed")) return "completed";
   if (status.includes("bulk")) return "bulk";
   return status;
 };
 
 const RecentDocsHome = () => {
   const { t } = useTranslation();
-  const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState(false);
 
   const [startDate, setStartDate] = useState("");
@@ -41,7 +39,6 @@ const RecentDocsHome = () => {
     const requestId = ++latestRequest.current;
     setAppliedFilters(params);
     setLoadError(false);
-    setIsLoading(true);
     try {
       const response = await documentService.getRecentDocs(params);
       if (requestId !== latestRequest.current) return;
@@ -51,14 +48,11 @@ const RecentDocsHome = () => {
 
       const rows = Array.isArray(response.data.response) ? response.data.response : [];
       setSearchResults(rows);
-      if (Object.keys(params).length === 0) setData(rows);
     } catch (error) {
       if (requestId !== latestRequest.current) return;
       console.error(t("dashboardCardStatuses.errorfetchingUserData"));
       setSearchResults([]);
       setLoadError(true);
-    } finally {
-      if (requestId === latestRequest.current) setIsLoading(false);
     }
   }, [t]);
 
@@ -69,8 +63,7 @@ const RecentDocsHome = () => {
   }, [fetchAllDocs]);
 
   const handleSearch = async () => {
-    const status = String(docStatus || "").trim().toLowerCase();
-    setQuickStatusFilter(["pending", "draft", "completed", "bulk"].includes(status) ? status : "all");
+    setQuickStatusFilter("all");
     setSearchQuery("");
     await fetchDocuments({
       StartDate: startDate,
@@ -81,19 +74,9 @@ const RecentDocsHome = () => {
     });
   };
 
+  // Quick filters (All, Pending, Draft, Completed, Bulk) are handled 100% on the frontend without hitting the API.
   const handleQuickStatusFilter = (status) => {
-    const nextFilters = { ...appliedFilters };
-    if (status === "all") {
-      delete nextFilters.DocStatus;
-      setDocStatus("");
-    } else {
-      nextFilters.DocStatus = status;
-      setDocStatus(status);
-    }
-
     setQuickStatusFilter(status);
-    setSearchQuery("");
-    fetchDocuments(nextFilters);
   };
 
   const clearSearch = () => {
@@ -108,19 +91,26 @@ const RecentDocsHome = () => {
   };
 
   const statusCounts = useMemo(() => {
-    const counts = { all: data.length, pending: 0, draft: 0, completed: 0, bulk: 0 };
-    data.forEach((row) => {
+    const counts = { all: searchResults.length, pending: 0, draft: 0, completed: 0, bulk: 0 };
+    searchResults.forEach((row) => {
       const status = getStatusBucket(row.docStatus);
       if (Object.prototype.hasOwnProperty.call(counts, status) && status !== "all") {
         counts[status] += 1;
       }
     });
     return counts;
-  }, [data]);
+  }, [searchResults]);
 
+  // Frontend-side search & status filtering
   const visibleSearchResults = useMemo(() => {
     let list = searchResults;
 
+    // 1. Quick status filter (All, Pending, Draft, Completed, Bulk)
+    if (quickStatusFilter && quickStatusFilter !== "all") {
+      list = list.filter((row) => getStatusBucket(row.docStatus) === quickStatusFilter);
+    }
+
+    // 2. Search bar query (Document name, reference number, created by)
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       list = list.filter(
@@ -132,7 +122,7 @@ const RecentDocsHome = () => {
     }
 
     return list;
-  }, [searchResults, searchQuery]);
+  }, [searchResults, quickStatusFilter, searchQuery]);
 
   const quickFilters = [
     { id: "all", label: t("menuButtons.Alldocs", "All documents") },
@@ -180,14 +170,10 @@ const RecentDocsHome = () => {
   };
 
   const hasActiveFilters = Boolean(startDate || endDate || docStatus || docName || referenceNo);
+  const hasVisibleFilters = Boolean(hasActiveFilters || quickStatusFilter !== "all" || searchQuery);
 
   return (
     <div>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       <section className='homePageTable' aria-labelledby='home-documents-heading'>
         {/* Seamless Unified Top Bar */}
@@ -266,7 +252,7 @@ const RecentDocsHome = () => {
               ))}
             </div>
 
-            {(hasActiveFilters || searchQuery) && (
+            {hasVisibleFilters && (
               <button type='button' className='recentdocs-reset-filters-btn' onClick={clearSearch}>
                 <FiX size={13} />
                 <span>{t("searchFilter.reset", "Reset Filters")}</span>
@@ -305,14 +291,14 @@ const RecentDocsHome = () => {
                       <p className='empty-state-title'>
                         {loadError
                           ? t("searchFilter.loadError", "Could not load documents from the server")
-                          : searchQuery || hasActiveFilters
+                          : hasVisibleFilters
                           ? t("searchFilter.noSearchResults", "No matching documents found")
                           : t("dashboardCardStatuses.notDocsFound", "No documents found")}
                       </p>
                       <p className='empty-state-desc'>
                         {loadError
                           ? t("searchFilter.loadErrorHelp", "Please try again in a moment.")
-                          : searchQuery || hasActiveFilters
+                          : hasVisibleFilters
                           ? t("searchFilter.tryClearing", "Try clearing your search terms or date filters to see more results.")
                           : t("home.noDocsPrompt", "Uploaded documents and signature requests will appear here.")}
                       </p>
@@ -320,7 +306,7 @@ const RecentDocsHome = () => {
                         <button type='button' className='empty-state-reset-btn' onClick={() => fetchDocuments(appliedFilters)}>
                           {t("searchFilter.retry", "Retry")}
                         </button>
-                      ) : (searchQuery || hasActiveFilters) && (
+                      ) : hasVisibleFilters && (
                         <button type='button' className='empty-state-reset-btn' onClick={clearSearch}>
                           {t("searchFilter.clearAll", "Clear all filters")}
                         </button>
@@ -331,12 +317,17 @@ const RecentDocsHome = () => {
               )}
 
               {visibleSearchResults.map((row, index) => {
-                const statusLabel = row.docStatus || t("viewDetails.bulk", "Bulk");
-                const statusKey = String(row.docStatus || "bulk").toLowerCase();
+                const statusKey = getStatusBucket(row.docStatus);
+                const statusLabel = statusKey === "bulk" && !String(row.docStatus ?? "").trim()
+                  ? t("viewDetails.bulk", "Bulk")
+                  : row.docStatus;
                 const statusColor = statusColors[statusKey] || "var(--modern-violet)";
 
                 return (
-                  <TableRow key={row.registerSignID || row.referenceNumber || index} className='home-doc-table-row'>
+                  <TableRow
+                    key={`${row.registerSignID || row.referenceNumber || row.docName || "document"}-${index}`}
+                    className='home-doc-table-row'
+                  >
                     {/* Document Name */}
                     <TableCell className='TableCell doc-name-cell'>
                       <div className='doc-name-wrapper'>
@@ -363,13 +354,13 @@ const RecentDocsHome = () => {
                     </TableCell>
 
                     {/* Reference Number */}
-                    <TableCell className='TableCell'>
-                      <span className='mono-reference-text'>{row.referenceNumber || "—"}</span>
+                    <TableCell className='TableCell truncate-ref-cell' title={row.referenceNumber || ""}>
+                      <span className='mono-reference-text' title={row.referenceNumber || ""}>{row.referenceNumber || "—"}</span>
                     </TableCell>
 
                     {/* Created By */}
                     <TableCell className='TableCell creator-cell'>
-                      {row.createdByName || "—"}
+                      <UserInitialsBadge name={row.createdByName} />
                     </TableCell>
                   </TableRow>
                 );

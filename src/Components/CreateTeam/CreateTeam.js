@@ -13,7 +13,6 @@ import { Offcanvas as Offcanvas } from "@/Components/UI/shadcnCompat";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import UserLisence from "@/Components/UserLisence/UserLisence";
 
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import UserSearchFilter from "./UserSearchFilter";
 import ViewTeamDetails from "./ViewTeamDetails";
 import PhoneInput from "react-phone-input-2";
@@ -428,11 +427,6 @@ function CreateTeam() {
 
   return (
     <div className='team-members-page container my-3'>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       {user.AccountType === "B" && user.RoleID === 2 && userAccess.remainingDays <= 0 ? (
         <>
@@ -481,7 +475,9 @@ function CreateTeam() {
                             style={{
                               maxWidth: "100%",
                               overflowX: "auto",
-                              height: "60vh",
+                              minHeight: "440px",
+                              height: "calc(100vh - 280px)",
+                              maxHeight: "calc(100vh - 280px)",
                             }}
                           >
                             <Table stickyHeader className='team-members-table-content'>
@@ -672,16 +668,14 @@ function CreateTeam() {
       {/* deactivate User */}
       <Modal show={showDeactivateModal} className='team-confirm-dialog team-confirm-dialog--deactivate' backdrop='static' keyboard={false} onHide={closeDeactivateModal} dialogClassName='custom-modal-width'>
         <Modal.Header closeButton>
-          <Modal.Title>
-            <div className='header-content'>
-              <div className='header-icon'>
-                <Icons.InactiveAction size={25} />
-              </div>
-              <div className='header-text'>
-                <Modal.Title>{t("AuthIntegration.Confirmation")}</Modal.Title>
-              </div>
+          <div className='header-content'>
+            <div className='header-icon'>
+              <Icons.InactiveAction size={25} />
             </div>
-          </Modal.Title>
+            <div className='header-text'>
+              <Modal.Title>{t("AuthIntegration.Confirmation")}</Modal.Title>
+            </div>
+          </div>
         </Modal.Header>
         <Modal.Body className='px-4 py-3'>
           <div>

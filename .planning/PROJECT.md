@@ -22,21 +22,21 @@ Secure, legally compliant, seamless multi-party document signing and management 
 
 ### Active
 
-- [ ] **SEC-01**: Centralized in-memory JWT access token management in `src/services/tokenManager.js`.
-- [ ] **SEC-02**: Proactive silent token refresh scheduled before JWT expiry.
-- [ ] **SEC-03**: Page refresh resilience via session-scoped base64 encoding (`_enc_tk`) without persistent disk vulnerability.
-- [ ] **RBAC-01**: Declarative `AuthGuard` redirecting unauthenticated visitors to `/login` with target return URL preserved.
-- [ ] **RBAC-02**: Multi-factor `RoleGuard` evaluating AccountType (`B` vs `I`), RoleID (1..4), userAccess flags, and active subscription status (`remainingDays > 0`).
-- [ ] **RBAC-03**: Accessible `<Forbidden403 />` denial screen providing prescriptive error context on denied routes.
-- [ ] **DEDUP-01**: Elimination of redundant duplicate files, paired legacy routes, and dead code across status views.
-- [ ] **DEDUP-02**: Route consolidation and redirect aliases (`/drafts` -> `/draft-docs`, `/completed-status` -> `/completed-docs`).
-- [ ] **UI-01**: Strict adherence to `--modern-*` design tokens from `src/index.css` across all surfaces.
-- [ ] **UI-02**: Complete elimination of decorative box-shadows on cards and shell surfaces.
-- [ ] **UI-03**: Comprehensive light mode, dark mode, and multi-palette visual system continuity.
-- [ ] **ENG-01**: Unified 3-step document preparation Stepper Wizard Engine (Upload & Send, BulkSend, SelfSignature, Templates).
-- [ ] **ENG-02**: Unified Document Status Table Engine powering all dashboard status lists.
-- [ ] **DMS-01**: DMS universal multi-format file upload modal with real-time progress and metadata capture.
-- [ ] **DMS-02**: Real DMS backend API integration replacing hardcoded mock data.
+- [x] **SEC-01**: Centralized in-memory JWT access token management in `src/services/tokenManager.js`.
+- [x] **SEC-02**: Proactive silent token refresh scheduled before JWT expiry.
+- [x] **SEC-03**: Page refresh resilience via session-scoped base64 encoding (`_enc_tk`) without persistent disk vulnerability.
+- [x] **RBAC-01**: Declarative `AuthGuard` redirecting unauthenticated visitors to `/login` with target return URL preserved.
+- [x] **RBAC-02**: Multi-factor `RoleGuard` evaluating AccountType (`B` vs `I`), RoleID (1..4), userAccess flags, and active subscription status (`remainingDays > 0`).
+- [x] **RBAC-03**: Accessible `<Forbidden403 />` denial screen providing prescriptive error context on denied routes.
+- [x] **DEDUP-01**: Elimination of redundant duplicate files, paired legacy routes, and dead code across status views.
+- [x] **DEDUP-02**: Route consolidation and redirect aliases (`/drafts` -> `/draft-docs`, `/completed-status` -> `/completed-docs`).
+- [x] **UI-01**: Strict adherence to `--modern-*` design tokens from `src/index.css` across all surfaces.
+- [x] **UI-02**: Complete elimination of decorative box-shadows on cards and shell surfaces.
+- [x] **UI-03**: Comprehensive light mode, dark mode, and multi-palette visual system continuity.
+- [x] **ENG-01**: Unified 3-step document preparation Stepper Wizard Engine (Upload & Send, BulkSend, SelfSignature, Templates).
+- [x] **ENG-02**: Unified Document Status Table Engine powering all dashboard status lists.
+- [x] **DMS-01**: DMS universal multi-format file upload modal with real-time progress and metadata capture.
+- [x] **DMS-02**: Real DMS backend API integration replacing hardcoded mock data.
 
 ### Out of Scope
 

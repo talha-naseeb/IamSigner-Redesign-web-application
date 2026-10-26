@@ -18,7 +18,7 @@ const PATHS = {
   pendingWithOthers: "/pending-with-others",
   drafts: "/drafts",
   draftDocs: "/draft-docs",
-  completeStatus: "/completed-status",
+  completeStatus: "/completed",
   completeDocs: "/completed-docs",
   inActive: "/inactive",
   inactiveDocs: "/inactive-docs",
@@ -28,8 +28,9 @@ const PATHS = {
   accountSettings: "/account-settings",
   declined: "/declined",
   declineDocs: "/declined-docs",
-  recallDocuments: "/recall-documents",
+  recallStatus: "/recalled",
   recallDocs: "/recall-docs",
+  recallDocuments: "/recall-docs",
   templatesPage: "/templates-page",
   createTemplates: "/create-templates",
   editTemplates: "/edit-templates",
@@ -49,7 +50,6 @@ const PATHS = {
   createEmailTemplate: "/create-email-template",
   companyProfile: "/company-profile/:accountId",
   departmentDetails: "/department-details/:accountId",
-  aiAssistant: "/ai-assistant",
 
   // Public signing and download routes
   signNow: "/SignNow/id/:id/*",

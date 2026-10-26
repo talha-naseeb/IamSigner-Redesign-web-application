@@ -5,7 +5,6 @@ import uploadFlowService from "@/services/uploadFlowService";
 import { Icons } from "@/assets/Icons";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 
 /**
  * Unified CCEmail Component
@@ -67,7 +66,6 @@ export const CCEmail = () => {
 
   return (
     <div>
-      {isLoading && <Loader />}
       <div className="mb-3 mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <label htmlFor={emailInputId} className="text-sm font-medium text-[var(--modern-text,#0f172a)]">
           {t("uploadDocFlow.addCCemail")}

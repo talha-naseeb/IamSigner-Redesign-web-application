@@ -65,7 +65,6 @@ import UploadDoc from "@/Components/Upload Flow/UploadDoc/UploadDoc";
 import UploadBulk from "@/Components/BulkSend/UploadBulk/UploadBulk";
 import UserDocReport from "@/Components/ReportDashboard/UserDocReport/UserDocReport";
 import AppUserReport from "@/Components/ReportDashboard/AppUserReport/AppUserReport";
-// import ChatAIAgent from "@/Pages/ChatAIAgent/ChatAIAgent";
 
 // Custom 404 handler based on token presence
 const Custom404Handler = () => {
@@ -97,9 +96,13 @@ const AppRouter = ({ onLogin }) => {
           <Route path={PATHS.viewFolderDocs} element={<ViewDocuments />} />
           <Route path={PATHS.viewSubFolderDocs} element={<ViewSubFolderDocuments />} />
           <Route path={PATHS.completeDocs} element={<CompleteDocs />} />
-          <Route path={PATHS.completeStatus} element={<Navigate to={PATHS.completeDocs} replace />} />
+          {/* Dashboard-card URLs render their own page (with the status-card strip); sidebar URLs keep the full table layout */}
+          <Route path={PATHS.completeStatus} element={<CompleteDocs />} />
+          {/* Legacy URLs kept working after the URL sync */}
+          <Route path="/completed-status" element={<Navigate to={PATHS.completeDocs} replace />} />
+          <Route path="/recall-documents" element={<Navigate to={PATHS.recallDocs} replace />} />
           <Route path={PATHS.inActive} element={<InActive />} />
-          <Route path={PATHS.inactiveDocs} element={<Navigate to={PATHS.inActive} replace />} />
+          <Route path={PATHS.inactiveDocs} element={<InActive />} />
           <Route path={PATHS.declineDocs} element={<DeclinedDocs />} />
           <Route path={PATHS.declined} element={<Navigate to={PATHS.declineDocs} replace />} />
           <Route path={PATHS.pendingDocs} element={<PendingDocs />} />
@@ -124,18 +127,20 @@ const AppRouter = ({ onLogin }) => {
           {/* Draft Documents - Block Role 3 */}
           <Route element={<RoleGuard allowedRoleIds={[1, 2, 4]} />}>
             <Route path={PATHS.draftDocs} element={<DraftDocs />} />
-            <Route path={PATHS.drafts} element={<Navigate to={PATHS.draftDocs} replace />} />
+            <Route path={PATHS.drafts} element={<DraftDocs />} />
           </Route>
 
           {/* Recalled Documents - Requires recalled permission & Role != 3 */}
           <Route element={<RoleGuard allowedRoleIds={[1, 2, 4]} requiredPermission='recalled' />}>
-            <Route path={PATHS.recallDocuments} element={<RecallDocuments />} />
-            <Route path={PATHS.recallDocs} element={<Navigate to={PATHS.recallDocuments} replace />} />
+            <Route path={PATHS.recallDocs} element={<RecallDocuments />} />
+            <Route path={PATHS.recallStatus} element={<RecallDocuments />} />
           </Route>
 
           {/* Shared Documents - Requires docShare permission & Role != 3 */}
           <Route element={<RoleGuard allowedRoleIds={[1, 2, 4]} requiredPermission='docShare' />}>
             <Route path={PATHS.shareDocs} element={<ShareDocs />} />
+            <Route path="/shared-with-me" element={<Navigate to={PATHS.shareDocs} replace />} />
+            <Route path="/shared-with-others" element={<Navigate to={PATHS.shareDocs} replace />} />
           </Route>
 
           {/* Templates - Requires templates permission & Role != 3 */}

@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import { Modal, Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import dashboardService from "@/services/dashboardService";
 
 const SignOrder = ({ masterDocID }) => {
@@ -85,14 +84,6 @@ const SignOrder = ({ masterDocID }) => {
 
   return (
     <>
-      {isLoading &&
-        ReactDOM.createPortal(
-          <div className='loader-overlay'>
-            <Loader />
-          </div>,
-          document.body
-        )}
-
       <div className='d-flex gap-2 align-items-center' onClick={() => handleSignOrder()}>
         <Icons.SignOrder />
         <span>{t("signOrderDaigram.Signorder")}</span>

@@ -11,7 +11,6 @@ import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { useUser } from "@/Context/UserContext";
 import UserLisence from "@/Components/UserLisence/UserLisence";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { useParams } from "react-router-dom";
 import AddCompletedToSubFolder from "../AddCompletedToSubFolder";
 
@@ -197,11 +196,6 @@ function SubFolder() {
                     </Accordion.Header>
                     <Accordion.Body>
                       <div>
-                        {isLoading && (
-                          <div className='loader-overlay'>
-                            <Loader />
-                          </div>
-                        )}
 
                         <Offcanvas show={showFolder} onHide={handleCloseOffcanvas} placement={document.documentElement.dir === "rtl" ? "start" : "end"} scroll={true}>
                           <Offcanvas.Header closeButton>

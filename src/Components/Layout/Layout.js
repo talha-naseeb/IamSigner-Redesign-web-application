@@ -10,9 +10,19 @@ const Layout = () => {
   const fullWidthLayoutRef = useRef(null);
   const [headerHeight, setHeaderHeight] = useState(0);
 
-  const showDashboardCard = ["/pending-with-me", "/pending-with-others", "/shared-with-me", "/shared-with-others", "/drafts", "/completed-status", "/inactive-docs", "/recall-docs"].some((path) =>
-    location.pathname.includes(path)
-  );
+  // Status-card strip is shown only on the dashboard-card pages (simple URLs). The sidebar
+  // "Document Status" pages (/pending-docs, /completed-docs, ...) keep the full table layout.
+  // Exact matching is required because e.g. "/completed" is a prefix of "/completed-docs".
+  const showDashboardCard = [
+    "/pending-with-me",
+    "/pending-with-others",
+    "/shared-with-me",
+    "/shared-with-others",
+    "/drafts",
+    "/completed",
+    "/inactive",
+    "/recalled",
+  ].some((path) => location.pathname === path || location.pathname.startsWith(`${path}/`));
 
   const hideSidebar =
     location.pathname.includes("/upload-doc") ||
@@ -50,7 +60,7 @@ const Layout = () => {
         <Sidebar>
           <Header />
           {showDashboardCard && (
-            <div className='container'>
+            <div className='dashboard-cards-wrapper'>
               <DashboardCard />
             </div>
           )}

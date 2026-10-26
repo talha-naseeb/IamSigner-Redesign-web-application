@@ -4,7 +4,6 @@ import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
 import uploadFlowService from "@/services/uploadFlowService";
 import userService from "@/services/userService";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -633,11 +632,6 @@ const Signatories = ({ setActiveStep, setCompletedSteps }) => {
 
   return (
     <div className='signatories-forms'>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <div className='d-flex align-items-center justify-content-start gap-2 mb-3'>
         <input type='checkbox' className='form-check-input' checked={showSignOrder} onChange={(e) => setShowSignOrder(e.target.checked)} />
         <span> {t("uploadDocFlow.setSignOrder")}</span>

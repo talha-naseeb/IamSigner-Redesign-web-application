@@ -13,7 +13,6 @@ import PasswordModal from "./PasswordModal";
 import ImageThumbnails from "@/Components/ImageThumbnails/ImageThumbnails";
 import { PageNavigations } from "@/Components/DocumentPreparation";
 import ConfirmationModal from "./ConfirmationModal";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import InputEditors from "./InputEditors";
 import { getSignatureErrorRoute } from "@/Helpers/signatureErrors";
 import { notifyDocumentSigned } from "@/Helpers/documentSignChannel";
@@ -861,11 +860,6 @@ const SignaturePage = () => {
 
   return (
     <div className='signaturePage'>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       <div className={`${passwordModal ? "blur-background" : ""}`}>
         <Row className='bg-white m-0 fixed-top signaturePage-header'>

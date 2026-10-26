@@ -4,7 +4,7 @@ import templateService from "@/services/templateService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { Button, Col, Dropdown, Modal } from "@/Components/UI/shadcnCompat";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Stack, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import { Icons } from "@/assets/Icons";
 import TemplatesSearchFilter from "./TemplatesSearchFilter";
 import EditTemplateNameModal from "./EditTemplateNameModal";
@@ -13,7 +13,6 @@ import TemplatesConfirmationModal from "./TemplatesConfirmationModal";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { useUser } from "@/Context/UserContext";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 
 const TemplatesPage = () => {
   const { t } = useTranslation();
@@ -245,12 +244,12 @@ const TemplatesPage = () => {
   };
 
   const columns = [
-    { label: t("tablesLabel.templateName"), key: "templateName" },
-    { label: t("tablesLabel.date"), key: "createdOn" },
-    { label: t("tablesLabel.createdby"), key: "createdByName" },
-    { label: t("tablesLabel.scope"), key: "templateID" },
-    { label: t("tablesLabel.status"), key: "isActive" },
-    { label: "", key: "actions" },
+    { label: t("tablesLabel.templateName"), key: "templateName", width: "26%" },
+    { label: t("tablesLabel.date"), key: "createdOn", width: "20%" },
+    { label: t("tablesLabel.createdby"), key: "createdByName", width: "24%" },
+    { label: t("tablesLabel.scope"), key: "scope", width: "14%" },
+    { label: t("tablesLabel.status"), key: "isActive", width: "10%" },
+    { label: "", key: "actions", width: "6%", align: "right" },
   ];
 
   const formatDate = (dateString) => {
@@ -337,36 +336,43 @@ const TemplatesPage = () => {
         <>
           <Grid className='container mt-3'>
             <Grid item xs={12}>
-              {/* Loader overlay */}
-              {isLoading && (
-                <div className='loader-overlay'>
-                  <Loader />
-                </div>
-              )}
-              <div className='flex justify-end mb-3'>
-                <Button variant='primary' onClick={handleCreateTemplate}>
-                  {t("templateUploadFlow.createTemplate")}
-                </Button>
-              </div>
-              <div className='py-4 px-4 rounded-xl border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)]'>
-                <div className='flex justify-between items-center p-1 mb-3'>
-                  <label className='font-semibold text-lg text-[var(--modern-text,#0f172a)] m-0'>{t("templateUploadFlow.myTemplate")}</label>
+              <div className='py-4 px-4 rounded-xl border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] pendingtable'>
+                <div className='flex flex-wrap justify-between items-center gap-3 p-1 mb-4'>
+                  <div className='flex items-center gap-2.5'>
+                    <label className='font-semibold text-lg text-[var(--modern-text,#0f172a)] m-0'>{t("templateUploadFlow.myTemplate")}</label>
+                    {searchResults.length > 0 && (
+                      <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--modern-raised,#f1f5f9)] text-[var(--modern-muted,#64748b)] border border-[var(--modern-border,#e2e8f0)]'>
+                        {searchResults.length}
+                      </span>
+                    )}
+                  </div>
 
-                  <div className='search-filters-container'>
-                    <TemplatesSearchFilter
-                      startDate={startDate}
-                      endDate={endDate}
-                      Scope={Scope}
-                      templateName={templateName}
-                      docStatus={docStatus}
-                      setDocStatus={setDocStatus}
-                      setStartDate={setStartDate}
-                      setEndDate={setEndDate}
-                      setScope={setScope}
-                      setTemplateName={setTemplateName}
-                      handleSearch={handleSearch}
-                      clearSearch={clearSearch}
-                    />
+                  <div className='flex items-center gap-2.5'>
+                    <div className='search-filters-container'>
+                      <TemplatesSearchFilter
+                        startDate={startDate}
+                        endDate={endDate}
+                        Scope={Scope}
+                        templateName={templateName}
+                        docStatus={docStatus}
+                        setDocStatus={setDocStatus}
+                        setStartDate={setStartDate}
+                        setEndDate={setEndDate}
+                        setScope={setScope}
+                        setTemplateName={setTemplateName}
+                        handleSearch={handleSearch}
+                        clearSearch={clearSearch}
+                      />
+                    </div>
+
+                    <Button
+                      variant='primary'
+                      className='h-[38px] min-h-[38px] rounded-[10px] px-4 font-semibold inline-flex items-center gap-2 shadow-none transition-all'
+                      onClick={handleCreateTemplate}
+                    >
+                      <Icons.Plus size={18} aria-hidden='true' />
+                      <span>{t("templateUploadFlow.createTemplate").trim()}</span>
+                    </Button>
                   </div>
                 </div>
 
@@ -377,15 +383,22 @@ const TemplatesPage = () => {
                   style={{
                     maxWidth: "100%",
                     overflowX: "auto",
-                    height: "60vh",
+                    minHeight: "440px",
+                    height: "calc(100vh - 280px)",
+                    maxHeight: "calc(100vh - 280px)",
                   }}
                 >
-                  <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
+                  <Table stickyHeader className='w-full' style={{ border: "none", minWidth: "750px" }}>
                     {/* Table Headers */}
                     <TableHead className='customTableHead'>
                       <TableRow>
-                        {columns.map((column) => (
-                          <TableCell key={column.label} style={{ backgroundColor: "#F0F3F4" }} className='TableHeaderCell'>
+                        {columns.map((column, idx) => (
+                          <TableCell
+                            key={column.key || idx}
+                            className='TableHeaderCell'
+                            align={column.align || "left"}
+                            style={{ width: column.width }}
+                          >
                             {column.label}
                           </TableCell>
                         ))}
@@ -396,30 +409,40 @@ const TemplatesPage = () => {
                     <TableBody>
                       {searchResults.length === 0 && (
                         <TableRow>
-                          <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
-                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                              <Icons.BulkDocuments size={50} />
-                              {t("dashboardCardStatuses.notDocsFound")}
-                            </div>
-                          </td>
+                          <TableCell colSpan={columns.length} className='table-empty-state-cell'>
+                            <TableEmptyState
+                              icon={<Icons.BulkDocuments size={50} />}
+                              title={t("dashboardCardStatuses.notDocsFound")}
+                            />
+                          </TableCell>
                         </TableRow>
                       )}
                       {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                        <TableRow key={index}>
-                          <TableCell className='TableCell'>{row.templateName}</TableCell>
-                          <TableCell className='TableCell'>{row.createdOn ? formatDate(row.createdOnFormatted) : ""}</TableCell>
-                          <TableCell className='TableCell'>{row.createdByName}</TableCell>
-                          <TableCell className='TableCell'>{row.scope === "I" ? "Individual" : "Company"}</TableCell>
-                          <TableCell className='TableCell'>
+                        <TableRow key={row.templateID || index} hover>
+                          <TableCell className='TableCell font-medium text-[var(--modern-text)]' style={{ width: "26%" }}>
+                            {row.templateName}
+                          </TableCell>
+                          <TableCell className='TableCell text-[var(--modern-muted)]' style={{ width: "20%" }}>
+                            {row.createdOn ? formatDate(row.createdOnFormatted) : "—"}
+                          </TableCell>
+                          <TableCell className='TableCell truncate-cell' style={{ width: "24%" }}>
+                            <UserInitialsBadge name={row.createdByName} />
+                          </TableCell>
+                          <TableCell className='TableCell' style={{ width: "14%" }}>
+                            <span className='text-xs font-medium text-[var(--modern-text)]'>
+                              {row.scope === "I" ? t("templateUploadFlow.Individual", "Individual") : t("templateUploadFlow.Company", "Company")}
+                            </span>
+                          </TableCell>
+                          <TableCell className='TableCell' style={{ width: "10%" }}>
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${row.isActive ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800" : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700"}`}>
                               {row.isActive ? "Active" : "InActive"}
                             </span>
                           </TableCell>
-                          <TableCell className='TableCell p-0'>
+                          <TableCell className='TableCell p-0' align='right' style={{ width: "6%" }}>
                             <Dropdown>
                               <Dropdown.Toggle as={CustomToggle} />
 
-                              <Dropdown.Menu>
+                              <Dropdown.Menu align='end'>
                                 <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleEditTemplateName(row.templateID, row.templateName)}>
                                   <Icons.PenEdit size={20} />
                                   {t("templateUploadFlow.rename")}
@@ -456,7 +479,6 @@ const TemplatesPage = () => {
                               </Dropdown.Menu>
                             </Dropdown>
                           </TableCell>
-                          <TableCell style={{ padding: 0 }}></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -464,12 +486,12 @@ const TemplatesPage = () => {
                 </TableContainer>
 
                 {/* Pagination */}
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "16px" }}>
-                  <div className='showHideNoDocs'>
-                    {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
+                <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 pt-3 border-t border-[var(--modern-border,#e2e8f0)]'>
+                  <div className='text-xs text-[var(--modern-muted,#64748b)]'>
+                    {searchResults.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, searchResults.length)} {t("tablesLabel.documentsof")} {searchResults.length} {t("tablesLabel.document")}
                   </div>
                   <Stack spacing={2}>
-                    <Pagination count={Math.ceil(data.length / rowsPerPage)} variant='outlined' shape='rounded' page={page + 1} onChange={(event, newPage) => handleChangePage(event, newPage - 1)} />
+                    <Pagination count={Math.ceil(searchResults.length / rowsPerPage)} variant='outlined' shape='rounded' page={page + 1} onChange={(event, newPage) => handleChangePage(event, newPage - 1)} />
                   </Stack>
                 </div>
               </div>
@@ -634,7 +656,7 @@ const TemplatesPage = () => {
 
             {/* view template */}
             <Modal show={showViewModal} onHide={handleCloseModal}>
-              <Modal.Header closeButton className='btn'>
+              <Modal.Header closeButton>
                 <Modal.Title style={{ color: "var(--text-primary)" }}>{docName}</Modal.Title>
               </Modal.Header>
               <Modal.Body className='d-flex'>

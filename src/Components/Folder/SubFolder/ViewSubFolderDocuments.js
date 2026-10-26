@@ -5,14 +5,13 @@ import { useForm } from "react-hook-form";
 import { Dropdown as Dropdown } from "@/Components/UI/shadcnCompat";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
 import SignOrder from "@/Components/CommonModals/SignOrder/SignOrder";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Stack, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
 import DownloadModal from "@/Components/CommonModals/DownloadModal/DownloadModal";
 import { Icons } from "@/assets/Icons";
 import { useParams, useNavigate } from "react-router-dom";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import AddDocToSubFolder from "./AddDocToSubFolder";
 import ShareModal from "@/Components/CommonModals/ShareModal/ShareModal";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
@@ -218,11 +217,6 @@ const ViewSubFolderDocuments = () => {
   return (
     <Grid className='folder-route folder-document-route container my-3 text-foreground [font-family:var(--modern-font-ui)]'>
       <Grid>
-        {isLoading && (
-          <div className='loader-overlay'>
-            <Loader />
-          </div>
-        )}
 
         <div className='container mt-3 rounded-2xl border border-border bg-card p-3 py-3 text-foreground max-sm:p-4'>
           <div className=' d-flex align-items-center justify-content-between mb-2'>
@@ -253,15 +247,17 @@ const ViewSubFolderDocuments = () => {
             </div>
           </div>
 
-          <hr />
+          <div className='border-b border-[var(--modern-border)] my-4' />
 
           <TableContainer
             component={Paper}
-            className='custom-table-scrollbar'
+            className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
             style={{
               maxWidth: "100%",
               overflowX: "auto",
-              height: "66vh",
+              minHeight: "440px",
+              height: "calc(100vh - 280px)",
+              maxHeight: "calc(100vh - 280px)",
             }}
           >
             <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
@@ -277,12 +273,12 @@ const ViewSubFolderDocuments = () => {
               <TableBody>
                 {data.length === 0 && (
                   <TableRow>
-                    <td colSpan='6' className='p-5 text-center text-muted-foreground'>
-                      <div className='flex flex-col items-center gap-2'>
-                        <Icons.Folders size={50} />
-                        {t("dashboardCardStatuses.notDocsFound")}
-                      </div>
-                    </td>
+                    <TableCell colSpan={columns.length} className='table-empty-state-cell'>
+                      <TableEmptyState
+                        icon={<Icons.Folders size={50} />}
+                        title={t("dashboardCardStatuses.notDocsFound")}
+                      />
+                    </TableCell>
                   </TableRow>
                 )}
 
@@ -294,15 +290,20 @@ const ViewSubFolderDocuments = () => {
                     <TableCell className='TableCell'>{row.docCompanyPrefixNo}</TableCell>
                     <TableCell className='TableCell'>{row.completedDate ? formatDate(row.completedDateFormatted) : ""}</TableCell>
                     <TableCell className='TableCell'>{row.referenceNumber}</TableCell>
-                    <TableCell className='TableCell '>
-                      <label
-                        className='inline-flex min-h-6 items-center rounded-full border border-[color-mix(in_srgb,var(--modern-success,#16a34a)_55%,transparent)] bg-[color-mix(in_srgb,var(--modern-success,#16a34a)_10%,transparent)] px-3 py-0.5 text-xs font-semibold text-[var(--modern-success,#16a34a)]'
+                    <TableCell className='TableCell'>
+                      <span
+                        className='inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold'
+                        style={{
+                          color: "var(--completed-status)",
+                          backgroundColor: "color-mix(in srgb, var(--completed-status) 12%, var(--modern-card))",
+                          border: "1px solid color-mix(in srgb, var(--completed-status) 35%, var(--modern-border))",
+                        }}
                       >
                         {row.docStatus}
-                      </label>
+                      </span>
                     </TableCell>
                     <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                      {row.createdByName}
+                      <UserInitialsBadge name={row.createdByName} />
                     </TableCell>
                     <TableCell className='py-0'>
                       <Dropdown>
@@ -343,12 +344,18 @@ const ViewSubFolderDocuments = () => {
           </TableContainer>
 
           {/* Pagination */}
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-            <div className='showHideNoDocs'>
-              {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
+          <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 text-xs text-[var(--modern-muted)]'>
+            <div>
+              {data.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
             </div>
             <Stack spacing={2}>
-              <Pagination count={Math.ceil(data.length / rowsPerPage)} variant='outlined' shape='rounded' page={page + 1} onChange={(event, newPage) => handleChangePage(event, newPage - 1)} />
+              <Pagination
+                count={Math.max(1, Math.ceil(data.length / rowsPerPage))}
+                variant='outlined'
+                shape='rounded'
+                page={Math.min(page + 1, Math.max(1, Math.ceil(data.length / rowsPerPage)))}
+                onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
+              />
             </Stack>
           </div>
         </div>

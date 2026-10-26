@@ -4,7 +4,6 @@ import { Offcanvas, Form, Button } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 
 const AddDocuments = ({ show, handleClose, MasterDocID }) => {
   const [getFolders, setGetFolders] = useState([]);
@@ -69,12 +68,6 @@ const AddDocuments = ({ show, handleClose, MasterDocID }) => {
 
   return (
     <>
-      {/* Loader overlay */}
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       <Offcanvas show={show} onHide={handleCancel} placement='end' scroll={true}>
         <Offcanvas.Header closeButton>

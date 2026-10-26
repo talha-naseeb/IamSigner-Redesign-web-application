@@ -1,11 +1,30 @@
-.delegation-accordion .accordion-item {
-  overflow: hidden;
+.delegation-section .delegation-accordion .accordion-item {
+  overflow: visible;
   border: 1px solid var(--modern-border) !important;
   border-radius: 18px !important;
   background: var(--modern-card) !important;
 }
 
-.delegation-accordion .accordion-button {
+/* Item no longer clips (so the calendar popup can overflow); round the header itself */
+.delegation-section .delegation-accordion .accordion-button {
+  border-radius: 17px !important;
+}
+
+.delegation-section .delegation-accordion .accordion-button[aria-expanded="true"] {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.delegation-accordion .accordion-body {
+  border-radius: 0 0 17px 17px;
+}
+
+.delegation-accordion .rmdp-wrapper,
+.delegation-accordion .rmdp-ep-popper {
+  z-index: 1060;
+}
+
+.delegation-section .delegation-accordion .accordion-button {
   min-height: 68px;
   padding: 1rem 1.25rem;
   background: var(--modern-card) !important;
@@ -33,10 +52,55 @@
   color: var(--modern-text);
   font-size: 0.84rem;
   font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
 }
 
+/* Align the activate toggle row with the 44px inputs beside it */
+.delegation-accordion .delegation-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+}
+
+/* Delegation Period input: match sibling form controls (beats legacy range-picker rules) */
+.delegation-accordion .delegation-date-picker,
+.delegation-accordion .delegation-date-picker .rmdp-container {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100%;
+  position: relative;
+}
+
+.delegation-accordion .delegation-date-picker input {
+  width: 100% !important;
+  height: 44px !important;
+  min-height: 44px;
+  padding: 0.5rem 0.9rem !important;
+  border: 1px solid var(--modern-border-strong) !important;
+  border-radius: 12px !important;
+  background-color: var(--modern-raised) !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui);
+  font-size: 0.9rem !important;
+  box-sizing: border-box;
+}
+
+.delegation-accordion .delegation-date-picker input:focus {
+  border-color: var(--modern-violet) !important;
+  outline: 3px solid var(--modern-focus);
+  outline-offset: 2px;
+}
+
+.delegation-accordion .delegation-date-picker input::placeholder {
+  color: var(--modern-muted);
+}
+
+/* Switch: no track border (it shrinks the padding box and pushes the thumb out of the track) */
 .delegation-accordion .react-switch .ui-switch-track {
-  border: 1px solid var(--modern-border-strong);
+  border: 0 !important;
+  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {

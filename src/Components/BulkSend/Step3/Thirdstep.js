@@ -4,10 +4,9 @@ import { useUser } from "@/Context/UserContext";
 import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import { useNavigate } from "react-router-dom";
-import CCEmail from "@/Components/DocumentPreparation/Step3_Recipients/CCEmail";
+import { CCEmail, DispatchSummaryBar } from "@/Components/DocumentPreparation";
 import { useTranslation } from "react-i18next";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
@@ -700,11 +699,6 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
 
   return (
     <Container className='upload-container-thirdStep'>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <div className='upload_body' id='part_one'>
         <div>
           {userAccess.supportDocs === true ? (
@@ -735,18 +729,17 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
                         {fileName}
                       </p>
                       <Dropdown>
-                        <Dropdown.Toggle as={CustomToggle}>
-                          <Dropdown.Menu>
-                            <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(supportingDocIDs[index])}>
-                              <Icons.View size={18} />
-                              {t("uploadDocFlow.view")}
-                            </Dropdown.Item>
-                            <Dropdown.Item className='flex items-center gap-2' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
-                              <Icons.DeleteAction size={18} />
-                              {t("uploadDocFlow.delete")}
-                            </Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown.Toggle>
+                        <Dropdown.Toggle as={CustomToggle} />
+                        <Dropdown.Menu align='end'>
+                          <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(supportingDocIDs[index])}>
+                            <Icons.View size={18} />
+                            {t("uploadDocFlow.view")}
+                          </Dropdown.Item>
+                          <Dropdown.Item className='flex items-center gap-2' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
+                            <Icons.DeleteAction size={18} />
+                            {t("uploadDocFlow.delete")}
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
                       </Dropdown>
                     </div>
                   ))}
@@ -981,21 +974,12 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
             </Accordion>
           </div>
 
-          <div className='fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-3 border-t border-[var(--modern-border)] bg-[var(--modern-card)]'>
-            <Button variant='outline' id='hide_part_one' onClick={handleBack} disabled={isLoading}>
-              {t("uploadDocFlow.back")}
-            </Button>
-            <Button variant='primary' id='hide_part_one' onClick={openConfirmationModal} disabled={isLoading}>
-              {isLoading ? (
-                <span className='flex items-center gap-2'>
-                  <span className='inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' />
-                  {t("uploadDocFlow.sendAndSign")}
-                </span>
-              ) : (
-                t("uploadDocFlow.sendAndSign")
-              )}
-            </Button>
-          </div>
+          <DispatchSummaryBar
+            onBack={handleBack}
+            onConfirm={openConfirmationModal}
+            isLoading={isLoading}
+            t={t}
+          />
 
           {/* supporting file delete modal */}
           <DeleteConfirmationModal

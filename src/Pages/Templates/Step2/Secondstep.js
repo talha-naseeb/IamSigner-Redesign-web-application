@@ -9,7 +9,6 @@ import ImageWithDropZone from "./DisplayCenterImage";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ImageThumbnails from "@/Components/ImageThumbnails/ImageThumbnails";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 
 const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
   const { t } = useTranslation();
@@ -173,11 +172,6 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
 
   return (
     <div className='w-full'>
-      {isLoading && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm'>
-          <Loader />
-        </div>
-      )}
 
       <div className='w-full'>
         <Row className='p-0 m-0'>

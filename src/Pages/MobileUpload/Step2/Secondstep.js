@@ -6,9 +6,10 @@ import { DraggableButton, PageNavigations, SearchControls } from "@/Components/D
 import ImageWithDropZone from "./DisplayCenterImage";
 import { useNavigate } from "react-router-dom";
 import MobileImageThumbnails from "./MobileImageThumbnails";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
+import { tokenManager } from "@/services/tokenManager";
+import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
 
 const Secondstep = ({ setActiveStep }) => {
   const { t } = useTranslation();
@@ -106,12 +107,14 @@ const Secondstep = ({ setActiveStep }) => {
         }
       } catch (error) {
         if (error?.response?.data?.statusCode === 2 || error?.response?.data?.statusCode === 4) {
-          sessionStorage.removeItem("token");
           const currentTheme = localStorage.getItem("theme");
+          const currentPalette = localStorage.getItem(PALETTE_STORAGE_KEY);
+          const currentLang = localStorage.getItem("i18nextLng");
+          tokenManager.clearToken();
           localStorage.clear();
-          if (currentTheme) {
-            localStorage.setItem("theme", currentTheme);
-          }
+          if (currentTheme) localStorage.setItem("theme", currentTheme);
+          if (currentPalette) localStorage.setItem(PALETTE_STORAGE_KEY, currentPalette);
+          if (currentLang) localStorage.setItem("i18nextLng", currentLang);
           setIsLoading(false);
           navigate("/");
           toast.info(t("uploadDocFlow.sessionExpire"));
@@ -140,8 +143,14 @@ const Secondstep = ({ setActiveStep }) => {
       }
     } catch (error) {
       if (error?.response?.data?.statusCode === 2 || error?.response?.data?.statusCode === 4) {
-        sessionStorage.removeItem("token");
+        const currentTheme = localStorage.getItem("theme");
+        const currentPalette = localStorage.getItem(PALETTE_STORAGE_KEY);
+        const currentLang = localStorage.getItem("i18nextLng");
+        tokenManager.clearToken();
         localStorage.clear();
+        if (currentTheme) localStorage.setItem("theme", currentTheme);
+        if (currentPalette) localStorage.setItem(PALETTE_STORAGE_KEY, currentPalette);
+        if (currentLang) localStorage.setItem("i18nextLng", currentLang);
         setIsLoading(false);
         navigate("/");
         toast.info(t("uploadDocFlow.sessionExpire"));
@@ -174,8 +183,14 @@ const Secondstep = ({ setActiveStep }) => {
       // toast.error("Error in loading data", { position: "top-right" });
       setIsLoading(false);
       if (error?.response?.data?.statusCode === 2 || error?.response?.data?.statusCode === 4) {
-        sessionStorage.removeItem("token");
+        const currentTheme = localStorage.getItem("theme");
+        const currentPalette = localStorage.getItem(PALETTE_STORAGE_KEY);
+        const currentLang = localStorage.getItem("i18nextLng");
+        tokenManager.clearToken();
         localStorage.clear();
+        if (currentTheme) localStorage.setItem("theme", currentTheme);
+        if (currentPalette) localStorage.setItem(PALETTE_STORAGE_KEY, currentPalette);
+        if (currentLang) localStorage.setItem("i18nextLng", currentLang);
         setIsLoading(false);
         navigate("/");
         toast.info(t("uploadDocFlow.sessionExpire"));
@@ -205,11 +220,6 @@ const Secondstep = ({ setActiveStep }) => {
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       <div className='secondstep-container mobile-page'>
         <Row className='main-content p-0 m-0'>

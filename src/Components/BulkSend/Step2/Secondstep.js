@@ -3,12 +3,11 @@ import { Button, Col, Dropdown, DropdownButton, Row } from "@/Components/UI/shad
 import { Icons } from "@/assets/Icons";
 import uploadFlowService from "@/services/uploadFlowService";
 import { toast } from "react-toastify";
-import { DraggableButton, PageNavigations, SearchControls } from "@/Components/DocumentPreparation";
+import { DraggableButton, CanvasStepBar, SearchControls } from "@/Components/DocumentPreparation";
 import ImageWithDropZone from "./DisplayCenterImage";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ImageThumbnails from "@/Components/ImageThumbnails/ImageThumbnails";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 
 const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
   const { t } = useTranslation();
@@ -240,11 +239,6 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
 
   return (
     <div className='w-full'>
-      {isLoading && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm'>
-          <Loader />
-        </div>
-      )}
 
       <div className='w-full'>
         <div className='flex flex-col-reverse md:flex-row p-0 m-0'>
@@ -380,24 +374,16 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
           </Col>
         </div>
 
-        <div className='fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-3 border-t border-[var(--modern-border)] bg-[var(--modern-card)]'>
-          <Button variant='outline' id='hide_part_one' onClick={handleBack} disabled={isLoading}>
-            {t("uploadDocFlow.back")}
-          </Button>
-
-          <PageNavigations imagesData={imagesData} selectedImage={selectedImage} setSelectedImage={setSelectedImage} onImageSelect={handleImageSelect} />
-
-          <Button variant='primary' id='hide_part_one' onClick={handleContinue} disabled={isLoading}>
-            {isLoading ? (
-              <span className='flex items-center gap-2'>
-                <span className='inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' />
-                {t("uploadDocFlow.Continue")}
-              </span>
-            ) : (
-              t("uploadDocFlow.Continue")
-            )}
-          </Button>
-        </div>
+        <CanvasStepBar
+          onBack={handleBack}
+          onContinue={handleContinue}
+          imagesData={imagesData}
+          selectedImage={selectedImage}
+          setSelectedImage={setSelectedImage}
+          onImageSelect={handleImageSelect}
+          isLoading={isLoading}
+          t={t}
+        />
       </div>
     </div>
   );

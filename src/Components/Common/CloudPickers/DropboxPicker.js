@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import templateService from "@/services/templateService";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { Icons } from "@/assets/Icons";
 import UploadSourceCard from "./UploadSourceCard";
 
@@ -161,11 +160,6 @@ function DropboxPicker({
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <DropboxChooser appKey={APP_KEY} success={handleSuccess} cancel={handleCancel} multiselect={false}>
         <UploadSourceCard>
           <Icons.Dropbox alt='Dropbox Image' />

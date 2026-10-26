@@ -13,11 +13,12 @@ const DateRangePicker = ({
   containerClassName = "",
   range = true,
   disabled = false,
-  placeholder = "",
+  placeholder,
   zIndex,
   portal,
   ...rest
 }) => {
+  const resolvedPlaceholder = placeholder !== undefined ? placeholder : range ? "YYYY-MM-DD ~ YYYY-MM-DD" : "YYYY-MM-DD";
   return (
     <div className={`range-picker-container ${containerClassName}`.trim()}>
       <DatePicker
@@ -30,7 +31,7 @@ const DateRangePicker = ({
         format={format}
         inputClass={`${inputClass} ${isInvalid ? "is-invalid" : ""}`.trim()}
         disabled={disabled}
-        placeholder={placeholder}
+        placeholder={resolvedPlaceholder}
         {...(zIndex != null ? { zIndex } : {})}
         {...(portal != null ? { portal } : {})}
         {...rest}

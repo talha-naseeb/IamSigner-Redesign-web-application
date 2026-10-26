@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { Button, Form, Accordion, Row, Col, Spinner } from "@/Components/UI/shadcnCompat";
 import { useForm } from "react-hook-form";
 import { useUser } from "@/Context/UserContext";
+import { useTheme } from "@/Context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import AppSwitch from "@/Components/Common/AppSwitch/AppSwitch";
 import PhoneInput from "react-phone-input-2";
@@ -15,6 +16,7 @@ import "./style.css";
 
 function Delegation() {
   const { t } = useTranslation();
+  const { palette } = useTheme();
 
   const [isSaving, setIsSaving] = useState(false);
   const { user, userAccess } = useUser();
@@ -49,6 +51,13 @@ function Delegation() {
     },
   });
 
+  const emailField = register("DelegatedToEmail", {
+    required: t("userProfile.emailRequired"),
+    pattern: {
+      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      message: t("userProfile.invalidEmail"),
+    },
+  });
   const handleToggleChange = (isChecked) => {
     setActiveDelegate(isChecked);
     ActivateDelegation(isChecked);
@@ -77,7 +86,7 @@ function Delegation() {
           StartDate: "",
           EndDate: "",
         });
-        setPhoneNumber("");
+
         setButtonHide(false);
         await getDelegation();
       } else {
@@ -131,6 +140,10 @@ function Delegation() {
         // Set date range for picker
         if (userInfo.startDate && userInfo.endDate) {
           setDateRange([new DateObject(userInfo.startDate), new DateObject(userInfo.endDate)]);
+          // Keep the hidden required form fields in sync with the saved period
+          setValue("StartDate", String(userInfo.startDate).slice(0, 10));
+          setValue("EndDate", String(userInfo.endDate).slice(0, 10));
+          clearErrors(["StartDate", "EndDate"]);
         }
       }
     } catch (error) {
@@ -219,7 +232,7 @@ function Delegation() {
       StartDate: "",
       EndDate: "",
     });
-    setPhoneNumber("");
+
     setDateRange([]);
     setButtonHide(false);
   };
@@ -289,16 +302,16 @@ function Delegation() {
                         <Form.Control
                           type='email'
                           placeholder={t("userProfile.DelegatedEmail")}
-                          {...register("DelegatedToEmail", {
-                            required: t("userProfile.emailRequired"),
-                            pattern: {
-                              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                              message: t("userProfile.invalidEmail"),
-                            },
-                          })}
-                          onChange={() => setButtonHide(true)}
+                          isInvalid={!!errors.DelegatedToEmail}
+                          aria-invalid={!!errors.DelegatedToEmail}
+                          className={errors.DelegatedToEmail ? "is-invalid" : ""}
+                          {...emailField}
+                          onChange={(e) => {
+                            emailField.onChange(e);
+                            setButtonHide(true);
+                          }}
                         />
-                        {errors.DelegatedToEmail && <div className='text-danger'>{errors.DelegatedToEmail.message}</div>}
+                        {errors.DelegatedToEmail && <div className='text-danger' role='alert'>{errors.DelegatedToEmail.message}</div>}
                       </Form.Group>
                     </Col>
 
@@ -320,19 +333,20 @@ function Delegation() {
                     </Col>
 
                     <Col xs={12} md={6} xl={4}>
-                      <div className='d-flex align-items-center gap-2 mt-4'>
+                      <div className='delegation-toggle-row'>
                         <label className='password-protected' htmlFor='delegation-active-toggle'>{t("userProfile.ActivateDelegation")}</label>
                         <AppSwitch
                           id='delegation-active-toggle'
                           checked={activeDelegate}
                           onChange={handleToggleChange}
-                          onColor={themeColor}
+                          onColor={palette === "management" ? "#FE5800" : "#8b6cff"}
+                          offColor={palette === "management" ? "#FFAD7D" : "#d9d1ff"}
                           onHandleColor='#ffffff'
-                          handleDiameter={15}
+                          handleDiameter={18}
                           uncheckedIcon={false}
                           checkedIcon={false}
-                          height={20}
-                          width={50}
+                          height={24}
+                          width={46}
                           className='react-switch'
                         />
                       </div>

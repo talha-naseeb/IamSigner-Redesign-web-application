@@ -6,7 +6,6 @@ import templateService from "@/services/templateService";
 import { Form } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { Icons } from "@/assets/Icons";
 import UploadSourceCard from "./UploadSourceCard";
 
@@ -164,11 +163,6 @@ function GoogleDrivePicker({
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <UploadSourceCard onClick={handleOpenPicker} role='button' tabIndex={0}>
         <Icons.GoogleDrive alt='Google Drive Image' />
         <Form.Group controlId='file-input-add-gdrive' className='space-y-0'>

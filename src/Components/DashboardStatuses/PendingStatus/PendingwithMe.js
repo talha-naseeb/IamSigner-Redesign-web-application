@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -13,7 +13,6 @@ import SignOrder from "@/Components/CommonModals/SignOrder/SignOrder";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
 import DownloadModal from "@/Components/CommonModals/DownloadModal/DownloadModal";
 import DashboardComments from "@/Components/CommonModals/DocumentsComments/DashboardComments";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { Icons } from "@/assets/Icons";
 import dashboardService from "@/services/dashboardService";
 import documentService from "@/services/documentService";
@@ -22,6 +21,7 @@ import { normalizeSigningLink } from "@/Helpers/signingLink";
 import SignCompletedScreen from "@/Components/SignCompletedScreen/SignCompletedScreen";
 import { API_STATUS } from "@/Constants/apiStatuses";
 import { tokenManager } from "@/services/tokenManager";
+import DocumentStatusTable, { formatTableDate } from "@/Components/DashboardStatuses/DocumentStatusTable";
 
 const Pendingwithme = () => {
   const { t } = useTranslation();
@@ -207,30 +207,14 @@ const Pendingwithme = () => {
   };
 
   const columns = [
-    { label: t("tablesLabel.docName"), key: "docName" },
-    { label: t("tablesLabel.docNumber"), key: "docCompanyPrefixNo" },
-    { label: t("tablesLabel.date"), key: "pendingWithDate" },
-    { label: t("tablesLabel.refNumber"), key: "referenceNumber" },
-    { label: t("tablesLabel.signingLink"), key: "signingLink" },
-    { label: t("tablesLabel.createdby"), key: "createdByName" },
-    { label: "", key: "actions" },
+    { label: t("tablesLabel.docName"), key: "docName", width: "24%" },
+    { label: t("tablesLabel.docNumber"), key: "docCompanyPrefixNo", width: "14%" },
+    { label: t("tablesLabel.date"), key: "pendingWithDate", width: "16%" },
+    { label: t("tablesLabel.refNumber"), key: "referenceNumber", width: "14%" },
+    { label: t("tablesLabel.signingLink"), key: "signingLink", width: "14%" },
+    { label: t("tablesLabel.createdby"), key: "createdByName", width: "12%" },
+    { label: "", key: "actions", width: "6%", align: "right" },
   ];
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-
-    const formattedMinutes = (minutes < 10 ? "0" : "") + minutes;
-
-    return `${day}/${month}/${year} - ${hours}:${formattedMinutes} ${ampm}`;
-  };
 
   const handleCellClick = (event) => {
     const cell = event.target;
@@ -243,166 +227,97 @@ const Pendingwithme = () => {
 
   return (
     <Grid className='container'>
-      <Grid>
-        {/* Loader overlay */}
-        {isLoading && (
-          <div className='loader-overlay'>
-            <Loader />
-          </div>
-        )}
-
-        <div className='py-3 p-3 container pendingtable'>
-          <div className="document-status-toolbar">
-            <label className='fs-16'>{t("menuButtons.pendingWithMe")}</label>
-
-            <div className='search-filters-container'>
-              <DocumentSearchFilters
-                startDate={startDate}
-                endDate={endDate}
-                referenceNo={referenceNo}
-                docNumber={docNumber}
-                docName={docName}
-                setStartDate={setStartDate}
-                setEndDate={setEndDate}
-                setReferenceNo={setReferenceNo}
-                setDocNumber={setDocNumber}
-                setDocName={setDocName}
-                handleSearch={handleSearch}
-                clearSearch={clearSearch}
-              />
-            </div>
-          </div>
-          {/* Table */}
-          <TableContainer
-            component={Paper}
-            className='custom-table-scrollbar'
-            style={{
-              maxWidth: "100%",
-              overflowX: "auto",
-              height: "38vh",
-            }}
-          >
-            <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
-              {/* Table Headers */}
-              <TableHead className='customTableHead'>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell key={column.label} className='TableHeaderCell header-pending'>
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-
-              {/* Table Body */}
-              <TableBody>
-                {searchResults.length === 0 && (
-                  <TableRow>
-                    <td colSpan='6' className='p-5 text-center'>
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                        <Icons.BulkDocuments size={50} />
-                        {t("dashboardCardStatuses.notDocsFound")}
-                      </div>
-                    </td>
-                  </TableRow>
+      <Grid item xs={12}>
+        <DocumentStatusTable
+          title={t("menuButtons.pendingWithMe")}
+          count={searchResults.length}
+          searchFilter={
+            <DocumentSearchFilters
+              startDate={startDate}
+              endDate={endDate}
+              referenceNo={referenceNo}
+              docNumber={docNumber}
+              docName={docName}
+              setStartDate={setStartDate}
+              setEndDate={setEndDate}
+              setReferenceNo={setReferenceNo}
+              setDocNumber={setDocNumber}
+              setDocName={setDocName}
+              handleSearch={handleSearch}
+              clearSearch={clearSearch}
+            />
+          }
+          columns={columns}
+          data={searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+          totalItems={searchResults.length}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handleChangePage}
+          tableContainerStyle={{ maxHeight: "calc(100vh - 280px)" }}
+          renderRow={(row, index) => (
+            <TableRow key={row.masterDocID || index} hover>
+              <TableCell className='TableCell truncate-cell font-medium text-[var(--modern-text)]' title={row.docName} onClick={(e) => handleCellClick(e)} style={{ width: "24%" }}>
+                {row.docName}
+              </TableCell>
+              <TableCell className='TableCell' style={{ width: "14%" }}>
+                {row.docCompanyPrefixNo || "—"}
+              </TableCell>
+              <TableCell className='TableCell text-[var(--modern-muted)]' style={{ width: "16%" }}>
+                {row.pendingWithDate ? formatTableDate(row.pendingWithDateFormatted || row.pendingWithDate) : "—"}
+              </TableCell>
+              <TableCell className='TableCell truncate-cell truncate-ref-cell' title={row.referenceNumber} onClick={(e) => handleCellClick(e)} style={{ width: "14%" }}>
+                {row.referenceNumber || "—"}
+              </TableCell>
+              <TableCell className='TableCell' style={{ width: "14%" }}>
+                <Button className='SignNowbtn text-align-center' variant='text' onClick={() => openSigningLink(row.signingLink)}>
+                  {t("dashboardCardStatuses.OpenToSign")}
+                </Button>
+              </TableCell>
+              <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell' style={{ width: "12%" }}>
+                <UserInitialsBadge name={row.createdByName} />
+              </TableCell>
+              <TableCell className='py-0 text-right' style={{ width: "6%" }}>
+                {userAccess.remainingDays <= 0 ? (
+                  <Dropdown>
+                    <Dropdown.Toggle as={CustomToggle} />
+                  </Dropdown>
+                ) : (
+                  <Dropdown>
+                    <Dropdown.Toggle as={CustomToggle} />
+                    <Dropdown.Menu>
+                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileDownload(row)}>
+                        <Icons.Download size={20} />
+                        {t("dashboardCardStatuses.download")}
+                      </Dropdown.Item>
+                      {!(user.AccountType === "B" && user.RoleID === 3) && userAccess.docShare === true && (
+                        <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleShareModalShow(row)}>
+                          <Icons.Share size={20} />
+                          {t("dashboardCardStatuses.share")}
+                        </Dropdown.Item>
+                      )}
+                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleView(row)}>
+                        <Icons.View size={20} />
+                        {t("dashboardCardStatuses.view")}
+                      </Dropdown.Item>
+                      <Dropdown.Item>
+                        <SignOrder masterDocID={row.masterDocID} />
+                      </Dropdown.Item>
+                      {userAccess.auditTrail === true && (
+                        <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewAuditTrail(row.signedDocKey)}>
+                          <Icons.AuditTrail size={20} />
+                          {t("dashboardCardStatuses.viewAuditTrail")}
+                        </Dropdown.Item>
+                      )}
+                      <Dropdown.Item>
+                        <DashboardComments registerSignID={row.registerSignID} />
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                 )}
-
-                {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                  <TableRow key={index}>
-                    {/* Table Cells */}
-
-                    <TableCell className='TableCell truncate-cell' onClick={(e) => handleCellClick(e)}>
-                      {row.docName}
-                    </TableCell>
-                    <TableCell className='TableCell'>{row.docCompanyPrefixNo}</TableCell>
-                    <TableCell className='TableCell'>{row.pendingWithDate ? formatDate(row.pendingWithDate) : ""}</TableCell>
-                    <TableCell className='TableCell'>{row.referenceNumber}</TableCell>
-                    <TableCell className='TableCell'>
-                      <Button className='SignNowbtn text-align-center' variant='text' onClick={() => openSigningLink(row.signingLink)}>
-                        {t("dashboardCardStatuses.OpenToSign")}
-                      </Button>
-                    </TableCell>
-                    <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                      {row.createdByName}
-                    </TableCell>
-
-                    {userAccess.remainingDays <= 0 ? (
-                      <>
-                        <TableCell className='py-0'>
-                          <Dropdown>
-                            <Dropdown.Toggle as={CustomToggle} />
-                          </Dropdown>
-                        </TableCell>
-                      </>
-                    ) : (
-                      <>
-                        <TableCell className='py-0'>
-                          <Dropdown>
-                            <Dropdown.Toggle as={CustomToggle} />
-
-                            <Dropdown.Menu>
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileDownload(row)}>
-                                <Icons.Download size={20} />
-                                {t("dashboardCardStatuses.download")}
-                              </Dropdown.Item>
-                              {user.AccountType === "B" && user.RoleID === 3 ? (
-                                <></>
-                              ) : (
-                                <>
-                                  {userAccess.docShare === true ? (
-                                    <>
-                                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleShareModalShow(row)}>
-                                        <Icons.Share size={20} />
-                                        {t("dashboardCardStatuses.share")}
-                                      </Dropdown.Item>
-                                    </>
-                                  ) : (
-                                    <></>
-                                  )}
-                                </>
-                              )}
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleView(row)}>
-                                <Icons.View size={20} />
-                                {t("dashboardCardStatuses.view")}
-                              </Dropdown.Item>
-                              <Dropdown.Item>
-                                <SignOrder masterDocID={row.masterDocID} />
-                              </Dropdown.Item>
-                              {userAccess.auditTrail === true ? (
-                                <>
-                                  <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewAuditTrail(row.signedDocKey)}>
-                                    <Icons.AuditTrail size={20} />
-                                    {t("dashboardCardStatuses.viewAuditTrail")}
-                                  </Dropdown.Item>
-                                </>
-                              ) : (
-                                <></>
-                              )}
-
-                              <Dropdown.Item>
-                                <DashboardComments registerSignID={row.registerSignID} />
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </TableCell>
-                      </>
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          {/* Pagination */}
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-            <div className='showHideNoDocs'>
-              {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
-            </div>
-            <Stack spacing={2}>
-              <Pagination count={Math.ceil(data.length / rowsPerPage)} variant='outlined' shape='rounded' page={page + 1} onChange={(event, newPage) => handleChangePage(event, newPage - 1)} />
-            </Stack>
-          </div>
-        </div>
+              </TableCell>
+            </TableRow>
+          )}
+        />
       </Grid>
 
       {/* Share and View modals */}

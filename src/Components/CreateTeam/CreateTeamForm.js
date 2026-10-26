@@ -3,7 +3,6 @@ import { Button, Form, Offcanvas } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import PhoneInput from "react-phone-input-2";
 import userService from "@/services/userService";
 
@@ -228,11 +227,6 @@ function CreateTeamForm({ fetchTeam }) {
 
   return (
     <div>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       <div className='createTemplate'>
         <button onClick={() => setShowCreateTeam(true)} className='templateButton mb-3'>

@@ -4,7 +4,6 @@ import userService from "@/services/userService";
 import { Icons } from "@/assets/Icons";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 
 const FolderSelection = ({ show, onClose, onSelectFolder }) => {
   const [folders, setFolders] = useState([]);
@@ -64,11 +63,6 @@ const FolderSelection = ({ show, onClose, onSelectFolder }) => {
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <Offcanvas show={show} onHide={onClose} placement={document.documentElement.dir === "rtl" ? "start" : "end"}>
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>{t("uploadDocFlow.Folders")}</Offcanvas.Title>

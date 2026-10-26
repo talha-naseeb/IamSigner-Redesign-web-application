@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
 import SignOrder from "@/Components/CommonModals/SignOrder/SignOrder";
 import { Dropdown as Dropdown } from "@/Components/UI/shadcnCompat";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination, Stack } from "@/Components/UI/dataPrimitives";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Pagination, Stack, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import DocumentSearchFilters from "@/Components/CommonModals/SearchFilters/DraftSearchFilter";
 import { useTranslation } from "react-i18next";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
@@ -12,7 +12,6 @@ import { Button } from "@/Components/UI/shadcnCompat";
 import { Icons } from "@/assets/Icons";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { useUser } from "@/Context/UserContext";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import dashboardService from "@/services/dashboardService";
 import documentService from "@/services/documentService";
 
@@ -233,11 +232,6 @@ const ShareDocs = () => {
           {userAccess.docShare === true ? (
             <>
               <Grid>
-                {isLoading && (
-                  <div className='loader-overlay'>
-                    <Loader />
-                  </div>
-                )}
 
                 <div className='py-3 p-3 container pendingtable'>
                   <h4>{t("dashboardCardStatuses.Shareddoc")}</h4>
@@ -274,11 +268,13 @@ const ShareDocs = () => {
                     <>
                       <TableContainer
                         component={Paper}
-                        className='custom-table-scrollbar'
+                        className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
                         style={{
                           maxWidth: "100%",
                           overflowX: "auto",
-                          height: "66vh",
+                          minHeight: "440px",
+                          height: "calc(100vh - 280px)",
+                          maxHeight: "calc(100vh - 280px)",
                         }}
                       >
                         <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
@@ -295,26 +291,28 @@ const ShareDocs = () => {
                           <TableBody>
                             {searchResults.length === 0 && (
                               <TableRow>
-                                <td colSpan='6' className='p-5 text-center'>
-                                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                                    <Icons.BulkDocuments size={50} />
-                                    {t("dashboardCardStatuses.notDocsFound")}
-                                  </div>
-                                </td>
+                                <TableCell colSpan={shareWithMeColumns.length} className='table-empty-state-cell'>
+                                  <TableEmptyState
+                                    icon={<Icons.BulkDocuments size={50} />}
+                                    title={t("dashboardCardStatuses.notDocsFound")}
+                                  />
+                                </TableCell>
                               </TableRow>
                             )}
 
                             {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                               <TableRow key={index}>
-                                <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
+                                <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell' title={row.docName}>
                                   {row.docName}
                                 </TableCell>
                                 <TableCell className='TableCell'>{row.docCompanyPrefixNo}</TableCell>
                                 <TableCell className='TableCell'>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
                                 <TableCell className='TableCell'>{row.email}</TableCell>
-                                <TableCell className='TableCell'>{row.referenceNumber}</TableCell>
+                                <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell truncate-ref-cell' title={row.referenceNumber}>
+                                  {row.referenceNumber}
+                                </TableCell>
                                 <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                                  {row.createdByName}
+                                  <UserInitialsBadge name={row.createdByName} />
                                 </TableCell>
 
                                 {userAccess.remainingDays <= 0 ? (
@@ -359,18 +357,16 @@ const ShareDocs = () => {
                           </TableBody>
                         </Table>
                       </TableContainer>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-                        <div className='showHideNoDocs'>
-                          <div className='showHideNoDocs'>
-                            {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
-                          </div>
+                      <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 text-xs text-[var(--modern-muted)]'>
+                        <div>
+                          {data.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
                         </div>
                         <Stack spacing={2}>
                           <Pagination
-                            count={Math.ceil(data.length / rowsPerPage)}
+                            count={Math.max(1, Math.ceil(data.length / rowsPerPage))}
                             variant='outlined'
                             shape='rounded'
-                            page={page + 1}
+                            page={Math.min(page + 1, Math.max(1, Math.ceil(data.length / rowsPerPage)))}
                             onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
                           />
                         </Stack>
@@ -382,11 +378,13 @@ const ShareDocs = () => {
                     <>
                       <TableContainer
                         component={Paper}
-                        className='custom-table-scrollbar'
+                        className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
                         style={{
                           maxWidth: "100%",
                           overflowX: "auto",
-                          height: "66vh",
+                          minHeight: "440px",
+                          height: "calc(100vh - 280px)",
+                          maxHeight: "calc(100vh - 280px)",
                         }}
                       >
                         <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
@@ -405,26 +403,28 @@ const ShareDocs = () => {
                           <TableBody>
                             {shareOtherResults.length === 0 && (
                               <TableRow>
-                                <td colSpan='6' className='p-5 text-center'>
-                                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                                    <Icons.BulkDocuments size={50} color='#F0F3F4' />
-                                    {t("dashboardCardStatuses.notDocsFound")}
-                                  </div>
-                                </td>
+                                <TableCell colSpan={shareWithOthersColumns.length} className='table-empty-state-cell'>
+                                  <TableEmptyState
+                                    icon={<Icons.BulkDocuments size={50} />}
+                                    title={t("dashboardCardStatuses.notDocsFound")}
+                                  />
+                                </TableCell>
                               </TableRow>
                             )}
 
                             {shareOtherResults.map((row, index) => (
                               <TableRow key={index}>
-                                <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
+                                <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell' title={row.docName}>
                                   {row.docName}
                                 </TableCell>
                                 <TableCell className='TableCell'>{row.docCompanyPrefixNo}</TableCell>
                                 <TableCell className='TableCell'>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
                                 <TableCell className='TableCell'>{row.email}</TableCell>
-                                <TableCell className='TableCell'>{row.referenceNumber}</TableCell>
+                                <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell truncate-ref-cell' title={row.referenceNumber}>
+                                  {row.referenceNumber}
+                                </TableCell>
                                 <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                                  {row.createdByName}
+                                  <UserInitialsBadge name={row.createdByName} />
                                 </TableCell>
 
                                 {userAccess.remainingDays <= 0 ? (
@@ -469,15 +469,16 @@ const ShareDocs = () => {
                           </TableBody>
                         </Table>
                       </TableContainer>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-                        {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, otherData.length)} {t("tablesLabel.documentsof")}
-                        {otherData.length} {t("tablesLabel.document")}
+                      <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 text-xs text-[var(--modern-muted)]'>
+                        <div>
+                          {otherData.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, otherData.length)} {t("tablesLabel.documentsof")} {otherData.length} {t("tablesLabel.document")}
+                        </div>
                         <Stack spacing={2}>
                           <Pagination
-                            count={Math.ceil(otherData.length / rowsPerPage)}
+                            count={Math.max(1, Math.ceil(otherData.length / rowsPerPage))}
                             variant='outlined'
                             shape='rounded'
-                            page={page + 1}
+                            page={Math.min(page + 1, Math.max(1, Math.ceil(otherData.length / rowsPerPage)))}
                             onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
                           />
                         </Stack>

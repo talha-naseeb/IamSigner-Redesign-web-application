@@ -4,7 +4,6 @@ import { Link, useLocation } from "react-router-dom";
 import { useUser } from "@/Context/UserContext";
 import { useTranslation } from "react-i18next";
 import { FiChevronLeft, FiX } from "react-icons/fi";
-import brandMark from "@/assets/images/logoIcon.svg";
 import "./sidebarStyle.css";
 import { Icons } from "@/assets/Icons";
 import { toast } from "react-toastify";
@@ -141,6 +140,13 @@ const Sidebar = ({ children }) => {
   };
 
   const toggleCollapsed = () => setIsCollapsed((collapsed) => !collapsed);
+  const handleSidebarToggle = () => {
+    if (isMobile) {
+      closeMobileSidebar();
+      return;
+    }
+    toggleCollapsed();
+  };
   const direction = document.dir || "ltr";
 
   return (
@@ -155,129 +161,136 @@ const Sidebar = ({ children }) => {
           />
         )}
         <aside
-          className={`sidebar ${isCollapsed ? "sidebar--collapsed" : "sidebar--open"} ${isMobileOpen ? "sidebar--mobile-open" : ""}`}
+          className={`sidebar ${isCollapsed ? "sidebar--collapsed" : "sidebar--open"} ${isMobileOpen ? "sidebar--mobile-open" : ""} ${!isMobile && location.pathname.startsWith("/dms") ? "sidebar--has-subpanel" : ""}`}
           aria-label={t("Sidebar.mainNavigation", "Main navigation")}
           aria-hidden={isMobile && !isMobileOpen}
         >
-          <div className="sidebar-scroll">
-            <div className="sidebar-brand-row">
-              <Link
-                to="/home"
-                className="sidebar-brand"
-                aria-label="IAmSigner home"
-                title="IAmSigner"
-                onClick={closeMobileSidebar}
-              >
-                <Icons.StepperLogo
-                  className="sidebar-brand-wordmark"
-                  style={{ width: "132px", height: "39px" }}
-                />
-                <img className="sidebar-brand-mark" src={brandMark} alt="" />
-              </Link>
-              <button
-                type="button"
-                className="sidebar-toggle"
-                onClick={isMobile ? closeMobileSidebar : toggleCollapsed}
-                aria-label={
-                  isMobile
-                    ? t("Sidebar.closeNavigation", "Close navigation")
-                    : isCollapsed
-                      ? t("Sidebar.expandNavigation", "Expand sidebar")
-                      : t("Sidebar.collapseNavigation", "Collapse sidebar")
-                }
-                title={
-                  isMobile
-                    ? t("Sidebar.closeNavigation", "Close navigation")
-                    : isCollapsed
-                      ? t("Sidebar.expandNavigation", "Expand sidebar")
-                      : t("Sidebar.collapseNavigation", "Collapse sidebar")
-                }
-              >
-                {isMobile ? (
-                  <FiX size={18} />
-                ) : (
-                  <FiChevronLeft
-                    size={18}
-                    className={`${isCollapsed ? "sidebar-toggle-icon--collapsed " : ""}${direction === "rtl" ? "sidebar-toggle-icon--rtl" : ""}`}
+          <div className="sidebar-rail">
+            <div className="sidebar-scroll">
+              <div className="sidebar-brand-row">
+                <Link
+                  to="/home"
+                  className="sidebar-brand"
+                  aria-label="IAmSigner home"
+                  aria-hidden={!isMobile && (isCollapsed || location.pathname.startsWith("/dms"))}
+                  tabIndex={!isMobile && (isCollapsed || location.pathname.startsWith("/dms")) ? -1 : undefined}
+                  title="IAmSigner"
+                  onClick={closeMobileSidebar}
+                >
+                  <Icons.StepperLogo
+                    className="sidebar-brand-wordmark"
+                    style={{ width: "132px", height: "39px" }}
                   />
-                )}
-              </button>
+                </Link>
+                <button
+                  type="button"
+                  className="sidebar-toggle"
+                  onClick={handleSidebarToggle}
+                  aria-label={
+                    isMobile
+                      ? t("Sidebar.closeNavigation", "Close navigation")
+                      : isCollapsed
+                        ? t("Sidebar.expandNavigation", "Expand sidebar")
+                        : t("Sidebar.collapseNavigation", "Collapse sidebar")
+                  }
+                  title={
+                    isMobile
+                      ? t("Sidebar.closeNavigation", "Close navigation")
+                      : isCollapsed
+                        ? t("Sidebar.expandNavigation", "Expand sidebar")
+                        : t("Sidebar.collapseNavigation", "Collapse sidebar")
+                  }
+                >
+                  {isMobile ? (
+                    <FiX size={18} />
+                  ) : (
+                    <FiChevronLeft
+                      size={18}
+                      className={`${isCollapsed ? "sidebar-toggle-icon--collapsed " : ""}${direction === "rtl" ? "sidebar-toggle-icon--rtl" : ""}`}
+                    />
+                  )}
+                </button>
+              </div>
+
+              <nav className="sidebar-nav" aria-label={t("Sidebar.mainNavigation", "Main navigation")}>
+                <div className="sidebar-nav-items">
+                  {menuConfig.basicMenuItems.map((item) => (
+                    <MenuItem
+                      key={item.path}
+                      item={item}
+                      isOpen={isOpen && !location.pathname.startsWith("/dms")}
+                      onClick={item.type === "upload" ? handleUploadClick : clearStorage}
+                      onNavigate={closeMobileSidebar}
+                    />
+                  ))}
+
+                  <DropdownMenu
+                    items={menuConfig.documentStatusItems}
+                    triggerIcon={Icons.DocumentStatus}
+                    triggerLabel={t("Sidebar.DocumentStatus")}
+                    isOpen={isOpen && !location.pathname.startsWith("/dms")}
+                    className="menuLinks doc-status-section"
+                    onNavigate={closeMobileSidebar}
+                    onExpandSidebar={() => setIsCollapsed(false)}
+                  />
+
+                  <div className="sidebar-nav-divider" />
+
+                  {menuConfig.featureMenuItems.map((item) => (
+                    <MenuItem
+                      key={item.path}
+                      item={item}
+                      isOpen={isOpen && !location.pathname.startsWith("/dms")}
+                      onClick={clearStorage}
+                      onNavigate={closeMobileSidebar}
+                    />
+                  ))}
+
+                  {menuConfig.aiMenuItems.length > 0 && (
+                    <DropdownMenu
+                      items={menuConfig.aiMenuItems}
+                      triggerIcon={Icons.MacAI}
+                      triggerLabel={t("Sidebar.MacAI")}
+                      isOpen={isOpen && !location.pathname.startsWith("/dms")}
+                      onItemClick={handleAiItemClick}
+                      onNavigate={closeMobileSidebar}
+                      onExpandSidebar={() => setIsCollapsed(false)}
+                    />
+                  )}
+
+                  {menuConfig.permissions.canAccessAdmin && (
+                    <DropdownMenu
+                      items={menuConfig.userReportItems}
+                      triggerIcon={Icons.UserReportShield}
+                      triggerLabel={t("Sidebar.userDashboard")}
+                      isOpen={isOpen && !location.pathname.startsWith("/dms")}
+                      onNavigate={closeMobileSidebar}
+                      onExpandSidebar={() => setIsCollapsed(false)}
+                    />
+                  )}
+
+                  {menuConfig.permissions.canAccessAdmin && (
+                    <DropdownMenu
+                      items={menuConfig.adminMenuItems}
+                      triggerIcon={Icons.AdminShield}
+                      triggerLabel={t("Sidebar.AdminMenu")}
+                      isOpen={isOpen && !location.pathname.startsWith("/dms")}
+                      onNavigate={closeMobileSidebar}
+                      onExpandSidebar={() => setIsCollapsed(false)}
+                    />
+                  )}
+                </div>
+              </nav>
             </div>
 
-            <nav className="sidebar-nav" aria-label={t("Sidebar.mainNavigation", "Main navigation")}>
-              <div className="sidebar-nav-items">
-                {menuConfig.basicMenuItems.map((item) => (
-                  <MenuItem
-                    key={item.path}
-                    item={item}
-                    isOpen={isOpen}
-                    onClick={item.type === "upload" ? handleUploadClick : clearStorage}
-                    onNavigate={closeMobileSidebar}
-                  />
-                ))}
-
-                <DropdownMenu
-                  items={menuConfig.documentStatusItems}
-                  triggerIcon={Icons.DocumentStatus}
-                  triggerLabel={t("Sidebar.DocumentStatus")}
-                  isOpen={isOpen}
-                  className="menuLinks doc-status-section"
-                  onNavigate={closeMobileSidebar}
-                  onExpandSidebar={() => setIsCollapsed(false)}
-                />
-
-                <div className="sidebar-nav-divider" />
-
-                {menuConfig.featureMenuItems.map((item) => (
-                  <MenuItem
-                    key={item.path}
-                    item={item}
-                    isOpen={isOpen}
-                    onClick={clearStorage}
-                    onNavigate={closeMobileSidebar}
-                  />
-                ))}
-
-                {menuConfig.aiMenuItems.length > 0 && (
-                  <DropdownMenu
-                    items={menuConfig.aiMenuItems}
-                    triggerIcon={Icons.MacAI}
-                    triggerLabel={t("Sidebar.MacAI")}
-                    isOpen={isOpen}
-                    onItemClick={handleAiItemClick}
-                    onNavigate={closeMobileSidebar}
-                    onExpandSidebar={() => setIsCollapsed(false)}
-                  />
-                )}
-
-                {menuConfig.permissions.canAccessAdmin && (
-                  <DropdownMenu
-                    items={menuConfig.userReportItems}
-                    triggerIcon={Icons.UserReportShield}
-                    triggerLabel={t("Sidebar.userDashboard")}
-                    isOpen={isOpen}
-                    onNavigate={closeMobileSidebar}
-                    onExpandSidebar={() => setIsCollapsed(false)}
-                  />
-                )}
-
-                {menuConfig.permissions.canAccessAdmin && (
-                  <DropdownMenu
-                    items={menuConfig.adminMenuItems}
-                    triggerIcon={Icons.AdminShield}
-                    triggerLabel={t("Sidebar.AdminMenu")}
-                    isOpen={isOpen}
-                    onNavigate={closeMobileSidebar}
-                    onExpandSidebar={() => setIsCollapsed(false)}
-                  />
-                )}
-              </div>
-            </nav>
+            {accountId && !location.pathname.startsWith("/dms") ? (
+              <SidebarAccountStorage accountId={accountId} isOpen={isOpen} />
+            ) : null}
           </div>
 
-          {accountId ? (
-            <SidebarAccountStorage accountId={accountId} isOpen={isOpen} />
-          ) : null}
+          {!isMobile && location.pathname.startsWith("/dms") && (
+            <div id="dms-subpanel-portal" className="sidebar-subpanel" />
+          )}
         </aside>
 
         <main className="mainbody">{children}</main>

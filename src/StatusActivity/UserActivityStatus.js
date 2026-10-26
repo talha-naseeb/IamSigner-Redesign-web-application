@@ -25,6 +25,7 @@ const UserActivityStatus = () => {
       if (response.data.statusCode === "1") {
         const currentTheme = localStorage.getItem("theme");
         const currentPalette = localStorage.getItem(PALETTE_STORAGE_KEY);
+        const currentLang = localStorage.getItem("i18nextLng");
         tokenManager.clearToken();
         sessionStorage.clear();
         localStorage.removeItem("savedSignature");
@@ -38,6 +39,9 @@ const UserActivityStatus = () => {
         }
         if (currentPalette) {
           localStorage.setItem(PALETTE_STORAGE_KEY, currentPalette);
+        }
+        if (currentLang) {
+          localStorage.setItem("i18nextLng", currentLang);
         }
         navigate("/");
 

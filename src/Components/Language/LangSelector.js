@@ -29,7 +29,7 @@ function LangSelector({ style }) {
     <div className='flex items-center flex-none' style={style}>
       <button
         type='button'
-        className='inline-flex min-w-[48px] min-h-[38px] items-center justify-center px-3 py-1.5 border border-[var(--modern-border-strong)] rounded-xl bg-[color-mix(in_srgb,var(--modern-violet)_8%,var(--modern-card))] text-[var(--modern-violet)] font-bold text-[0.82rem] leading-none cursor-pointer transition-colors hover:border-[var(--modern-violet)] hover:bg-[var(--modern-violet-soft)] focus-visible:outline-2 focus-visible:outline-[var(--modern-violet)] focus-visible:outline-offset-2 motion-reduce:transition-none'
+        className='inline-flex min-w-[48px] h-[40px] min-h-[40px] items-center justify-center px-3 py-1.5 border border-solid border-[var(--modern-border)] rounded-xl bg-[var(--modern-violet-soft)] text-[var(--modern-violet)] font-bold text-[0.82rem] leading-none cursor-pointer transition-colors hover:border-[var(--modern-border-strong)] hover:bg-[var(--modern-card)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[var(--modern-focus)] focus-visible:outline-offset-2 motion-reduce:transition-none'
         aria-label={nextLanguage === "ar" ? "Switch to Arabic" : "Switch to English"}
         onClick={() => changeLanguage(nextLanguage)}
       >

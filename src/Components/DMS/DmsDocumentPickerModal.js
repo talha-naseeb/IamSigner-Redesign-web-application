@@ -3,7 +3,6 @@ import { Button, Modal } from "@/Components/UI/shadcnCompat";
 import { SearchIcon as SearchIcon } from "@/Components/UI/iconCompat";
 import { InsertDriveFileOutlinedIcon as InsertDriveFileOutlinedIcon } from "@/Components/UI/iconCompat";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import FolderTree from "./components/FolderTree";
 import FileTypeIcon from "./components/FileTypeIcon";
 import { useDmsRequestAbort } from "./hooks/useDmsRequestAbort";
@@ -192,11 +191,7 @@ const DmsDocumentPickerModal = ({ show, onHide, onSelectDocument }) => {
             </div>
 
             <div className='dms-upload-picker-docs-body'>
-              {showLoader ? (
-                <div className='dms-upload-picker-loading'>
-                  <Loader />
-                </div>
-              ) : filteredDocs.length === 0 ? (
+              {showLoader ? null : filteredDocs.length === 0 ? (
                 <div className='dms-upload-picker-empty'>
                   <InsertDriveFileOutlinedIcon sx={{ fontSize: 52, color: "var(--border-color)" }} />
                   <p>{t("DMS.noSignableDocs")}</p>

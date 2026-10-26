@@ -4,13 +4,30 @@ import { PeopleOutlineIcon as PeopleOutlineIcon } from "@/Components/UI/iconComp
 import { PersonAddAltIcon as PersonAddAltIcon } from "@/Components/UI/iconCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons/index";
+import { UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import FileTypeIcon from "./FileTypeIcon";
 import { isDmsSignableDocument } from "../utils/dmsSignBridge";
 import { getPermissionLabelKey, toSharedWithList } from "../utils/dmsShareUtils";
 
-const getActivityText = (item, fallback) => {
+const getActivityActor = (item) => {
+  if (typeof item === "string") return "";
+  return (
+    item?.performedBy ||
+    item?.performedByName ||
+    item?.performedByUser ||
+    item?.createdBy ||
+    item?.createdByName ||
+    item?.userName ||
+    item?.userEmail ||
+    item?.email ||
+    item?.actor ||
+    ""
+  );
+};
+
+const getActivityMessage = (item, fallback) => {
   if (typeof item === "string") return item;
-  const message =
+  return (
     item?.message ||
     item?.description ||
     item?.activity ||
@@ -21,18 +38,14 @@ const getActivityText = (item, fallback) => {
     item?.operation ||
     item?.event ||
     item?.type ||
-    "";
-  const actor =
-    item?.performedBy ||
-    item?.performedByName ||
-    item?.performedByUser ||
-    item?.createdBy ||
-    item?.createdByName ||
-    item?.userName ||
-    item?.userEmail ||
-    item?.email ||
-    item?.actor ||
-    "";
+    fallback
+  );
+};
+
+const getActivityText = (item, fallback) => {
+  if (typeof item === "string") return item;
+  const message = getActivityMessage(item, "");
+  const actor = getActivityActor(item);
   return [actor, message].filter(Boolean).join(" - ") || fallback;
 };
 
@@ -209,21 +222,24 @@ const DMSDetailPanel = ({
             [t("DMS.fileSize"), doc?.size],
             [t("DMS.fileType"), doc?.ext],
             [t("DMS.modified"), doc?.modified],
-            [t("DMS.owner"), doc?.owner],
+            [t("DMS.owner"), doc?.owner, true],
             ...(doc?.folderPath ? [[t("DMS.folderPath"), doc.folderPath]] : []),
             ...shareDetailRows,
             ...(doc?.notificationDate ? [[t("DMS.notificationDate"), doc.notificationDate]] : []),
             ...(doc?.notificationBeforeDays !== "" && doc?.notificationBeforeDays != null
               ? [[t("DMS.notificationBeforeDays"), doc.notificationBeforeDays]]
               : []),
-          ].map(([key, val]) => (
-            <div key={key} className="dms-detail-row">
-              <span className="dms-detail-key">{key}</span>
-              <span className="dms-detail-val" title={val}>
-                {val}
-              </span>
-            </div>
-          ))}
+          ].map(([key, val, isUser]) => {
+            const isUserRow = isUser || key === t("DMS.sharedWith") || key === t("DMS.sharedBy");
+            return (
+              <div key={key} className="dms-detail-row">
+                <span className="dms-detail-key">{key}</span>
+                <span className="dms-detail-val" title={typeof val === "string" ? val : undefined}>
+                  {isUserRow && val ? <UserInitialsBadge name={val} /> : val}
+                </span>
+              </div>
+            );
+          })}
           {doc?.tags && (
             <div className="dms-detail-row" style={{ alignItems: "flex-start" }}>
               <span className="dms-detail-key">{t("DMS.tags")}</span>
@@ -262,13 +278,14 @@ const DMSDetailPanel = ({
             <div className="d-flex flex-column gap-3">
               {activities.map((item, index) => {
                 const time = getActivityTime(item, locale);
+                const actor = getActivityActor(item);
+                const message = getActivityMessage(item, t("DMS.documentActivity"));
                 return (
                   <div key={item?.id ?? item?.activityId ?? index} className="dms-activity-item">
                     <span className="dms-activity-dot completed" />
-                    <div>
-                      <span className="dms-activity-text">
-                        {getActivityText(item, t("DMS.documentActivity"))}
-                      </span>
+                    <div className="d-flex flex-column gap-1">
+                      {actor ? <UserInitialsBadge name={actor} className="dms-user-badge-sm" /> : null}
+                      <span className="dms-activity-text">{message}</span>
                       {time ? <span className="dms-activity-time">{time}</span> : null}
                     </div>
                   </div>
@@ -288,8 +305,7 @@ const DMSDetailPanel = ({
           {sharedWithList.length > 0 ? (
             sharedWithList.map((email) => (
               <div key={email} className="dms-shared-user">
-                <div className="dms-avatar">{email[0].toUpperCase()}</div>
-                <span>{email}</span>
+                <UserInitialsBadge name={email} />
               </div>
             ))
           ) : (

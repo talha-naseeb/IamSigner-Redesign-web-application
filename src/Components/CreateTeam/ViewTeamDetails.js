@@ -4,7 +4,6 @@ import userService from "@/services/userService";
 import documentService from "@/services/documentService";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 
 const ViewTeamDetails = ({ show, onHide, appUserID }) => {
   const { t } = useTranslation();
@@ -40,7 +39,7 @@ const ViewTeamDetails = ({ show, onHide, appUserID }) => {
 
   return (
     <Modal show={show} className='team-details-dialog' onHide={onHide} backdrop='static' keyboard={false} size='lg' centered>
-      <Modal.Header closeButton className='-bottom'>
+      <Modal.Header closeButton>
         <Modal.Title className='d-flex align-items-center gap-2'>
           <div className='viewerProfile'>{userData?.appUser?.fullName?.charAt(0)?.toUpperCase() || "U"}</div>
           <div>
@@ -51,11 +50,7 @@ const ViewTeamDetails = ({ show, onHide, appUserID }) => {
       </Modal.Header>
 
       <Modal.Body className='p-4 custom-table-scrollbar'>
-        {isLoading ? (
-          <div className='d-flex justify-content-center align-items-center' style={{ height: "200px" }}>
-            <Loader />
-          </div>
-        ) : (
+        {!isLoading &&
           userData && (
             <div>
               {/* Basic Information */}
@@ -154,8 +149,7 @@ const ViewTeamDetails = ({ show, onHide, appUserID }) => {
                 </div>
               )}
             </div>
-          )
-        )}
+          )}
       </Modal.Body>
     </Modal>
   );

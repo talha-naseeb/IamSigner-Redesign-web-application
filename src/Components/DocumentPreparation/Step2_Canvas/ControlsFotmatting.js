@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Button, Dropdown, Offcanvas } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useUser } from "@/Context/UserContext";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { MdControlPointDuplicate } from "react-icons/md";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -205,11 +204,6 @@ const ControlsFotmatting = ({ show, onHide, button, onUpdateControlsLocation, se
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <Offcanvas show={show} placement={document.documentElement.dir === "rtl" ? "start" : "end"} style={{ width: "300px", zIndex: "1055" }} onHide={onHide}>
         <Offcanvas.Header style={{ borderBottom: "1px solid #ccc" }} closeButton>
           <Offcanvas.Title>{button.label}</Offcanvas.Title>

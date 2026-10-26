@@ -352,7 +352,9 @@ const EmailTemplates = () => {
                   style={{
                     maxWidth: "100%",
                     overflowX: "auto",
-                    height: "60vh",
+                    minHeight: "440px",
+                    height: "calc(100vh - 280px)",
+                    maxHeight: "calc(100vh - 280px)",
                     backgroundColor: "transparent",
                     boxShadow: "none",
                   }}

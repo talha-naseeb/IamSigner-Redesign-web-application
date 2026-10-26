@@ -59,12 +59,13 @@ export const handleSessionExpiry = () => {
 
   const currentTheme = localStorage.getItem("theme");
   const currentPalette = localStorage.getItem(PALETTE_STORAGE_KEY);
+  const currentLang = localStorage.getItem("i18nextLng");
   
   // Clear tokens from in-memory manager and session storage
   tokenManager.clearToken();
   sessionStorage.clear();
 
-  // Purge sensitive signature data and workflow keys while keeping user theme preferences
+  // Purge sensitive signature data and workflow keys while keeping user theme and language preferences
   localStorage.removeItem("savedSignature");
   localStorage.removeItem("registerSignID");
   localStorage.removeItem("signatoriesID");
@@ -77,6 +78,9 @@ export const handleSessionExpiry = () => {
   }
   if (currentPalette) {
     localStorage.setItem(PALETTE_STORAGE_KEY, currentPalette);
+  }
+  if (currentLang) {
+    localStorage.setItem("i18nextLng", currentLang);
   }
 
   // Clear any stacked error toasts from concurrent failed requests

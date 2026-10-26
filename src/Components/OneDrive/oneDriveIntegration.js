@@ -6,7 +6,6 @@ import { Form } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import axios from "../../Api/api";
-import Loader from "../CommonModals/Loader/Loader";
 import uploadFlowService from "@/services/uploadFlowService";
 import UploadSourceCard from "@/Components/Common/CloudPickers/UploadSourceCard";
 
@@ -166,11 +165,6 @@ export default function OneDriveIntegration({ uploadedFiles, setUploadedFiles, m
 
   return (
     <div>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <UploadSourceCard onClick={handleLogin}>
         <img alt='oneDriveIcon' src={oneDriveIcon} className='h-7 w-7 shrink-0 object-contain' />
         <Form.Group controlId='file-input-add' className='space-y-0'>

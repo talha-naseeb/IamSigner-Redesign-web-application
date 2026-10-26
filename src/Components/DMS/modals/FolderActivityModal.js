@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Modal, Button, Spinner } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons/index";
+import { UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 
 const ACTIVITY_PAGE_SIZE = 5;
 
@@ -154,9 +155,10 @@ const FolderActivityModal = ({ show, folder, activities = [], loading = false, o
                     {details ? <p className="dms-folder-activity-details">{details}</p> : null}
                     <div className="dms-folder-activity-meta">
                       {actor ? (
-                        <span title={actor}>
-                          <strong>{t("DMS.performedBy")}:</strong> {actor}
-                        </span>
+                        <div className="d-inline-flex align-items-center gap-1.5 me-2">
+                          <span className="text-muted">{t("DMS.performedBy")}:</span>
+                          <UserInitialsBadge name={actor} className="dms-user-badge-sm" />
+                        </div>
                       ) : null}
                       {actor && time ? <span className="dms-folder-activity-separator">•</span> : null}
                       {time ? <span>{time}</span> : null}

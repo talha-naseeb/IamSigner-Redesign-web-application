@@ -51,7 +51,8 @@
   top: 2px;
   left: 2px;
   transition: transform 0.2s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  box-shadow: none;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .cal-toggle-track.on .cal-toggle-thumb {
@@ -278,7 +279,7 @@
   border: 1px solid color-mix(in srgb, var(--modern-violet) 20%, var(--modern-border, var(--border-color)));
   border-radius: var(--radius-lg, 12px);
   background: linear-gradient(145deg, color-mix(in srgb, var(--modern-violet) 7%, var(--modern-card)), var(--modern-card));
-  box-shadow: var(--modern-card-shadow);
+  box-shadow: none;
 }
 
 .home-calendar .cal-converter {

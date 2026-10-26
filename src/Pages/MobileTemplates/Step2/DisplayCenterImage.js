@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ImageWithControls from "@/Components/DocumentPreparation/Step2_Canvas/ImageWithControls";
 import useDragAutoScroll from "@/Components/SignaturePlacement/useDragAutoScroll";
-import Loader from "@/Components/CommonModals/Loader/Loader";
+import { tokenManager } from "@/services/tokenManager";
+import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
 
 const toFiniteNumber = (v, fallback) => { const n = parseFloat(v); return Number.isFinite(n) ? n : fallback; };
 
@@ -406,10 +407,16 @@ const ImageWithDropZone = ({
       // toast.success("Location updated successfully");
     } catch (error) {
       if (error?.response?.data?.statusCode == 2 || error?.response?.data?.statusCode == 4) {
-        sessionStorage.removeItem("token");
+        const currentTheme = localStorage.getItem("theme");
+        const currentPalette = localStorage.getItem(PALETTE_STORAGE_KEY);
+        const currentLang = localStorage.getItem("i18nextLng");
+        tokenManager.clearToken();
         localStorage.clear();
+        if (currentTheme) localStorage.setItem("theme", currentTheme);
+        if (currentPalette) localStorage.setItem(PALETTE_STORAGE_KEY, currentPalette);
+        if (currentLang) localStorage.setItem("i18nextLng", currentLang);
         navigate("/");
-        toast.info("session expired");
+        toast.info(t("uploadDocFlow.sessionExpire"));
       } else {
         toast.error(t("uploadDocFlow.errLocation"));
         // setIsLoading(false);
@@ -439,8 +446,14 @@ const ImageWithDropZone = ({
         setIsLoading(false);
       } catch (error) {
         if (error?.response?.data?.statusCode == 2 || error?.response?.data?.statusCode == 4) {
-          sessionStorage.removeItem("token");
+          const currentTheme = localStorage.getItem("theme");
+          const currentPalette = localStorage.getItem(PALETTE_STORAGE_KEY);
+          const currentLang = localStorage.getItem("i18nextLng");
+          tokenManager.clearToken();
           localStorage.clear();
+          if (currentTheme) localStorage.setItem("theme", currentTheme);
+          if (currentPalette) localStorage.setItem(PALETTE_STORAGE_KEY, currentPalette);
+          if (currentLang) localStorage.setItem("i18nextLng", currentLang);
           setIsLoading(false);
           navigate("/");
           toast.info(t("uploadDocFlow.sessionExpire"));
@@ -472,11 +485,6 @@ const ImageWithDropZone = ({
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       <ImageWithControls
         selectedImage={selectedImage}

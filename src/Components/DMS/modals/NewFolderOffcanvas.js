@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Offcanvas, Form, Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 
 const FOLDER_COLOR_OPTIONS = [
   { value: "", labelKey: "DMS.defaultBrandColor", swatch: "var(--theme-color)" },
@@ -83,11 +82,6 @@ const NewFolderOffcanvas = ({
       backdrop={creating ? "static" : true}
       keyboard={!creating}
     >
-      {creating ? (
-        <div className="loader-overlay">
-          <Loader />
-        </div>
-      ) : null}
       <Offcanvas.Header closeButton={!creating}>
         <Offcanvas.Title>{t("DMS.createNewFolder")}</Offcanvas.Title>
       </Offcanvas.Header>
@@ -120,7 +114,7 @@ const NewFolderOffcanvas = ({
               </Form.Label>
               <Form.Control
                 as="textarea"
-                rows={3}
+                rows={4}
                 placeholder={t("DMS.folderDescriptionPlaceholder")}
                 disabled={creating}
                 {...register("description")}

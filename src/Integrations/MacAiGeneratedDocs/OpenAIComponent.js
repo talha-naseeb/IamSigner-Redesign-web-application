@@ -6,7 +6,6 @@ import { Icons } from "@/assets/Icons";
 import { useUser } from "@/Context/UserContext";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import integrationService from "@/services/integrationService";
 
 function OpenAIComponent() {
@@ -293,11 +292,6 @@ function OpenAIComponent() {
           {userAccess.macAI === true ? (
             <>
               <div className='container my-3'>
-                {isLoading && (
-                  <div className='loader-overlay'>
-                    <Loader />
-                  </div>
-                )}
                 {isOPenAILoading && (
                   <div className='loader-overlay'>
                     <div className='OpenAiloader'></div>

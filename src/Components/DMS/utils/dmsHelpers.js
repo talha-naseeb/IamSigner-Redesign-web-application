@@ -31,6 +31,14 @@ export const getFolderTreeKey = (treeScope, id) => {
 export const getFolderDocsMapKey = (treeScope, folderId) =>
   `${treeScope ?? DMS_SCOPE_OWN}:${String(folderId ?? "")}`;
 
+/** Returns true if node or any recursive descendant matches the target tree key. */
+export const hasSelectedChild = (node, key) => {
+  if (!node || !key) return false;
+  const nodeKey = node.treeKey ?? node.id;
+  if (nodeKey === key) return true;
+  return Array.isArray(node.children) && node.children.some((child) => hasSelectedChild(child, key));
+};
+
 /** Dedupe shared list rows by shareId (fallback to id). */
 export const dedupeSharedListItems = (items = []) => {
   const seen = new Set();

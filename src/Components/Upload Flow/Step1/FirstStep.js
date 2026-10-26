@@ -3,17 +3,20 @@ import { Button, Col, Container, Form, Modal, Row, Dropdown, Accordion } from "@
 import uploadFlowService from "@/services/uploadFlowService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import ReferenceNumber from "@/Components/DocumentPreparation/Step1_Source/ReferenceNumber";
-import Description from "@/Components/DocumentPreparation/Step1_Source/Description";
+import {
+  ReferenceNumber,
+  Description,
+  DocumentSourceCards,
+  UploadedDocumentsTable,
+} from "@/Components/DocumentPreparation";
 import { DropboxPicker as Dropbox, GoogleDrivePicker as UploadFromGoogleDrive } from "@/Components/Common/CloudPickers";
 import { useDropzone } from "react-dropzone";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import ListOfDocuments from "@/Integrations/MacAiGeneratedDocs/ListOfDocuments";
 import ManualDosList from "@/Integrations/ManuallyGeneratedDocs/ManualDosList";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import OneDriveIntegration from "@/Components/OneDrive/oneDriveIntegration";
 import DmsUploadIntegration, { useDmsDocumentUpload } from "@/Components/DMS/DmsUploadIntegration";
 import DmsDocumentPickerModal from "@/Components/DMS/DmsDocumentPickerModal";
@@ -490,176 +493,82 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
     <>
       <Container className='upload-container'>
         <div className='mt-4'>
-          <div
-            {...getRootProps({
-              className: "m-0 flex flex-col justify-center gap-[5px] rounded-lg border-[3px] border-dashed border-[var(--modern-border-strong)] bg-card p-10 transition-colors hover:border-primary",
-            })}
-          >
-            <div className='my-4 flex flex-col items-center justify-center gap-4'>
-              <Icons.UploadCloud size={35} color='var(--modern-primary)' />
-              <label className='text-lg font-normal text-foreground'>{t("uploadDocFlow.easilyUpload")}</label>
-            </div>
-            <div className='grid grid-cols-1 gap-2 md:grid-cols-4'>
-              <div className='min-w-0'>
-                <Form.Group controlId='file-input-add' className='space-y-0'>
-                  <div
-                    {...getRootProps({
-                      className: uploadSourceCardClassName,
-                      onClick: (e) => {
-                        e.stopPropagation();
-                      },
-                    })}
-                  >
-                    <Icons.Local />
-                    <Form.Label className='m-0 cursor-pointer whitespace-nowrap text-sm font-medium'>{t("uploadDocFlow.local")}</Form.Label>
-                    <Form.Control
-                      {...getInputProps()}
-                      className='!sr-only'
-                      type='file'
-                      name='file'
-                      accept='.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx'
-                      multiple
-                    />
-                  </div>
-                </Form.Group>
-              </div>
-              {isDmsEnabled && canUserStartDmsSign(user, userAccess) ? (
-                <div className='min-w-0'>
-                  <DmsUploadIntegration
-                    onOpenPicker={() => setIsDmsPickerOpen(true)}
-                    isDmsUploading={isDmsUploading}
-                  />
-                </div>
-              ) : null}
-              {user.isDropbox &&
-                (userAccess.dropbox ? (
-                  <div className='min-w-0'>
-                    <Dropbox
-                      onFileSelected={handleDropboxFileSelected}
-                      uploadedFiles={uploadedFiles}
-                      setUploadedFiles={setUploadedFiles}
-                      masterDocIDs={masterDocIDs}
-                      setMasterDocIDs={setMasterDocIDs}
-                      fileToggleStates={fileToggleStates}
-                      setFileToggleStates={setFileToggleStates}
-                      registerSignID={registerSignID}
-                      setRegisterSignID={setRegisterSignID}
-                      email={user.email}
-                    />
-                  </div>
-                ) : null)}
-              {user.isGoogleDrive &&
-                (userAccess.googDrive ? (
-                  <div className='min-w-0'>
-                    <UploadFromGoogleDrive
-                      uploadedFiles={uploadedFiles}
-                      setUploadedFiles={setUploadedFiles}
-                      masterDocIDs={masterDocIDs}
-                      setMasterDocIDs={setMasterDocIDs}
-                      fileToggleStates={fileToggleStates}
-                      setFileToggleStates={setFileToggleStates}
-                      registerSignID={registerSignID}
-                      setRegisterSignID={setRegisterSignID}
-                      email={user.email}
-                    />
-                  </div>
-                ) : null)}
-              {user.isOneDrive &&
-                (userAccess.oneDrive ? (
-                  <div className='min-w-0'>
-                    <OneDriveIntegration
-                      uploadedFiles={uploadedFiles}
-                      setUploadedFiles={setUploadedFiles}
-                      masterDocIDs={masterDocIDs}
-                      setMasterDocIDs={setMasterDocIDs}
-                      fileToggleStates={fileToggleStates}
-                      setFileToggleStates={setFileToggleStates}
-                      registerSignID={registerSignID}
-                      setRegisterSignID={setRegisterSignID}
-                      email={user.email}
-                    />
-                  </div>
-                ) : null)}
-            </div>
-          </div>
+          <DocumentSourceCards
+            getRootProps={getRootProps}
+            getInputProps={getInputProps}
+            user={user}
+            userAccess={userAccess}
+            isDmsEnabled={isDmsEnabled}
+            canStartDms={canUserStartDmsSign(user, userAccess)}
+            onOpenDmsPicker={() => setIsDmsPickerOpen(true)}
+            isDmsUploading={isDmsUploading}
+            dropboxProps={{
+              onFileSelected: handleDropboxFileSelected,
+              uploadedFiles,
+              setUploadedFiles,
+              masterDocIDs,
+              setMasterDocIDs,
+              fileToggleStates,
+              setFileToggleStates,
+              registerSignID,
+              setRegisterSignID,
+              email: user.email,
+            }}
+            googleDriveProps={{
+              uploadedFiles,
+              setUploadedFiles,
+              masterDocIDs,
+              setMasterDocIDs,
+              fileToggleStates,
+              setFileToggleStates,
+              registerSignID,
+              setRegisterSignID,
+              email: user.email,
+            }}
+            oneDriveProps={{
+              uploadedFiles,
+              setUploadedFiles,
+              masterDocIDs,
+              setMasterDocIDs,
+              fileToggleStates,
+              setFileToggleStates,
+              registerSignID,
+              setRegisterSignID,
+              email: user.email,
+            }}
+            uploadErrorMessage={uploadErrorMessage}
+            t={t}
+          />
 
-          {uploadErrorMessage && (
-            <p className='flex items-start gap-2 text-sm italic text-[var(--modern-danger)]'>
-              <Icons.AlertCircle className='mb-1 mx-2' />
-              {uploadErrorMessage}
-            </p>
-          )}
+          <UploadedDocumentsTable
+            uploadedFiles={uploadedFiles}
+            isTemplateApplied={isTemplateApplied}
+            masterDocIDs={masterDocIDs}
+            onViewFile={handleFileview}
+            onDeleteFile={handleShowConfirmModal}
+            onApplyTemplate={(id, idx) => handleGetTemplate(id, totalPages[idx], idx, true)}
+            onRemoveTemplate={(id, idx) => handleRemoveTemplate(id, appliedTemplates[id], idx)}
+            t={t}
+          />
 
-          {loading ||
-            (isLoading && (
-              <div className='loader-overlay'>
-                <Loader />
-              </div>
-            ))}
-
-          <div className='mt-3 space-y-2' id='upload_file_bx '>
-            {uploadedFiles.map((fileName, index, file) => (
-              <div key={index} className='flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-card px-3 py-3 text-foreground'>
-                <p className='m-0 flex min-w-0 items-center gap-2 break-all text-sm'>
-                  <Icons.PDFs size={22} />
-                  {fileName} {isTemplateApplied[index] && <Icons.Templates size={18} />}
-                </p>
-
-                <div className='flex shrink-0 items-center'>
-                  <Dropdown>
-                    <Dropdown.Toggle as={CustomToggle} />
-                    <Dropdown.Menu>
-                      {!isTemplateApplied[index] && (
-                        <Dropdown.Item
-                          className='flex items-center gap-2'
-                          onClick={() => {
-                            handleGetTemplate(masterDocIDs[index], totalPages[index], index, true);
-                          }}
-                        >
-                          <Icons.ApplyTemplate size={18} />
-                          {t("uploadDocFlow.Applytemplate")}
-                        </Dropdown.Item>
-                      )}
-                      {isTemplateApplied[index] && (
-                        <Dropdown.Item className='flex items-center gap-2' onClick={() => handleRemoveTemplate(masterDocIDs[index], appliedTemplates[masterDocIDs[index]], index)}>
-                          <Icons.RemoveTemplate size={18} />
-                          {t("uploadDocFlow.removeTemplate")}
-                        </Dropdown.Item>
-                      )}
-                      <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(masterDocIDs[index], fileName)}>
-                        <Icons.View size={18} />
-                        {t("uploadDocFlow.view")}
-                      </Dropdown.Item>
-
-                      <Dropdown.Item className='flex items-center gap-2' onClick={() => handleShowConfirmModal(masterDocIDs[index], index)}>
-                        <Icons.DeleteAction size={18} />
-                        {t("uploadDocFlow.delete")}
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-
-                  <Modal show={templatesAppliedModal} onHide={() => setTemplatesAppliedModal(false)} dialogClassName='custom-modal-width'>
-                    <Modal.Header closeButton>
-                      <Modal.Title>{t("uploadDocFlow.saveTemplate")}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body className='px-3 py-2'>{t("uploadDocFlow.matchingTemplates")}</Modal.Body>
-                    <Modal.Footer>
-                      <Button
-                        variant='none'
-                        className='applyBtn'
-                        onClick={() => {
-                          setTemplatesAppliedModal(false);
-                          setTemplatesModalShow(true);
-                        }}
-                      >
-                        {t("uploadDocFlow.yesProceed")}
-                      </Button>
-                    </Modal.Footer>
-                  </Modal>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Modal show={templatesAppliedModal} onHide={() => setTemplatesAppliedModal(false)} dialogClassName='custom-modal-width'>
+            <Modal.Header closeButton>
+              <Modal.Title>{t("uploadDocFlow.saveTemplate")}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className='px-3 py-2'>{t("uploadDocFlow.matchingTemplates")}</Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant='none'
+                className='applyBtn'
+                onClick={() => {
+                  setTemplatesAppliedModal(false);
+                  setTemplatesModalShow(true);
+                }}
+              >
+                {t("uploadDocFlow.yesProceed")}
+              </Button>
+            </Modal.Footer>
+          </Modal>
 
           <DeleteConfirmationModal
             show={showConfirmModal}
@@ -717,7 +626,7 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
               {viewMode === "allTemplates" && (
                 <TableContainer
                   component={Paper}
-                  className='custom-table-scrollbar max-w-full overflow-x-auto h-[60vh]'
+                  className='custom-table-scrollbar max-w-full overflow-x-auto max-h-[min(60vh,520px)] rounded-xl border border-[var(--modern-border)]'
                 >
                   <Table stickyHeader className='border-0'>
                     <TableHead>
@@ -733,19 +642,21 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                     <TableBody>
                       {allTemplates.length === 0 && (
                         <TableRow>
-                          <td colSpan='6' className='p-5 text-center text-[var(--modern-muted,#64748b)]'>
-                            <div className="flex flex-col items-center gap-2">
-                              <Icons.BulkDocuments size={50} />
-                              {t("dashboardCardStatuses.notDocsFound")}
-                            </div>
-                          </td>
+                          <TableCell colSpan={allTemplatesColumns.length} className='table-empty-state-cell'>
+                            <TableEmptyState
+                              icon={<Icons.BulkDocuments size={50} />}
+                              title={t("dashboardCardStatuses.notDocsFound")}
+                            />
+                          </TableCell>
                         </TableRow>
                       )}
 
                       {allTemplates.map((row, index) => (
                         <TableRow className='' key={index}>
                           <TableCell className='TableCell'>{row.templateName}</TableCell>
-                          <TableCell className='TableCell'>{row.createdBy}</TableCell>
+                          <TableCell className='TableCell'>
+                            <UserInitialsBadge name={row.createdBy} />
+                          </TableCell>
                           <TableCell className='TableCell'>
                             <Button variant='text' className='SignNowbtn' onClick={() => handleApplyTemplate(row.templateID)}>
                               {t("uploadDocFlow.apply")}
@@ -760,7 +671,7 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
               {viewMode === "matchingTemplates" && (
                 <TableContainer
                   component={Paper}
-                  className='custom-table-scrollbar max-w-full overflow-x-auto h-[60vh]'
+                  className='custom-table-scrollbar max-w-full overflow-x-auto max-h-[min(60vh,520px)] rounded-xl border border-[var(--modern-border)]'
                 >
                   <Table stickyHeader className='border-0'>
                     <TableHead>
@@ -777,12 +688,12 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                     <TableBody>
                       {matchingTemplates && matchingTemplates.length === 0 && (
                         <TableRow>
-                          <td colSpan='6' className='p-5 text-center text-[var(--modern-muted,#64748b)]'>
-                            <div className="flex flex-col items-center gap-2">
-                              <Icons.BulkDocuments size={50} color='#F0F3F4' />
-                              {t("dashboardCardStatuses.notDocsFound")}
-                            </div>
-                          </td>
+                          <TableCell colSpan={matchingTemplatesColumns ? matchingTemplatesColumns.length : 3} className='table-empty-state-cell'>
+                            <TableEmptyState
+                              icon={<Icons.BulkDocuments size={50} />}
+                              title={t("dashboardCardStatuses.notDocsFound")}
+                            />
+                          </TableCell>
                         </TableRow>
                       )}
 
@@ -790,7 +701,9 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
                         matchingTemplates.map((row, index) => (
                           <TableRow key={index}>
                             <TableCell className='TableCell'>{row.templateName}</TableCell>
-                            <TableCell className='TableCell'>{row.createdBy}</TableCell>
+                            <TableCell className='TableCell'>
+                              <UserInitialsBadge name={row.createdBy} />
+                            </TableCell>
                             <TableCell className='TableCell'>
                               <Button variant='text' className='SignNowbtn' onClick={() => handleApplyTemplate(row.templateID)}>
                                 {t("uploadDocFlow.apply")}

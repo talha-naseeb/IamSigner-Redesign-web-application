@@ -1,10 +1,10 @@
 import { Dropdown } from "@/Components/UI/shadcnCompat";
-import { AccessTimeIcon as AccessTimeIcon } from "@/Components/UI/iconCompat";
 import { FolderOutlinedIcon as FolderOutlinedIcon } from "@/Components/UI/iconCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons/index";
+import { UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
-import FileTypeIcon from "./FileTypeIcon";
+import { FileTypeBadge } from "./FileTypeIcon";
 import { isDmsSignableDocument } from "../utils/dmsSignBridge";
 import { resolveDmsDocumentAccess } from "../utils/dmsHelpers";
 import { getPermissionLabelKey } from "../utils/dmsShareUtils";
@@ -114,7 +114,7 @@ const DocumentCard = ({
       className={`dms-doc-card${selected ? " dms-doc-card-selected" : ""}${isSharedDoc ? " dms-doc-card-shared" : ""}`}
       onClick={() => onSelect(doc)}
     >
-      <div className="dms-doc-card-header">
+      <div className="dms-doc-card-hero">
         {selectionEnabled ? (
           <input
             type="checkbox"
@@ -125,48 +125,52 @@ const DocumentCard = ({
             onClick={(e) => e.stopPropagation()}
           />
         ) : null}
-        <FileTypeIcon ext={doc.ext} size={42} />
-        {actionMenu}
+        <FileTypeBadge ext={doc.ext} />
       </div>
 
-      <div className="dms-doc-card-name" title={doc.name}>{doc.name}</div>
+      <div className="dms-doc-card-body">
+        <div className="dms-doc-card-name" title={doc.name}>{doc.name}</div>
+        <div className="dms-doc-card-modified">
+          {doc.modified
+            ? doc.modified.startsWith("Edited")
+              ? doc.modified
+              : `${t("DMS.edited", "Edited")} ${doc.modified}`
+            : "—"}
+        </div>
+        {doc.owner ? (
+          <div className="dms-doc-card-owner">
+            <UserInitialsBadge name={doc.owner} className="dms-user-badge-sm" />
+          </div>
+        ) : null}
+        {showFolderPath ? (
+          <div className="dms-doc-card-path" title={doc.folderPath}>
+            <FolderOutlinedIcon sx={{ fontSize: 11, flexShrink: 0 }} />
+            <span>{doc.folderPath}</span>
+          </div>
+        ) : null}
+        {isSharedDoc && doc.sharedOn ? (
+          <div className="dms-doc-card-share-line">
+            {t("DMS.sharedOn")}: {doc.sharedOn}
+          </div>
+        ) : null}
+      </div>
 
-      {isSharedDoc ? (
-        <>
-          {doc.sharedOn ? (
-            <div className="dms-doc-card-share-line">
-              {t("DMS.sharedOn")}: {doc.sharedOn}
-            </div>
-          ) : null}
-          <div className="dms-folder-card-meta">
-            {doc.size && doc.size !== "—" ? (
-              <span className="dms-folder-card-count">{doc.size}</span>
-            ) : null}
-            {permissionLabel ? (
-              <span className="dms-folder-permission-tag">
-                {t("DMS.permission")}: {permissionLabel}
-              </span>
-            ) : null}
+      <div className="dms-doc-card-bottom">
+        <div className="dms-doc-card-size-wrap">
+          <span className="dms-doc-size">{doc.size && doc.size !== "—" ? doc.size : "—"}</span>
+          {isSharedDoc ? (
             <span className="dms-folder-shared-tag">{t("DMS.shared")}</span>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="dms-doc-card-meta">
-            <span className="dms-doc-size">{doc.size}</span>
-          </div>
-          {showFolderPath ? (
-            <div className="dms-doc-card-path" title={doc.folderPath}>
-              <FolderOutlinedIcon sx={{ fontSize: 11, flexShrink: 0 }} />
-              <span>{doc.folderPath}</span>
-            </div>
           ) : null}
-          <div className="dms-doc-card-footer">
-            <AccessTimeIcon sx={{ fontSize: 12, color: "var(--text-secondary)" }} />
-            <span>{doc.modified}</span>
-          </div>
-        </>
-      )}
+          {permissionLabel ? (
+            <span className="dms-folder-permission-tag" title={permissionLabel}>
+              {permissionLabel}
+            </span>
+          ) : null}
+        </div>
+        <div className="dms-doc-card-actions" onClick={(e) => e.stopPropagation()}>
+          {actionMenu}
+        </div>
+      </div>
     </div>
   );
 };

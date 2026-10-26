@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import verificationService from "@/services/verificationService";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 
 const ShareDownloadModal = ({ show, handleClose, dataRow }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -129,11 +128,6 @@ const ShareDownloadModal = ({ show, handleClose, dataRow }) => {
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       <Modal show={show} onHide={handleClose} dialogClassName='custom-modal-width'>
         <Modal.Header>

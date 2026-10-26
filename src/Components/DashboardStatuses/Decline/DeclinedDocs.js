@@ -4,15 +4,15 @@ import { toast } from "react-toastify";
 import SignOrder from "@/Components/CommonModals/SignOrder/SignOrder";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
 import DocumentSearchFilters from "@/Components/CommonModals/SearchFilters/DocSearchFilter";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { useUser } from "@/Context/UserContext";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import DownloadModal from "@/Components/CommonModals/DownloadModal/DownloadModal";
 import { Icons } from "@/assets/Icons";
 import dashboardService from "@/services/dashboardService";
 import documentService from "@/services/documentService";
+import DocumentStatusTable, { formatTableDate } from "@/Components/DashboardStatuses/DocumentStatusTable";
 
 const DeclinedDocs = () => {
   const { t } = useTranslation();
@@ -126,29 +126,14 @@ const DeclinedDocs = () => {
   };
 
   const columns = [
-    { label: t("tablesLabel.docName"), key: "docName" },
-    { label: t("tablesLabel.docNumber"), key: "regCompanyPrefixNo" },
-    { label: t("tablesLabel.date"), key: "createdOn" },
-    { label: t("tablesLabel.Remarks"), key: "declinedReason" },
-    { label: t("tablesLabel.refNumber"), key: "referenceNumber" },
-    { label: t("tablesLabel.createdby"), key: "createdByName" },
-    { label: "", key: "actions" },
+    { label: t("tablesLabel.docName"), key: "docName", width: "24%" },
+    { label: t("tablesLabel.docNumber"), key: "regCompanyPrefixNo", width: "16%" },
+    { label: t("tablesLabel.date"), key: "createdOn", width: "16%" },
+    { label: t("tablesLabel.Remarks"), key: "declinedReason", width: "16%" },
+    { label: t("tablesLabel.refNumber"), key: "referenceNumber", width: "12%" },
+    { label: t("tablesLabel.createdby"), key: "createdByName", width: "10%" },
+    { label: "", key: "actions", width: "6%", align: "right" },
   ];
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    const formattedMinutes = (minutes < 10 ? "0" : "") + minutes;
-
-    return `${day}/${month}/${year} ${hours}:${formattedMinutes} ${ampm}`;
-  };
 
   const handleCellClick = (event) => {
     const cell = event.target;
@@ -157,18 +142,11 @@ const DeclinedDocs = () => {
 
   return (
     <Grid className='container' style={{ marginTop: "12px" }}>
-      <Grid>
-        {/* Loader overlay */}
-        {isLoading && (
-          <div className='loader-overlay'>
-            <Loader />
-          </div>
-        )}
-
-        <div className='py-3 p-3 container pendingtable'>
-          <div className="document-status-toolbar">
-            <h4>{t("menuButtons.declinedDocs")}</h4>
-
+      <Grid item xs={12}>
+        <DocumentStatusTable
+          title={t("menuButtons.declinedDocs")}
+          count={searchResults.length}
+          searchFilter={
             <DocumentSearchFilters
               startDate={startDate}
               endDate={endDate}
@@ -183,102 +161,59 @@ const DeclinedDocs = () => {
               handleSearch={handleSearch}
               clearSearch={clearSearch}
             />
-          </div>
-          {/* Table */}
-          <TableContainer
-            component={Paper}
-            className='custom-table-scrollbar'
-            style={{
-              maxWidth: "100%",
-              overflowX: "auto",
-              height: "70vh",
-            }}
-          >
-            <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
-              {/* Table Headers */}
-              <TableHead className='customTableHead'>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell key={column.label} className='TableHeaderCell'>
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-
-              {/* Table Body */}
-              <TableBody>
-                {searchResults.length === 0 && (
-                  <TableRow>
-                    <td colSpan='6' className='p-5 text-center'>
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                        <Icons.BulkDocuments size={50} />
-                        {t("dashboardCardStatuses.notDocsFound")}
-                      </div>
-                    </td>
-                  </TableRow>
+          }
+          columns={columns}
+          data={searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+          totalItems={searchResults.length}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handleChangePage}
+          tableContainerStyle={{ maxHeight: "calc(100vh - 280px)" }}
+          renderRow={(row, index) => (
+            <TableRow key={row.masterDocID || index} hover>
+              <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell font-medium text-[var(--modern-text)]' title={row.docName} style={{ width: "24%" }}>
+                {row.docName}
+              </TableCell>
+              <TableCell className='TableCell' style={{ width: "16%" }}>
+                {row.regCompanyPrefixNo || "—"}
+              </TableCell>
+              <TableCell className='TableCell text-[var(--modern-muted)]' style={{ width: "16%" }}>
+                {row.declinedDate ? formatTableDate(row.declinedDateFormatted || row.declinedDate) : "—"}
+              </TableCell>
+              <TableCell className='TableCell truncate-cell' title={row.declinedReason} onClick={(e) => handleCellClick(e)} style={{ width: "16%" }}>
+                {row.declinedReason || "—"}
+              </TableCell>
+              <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell truncate-ref-cell' title={row.referenceNumber} style={{ width: "12%" }}>
+                {row.referenceNumber || "—"}
+              </TableCell>
+              <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell' style={{ width: "10%" }}>
+                <UserInitialsBadge name={row.createdByName} />
+              </TableCell>
+              <TableCell className='TableCell py-0 text-right' style={{ width: "6%" }}>
+                {userAccess.remainingDays <= 0 ? (
+                  <Dropdown />
+                ) : (
+                  <Dropdown>
+                    <Dropdown.Toggle as={CustomToggle} />
+                    <Dropdown.Menu>
+                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileDownload(row)}>
+                        <Icons.Download size={20} />
+                        {t("dashboardCardStatuses.download")}
+                      </Dropdown.Item>
+                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleView(row)}>
+                        <Icons.View size={20} />
+                        {t("dashboardCardStatuses.view")}
+                      </Dropdown.Item>
+                      <Dropdown.Item>
+                        <SignOrder masterDocID={row.masterDocID} />
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                 )}
-
-                {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                  <TableRow key={index}>
-                    {/* Table Cells */}
-                    <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                      {row.docName}
-                    </TableCell>
-                    <TableCell className='TableCell'>{row.regCompanyPrefixNo}</TableCell>
-                    <TableCell className='TableCell'>{row.declinedDate ? formatDate(row.declinedDateFormatted) : ""}</TableCell>
-                    <TableCell className='TableCell truncate-cell' onClick={(e) => handleCellClick(e)}>
-                      {row.declinedReason}
-                    </TableCell>
-                    <TableCell className='TableCell'>{row.referenceNumber}</TableCell>
-                    <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                      {row.createdByName}
-                    </TableCell>
-
-                    {userAccess.remainingDays <= 0 ? (
-                      <>
-                        <TableCell className='TableCell py-0'>
-                          <Dropdown></Dropdown>
-                        </TableCell>
-                      </>
-                    ) : (
-                      <>
-                        <TableCell className='TableCell py-0'>
-                          <Dropdown>
-                            <Dropdown.Toggle as={CustomToggle} />
-
-                            <Dropdown.Menu>
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileDownload(row)}>
-                                <Icons.Download size={20} />
-                                {t("dashboardCardStatuses.download")}
-                              </Dropdown.Item>
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleView(row)}>
-                                <Icons.View size={20} />
-                                {t("dashboardCardStatuses.view")}
-                              </Dropdown.Item>
-                              <Dropdown.Item>
-                                <SignOrder masterDocID={row.masterDocID} />
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </TableCell>
-                      </>
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-            <div className='showHideNoDocs'>
-              {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
-            </div>
-            <Stack spacing={2}>
-              <Pagination count={Math.ceil(data.length / rowsPerPage)} variant='outlined' shape='rounded' page={page + 1} onChange={(event, newPage) => handleChangePage(event, newPage - 1)} />
-            </Stack>
-          </div>
-        </div>
+              </TableCell>
+            </TableRow>
+          )}
+        />
       </Grid>
 
       <DownloadModal

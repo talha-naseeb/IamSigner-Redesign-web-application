@@ -4,12 +4,11 @@ import { useUser } from "@/Context/UserContext";
 import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import { useNavigate } from "react-router-dom";
-import CCEmail from "@/Components/DocumentPreparation/Step3_Recipients/CCEmail";
+import { CCEmail, DispatchSummaryBar } from "@/Components/DocumentPreparation";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import { useForm } from "react-hook-form";
 import { useDropzone } from "react-dropzone";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import FolderSelection from "./FolderSelection";
@@ -17,6 +16,8 @@ import DateRangePicker from "@/Components/Common/DateRangePicker/DateRangePicker
 import { DateObject } from "react-multi-date-picker";
 import { startOfToday } from "date-fns";
 import UploadSourceCard from "@/Components/Common/CloudPickers/UploadSourceCard";
+import { tokenManager } from "@/services/tokenManager";
+import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
 
 const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
   const { t } = useTranslation();
@@ -617,8 +618,14 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
       toast.error("Something wrong. Try later");
 
       if (error?.response?.data?.statusCode === 2 || error?.response?.data?.statusCode === 4) {
-        sessionStorage.removeItem("token");
+        const currentTheme = localStorage.getItem("theme");
+        const currentPalette = localStorage.getItem(PALETTE_STORAGE_KEY);
+        const currentLang = localStorage.getItem("i18nextLng");
+        tokenManager.clearToken();
         localStorage.clear();
+        if (currentTheme) localStorage.setItem("theme", currentTheme);
+        if (currentPalette) localStorage.setItem(PALETTE_STORAGE_KEY, currentPalette);
+        if (currentLang) localStorage.setItem("i18nextLng", currentLang);
         setIsLoading(false);
         navigate("/");
         toast.info(t("uploadDocFlow.sessionExpire"));
@@ -713,11 +720,6 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
 
   return (
     <Container className='upload-container-thirdStep'>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <div className='upload_body' id='part_one'>
         <div>
           {userAccess.supportDocs === true ? (
@@ -748,18 +750,17 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
                         {fileName}
                       </p>
                       <Dropdown>
-                        <Dropdown.Toggle as={CustomToggle}>
-                          <Dropdown.Menu>
-                            <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(supportingDocIDs[index])}>
-                              <Icons.View size={18} />
-                              {t("uploadDocFlow.view")}
-                            </Dropdown.Item>
-                            <Dropdown.Item className='flex items-center gap-2' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
-                              <Icons.DeleteAction size={18} />
-                              {t("uploadDocFlow.delete")}
-                            </Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown.Toggle>
+                        <Dropdown.Toggle as={CustomToggle} />
+                        <Dropdown.Menu align='end'>
+                          <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(supportingDocIDs[index])}>
+                            <Icons.View size={18} />
+                            {t("uploadDocFlow.view")}
+                          </Dropdown.Item>
+                          <Dropdown.Item className='flex items-center gap-2' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
+                            <Icons.DeleteAction size={18} />
+                            {t("uploadDocFlow.delete")}
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
                       </Dropdown>
                     </div>
                   ))}
@@ -1020,14 +1021,11 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
             </Accordion>
           </div>
 
-          <div className='fixed bottom-0 left-0 z-[1040] flex w-full items-center justify-between border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] px-5 py-2.5'>
-            <Button variant='outline' className='min-h-10 px-5 font-semibold' id='hide_part_one' onClick={handleBack}>
-              {t("uploadDocFlow.back")}
-            </Button>
-            <Button variant='primary' className='min-h-10 px-5 font-semibold' id='hide_part_one' onClick={openConfirmationModal}>
-              {t("uploadDocFlow.sendAndSign")}
-            </Button>
-          </div>
+          <DispatchSummaryBar
+            onBack={handleBack}
+            onConfirm={openConfirmationModal}
+            t={t}
+          />
 
           {/* supportin file delete modal */}
           <DeleteConfirmationModal

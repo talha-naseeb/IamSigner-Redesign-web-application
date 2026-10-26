@@ -4,6 +4,7 @@ import { Offcanvas, Button, Form, Spinner } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons/index";
+import { UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import userService from "@/services/userService";
 import { DMS_PERMISSION_NAMES, DMS_PERMISSION_OPTIONS } from "../constants/dmsConfig";
 import {
@@ -17,12 +18,6 @@ import {
   parsePermissionName,
   shareDraftEquals,
 } from "../utils/dmsShareUtils";
-
-const avatarInitial = (email) => {
-  const s = String(email || "").trim();
-  if (!s) return "?";
-  return s[0].toUpperCase();
-};
 
 const FolderAccessModal = ({ show, target, folder, onHide, onInvitePeople, onSharesChanged }) => {
   const { t } = useTranslation();
@@ -167,8 +162,6 @@ const FolderAccessModal = ({ show, target, folder, onHide, onInvitePeople, onSha
         </div>
       </Offcanvas.Header>
 
-      <hr className="my-0 opacity-25" />
-
       <Offcanvas.Body className="dms-folder-access-body">
         {loading ? (
           <div className="dms-folder-access-loading">
@@ -199,14 +192,7 @@ const FolderAccessModal = ({ show, target, folder, onHide, onInvitePeople, onSha
               return (
                 <li key={row.id} className="dms-access-card">
                   <div className="dms-access-card-top">
-                    <div className="dms-access-avatar" aria-hidden>
-                      {avatarInitial(row.sharedWithUser)}
-                    </div>
-                    <div className="dms-access-identity">
-                      <span className="dms-access-email" title={row.sharedWithUser}>
-                        {row.sharedWithUser}
-                      </span>
-                    </div>
+                    <UserInitialsBadge name={row.sharedWithUser} />
                   </div>
 
                   <div className="dms-access-fields">

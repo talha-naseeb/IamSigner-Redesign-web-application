@@ -10,7 +10,7 @@ The route and feature status (Old / Mixed / New) remains tracked in [UI_MODULE_I
 - React source files scanned: **285** across .js/.jsx/.ts/.tsx.
 - Files containing JSX: **224** (9 .jsx files and 215 .js files).
 - JSX test files included in the total: **1**.
-- Custom source CSS files: **76**; direct import scan found **76 referenced** and **0 with no direct JS import**.
+- Custom source CSS files: **75**; direct import scan found **75 referenced** and **0 with no direct JS import**.
 - JSX files with inline `style={{...}}` props: **120**; review these for static styles that can move to Tailwind and dynamic values that must remain data-driven.
 - Parse errors during JSX inventory scan: **0**.
 
@@ -23,7 +23,7 @@ These files define or apply the global theme, token palette, Tailwind configurat
 - [ ] `src/Context/themeUtils.js` — theme/palette names, storage, document attributes, initial state helpers.
 - [ ] `src/Context/ThemeContext.js` — shared theme/palette state provider.
 - [ ] `src/Components/Navbar/Header.js` — theme toggle and palette selection UI.
-- [ ] `src/Components/Auth/AuthThemeToggle.js` — theme toggle UI.
+- [x] `src/Components/Auth/AuthThemeToggle.js` — theme toggle UI migrated to shared tokens and Tailwind utilities.
 - [ ] `src/styles/themeAwareForm.css` — shared theme-aware form styling.
 - [ ] `src/index.js` — global and vendor stylesheet entry imports.
 
@@ -33,7 +33,7 @@ Supported modes found in source: **light / dark** themes and **concept-2 / manag
 
 Review these files because they read or update the theme/palette state or render theme-sensitive controls:
 
-- [ ] `src/Components/Auth/AuthThemeToggle.js`
+- [x] `src/Components/Auth/AuthThemeToggle.js`
 - [ ] `src/Components/BulkSend/Stepper/BulkStepper.js`
 - [ ] `src/Components/Navbar/Header.js`
 - [ ] `src/Components/ReportDashboard/CompanyAdminPanel/ActiveAccounts.js`
@@ -45,11 +45,11 @@ Review these files because they read or update the theme/palette state or render
 - [ ] `src/Context/UserContext.js`
 - [ ] `src/Context/themeUtils.js`
 - [ ] `src/Pages/AuditTrail/AuditTrail.js`
-- [ ] `src/Pages/Auth/Carousels/AuthFeatureCarousel.js`
-- [ ] `src/Pages/Auth/ForgotPassword/ForgotPassword.js`
-- [ ] `src/Pages/Auth/ForgotPassword/Resetpassword.js`
-- [ ] `src/Pages/Auth/Login/Login.js`
-- [ ] `src/Pages/Auth/Signup/SignUp.js`
+- [x] `src/Pages/Auth/Carousels/AuthFeatureCarousel.js`
+- [x] `src/Pages/Auth/ForgotPassword/ForgotPassword.js`
+- [x] `src/Pages/Auth/ForgotPassword/Resetpassword.js`
+- [x] `src/Pages/Auth/Login/Login.js`
+- [x] `src/Pages/Auth/Signup/SignUp.js`
 
 ### Shared component layer
 
@@ -126,7 +126,7 @@ Every entry is a migration review item. JSX in routes, providers, and helper ren
 
 ### Components/Auth
 
-- [ ] `src/Components/Auth/AuthThemeToggle.js` — inline style prop present; inspect static vs data-driven style
+- [x] `src/Components/Auth/AuthThemeToggle.js` — migrated to shared tokens and Tailwind utilities.
 
 ### Components/BulkSend/PlaceBulkSignatories
 
@@ -224,7 +224,7 @@ Every entry is a migration review item. JSX in routes, providers, and helper ren
 
 ### Components/CommonModals/Loader
 
-- [ ] `src/Components/CommonModals/Loader/Loader.js`
+- [x] `src/Components/CommonModals/Loader/Loader.js` — retired full-screen Lottie loader overlay across all pages and components.
 
 ### Components/CommonModals/SearchFilters
 
@@ -588,40 +588,40 @@ Every entry is a migration review item. JSX in routes, providers, and helper ren
 
 ### Pages/Auth/Carousels
 
-- [ ] `src/Pages/Auth/Carousels/AuthFeatureCarousel.js`
+- [x] `src/Pages/Auth/Carousels/AuthFeatureCarousel.js` — migrated to shared tokens and Tailwind utilities; `AuthFeatureCarousel.css` retired.
 
 ### Pages/Auth/Carousels/Forgot
 
-- [ ] `src/Pages/Auth/Carousels/Forgot/ForgotCarousel.js`
+- [x] `src/Pages/Auth/Carousels/Forgot/ForgotCarousel.js` — delegates to `AuthFeatureCarousel`.
 
 ### Pages/Auth/Carousels/Login
 
-- [ ] `src/Pages/Auth/Carousels/Login/LoginCarousel.js`
+- [x] `src/Pages/Auth/Carousels/Login/LoginCarousel.js` — delegates to `AuthFeatureCarousel`.
 
 ### Pages/Auth/Carousels/SignUp
 
-- [ ] `src/Pages/Auth/Carousels/SignUp/SignUpCarousel.js`
+- [x] `src/Pages/Auth/Carousels/SignUp/SignUpCarousel.js` — delegates to `AuthFeatureCarousel`.
 
 ### Pages/Auth/ForgotPassword
 
-- [ ] `src/Pages/Auth/ForgotPassword/ForgotPassword.js` — inline style prop present; inspect static vs data-driven style
-- [ ] `src/Pages/Auth/ForgotPassword/Resetpassword.js` — inline style prop present; inspect static vs data-driven style
+- [x] `src/Pages/Auth/ForgotPassword/ForgotPassword.js` — migrated to shared tokens and Tailwind utilities; custom stylesheets (`style.css`, `AuthPages.css`) retired.
+- [x] `src/Pages/Auth/ForgotPassword/Resetpassword.js` — migrated to shared tokens and Tailwind utilities; custom stylesheets (`style.css`, `AuthPages.css`) retired.
 
 ### Pages/Auth/Login
 
-- [ ] `src/Pages/Auth/Login/Login.js` — inline style prop present; inspect static vs data-driven style
+- [x] `src/Pages/Auth/Login/Login.js` — migrated to shared tokens and Tailwind utilities; custom stylesheets (`Login.css`, `AuthPages.css`) retired.
 
 ### Pages/Auth/PasswordChange
 
-- [ ] `src/Pages/Auth/PasswordChange/PasswordChange.js`
+- [x] `src/Pages/Auth/PasswordChange/PasswordChange.js` — migrated to shared tokens and Tailwind utilities; custom stylesheet (`style.css`) retired.
 
 ### Pages/Auth/Signup
 
-- [ ] `src/Pages/Auth/Signup/SignUp.js` — inline style prop present; inspect static vs data-driven style
+- [x] `src/Pages/Auth/Signup/SignUp.js` — migrated to shared tokens and Tailwind utilities; custom stylesheets (`style.css`, `AuthPages.css`) retired.
 
 ### Pages/Auth/VerifyOtp
 
-- [ ] `src/Pages/Auth/VerifyOtp/VerifyOtpPage.js`
+- [x] `src/Pages/Auth/VerifyOtp/VerifyOtpPage.js` — migrated to shared tokens and Tailwind utilities; custom stylesheet (`style.css`) retired.
 
 ### Pages/DeclinedMessage
 
@@ -629,7 +629,7 @@ Every entry is a migration review item. JSX in routes, providers, and helper ren
 
 ### Pages/Errors
 
-- [ ] `src/Pages/Errors/Forbidden403.js`
+- [x] `src/Pages/Errors/Forbidden403.js` — migrated to shared tokens and pure Tailwind utilities.
 
 ### Pages/Home
 
@@ -757,7 +757,7 @@ Every source CSS file is listed below with its direct importers. Convert route-s
 
 ### Components/CommonModals/Loader
 
-- [ ] `src/Components/CommonModals/Loader/Loader.css` — imported by `src/Components/CommonModals/Loader/Loader.js`
+- [x] `src/Components/CommonModals/Loader/Loader.css` — retired after removing full-screen Lottie loader overlay across all pages.
 
 ### Components/CommonModals/SearchFilters
 
@@ -924,31 +924,31 @@ Every source CSS file is listed below with its direct importers. Convert route-s
 
 ### Pages/Auth
 
-- [ ] `src/Pages/Auth/AuthPages.css` — imported by `src/Pages/Auth/ForgotPassword/ForgotPassword.js`, `src/Pages/Auth/ForgotPassword/Resetpassword.js`, `src/Pages/Auth/Login/Login.js`, `src/Pages/Auth/Signup/SignUp.js`
+- [x] `src/Pages/Auth/AuthPages.css` — retired after migrating `Login.js`, `SignUp.js`, `ForgotPassword.js`, and `Resetpassword.js` to shared tokens and Tailwind utilities (with third-party `react-phone-input-2` rules moved to `src/index.css`).
 
 ### Pages/Auth/Carousels
 
-- [ ] `src/Pages/Auth/Carousels/AuthFeatureCarousel.css` — imported by `src/Pages/Auth/Carousels/AuthFeatureCarousel.js`
+- [x] `src/Pages/Auth/Carousels/AuthFeatureCarousel.css` — retired after migrating `AuthFeatureCarousel.js` to shared tokens and Tailwind utilities.
 
 ### Pages/Auth/ForgotPassword
 
-- [ ] `src/Pages/Auth/ForgotPassword/style.css` — imported by `src/Pages/Auth/ForgotPassword/ForgotPassword.js`, `src/Pages/Auth/ForgotPassword/Resetpassword.js`
+- [x] `src/Pages/Auth/ForgotPassword/style.css` — retired after migrating `ForgotPassword.js` and `Resetpassword.js` to shared tokens and Tailwind utilities.
 
 ### Pages/Auth/Login
 
-- [ ] `src/Pages/Auth/Login/Login.css` — imported by `src/Pages/Auth/Login/Login.js`
+- [x] `src/Pages/Auth/Login/Login.css` — retired after migrating `Login.js` to shared tokens and Tailwind utilities.
 
 ### Pages/Auth/PasswordChange
 
-- [ ] `src/Pages/Auth/PasswordChange/style.css` — imported by `src/Pages/Auth/PasswordChange/PasswordChange.js`
+- [x] `src/Pages/Auth/PasswordChange/style.css` — retired after migrating `PasswordChange.js` to shared tokens and Tailwind utilities.
 
 ### Pages/Auth/Signup
 
-- [ ] `src/Pages/Auth/Signup/style.css` — imported by `src/Pages/Auth/Signup/SignUp.js`
+- [x] `src/Pages/Auth/Signup/style.css` — retired after migrating `SignUp.js` to shared tokens and Tailwind utilities.
 
 ### Pages/Auth/VerifyOtp
 
-- [ ] `src/Pages/Auth/VerifyOtp/style.css` — imported by `src/Pages/Auth/VerifyOtp/VerifyOtpPage.js`
+- [x] `src/Pages/Auth/VerifyOtp/style.css` — retired after migrating `VerifyOtpPage.js` to shared tokens and Tailwind utilities.
 
 ### Pages/Errors
 

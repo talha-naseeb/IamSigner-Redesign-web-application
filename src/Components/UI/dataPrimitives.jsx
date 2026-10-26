@@ -68,6 +68,15 @@ export const TableCell = forwardRef(function ShadcnTableCell({ component, align 
   return <Tag {...props} ref={ref} scope={scope || (inHead ? "col" : undefined)} style={useStyles(style, sx)} className={cn("ui-table-cell", inHead ? "ui-table-cell-head" : "ui-table-cell-body", "px-4 py-3 text-sm [font-family:var(--modern-font-ui)]", themedCell, align === "center" && "text-center", align === "right" && "text-right", padding === "checkbox" && "w-12 px-2", padding === "none" && "p-0", size === "small" && "px-2 py-2 text-xs", className)} />;
 });
 
+export const TableEmptyState = ({ icon, title, description, action, className }) => (
+  <div className={cn("table-empty-state", className)}>
+    {icon ? <div className="table-empty-state-icon" aria-hidden="true">{icon}</div> : null}
+    {title ? <p className="table-empty-state-title">{title}</p> : null}
+    {description ? <p className="table-empty-state-description">{description}</p> : null}
+    {action ? <div className="table-empty-state-action">{action}</div> : null}
+  </div>
+);
+
 export const Pagination = ({ count = 0, page = 1, onChange, className, color = "primary", variant = "text", shape, size = "medium", siblingCount = 1, boundaryCount = 1, ...props }) => {
   const total = Math.max(0, Number(count) || 0);
   if (total < 1) return null;
@@ -88,4 +97,32 @@ export const IconButton = forwardRef(function ShadcnIconButton({ size = "medium"
   return <button {...props} ref={ref} type={props.type || "button"} className={cn("ui-icon-button inline-flex items-center justify-center rounded-md text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--modern-primary,#6366f1)] disabled:opacity-50", size === "small" ? "h-8 w-8" : size === "large" ? "h-11 w-11" : "h-10 w-10", edge === "start" && "-ml-2", edge === "end" && "-mr-2", className)} />;
 });
 export const Tooltip = ({ title, children, ...props }) => React.isValidElement(children) ? React.cloneElement(children, { title: typeof title === "string" ? title : undefined, ...props, ...children.props }) : <span title={typeof title === "string" ? title : undefined}>{children}</span>;
+
+export const getInitials = (value) => {
+  if (!value || typeof value !== "string") return "?";
+  const firstEntry = value.split(",")[0].trim();
+  if (!firstEntry || firstEntry === "—") return "?";
+  const base = firstEntry.includes("@") ? firstEntry.split("@")[0] : firstEntry;
+  const parts = base.split(/[\s._-]+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  }
+  return base.slice(0, 2).toUpperCase();
+};
+
+export const UserInitialsBadge = ({ name, className, avatarOnly = false }) => {
+  const text = typeof name === "string" ? name.trim() : "";
+  if (!text || text === "—") {
+    return <span className="text-[var(--modern-muted,#64748b)]">—</span>;
+  }
+  return (
+    <span className={cn("user-initials-cell", className)} title={text}>
+      <span className="user-initials-avatar" aria-hidden="true">
+        {getInitials(text)}
+      </span>
+      {!avatarOnly && <span className="user-initials-name">{text}</span>}
+    </span>
+  );
+};
+
 

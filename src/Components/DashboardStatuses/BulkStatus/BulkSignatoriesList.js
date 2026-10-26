@@ -6,14 +6,13 @@ import { Dropdown as Dropdown } from "@/Components/UI/shadcnCompat";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
 import ShareModal from "@/Components/CommonModals/ShareModal/ShareModal";
 import { useForm } from "react-hook-form";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Stack, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
 import DownloadModal from "@/Components/CommonModals/DownloadModal/DownloadModal";
 import { Icons } from "@/assets/Icons";
 import { useParams, useNavigate } from "react-router-dom";
 import { useUser } from "@/Context/UserContext";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import DashboardComments from "@/Components/CommonModals/DocumentsComments/DashboardComments";
 
@@ -30,6 +29,17 @@ const BulkSignatoriesList = () => {
   const [pdfUrl, setPdfUrl] = useState("");
   const { reset } = useForm();
   const [searchResults, setSearchResults] = useState([]);
+
+  const statusColors = {
+    signed: "var(--completed-status)",
+    completed: "var(--completed-status)",
+    draft: "var(--draft-status)",
+    declined: "var(--decline-status)",
+    inactive: "var(--inactive-status)",
+    pending: "var(--pending-status)",
+    share: "var(--share-status)",
+    recalled: "var(--recall-status)",
+  };
   const [showATModal, setShowATModal] = useState(false);
   const [auditTrailURL, setAuditTrailURL] = useState("");
   const [showDownloadModal, setShowDownloadModal] = useState(false);
@@ -183,12 +193,6 @@ const BulkSignatoriesList = () => {
   return (
     <Grid className='container' style={{ marginTop: "12px" }}>
       <Grid>
-        {/* Loader overlay */}
-        {isLoading && (
-          <div className='loader-overlay'>
-            <Loader />
-          </div>
-        )}
 
         <div className='py-3 p-3 container pendingtable'>
           <div style={{ display: "flex", gap: "5px", alignItems: "center", marginBottom: "1rem" }}>
@@ -199,11 +203,13 @@ const BulkSignatoriesList = () => {
           {/* Table */}
           <TableContainer
             component={Paper}
-            className='custom-table-scrollbar'
+            className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
             style={{
               maxWidth: "100%",
               overflowX: "auto",
-              height: "70vh",
+              minHeight: "440px",
+              height: "calc(100vh - 280px)",
+              maxHeight: "calc(100vh - 280px)",
             }}
           >
             <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
@@ -222,12 +228,12 @@ const BulkSignatoriesList = () => {
               <TableBody>
                 {searchResults.length === 0 && (
                   <TableRow>
-                    <td colSpan='6' className='p-5 text-center' style={{ color: "var(--secondary-color) !important" }}>
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                        <Icons.BulkDocuments size={70} />
-                        {t("dashboardCardStatuses.notDocsFound")}
-                      </div>
-                    </td>
+                    <TableCell colSpan={columns.length} className='table-empty-state-cell'>
+                      <TableEmptyState
+                        icon={<Icons.BulkDocuments size={50} />}
+                        title={t("dashboardCardStatuses.notDocsFound")}
+                      />
+                    </TableCell>
                   </TableRow>
                 )}
 
@@ -235,57 +241,30 @@ const BulkSignatoriesList = () => {
                   <TableRow key={index}>
                     {/* Table Cells */}
                     <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                      {row.name}
+                      <div className='flex items-center gap-2'>
+                        <UserInitialsBadge name={row.name} />
+                        <span>{row.name}</span>
+                      </div>
                     </TableCell>
                     <TableCell className='TableCell'>{row.email}</TableCell>
                     <TableCell className='TableCell'>{row.signDate ? formatDate(row.signDate) : ""}</TableCell>
-                    <TableCell className='TableCell '>
-                      <label
-                        style={{
-                          padding: "2px 12px",
-                          borderRadius: "12px",
-                          fontWeight: "bold",
-                          color:
-                            row.signStatus === "Signed"
-                              ? "#19d157"
-                              : row.signStatus === "Draft"
-                              ? "#4339f2"
-                              : row.signStatus === "Declined"
-                              ? "#dc3545"
-                              : row.signStatus === "InActive"
-                              ? "#bec4c8"
-                              : row.signStatus === "Pending"
-                              ? "#f9ba05"
-                              : row.signStatus === "Share"
-                              ? "#0c9ad7"
-                              : row.signStatus === "Recalled"
-                              ? "#47b7c5"
-                              : row.signStatus === "Not Started"
-                              ? "#bec4c8"
-                              : "inherit",
-                          border: `1px solid ${
-                            row.signStatus === "Signed"
-                              ? "#19d157"
-                              : row.signStatus === "Draft"
-                              ? "#4339f2"
-                              : row.signStatus === "Declined"
-                              ? "#dc3545"
-                              : row.signStatus === "InActive"
-                              ? "#bec4c8"
-                              : row.signStatus === "Pending"
-                              ? "#f9ba05"
-                              : row.signStatus === "Share"
-                              ? "#0c9ad7"
-                              : row.signStatus === "Recalled"
-                              ? "#47b7c5"
-                              : row.signStatus === "Not Started"
-                              ? "#bec4c8"
-                              : "inherit"
-                          }`,
-                        }}
-                      >
-                        {row.signStatus}
-                      </label>
+                    <TableCell className='TableCell'>
+                      {(() => {
+                        const rawStatus = (row.signStatus || "pending").toLowerCase();
+                        const statusColor = statusColors[rawStatus] || "var(--inactive-status)";
+                        return (
+                          <span
+                            className='inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold'
+                            style={{
+                              color: statusColor,
+                              backgroundColor: `color-mix(in srgb, ${statusColor} 12%, var(--modern-card))`,
+                              border: `1px solid color-mix(in srgb, ${statusColor} 35%, var(--modern-border))`,
+                            }}
+                          >
+                            {row.signStatus || "Pending"}
+                          </span>
+                        );
+                      })()}
                     </TableCell>
 
                     {userAccess.remainingDays <= 0 ? (
@@ -349,12 +328,18 @@ const BulkSignatoriesList = () => {
             </Table>
           </TableContainer>
 
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-            <div className='showHideNoDocs'>
-              {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
+          <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 text-xs text-[var(--modern-muted)]'>
+            <div>
+              {data.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
             </div>
             <Stack spacing={2}>
-              <Pagination count={Math.ceil(data.length / rowsPerPage)} variant='outlined' shape='rounded' page={page + 1} onChange={(event, newPage) => handleChangePage(event, newPage - 1)} />
+              <Pagination
+                count={Math.max(1, Math.ceil(data.length / rowsPerPage))}
+                variant='outlined'
+                shape='rounded'
+                page={Math.min(page + 1, Math.max(1, Math.ceil(data.length / rowsPerPage)))}
+                onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
+              />
             </Stack>
           </div>
         </div>

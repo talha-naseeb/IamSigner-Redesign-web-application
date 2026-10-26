@@ -1,5 +1,5 @@
 import { Dropdown } from "@/Components/UI/shadcnCompat";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { Icons } from "@/assets/Icons/index";
@@ -57,7 +57,7 @@ const FolderRow = ({ folder, onOpen, onFolderAction, t, selectionEnabled = false
       <TableCell className="TableCell" data-label={t("DMS.sortSize")}>{folder.size || "—"}</TableCell>
       <TableCell className="TableCell" data-label={t("DMS.modified")}>{folder.modified}</TableCell>
       <TableCell className="TableCell dms-list-owner-cell" data-label={t("DMS.owner")} title={owner || undefined}>
-        {owner || "—"}
+        <UserInitialsBadge name={owner} />
       </TableCell>
       <TableCell className="py-0 dms-list-action-cell" onClick={(e) => e.stopPropagation()}>
         <Dropdown>
@@ -178,7 +178,9 @@ const DocumentRow = ({
     <TableCell className="TableCell" data-label={t("DMS.modified")}>
       {isSharedDoc && doc.sharedOn ? doc.sharedOn : doc.modified}
     </TableCell>
-    <TableCell className="TableCell" data-label={t("DMS.owner")}>{doc.owner}</TableCell>
+    <TableCell className="TableCell dms-list-owner-cell" data-label={t("DMS.owner")}>
+      <UserInitialsBadge name={doc.owner} />
+    </TableCell>
     <TableCell className="py-0 dms-list-action-cell" onClick={(e) => e.stopPropagation()}>
       <Dropdown>
         <Dropdown.Toggle as={CustomToggle} />
@@ -305,7 +307,9 @@ const DMSListView = ({
       style={{
         maxWidth: "100%",
         overflowX: "auto",
-        height: "80vh",
+        minHeight: "440px",
+        height: "calc(100vh - 280px)",
+        maxHeight: "calc(100vh - 280px)",
       }}
     >
       <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>

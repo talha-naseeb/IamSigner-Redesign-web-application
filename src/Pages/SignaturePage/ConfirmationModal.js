@@ -32,14 +32,14 @@ const ConfirmationModal = ({ show, onHide, onClick, className = "" }) => {
       }
     >
       <div className="flex flex-col items-center text-center p-2 gap-3">
-        <div className="p-3 rounded-full border bg-emerald-500/10 text-emerald-500 border-emerald-500/20">
+        <div className="inline-flex items-center justify-center p-3 rounded-full border bg-emerald-500/10 text-emerald-500 border-emerald-500/20">
           <CheckCircle2 className="h-6 w-6" />
         </div>
         <div className="space-y-1">
-          <h3 className="text-base font-semibold text-[var(--modern-text,#0f172a)]">
+          <h3 className="m-0 text-base font-semibold text-[var(--modern-text,#0f172a)]">
             {t("signaturePage.confirmCompleted")}
           </h3>
-          <p className="text-sm text-[var(--modern-muted,#64748b)]">
+          <p className="m-0 text-sm text-[var(--modern-muted,#64748b)]">
             {t("signaturePage.proceed")}
           </p>
         </div>

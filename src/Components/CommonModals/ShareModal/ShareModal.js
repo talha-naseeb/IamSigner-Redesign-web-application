@@ -5,7 +5,6 @@ import "./modal.css";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import userService from "@/services/userService";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { useUser } from "@/Context/UserContext";
 import { FiShare2 } from "react-icons/fi";
 
@@ -167,11 +166,6 @@ const ShareModal = ({ show, handleClose, masterDocID, registerSignID }) => {
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <Modal show={show} backdrop='static' keyboard={false} onHide={handleCloseModal} dialogClassName='custom-modal-width'>
         <Modal.Header closeButton>
           <div className='header-content'>

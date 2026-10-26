@@ -1,5 +1,5 @@
 import React, { createContext, forwardRef, useContext, useEffect, useId, useMemo, useState } from "react";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
+import * as DialogPrimitive from "./dialogPrimitive";
 import { ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -102,7 +102,7 @@ const FormCheck = ({ type = "checkbox", id, label, className, children, inline, 
   const controlId = id || `check-${generatedId}`;
   return (
     <CheckContext.Provider value={{ id: controlId, type }}>
-      <div className={cn("form-check flex items-start gap-2", inline && "inline-flex", reverse && "flex-row-reverse", className)}>
+      <div className={cn("form-check flex items-center gap-2.5 min-h-6", inline && "inline-flex", reverse && "flex-row-reverse", className)}>
         {children || <>
           <FormCheck.Input {...props} id={controlId} type={type} />
           {label != null && <FormCheck.Label htmlFor={controlId}>{label}</FormCheck.Label>}
@@ -113,11 +113,11 @@ const FormCheck = ({ type = "checkbox", id, label, className, children, inline, 
 };
 FormCheck.Input = forwardRef(function ShadcnCheckInput({ className, type = "checkbox", ...props }, ref) {
   const context = useContext(CheckContext);
-  return <input {...props} ref={ref} id={props.id || context.id} type={type || context.type} className={cn("form-check-input mt-0.5 h-4 w-4 shrink-0 accent-[var(--modern-primary,#6366f1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--modern-primary,#6366f1)]", className)} />;
+  return <input {...props} ref={ref} id={props.id || context.id} type={type || context.type} className={cn("form-check-input m-0 h-4 w-4 shrink-0 cursor-pointer rounded border border-[var(--modern-border-strong,#cbd5e1)] accent-[var(--modern-primary,#6366f1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--modern-primary,#6366f1)]", className)} />;
 });
 FormCheck.Label = forwardRef(function ShadcnCheckLabel({ className, ...props }, ref) {
   const context = useContext(CheckContext);
-  return <label {...props} ref={ref} htmlFor={props.htmlFor || context.id} className={cn("form-check-label text-sm text-[var(--modern-text,#0f172a)]", className)} />;
+  return <label {...props} ref={ref} htmlFor={props.htmlFor || context.id} className={cn("form-check-label m-0 inline-flex items-center gap-2 cursor-pointer select-none text-sm leading-snug text-[var(--modern-text,#0f172a)]", className)} />;
 });
 const FormText = ({ muted, className, ...props }) => <small {...props} className={cn("form-text block text-xs", muted ? "text-[var(--modern-muted,#64748b)]" : "", className)} />;
 const FormFeedback = ({ type = "invalid", className, ...props }) => <small {...props} role={type === "invalid" ? "alert" : undefined} className={cn("block text-xs", type === "invalid" ? "text-[var(--modern-danger,#ef4444)]" : "text-[var(--modern-success,#16a34a)]", className)} />;
@@ -128,7 +128,7 @@ export const FormGroup = FormGroupComponent;
 const ModalContext = createContext({ close: () => {} });
 const containsDialogTitle = (children) => React.Children.toArray(children).some((child) => React.isValidElement(child) && (child.type === Modal.Title || containsDialogTitle(child.props.children)));
 const Modal = ({ show = false, onHide, children, className, dialogClassName, contentClassName, centered = false, size, fullscreen, backdrop = true, keyboard = true, style, ...props }) => {
-  const sizeClass = { sm: "max-w-sm", lg: "max-w-3xl", xl: "max-w-5xl" }[size] || "max-w-2xl";
+  const sizeClass = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-3xl", xl: "max-w-5xl" }[size] || "max-w-2xl";
   const titleId = useId();
   const hasTitle = containsDialogTitle(children);
   return (
@@ -157,12 +157,12 @@ const Modal = ({ show = false, onHide, children, className, dialogClassName, con
 Modal.Dialog = ({ className, ...props }) => <div {...props} className={cn("modal-dialog", className)} />;
 Modal.Header = ({ closeButton, children, className, ...props }) => {
   const { close } = useContext(ModalContext);
-  return <div {...props} className={cn("modal-header flex items-center justify-between gap-3 border-b border-[var(--modern-border,#e2e8f0)] px-5 py-4", className)}>{children}{closeButton && <button type="button" onClick={close} aria-label="Close" className="rounded-md p-1.5 text-[var(--modern-muted,#64748b)] hover:bg-[var(--modern-raised,#f1f5f9)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--modern-primary,#6366f1)]"><X className="h-4 w-4" /></button>}</div>;
+  return <div {...props} className={cn("modal-header flex items-center justify-between gap-3 border-b border-[var(--modern-border,#e2e8f0)] px-5 py-4", className)}>{children}{closeButton && <button type="button" onClick={close} aria-label="Close" className="btn-close inline-flex shrink-0 items-center justify-center rounded-md border-0 bg-transparent p-1.5 text-[var(--modern-muted,#64748b)] cursor-pointer transition-colors hover:bg-transparent hover:text-[var(--modern-text,#0f172a)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--modern-primary,#6366f1)]"><X className="h-4 w-4" /></button>}</div>;
 };
-Modal.Title = ({ as = "h2", className, ...props }) => { const context = useContext(ModalContext); const Component = as === "h2" ? DialogPrimitive.Title : as; return element(Component, "h2", { ...props, id: props.id || context.titleId, className: cn("modal-title m-0 text-lg font-semibold text-[var(--modern-text,#0f172a)]", className) }, props.children); };
+Modal.Title = ({ as = "h2", className, ...props }) => { const context = useContext(ModalContext); const Component = as === "h2" ? DialogPrimitive.Title : as; return element(Component, "h2", { ...props, id: props.id || context.titleId, className: cn("modal-title m-0 inline-flex items-center gap-2.5 text-lg font-semibold leading-snug text-[var(--modern-text,#0f172a)]", className) }, props.children); };
 Modal.Body = ({ className, ...props }) => <div {...props} className={cn("modal-body p-5", className)} />;
 Modal.Footer = ({ className, ...props }) => <div {...props} className={cn("modal-footer flex flex-wrap items-center justify-end gap-2 border-t border-[var(--modern-border,#e2e8f0)] px-5 py-4", className)} />;
-Modal.CloseButton = ({ onClick, ...props }) => <button type="button" aria-label="Close" onClick={onClick} {...props}><X className="h-4 w-4" /></button>;
+Modal.CloseButton = ({ onClick, className, ...props }) => <button type="button" aria-label="Close" onClick={onClick} className={cn("btn-close inline-flex shrink-0 items-center justify-center border-0 bg-transparent p-1.5 text-[var(--modern-muted,#64748b)] cursor-pointer hover:bg-transparent hover:text-[var(--modern-text,#0f172a)]", className)} {...props}><X className="h-4 w-4" /></button>;
 export { Modal };
 
 const Offcanvas = ({ show = false, onHide, placement = "end", children, className, style, backdrop = true, keyboard = true, scroll = false, ...props }) => {
@@ -182,7 +182,7 @@ const Offcanvas = ({ show = false, onHide, placement = "end", children, classNam
           aria-label={hasTitle ? props["aria-label"] : props["aria-label"] || "Panel"}
           onEscapeKeyDown={(event) => { if (!keyboard) event.preventDefault(); }}
           onPointerDownOutside={(event) => { if (backdrop === "static" || backdrop === false) event.preventDefault(); }}
-          className={cn("fixed z-[1050] flex flex-col overflow-y-auto outline-none", modernSurface, positionClass, scroll && "overflow-visible", className)}
+          className={cn("offcanvas fixed z-[1050] flex flex-col overflow-y-auto outline-none", modernSurface, positionClass, scroll && "overflow-visible", className)}
           style={panelStyle}
         ><ModalContext.Provider value={{ close: onHide, titleId }}>{children}</ModalContext.Provider></DialogPrimitive.Content>
       </DialogPrimitive.Portal>
@@ -191,9 +191,9 @@ const Offcanvas = ({ show = false, onHide, placement = "end", children, classNam
 };
 Offcanvas.Header = ({ closeButton, children, className, ...props }) => {
   const { close } = useContext(ModalContext);
-  return <div {...props} className={cn("offcanvas-header flex items-center justify-between gap-3 border-b border-[var(--modern-border,#e2e8f0)] px-5 py-4", className)}>{children}{closeButton && <DialogPrimitive.Close aria-label="Close" className="rounded-md p-1.5 text-[var(--modern-muted,#64748b)] hover:bg-[var(--modern-raised,#f1f5f9)]"><X className="h-4 w-4" /></DialogPrimitive.Close>}</div>;
+  return <div {...props} className={cn("offcanvas-header flex items-center justify-between gap-3 border-b border-[var(--modern-border,#e2e8f0)] px-5 py-4", className)}>{children}{closeButton && <DialogPrimitive.Close aria-label="Close" className="btn-close inline-flex shrink-0 items-center justify-center rounded-md border-0 bg-transparent p-1.5 text-[var(--modern-muted,#64748b)] cursor-pointer transition-colors hover:bg-transparent hover:text-[var(--modern-text,#0f172a)]"><X className="h-4 w-4" /></DialogPrimitive.Close>}</div>;
 };
-Offcanvas.Title = ({ as = "h2", className, ...props }) => { const context = useContext(ModalContext); const Component = as === "h2" ? DialogPrimitive.Title : as; return element(Component, "h2", { ...props, id: props.id || context.titleId, className: cn("offcanvas-title m-0 text-lg font-semibold", className) }, props.children); };
+Offcanvas.Title = ({ as = "h2", className, ...props }) => { const context = useContext(ModalContext); const Component = as === "h2" ? DialogPrimitive.Title : as; return element(Component, "h2", { ...props, id: props.id || context.titleId, className: cn("offcanvas-title m-0 inline-flex items-center gap-2.5 text-lg font-semibold leading-snug text-[var(--modern-text,#0f172a)]", className) }, props.children); };
 Offcanvas.Body = ({ className, ...props }) => <div {...props} className={cn("offcanvas-body flex-1 overflow-y-auto p-5", className)} />;
 Offcanvas.Header.displayName = "OffcanvasHeader";
 export { Offcanvas };
@@ -206,15 +206,17 @@ const DropdownRoot = ({ children, show, defaultShow = false, onToggle, onSelect,
   const open = controlled ? show : localShow;
   const setOpen = (next, event) => { if (!controlled) setLocalShow(next); onToggle?.(next, event); };
   const context = useMemo(() => ({ open, setOpen, onSelect, autoClose, drop, toggleRef }), [open, onSelect, autoClose, drop]);
-  return <DropdownContext.Provider value={context}><div {...props} className={cn("relative inline-flex", className)}>{children}</div></DropdownContext.Provider>;
+  return <DropdownContext.Provider value={context}><div {...props} className={cn("dropdown relative inline-flex", className)}>{children}</div></DropdownContext.Provider>;
 };
-const DropdownToggle = forwardRef(function ShadcnDropdownToggle({ as, children, className, onClick, variant = "secondary", id, ...props }, ref) {
+const DropdownToggle = forwardRef(function ShadcnDropdownToggle({ as, children, className, onClick, variant, id, ...props }, ref) {
   const context = useContext(DropdownContext);
   const Component = as || "button";
-  const toggleProps = { ...props, ref: (node) => { if (context?.toggleRef) context.toggleRef.current = node; if (typeof ref === "function") ref(node); else if (ref) ref.current = node; }, id, type: Component === "button" ? (props.type || "button") : undefined, "aria-haspopup": "menu", "aria-expanded": Boolean(context?.open), onClick: (event) => { onClick?.(event); if (!event.defaultPrevented) context?.setOpen(!context.open, event); }, className: cn("dropdown-toggle inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--modern-primary,#6366f1)]", variant === "none" ? "" : "border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] text-[var(--modern-text,#0f172a)]", className) };
-  return element(Component, "button", toggleProps, children ?? (Component === "button" ? <ChevronDown className="h-4 w-4" /> : null));
+  const resolvedVariant = variant !== undefined ? variant : (as ? "none" : "secondary");
+  const isUnstyledVariant = resolvedVariant === "none" || resolvedVariant === "";
+  const toggleProps = { ...props, ref: (node) => { if (context?.toggleRef) context.toggleRef.current = node; if (typeof ref === "function") ref(node); else if (ref) ref.current = node; }, id, type: Component === "button" ? (props.type || "button") : undefined, "aria-haspopup": "menu", "aria-expanded": Boolean(context?.open), onClick: (event) => { onClick?.(event); if (!event.defaultPrevented) context?.setOpen(!context.open, event); }, className: cn("dropdown-toggle inline-flex items-center justify-between gap-2 rounded-md text-sm cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--modern-primary,#6366f1)]", !as && "px-3 py-2", isUnstyledVariant ? "border-0 bg-transparent text-[var(--modern-text,#0f172a)]" : "border border-solid border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] px-3 py-2 text-[var(--modern-text,#0f172a)]", className) };
+  return element(Component, "button", toggleProps, children ?? (Component === "button" ? <ChevronDown className="h-4 w-4 shrink-0" /> : null));
 });
-const DropdownMenu = ({ children, className, align = "start", style, ...props }) => {
+const DropdownMenu = ({ children, className, align, style, ...props }) => {
   const context = useContext(DropdownContext);
   const menuRef = React.useRef(null);
   useEffect(() => {
@@ -224,7 +226,13 @@ const DropdownMenu = ({ children, className, align = "start", style, ...props })
     return () => { document.removeEventListener("mousedown", close); };
   }, [context]);
   if (!context?.open) return null;
-  const position = context.drop === "end" ? "left-full top-0 ml-1" : context.drop === "start" ? "right-full top-0 mr-1" : context.drop === "up" ? `bottom-full mb-1 ${align === "end" ? "right-0" : "left-0"}` : `top-full mt-1 ${align === "end" ? "right-0" : "left-0"}`;
+  const isRtl = typeof document !== "undefined" && document.documentElement.dir === "rtl";
+  const toggleWantsEnd = context?.toggleRef?.current?.dataset?.dropdownAlign === "end";
+  const classWantsEnd = typeof className === "string" && className.includes("dropdown-menu-end");
+  const classWantsStart = typeof className === "string" && className.includes("dropdown-menu-start");
+  const resolvedAlign = align || (classWantsEnd ? "end" : classWantsStart ? "start" : toggleWantsEnd ? "end" : "start");
+  const horizontalClass = resolvedAlign === "end" ? (isRtl ? "left-0" : "right-0") : (isRtl ? "right-0" : "left-0");
+  const position = context.drop === "end" ? "left-full top-0 ml-1" : context.drop === "start" ? "right-full top-0 mr-1" : context.drop === "up" ? `bottom-full mb-1 ${horizontalClass}` : `top-full mt-1 ${horizontalClass}`;
   const handleKeyDown = (event) => {
     props.onKeyDown?.(event);
     if (event.defaultPrevented) return;
@@ -232,13 +240,13 @@ const DropdownMenu = ({ children, className, align = "start", style, ...props })
     if (event.key === "Escape") { event.preventDefault(); context.setOpen(false, event); context.toggleRef.current?.focus(); return; }
     if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); const index = items.indexOf(document.activeElement); const delta = event.key === "ArrowDown" ? 1 : -1; items[(index + delta + items.length) % items.length]?.focus(); }
   };
-  return <div {...props} ref={menuRef} role="menu" onKeyDown={handleKeyDown} style={style} className={cn("dropdown-menu absolute z-50 min-w-48 rounded-md border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] p-1 text-[var(--modern-text,#0f172a)]", position, className)}>{children}</div>;
+  return <div {...props} ref={menuRef} role="menu" onKeyDown={handleKeyDown} style={style} className={cn("dropdown-menu absolute z-[1060] min-w-48 rounded-lg border border-solid border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] p-1 text-[var(--modern-text,#0f172a)]", position, className)}>{children}</div>;
 };
 const DropdownItem = forwardRef(function ShadcnDropdownItem({ as, eventKey, active, disabled, href, onClick, className, children, ...props }, ref) {
   const context = useContext(DropdownContext);
   const Component = as || (href ? "a" : "button");
   const handleClick = (event) => { if (disabled) { event.preventDefault(); return; } onClick?.(event); if (event.defaultPrevented) return; context?.onSelect?.(eventKey ?? href, event); if (context?.autoClose !== false) context?.setOpen(false, event); };
-  return element(Component, Component === "a" ? "a" : "button", { ...props, ref, href, type: Component === "button" ? (props.type || "button") : undefined, role: "menuitem", tabIndex: disabled ? -1 : 0, disabled: Component === "button" ? disabled : undefined, "aria-disabled": disabled || undefined, "aria-current": active ? "true" : undefined, onClick: handleClick, className: cn("dropdown-item flex w-full items-center rounded-sm px-3 py-2 text-left text-sm hover:bg-[var(--modern-raised,#f1f5f9)] focus-visible:bg-[var(--modern-raised,#f1f5f9)] focus-visible:outline-none", active && "bg-[var(--modern-raised,#f1f5f9)]", disabled && "pointer-events-none opacity-50", className) }, children ?? props.children);
+  return element(Component, Component === "a" ? "a" : "button", { ...props, ref, href, type: Component === "button" ? (props.type || "button") : undefined, role: "menuitem", tabIndex: disabled ? -1 : 0, disabled: Component === "button" ? disabled : undefined, "aria-disabled": disabled || undefined, "aria-current": active ? "true" : undefined, onClick: handleClick, className: cn("dropdown-item flex w-full items-center gap-2.5 rounded-md border-0 bg-transparent px-3 py-2 text-left text-sm text-[var(--modern-text,#0f172a)] no-underline cursor-pointer transition-colors hover:bg-[var(--modern-raised,#f1f5f9)] focus-visible:bg-[var(--modern-raised,#f1f5f9)] focus-visible:outline-none", active && "bg-[var(--modern-raised,#f1f5f9)]", disabled && "pointer-events-none opacity-50", className) }, children ?? props.children);
 });
 const DropdownHeader = ({ className, ...props }) => <div {...props} className={cn("dropdown-header px-3 py-2 text-xs font-semibold text-[var(--modern-muted,#64748b)]", className)} />;
 const DropdownDivider = ({ className, ...props }) => <div {...props} role="separator" className={cn("dropdown-divider my-1 h-px bg-[var(--modern-border,#e2e8f0)]", className)} />;
@@ -277,7 +285,7 @@ export { Nav };
 Nav.Item = ({ as, className, ...props }) => element(as, "div", { ...props, className: cn("nav-item", className) }, props.children);
 Nav.Link = forwardRef(function ShadcnNavLink({ as, eventKey, active, className, onClick, href, children, ...props }, ref) {
   const context = useContext(NavContext); const Component = as || (href ? "a" : "button"); const selected = active ?? (eventKey != null && context.activeKey === eventKey);
-  return element(Component, Component === "a" ? "a" : "button", { ...props, ref, href, type: Component === "button" ? (props.type || "button") : undefined, role: props.role, "aria-current": selected ? "page" : undefined, onClick: (event) => { onClick?.(event); if (!event.defaultPrevented) context.onSelect?.(eventKey, event); }, className: cn("nav-link inline-flex items-center rounded-md px-3 py-2 text-sm text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--modern-primary,#6366f1)]", selected && "bg-[var(--modern-raised,#f1f5f9)]", className) }, children ?? props.children);
+  return element(Component, Component === "a" ? "a" : "button", { ...props, ref, href, type: Component === "button" ? (props.type || "button") : undefined, role: props.role, "aria-current": selected ? "page" : undefined, onClick: (event) => { onClick?.(event); if (!event.defaultPrevented) context.onSelect?.(eventKey, event); }, className: cn("nav-link inline-flex items-center rounded-md border-0 bg-transparent px-3 py-2 text-sm text-[var(--modern-text,#0f172a)] no-underline cursor-pointer hover:bg-[var(--modern-raised,#f1f5f9)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--modern-primary,#6366f1)]", selected && "bg-[var(--modern-raised,#f1f5f9)]", className) }, children ?? props.children);
 });
 
 const NavbarContext = createContext({ expanded: false, toggle: () => {}, close: () => {} });
@@ -286,7 +294,7 @@ const Navbar = ({ children, expand = true, className, as, sticky, ...props }) =>
   const context = useMemo(() => ({ expanded, toggle: () => setExpanded((v) => !v), close: () => setExpanded(false) }), [expanded]);
   return <NavbarContext.Provider value={context}>{element(as, "nav", { ...props, className: cn("navbar", sticky === "top" && "sticky top-0", "w-full", className) }, children)}</NavbarContext.Provider>;
 };
-Navbar.Toggle = ({ children, className, onClick, ...props }) => { const context = useContext(NavbarContext); return <button type="button" {...props} aria-expanded={context.expanded} onClick={(event) => { onClick?.(event); if (!event.defaultPrevented) context.toggle(); }} className={cn("inline-flex items-center justify-center rounded-md border border-[var(--modern-border,#e2e8f0)] p-2", className)}>{children}</button>; };
+Navbar.Toggle = ({ children, className, onClick, ...props }) => { const context = useContext(NavbarContext); return <button type="button" {...props} aria-expanded={context.expanded} onClick={(event) => { onClick?.(event); if (!event.defaultPrevented) context.toggle(); }} className={cn("inline-flex items-center justify-center rounded-md border border-[var(--modern-border,#e2e8f0)] bg-transparent p-2 text-[var(--modern-text,#0f172a)] cursor-pointer", className)}>{children}</button>; };
 Navbar.Collapse = ({ children, className, ...props }) => { const context = useContext(NavbarContext); return context.expanded ? <div {...props} className={cn(className)}>{children}</div> : null; };
 Navbar.Offcanvas = ({ show, onHide, ...props }) => { const context = useContext(NavbarContext); return <Offcanvas {...props} show={show ?? context.expanded} onHide={() => { onHide?.(); context.close(); }} />; };
 export { Navbar };
@@ -332,7 +340,7 @@ const Carousel = ({ children, controls = true, indicators = true, interval = fal
   const items = React.Children.toArray(children).filter(Boolean); const [index, setIndex] = useState(0);
   useEffect(() => { if (!interval || items.length < 2) return; const timer = setInterval(() => setIndex((i) => (i + 1) % items.length), Number(interval)); return () => clearInterval(timer); }, [interval, items.length]);
   const move = (delta) => setIndex((i) => { const next = i + delta; return wrap ? (next + items.length) % items.length : Math.max(0, Math.min(items.length - 1, next)); });
-  return <div {...props} className={cn("relative", className)}>{items[index] && React.cloneElement(items[index], { className: cn(items[index].props.className, "block") })}{controls && items.length > 1 && <><button type="button" aria-label="Previous slide" onClick={() => move(-1)} className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-[var(--modern-card,#fff)] p-2 text-[var(--modern-text,#0f172a)]"><ChevronLeft /></button><button type="button" aria-label="Next slide" onClick={() => move(1)} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-[var(--modern-card,#fff)] p-2 text-[var(--modern-text,#0f172a)]"><ChevronRight /></button></>}{indicators && items.length > 1 && <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2">{items.map((_, i) => <button key={i} type="button" aria-label={`Go to slide ${i + 1}`} aria-current={index === i} onClick={() => setIndex(i)} className={cn("h-2 w-2 rounded-full", index === i ? "bg-[var(--modern-primary,#6366f1)]" : "bg-[var(--modern-border-strong,#cbd5e1)]")} />)}</div>}</div>;
+  return <div {...props} className={cn("relative", className)}><div className="carousel-inner overflow-visible">{items[index] && React.cloneElement(items[index], { className: cn(items[index].props.className, "block") })}</div>{controls && items.length > 1 && <><button type="button" aria-label="Previous slide" onClick={() => move(-1)} className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-[var(--modern-card,#fff)] p-2 text-[var(--modern-text,#0f172a)]"><ChevronLeft /></button><button type="button" aria-label="Next slide" onClick={() => move(1)} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-[var(--modern-card,#fff)] p-2 text-[var(--modern-text,#0f172a)]"><ChevronRight /></button></>}{indicators && items.length > 1 && <div className="carousel-indicators relative inset-auto ms-5 flex items-center justify-start gap-2 p-0">{items.map((_, i) => <button key={i} type="button" data-bs-target="" aria-label={`Go to slide ${i + 1}`} aria-current={index === i} onClick={() => setIndex(i)} className={cn("h-1 flex-none rounded-full border-0 transition-all duration-200 cursor-pointer", index === i ? "active w-[38px] opacity-100 bg-[linear-gradient(100deg,var(--modern-violet),var(--modern-blue),var(--modern-cyan))]" : "w-[21px] opacity-70 bg-[var(--modern-border-strong,#cbd5e1)]")} />)}</div>}</div>;
 };
 Carousel.Item = CarouselItem;
 export { Carousel };

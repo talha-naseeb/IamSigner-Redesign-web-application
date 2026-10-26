@@ -23,13 +23,14 @@ const AppSwitch = ({
   "aria-labelledby": ariaLabelledBy,
   ...inputProps
 }) => {
-  const thumbSize = Math.min(handleDiameter ?? height - 4, height);
-  const padding = (height - thumbSize) / 2;
-  const checkedOffset = width - thumbSize - padding * 2;
+  const thumbSize = Math.min(handleDiameter ?? height - 4, height - 2);
+  const padding = Math.max(2, (height - thumbSize) / 2);
+  const checkedOffset = Math.max(0, width - thumbSize - padding * 2);
+  const iconSlotWidth = Math.max(0, width - thumbSize - padding * 2);
   const handleChange = (event) => onChange?.(!checked, event);
 
   return (
-    <span className={cn("app-switch inline-flex align-middle", className)} style={{ width, height }}>
+    <span className={cn("app-switch inline-flex shrink-0 align-middle", className)} style={{ width, height }}>
       <button
         {...inputProps}
         id={id}
@@ -40,14 +41,36 @@ const AppSwitch = ({
         aria-labelledby={ariaLabelledBy}
         disabled={disabled}
         onClick={handleChange}
-        className="ui-switch-track relative inline-flex w-full items-center rounded-full p-0 outline-none transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--modern-primary,#6366f1)] disabled:cursor-not-allowed disabled:opacity-60"
+        className="ui-switch-track relative inline-flex w-full h-full items-center rounded-full border-0 p-0 overflow-hidden cursor-pointer outline-none transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--modern-primary,#6366f1)] disabled:cursor-not-allowed disabled:opacity-60"
         style={{ width, height, backgroundColor: checked ? onColor : offColor }}
       >
-        {uncheckedIcon && !checked && <span className="absolute left-1 top-1/2 -translate-y-1/2">{uncheckedIcon}</span>}
-        {checkedIcon && checked && <span className="absolute right-1 top-1/2 -translate-y-1/2">{checkedIcon}</span>}
+        {checkedIcon && (
+          <span
+            aria-hidden="true"
+            className={cn(
+              "pointer-events-none absolute top-1/2 -translate-y-1/2 flex items-center justify-center transition-opacity duration-150",
+              checked ? "opacity-100" : "opacity-0"
+            )}
+            style={{ left: padding, width: iconSlotWidth, height: thumbSize }}
+          >
+            {checkedIcon}
+          </span>
+        )}
+        {uncheckedIcon && (
+          <span
+            aria-hidden="true"
+            className={cn(
+              "pointer-events-none absolute top-1/2 -translate-y-1/2 flex items-center justify-center transition-opacity duration-150",
+              !checked ? "opacity-100" : "opacity-0"
+            )}
+            style={{ right: padding, width: iconSlotWidth, height: thumbSize }}
+          >
+            {uncheckedIcon}
+          </span>
+        )}
         <span
           aria-hidden="true"
-          className="ui-switch-thumb absolute top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full transition-transform"
+          className="ui-switch-thumb pointer-events-none absolute top-1/2 z-[1] flex -translate-y-1/2 items-center justify-center rounded-full transition-transform duration-200 ease-out"
           style={{
             width: thumbSize,
             height: thumbSize,

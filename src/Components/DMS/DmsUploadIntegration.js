@@ -3,7 +3,6 @@ import { Form } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { registerDmsDocumentForUploadFlow } from "./utils/dmsSignBridge";
 import { useUser } from "@/Context/UserContext";
 import UploadSourceCard from "@/Components/Common/CloudPickers/UploadSourceCard";
@@ -109,11 +108,6 @@ const DmsUploadIntegration = ({ onOpenPicker, isDmsUploading = false }) => {
 
   return (
     <>
-      {isDmsUploading && (
-        <div className="loader-overlay">
-          <Loader />
-        </div>
-      )}
       <UploadSourceCard
         onClick={(e) => {
           e.stopPropagation();

@@ -6,7 +6,6 @@ import { Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
 import uploadFlowService from "@/services/uploadFlowService";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { toast } from "react-toastify";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 
@@ -186,11 +185,6 @@ function PlaceBulkSignatories({ setActiveStep, setCompletedSteps }) {
 
   return (
     <div className='container max-w-5xl mx-auto px-4 mt-4'>
-      {isLoading && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm'>
-          <Loader />
-        </div>
-      )}
 
       <div
         className='flex items-center justify-center gap-2 p-3.5 rounded-md cursor-pointer bg-[var(--modern-primary,#6366f1)] text-white font-semibold hover:opacity-90 transition-opacity'

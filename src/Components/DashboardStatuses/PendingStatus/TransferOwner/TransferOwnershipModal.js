@@ -3,7 +3,6 @@ import { Modal, Button, Form } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import userService from "@/services/userService";
 import dashboardService from "@/services/dashboardService";
 import { Icons } from "@/assets/Icons/index";
@@ -108,11 +107,6 @@ const TransferOwnershipModal = ({ show, handleClose, masterDocID, docName }) => 
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <Modal show={show} onHide={handleCloseModal} dialogClassName='custom-modal-width' backdrop='static' keyboard={false}>
         <Modal.Header closeButton>
           <div className='flex items-center gap-3'>

@@ -4,7 +4,6 @@ import moreIcon from "@/assets/images/moreIcon.png";
 import { useTranslation } from "react-i18next";
 import dashboardService from "@/services/dashboardService";
 import uploadFlowService from "@/services/uploadFlowService";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { Chips } from "@/Components/UI/EmailChips";
@@ -489,11 +488,6 @@ const ChangeOrderModal = ({ show, handleClose, registerSignID, signedDocKey }) =
         </Modal.Header>
         <Modal.Body className='signature-modal-body' style={{ maxHeight: "50vh", overflowY: "auto" }}>
           <div className='signatories-forms'>
-            {isLoading && (
-              <div className='loader-overlay'>
-                <Loader />
-              </div>
-            )}
 
             <div className='signatory-form-container'>
               <Form>

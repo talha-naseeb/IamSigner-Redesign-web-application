@@ -595,8 +595,13 @@
   color: var(--modern-violet);
 }
 
+.doc-name-cell {
+  max-width: 240px;
+}
+
 .doc-name-text {
-  max-width: 340px;
+  display: block;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -631,6 +636,11 @@
 /* Clean Reference Text (No heavy border box) */
 .mono-reference-text {
   display: inline-block;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
   padding: 3px 7px;
   border-radius: 6px;
   background: color-mix(in srgb, var(--modern-violet) 10%, transparent);

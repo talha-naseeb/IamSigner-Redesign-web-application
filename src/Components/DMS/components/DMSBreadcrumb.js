@@ -2,6 +2,7 @@ import React from "react";
 import { NavigateNextIcon as NavigateNextIcon } from "@/Components/UI/iconCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons/index";
+import { ALL_DOCUMENTS_ICON } from "../constants/dmsConfig";
 
 const DMSBreadcrumb = ({ breadcrumb, onGoHome, onSelectFolder }) => {
   const { t } = useTranslation();
@@ -9,7 +10,7 @@ const DMSBreadcrumb = ({ breadcrumb, onGoHome, onSelectFolder }) => {
   return (
     <div className="dms-breadcrumb">
       <span className="dms-breadcrumb-home" onClick={onGoHome}>
-        <Icons.Home size={14} /> {t("DMS.allDocuments")}
+        <ALL_DOCUMENTS_ICON size={14} /> {t("DMS.allDocuments")}
       </span>
       {breadcrumb.map((item, idx) => (
         <React.Fragment key={item.treeKey ?? item.id}>

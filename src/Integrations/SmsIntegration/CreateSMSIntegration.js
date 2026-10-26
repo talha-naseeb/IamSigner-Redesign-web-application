@@ -8,7 +8,6 @@ import { useUser } from "@/Context/UserContext";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Grid } from "@/Components/UI/dataPrimitives";
 import SMSIcon from "@/assets/images/sms-edit.svg";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 
 const providers = ["Twilio", "Nexmo", "Plivo"];
 
@@ -87,11 +86,6 @@ function CreateSMSIntegration() {
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <Accordion defaultActiveKey='0' className='accordion'>
         <Accordion.Item eventKey='0'>
           <Accordion.Header>
@@ -110,18 +104,18 @@ function CreateSMSIntegration() {
               <div className='pendingtable'>
                 <TableContainer
                   component={Paper}
-                  className='custom-table-scrollbar'
+                  className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
                   style={{
                     maxWidth: "100%",
                     overflowX: "auto",
-                    height: "25vh",
+                    maxHeight: "360px",
                   }}
                 >
                   <Table stickyHeader style={{ border: "none" }}>
                     <TableHead>
                       <TableRow>
                         {columns.map((column) => (
-                          <TableCell key={column.key} style={{ backgroundColor: "#c2e8f8" }} className='TableHeaderCell'>
+                          <TableCell key={column.key} className='TableHeaderCell'>
                             {column.label}
                           </TableCell>
                         ))}

@@ -3,7 +3,6 @@ import { Modal, Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { FiRefreshCw } from "react-icons/fi";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import dashboardService from "@/services/dashboardService";
 import { Icons } from "@/assets/Icons";
 
@@ -35,11 +34,6 @@ const RecallConfirmationModal = ({ show, onHide, selectedRow, onSuccess }) => {
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       <Modal show={show} backdrop='static' keyboard={false} onHide={onHide} dialogClassName='custom-modal-width'>
         <Modal.Header closeButton>

@@ -4,7 +4,6 @@ import { useTheme } from "@/Context/ThemeContext";
 import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
 import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import verificationService from "@/services/verificationService";
 
 export default function AuditTrail({ url }) {
@@ -84,11 +83,6 @@ export default function AuditTrail({ url }) {
         {theme === "dark" ? <Icons.IamSignerLightMode /> : <Icons.StepperLogo />}
         <h4>{t("auditTrailScreen.auditTrail")}</h4>
       </div>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <div className='signers-info'>
         <div>
           <span className='info-title'>{t("tablesLabel.docInfo")}</span>

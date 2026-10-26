@@ -144,6 +144,10 @@
   height: calc(100% - 58px);
 }
 
+.mainbody:has(.dms-root) {
+  overflow-y: hidden;
+}
+
 /* Upload/template editors have no navigation sidebar, so their header can be
    fixed across the full viewport without the scroll-position jump. */
 .mainbody--full-width {
@@ -172,17 +176,135 @@
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--theme-color) 22%, var(--border-color));
   border-radius: 20px;
-  background:
-    radial-gradient(130% 80% at 0% 0%, color-mix(in srgb, var(--theme-color) 10%, transparent), transparent 58%),
-    linear-gradient(155deg, color-mix(in srgb, var(--theme-color) 4%, var(--bg-primary)), var(--bg-primary) 60%, color-mix(in srgb, var(--theme-color) 3%, var(--bg-primary)));
-  box-shadow: 0 8px 28px color-mix(in srgb, var(--theme-color) 7%, transparent), var(--shadow-sm);
   color: var(--text-secondary);
-  transition: flex-basis 300ms cubic-bezier(0.22, 1, 0.36, 1), width 300ms cubic-bezier(0.22, 1, 0.36, 1), background var(--theme-transition), border-color var(--theme-transition);
+  transition: flex-basis 420ms cubic-bezier(0.4, 0, 0.2, 1), width 1s cubic-bezier(0.4, 0, 0.2, 1), background var(--theme-transition), border-color var(--theme-transition);
 }
 
 .sidebar--collapsed {
   flex-basis: 4.25rem;
   width: 4.25rem;
+}
+
+/* Two-tier docked layout when DMS subpanel is active */
+.sidebar.sidebar--has-subpanel {
+  flex-direction: row;
+  flex: 0 0 auto;
+  width: auto;
+  overflow: visible;
+}
+
+.sidebar-rail {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 100%;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.sidebar.sidebar--has-subpanel .sidebar-rail {
+  flex: 0 0 15rem;
+  width: 15rem;
+  border-right: 1px solid color-mix(in srgb, var(--theme-color) 12%, var(--border-color));
+}
+
+.sidebar.sidebar--has-subpanel.sidebar--collapsed .sidebar-rail {
+  flex-basis: 4.25rem;
+  width: 4.25rem;
+}
+
+[dir="rtl"] .sidebar.sidebar--has-subpanel .sidebar-rail {
+  border-right: none;
+  border-left: 1px solid color-mix(in srgb, var(--theme-color) 12%, var(--border-color));
+}
+
+.sidebar.sidebar--has-subpanel.sidebar--collapsed .sidebar-brand {
+  width: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebar.sidebar--has-subpanel.sidebar--collapsed .sidebar-brand-row {
+  justify-content: center;
+  padding: 13px 8px;
+}
+
+.sidebar.sidebar--has-subpanel.sidebar--collapsed .sidebar-nav {
+  padding: 13px 6px;
+}
+
+.sidebar.sidebar--has-subpanel.sidebar--collapsed .link_text {
+  display: none !important;
+}
+
+.sidebar.sidebar--has-subpanel.sidebar--collapsed .menuLinks {
+  justify-content: center;
+  padding: 10px 0;
+  border-radius: 12px;
+}
+
+.sidebar.sidebar--has-subpanel.sidebar--collapsed .dms-sidebar-tab-arrow {
+  display: none !important;
+}
+
+/* Secondary docked subpanel container */
+.sidebar-subpanel {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 250px;
+  width: 250px;
+  min-width: 250px;
+  height: 100%;
+  background: var(--modern-card);
+  position: relative;
+  z-index: 1;
+  border-radius: 0 19px 19px 0;
+  overflow: hidden;
+  transition: flex-basis 420ms cubic-bezier(0.4, 0, 0.2, 1),
+              width 420ms cubic-bezier(0.4, 0, 0.2, 1),
+              min-width 420ms cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.18s ease;
+}
+
+/* When the DMS tree panel is collapsed, collapse the docked subpanel to an icon rail */
+.sidebar-subpanel:has(.dms-tree-panel--collapsed),
+.sidebar-subpanel.sidebar-subpanel--collapsed {
+  flex: 0 0 4.25rem;
+  width: 4.25rem;
+  min-width: 4.25rem;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+[dir="rtl"] .sidebar-subpanel {
+  border-radius: 19px 0 0 19px;
+}
+
+.sidebar-subpanel:empty {
+  display: none !important;
+  width: 0 !important;
+}
+
+.sidebar-subpanel .dms-tree-panel {
+  width: 250px;
+  min-width: 250px;
+  max-width: 250px;
+  height: 100%;
+  border-right: none;
+  border-top: none;
+  border-bottom: none;
+  background: transparent;
+  transition: width 420ms cubic-bezier(0.4, 0, 0.2, 1),
+              min-width 420ms cubic-bezier(0.4, 0, 0.2, 1),
+              max-width 420ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-subpanel .dms-tree-panel.dms-tree-panel--collapsed {
+  width: 4.25rem;
+  min-width: 4.25rem;
+  max-width: 4.25rem;
 }
 
 .sidebar-scroll {
@@ -211,7 +333,7 @@
   min-height: 66px;
   padding: 13px 14px 12px 16px;
   border-bottom: 1px solid color-mix(in srgb, var(--theme-color) 12%, var(--border-color));
-  transition: gap 240ms cubic-bezier(0.22, 1, 0.36, 1), padding 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: gap 420ms cubic-bezier(0.4, 0, 0.2, 1), padding 420ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-brand {
@@ -223,8 +345,9 @@
   min-width: 0;
   align-items: center;
   overflow: hidden;
+  opacity: 1;
   text-decoration: none;
-  transition: width 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: width 420ms cubic-bezier(0.4, 0, 0.2, 1), opacity 320ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-brand-wordmark {
@@ -236,27 +359,14 @@
   height: 39px;
   opacity: 1;
   transform: translateY(-50%);
-  transition: opacity 160ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.sidebar-brand-mark {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  display: block;
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  opacity: 0;
-  transform: translate(-5px, -50%) scale(0.82);
-  transition: opacity 180ms ease, transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 320ms cubic-bezier(0.4, 0, 0.2, 1), transform 420ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-toggle {
   display: inline-flex;
-  width: 30px;
-  height: 30px;
-  flex: 0 0 30px;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
   align-items: center;
   justify-content: center;
   border: 1px solid color-mix(in srgb, var(--theme-color) 15%, var(--border-color));
@@ -264,7 +374,7 @@
   background: color-mix(in srgb, var(--bg-primary) 72%, transparent);
   color: var(--text-secondary);
   cursor: pointer;
-  transition: width 240ms cubic-bezier(0.22, 1, 0.36, 1), height 240ms cubic-bezier(0.22, 1, 0.36, 1), flex-basis 240ms cubic-bezier(0.22, 1, 0.36, 1), color 150ms ease, background-color 150ms ease;
+  transition: width 420ms cubic-bezier(0.4, 0, 0.2, 1), height 420ms cubic-bezier(0.4, 0, 0.2, 1), flex-basis 420ms cubic-bezier(0.4, 0, 0.2, 1), color 200ms ease, background-color 200ms ease, border-color 200ms ease;
 }
 
 .sidebar-toggle:hover {
@@ -278,7 +388,7 @@
 }
 
 .sidebar-toggle svg {
-  transition: transform 220ms ease;
+  transition: transform 380ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-toggle-icon--rtl:not(.sidebar-toggle-icon--collapsed) {
@@ -291,7 +401,7 @@
 
 .sidebar-nav {
   padding: 13px 9px 16px;
-  transition: padding 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: padding 420ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-nav-items {
@@ -328,7 +438,7 @@
   text-align: start;
   text-decoration: none;
   cursor: pointer;
-  transition: color 150ms ease, background-color 150ms ease, transform 150ms ease, gap 240ms cubic-bezier(0.22, 1, 0.36, 1), padding 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: color 180ms ease, background-color 180ms ease, transform 180ms ease, gap 420ms cubic-bezier(0.4, 0, 0.2, 1), padding 420ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar .menuLinks:hover,
@@ -379,6 +489,109 @@
   border-radius: 4px 0 0 4px;
 }
 
+/* Connected MAC Drive item in primary sidebar */
+.sidebar .menuLinks.dms-section {
+  position: relative;
+}
+
+.sidebar .menuLinks.dms-section .dms-sidebar-tab-arrow {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  color: var(--modern-muted);
+  opacity: 0.6;
+  transition: transform 0.2s ease, opacity 0.2s ease, color 0.2s ease;
+}
+
+[dir="rtl"] .sidebar .menuLinks.dms-section .dms-sidebar-tab-arrow {
+  margin-left: 0;
+  margin-right: auto;
+  transform: rotate(180deg);
+}
+
+.sidebar .menuLinks.dms-section:hover .dms-sidebar-tab-arrow {
+  opacity: 0.9;
+  transform: translateX(2px);
+}
+
+.sidebar .menuLinks.dms-section.active .dms-sidebar-tab-arrow {
+  opacity: 1;
+  color: var(--theme-color);
+  transform: translateX(3px);
+}
+
+[dir="rtl"] .sidebar .menuLinks.dms-section.active .dms-sidebar-tab-arrow {
+  transform: rotate(180deg) translateX(3px);
+}
+
+/* Connecting arrow notch for active MAC Drive tab */
+.sidebar .menuLinks.dms-section.active::after {
+  content: "";
+  position: absolute;
+  right: -9px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 6px solid var(--theme-color);
+  z-index: 10;
+}
+
+[dir="rtl"] .sidebar .menuLinks.dms-section.active::after {
+  right: auto;
+  left: -9px;
+  border-left: none;
+  border-right: 6px solid var(--theme-color);
+}
+
+/* Enhanced connected tab styling when two-tier subpanel is docked */
+.sidebar--has-subpanel.sidebar--collapsed .sidebar-rail .menuLinks.dms-section.active {
+  background: var(--modern-violet) !important;
+  color: #fff !important;
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.sidebar--has-subpanel.sidebar--collapsed .sidebar-rail .menuLinks.dms-section.active .Menuicons,
+.sidebar--has-subpanel.sidebar--collapsed .sidebar-rail .menuLinks.dms-section.active svg {
+  color: #fff !important;
+}
+
+.sidebar--has-subpanel.sidebar--collapsed .sidebar-rail .menuLinks.dms-section.active::before {
+  display: none !important;
+}
+
+.sidebar--has-subpanel.sidebar--collapsed .sidebar-rail .menuLinks.dms-section.active::after {
+  content: "";
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 10px solid var(--modern-violet);
+  z-index: 50;
+  filter: drop-shadow(1px 0 1px rgba(0, 0, 0, 0.08));
+}
+
+[dir="rtl"] .sidebar--has-subpanel.sidebar--collapsed .sidebar-rail .menuLinks.dms-section.active::after {
+  right: auto;
+  left: -10px;
+  border-left: none;
+  border-right: 10px solid var(--modern-violet);
+  filter: drop-shadow(-1px 0 1px rgba(0, 0, 0, 0.08));
+}
+
 .Menuicons {
   display: inline-flex;
   width: 21px;
@@ -406,7 +619,7 @@
   text-overflow: ellipsis;
   transform: translateX(0);
   white-space: nowrap;
-  transition: max-width 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 140ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: max-width 420ms cubic-bezier(0.4, 0, 0.2, 1), opacity 320ms cubic-bezier(0.4, 0, 0.2, 1), transform 420ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-nav-group {
@@ -423,11 +636,30 @@
   color: var(--text-muted);
   opacity: 1;
   visibility: visible;
-  transition: width 200ms ease, flex-basis 200ms ease, opacity 140ms ease, transform 160ms ease, visibility 140ms ease;
+  transition: width 380ms cubic-bezier(0.4, 0, 0.2, 1), flex-basis 380ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1), transform 320ms cubic-bezier(0.4, 0, 0.2, 1), visibility 300ms ease;
 }
 
 .sidebar-group-chevron--open {
   transform: rotate(180deg);
+}
+
+.sidebar-submenu-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
+  transition: grid-template-rows 380ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-submenu-wrapper--open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sidebar-submenu-inner {
+  overflow: hidden;
+  min-height: 0;
 }
 
 .sidebar-submenu {
@@ -482,7 +714,8 @@
   color: var(--theme-color);
   font-size: 13px;
   font-weight: 650;
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--theme-color) 8%, transparent);
+  box-shadow: none;
+  transition: background-color 180ms ease, gap 420ms cubic-bezier(0.4, 0, 0.2, 1), padding 420ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .UploadMenuLink:hover .UploadDocMenu {
@@ -497,7 +730,7 @@
   border-top: 1px solid color-mix(in srgb, var(--theme-color) 15%, var(--border-color));
   color: var(--text-secondary);
   font-size: 11px;
-  transition: margin 240ms cubic-bezier(0.22, 1, 0.36, 1), padding 240ms cubic-bezier(0.22, 1, 0.36, 1), min-height 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: margin 420ms cubic-bezier(0.4, 0, 0.2, 1), padding 420ms cubic-bezier(0.4, 0, 0.2, 1), min-height 420ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-storage--collapsed {
@@ -512,7 +745,7 @@
 .sidebar-storage-content {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 140ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1), visibility 140ms ease;
+  transition: opacity 320ms cubic-bezier(0.4, 0, 0.2, 1), transform 380ms cubic-bezier(0.4, 0, 0.2, 1), visibility 320ms ease;
 }
 
 .sidebar-storage--collapsed .sidebar-storage-content {
@@ -531,7 +764,7 @@
   opacity: 0;
   pointer-events: none;
   transform: scale(0.85);
-  transition: opacity 140ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 320ms cubic-bezier(0.4, 0, 0.2, 1), transform 380ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-storage--collapsed .sidebar-storage-collapsed-icon {
@@ -570,28 +803,25 @@
 .sidebar--collapsed .sidebar-brand-row {
   justify-content: center;
   min-height: 66px;
-  gap: 4px;
-  padding: 11px 7px;
+  gap: 0;
+  padding: 13px 0;
 }
 
 .sidebar--collapsed .sidebar-brand {
-  width: 20px;
+  width: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .sidebar--collapsed .sidebar-brand-wordmark {
   opacity: 0;
-  transform: translate(-8px, -50%);
-}
-
-.sidebar--collapsed .sidebar-brand-mark {
-  opacity: 1;
-  transform: translate(0, -50%) scale(1);
+  transform: translate(-12px, -50%);
 }
 
 .sidebar--collapsed .sidebar-toggle {
-  width: 24px;
-  height: 24px;
-  flex-basis: 24px;
+  width: 34px;
+  height: 34px;
+  flex-basis: 34px;
 }
 
 .sidebar--collapsed .sidebar-nav {
@@ -708,7 +938,8 @@
     border-radius: 0 20px 20px 0;
     transform: translateX(-105%);
     visibility: hidden;
-    box-shadow: 18px 0 45px rgba(15, 23, 42, 0.18);
+    box-shadow: none;
+    border-right: 1px solid var(--modern-border);
     transition: transform 240ms var(--motion-emphasized), visibility 240ms;
   }
 
@@ -762,13 +993,10 @@
     transform: translateY(-50%);
   }
 
-  .sidebar--collapsed .sidebar-brand-mark {
-    opacity: 0;
-    transform: translate(-5px, -50%) scale(0.82);
-  }
-
   .sidebar--collapsed .sidebar-brand {
     width: 132px;
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .sidebar--collapsed .sidebar-toggle {

@@ -114,13 +114,13 @@ export const useMenuConfig = (user, userAccess, t, accountId) => {
         icon: Icons.Recall,
         iconSize: 21,
         label: t("Sidebar.Recall"),
-        path: "/recall-documents",
+        path: "/recall-docs",
         show: userAccess.recalled === true,
       },
       {
         icon: Icons.Inactive,
         label: t("Sidebar.Inactive"),
-        path: "/inactive",
+        path: "/inactive-docs",
         show: true,
       },
       {
@@ -155,14 +155,6 @@ export const useMenuConfig = (user, userAccess, t, accountId) => {
 
   // Feature menu items
   const featureMenuItems = [
-    // {
-    //   icon: Icons.Automation,
-    //   label: t("Sidebar.AIAssistant"),
-    //   path: "/ai-assistant",
-    //   className: "template-section",
-    //   show: !isRestrictedUser && userAccess.templates === true,
-    //
-    //  },
     {
       icon: Icons.MacDrive,
       label: t("Sidebar.DMS"),

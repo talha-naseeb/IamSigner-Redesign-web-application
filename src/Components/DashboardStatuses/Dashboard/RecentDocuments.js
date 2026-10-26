@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Stack, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import RecentDocsFilter from "./RecentDocsFilter";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { FaDownload } from "react-icons/fa6";
@@ -150,12 +149,6 @@ const RecentDocuments = () => {
   return (
     <div className='w-full max-w-none m-0 py-6 px-4 sm:px-6 bg-[var(--modern-bg)] text-[var(--modern-text)] font-sans'>
       <div>
-        {/* Loader overlay */}
-        {isLoading && (
-          <div className='loader-overlay'>
-            <Loader />
-          </div>
-        )}
 
         {user.AccountType === "B" && (user.RoleID === 1 || user.RoleID === 4) && userAccess.remainingDays >= 0 ? (
           <div className='w-full max-w-[1560px] mx-auto p-5 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)]'>
@@ -203,7 +196,9 @@ const RecentDocuments = () => {
               style={{
                 maxWidth: "100%",
                 overflowX: "auto",
-                height: "70vh",
+                minHeight: "440px",
+                height: "calc(100vh - 280px)",
+                maxHeight: "calc(100vh - 280px)",
               }}
             >
               <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
@@ -222,11 +217,11 @@ const RecentDocuments = () => {
                 <TableBody>
                   {searchResults.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={columns.length} className='h-48 text-center text-[var(--modern-muted)]'>
-                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                          <Icons.BulkDocuments size={50} />
-                          {t("dashboardCardStatuses.notDocsFound")}
-                        </div>
+                      <TableCell colSpan={columns.length} className='table-empty-state-cell'>
+                        <TableEmptyState
+                          icon={<Icons.BulkDocuments size={50} />}
+                          title={t("dashboardCardStatuses.notDocsFound")}
+                        />
                       </TableCell>
                     </TableRow>
                   )}
@@ -236,11 +231,13 @@ const RecentDocuments = () => {
                     return (
                       <TableRow key={index} className='hover:bg-[var(--modern-raised)]'>
                         {/* Table Cells */}
-                        <TableCell className='TableCell truncate max-w-[150px]' onClick={(e) => handleCellClick(e)}>
+                        <TableCell className='TableCell truncate-cell' title={row.docName} onClick={(e) => handleCellClick(e)}>
                           {row.docName}
                         </TableCell>
                         <TableCell className='TableCell'>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
-                        <TableCell className='TableCell'>{row.referenceNumber}</TableCell>
+                        <TableCell className='TableCell truncate-cell truncate-ref-cell' title={row.referenceNumber} onClick={(e) => handleCellClick(e)}>
+                          {row.referenceNumber}
+                        </TableCell>
                         <TableCell className='TableCell'>
                           <span
                             className='inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold'
@@ -253,7 +250,9 @@ const RecentDocuments = () => {
                             {row.docStatus || "Bulk"}
                           </span>
                         </TableCell>
-                        <TableCell className='TableCell'>{row.createdByName}</TableCell>
+                        <TableCell className='TableCell truncate-cell' onClick={(e) => handleCellClick(e)}>
+                          <UserInitialsBadge name={row.createdByName} />
+                        </TableCell>
                       </TableRow>
                     );
                   })}

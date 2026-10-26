@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import { useDropzone } from "react-dropzone";
 import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { useNavigate } from "react-router-dom";
 import verificationService from "@/services/verificationService";
 import UploadSourceCard from "@/Components/Common/CloudPickers/UploadSourceCard";
@@ -121,11 +120,6 @@ const AddSupportingDocSignNow = ({ show, onClose, signAuth, getSupportingDocs, c
           <Offcanvas.Title>{t("uploadDocFlow.UploadsupportedDocument")}</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          {isLoading && (
-            <div className='loader-overlay'>
-              <Loader />
-            </div>
-          )}
 
           <UploadSourceCard {...getRootProps()}>
             <input {...getInputProps()} className="sr-only" />

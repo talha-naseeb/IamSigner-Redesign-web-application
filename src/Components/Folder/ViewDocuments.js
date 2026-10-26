@@ -6,17 +6,10 @@ import { Button, Form, Dropdown, Offcanvas, Modal } from "@/Components/UI/shadcn
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { Icons } from "@/assets/Icons";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import ShareModal from "@/Components/CommonModals/ShareModal/ShareModal";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
 import SignOrder from "@/Components/CommonModals/SignOrder/SignOrder";
-import { Pagination } from "@/Components/UI/dataPrimitives";
-import DownloadModal from "@/Components/CommonModals/DownloadModal/DownloadModal";
-import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
-import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
-import AddCompletedDocuments from "@/Components/Folder/AddCompletedDocuments";
-import AddCompletedToSubFolder from "@/Components/Folder/AddCompletedToSubFolder";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@/Components/UI/dataPrimitives";
+import { Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Paper, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 
 const ViewDocuments = () => {
@@ -366,11 +359,6 @@ const ViewDocuments = () => {
 
   return (
     <div className='folder-route folder-document-route container my-3 text-foreground [font-family:var(--modern-font-ui)]'>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       <button className='templateButton' onClick={() => setShowFolder(true)}>
         {t("Folder.addSubFolder")}
@@ -406,15 +394,17 @@ const ViewDocuments = () => {
             </div>
           </div>
         </div>
-        <hr />
+        <div className='border-b border-[var(--modern-border)] my-4' />
 
         <TableContainer
           component={Paper}
-          className='custom-table-scrollbar'
+          className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
           style={{
             maxWidth: "100%",
             overflowX: "auto",
-            height: "58vh",
+            minHeight: "440px",
+            height: "calc(100vh - 280px)",
+            maxHeight: "calc(100vh - 280px)",
           }}
         >
           <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
@@ -430,18 +420,11 @@ const ViewDocuments = () => {
             <TableBody>
               {data.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={columns.length} align='center' style={{ border: "none" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Icons.Folders size={50} />
-                      {t("dashboardCardStatuses.notDocsFound")}
-                    </div>
+                  <TableCell colSpan={columns.length} className='table-empty-state-cell'>
+                    <TableEmptyState
+                      icon={<Icons.Folders size={50} />}
+                      title={t("dashboardCardStatuses.notDocsFound")}
+                    />
                   </TableCell>
                 </TableRow>
               ) : (
@@ -483,7 +466,9 @@ const ViewDocuments = () => {
                     >
                       {row.subFolderDescription}
                     </TableCell>
-                    <TableCell>{row.subFolderID ? row.subFolderCreatedByName : row.createdByName}</TableCell>
+                    <TableCell className='TableCell truncate-cell'>
+                      <UserInitialsBadge name={row.subFolderID ? row.subFolderCreatedByName : row.createdByName} />
+                    </TableCell>
                     <TableCell className='py-0'>
                       <Dropdown className='align-items-center'>
                         <Dropdown.Toggle as={CustomToggle} />
@@ -546,11 +531,17 @@ const ViewDocuments = () => {
           </Table>
         </TableContainer>
 
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-          <div className='showHideNoDocs'>
-            {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
+        <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 text-xs text-[var(--modern-muted)]'>
+          <div>
+            {data.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
           </div>
-          <Pagination count={Math.ceil(data.length / rowsPerPage)} variant='outlined' shape='rounded' page={page + 1} onChange={(event, newPage) => handleChangePage(event, newPage - 1)} />
+          <Pagination
+            count={Math.max(1, Math.ceil(data.length / rowsPerPage))}
+            variant='outlined'
+            shape='rounded'
+            page={Math.min(page + 1, Math.max(1, Math.ceil(data.length / rowsPerPage)))}
+            onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
+          />
         </div>
       </div>
 

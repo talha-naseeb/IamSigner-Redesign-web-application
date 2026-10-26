@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { DateObject } from "react-multi-date-picker";
 import DateRangePicker from "@/Components/Common/DateRangePicker/DateRangePicker";
 import { Icons } from "@/assets/Icons/index";
+import { ALL_DOCUMENTS_ICON } from "../constants/dmsConfig";
 
 const CONTENT_FILTERS = [
   { id: "both", labelKey: "DMS.filterBoth" },
@@ -77,18 +78,21 @@ const DMSToolbar = ({
   return (
     <div className={`dms-toolbar${isRoot ? " dms-toolbar--root" : ""}`}>
       <div className="dms-toolbar-head">
-        <h6 className="dms-page-title">
-          {selectedFolder ? selectedFolder.name : t("DMS.allDocuments")}
-          <span className="dms-page-count">
-            {isRoot
-              ? `${rootFolderCount} ${t("DMS.foldersCount")}`
-              : `${
-                  subfolderCount
-                    ? `${subfolderCount} ${t("DMS.foldersCount")}, `
-                    : ""
-                }${docCount} ${t("DMS.docsCount")}`}
-          </span>
-        </h6>
+        <div className="dms-toolbar-title-group">
+          <h1 className="dms-page-title">
+            {selectedFolder ? (
+              <>
+                <Icons.Folders size={20} className="dms-title-icon text-[var(--modern-violet)]" aria-hidden="true" />
+                <span>{selectedFolder.name}</span>
+              </>
+            ) : (
+              <>
+                <ALL_DOCUMENTS_ICON size={20} className="dms-title-icon text-[var(--modern-violet)]" aria-hidden="true" />
+                <span>{t("DMS.allDocuments")}</span>
+              </>
+            )}
+          </h1>
+        </div>
       </div>
 
       <div className="dms-toolbar-controls">
@@ -124,75 +128,88 @@ const DMSToolbar = ({
               </button>
             ))}
           </div>
-          <div className="dms-toolbar-actions">
-            <div className="dms-view-toggle">
-              <Tooltip title={t("DMS.gridView")}>
-                <IconButton
-                  size="small"
-                  className={viewMode === "grid" ? "dms-view-active" : ""}
-                  onClick={() => onViewChange("grid")}
-                >
-                  <GridViewIcon sx={{ fontSize: 17 }} />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title={t("DMS.listView")}>
-                <IconButton
-                  size="small"
-                  className={viewMode === "list" ? "dms-view-active" : ""}
-                  onClick={() => onViewChange("list")}
-                >
-                  <ViewListIcon sx={{ fontSize: 17 }} />
-                </IconButton>
-              </Tooltip>
-            </div>
+        </div>
 
-            {onOpenMobileTree ? (
-              <Button
+        <div className="dms-toolbar-actions">
+          <div
+            className="dms-view-toggle"
+            role="group"
+            aria-label={t("DMS.viewMode", "View Mode")}
+          >
+            <Tooltip title={t("DMS.gridView")}>
+              <button
                 type="button"
-                size="sm"
-                variant="outline-secondary"
-                className="dms-action-btn dms-mobile-tree-btn"
-                onClick={onOpenMobileTree}
-                aria-label={t("DMS.browseFolders")}
-              >
-                <Icons.Folders size={15} />
-                <span>{t("DMS.browseFolders")}</span>
-              </Button>
-            ) : null}
-            {isRoot ? (
-              <Button
-                type="button"
-                size="sm"
-                variant="outline-secondary"
-                className={`dms-action-btn dms-folder-filter-btn${
-                  hasRootFolderFilters ? " active" : ""
+                className={`dms-view-toggle-btn${
+                  viewMode === "grid" ? " dms-view-active" : ""
                 }`}
-                onClick={() => setShowFolderFilters((prev) => !prev)}
-                aria-label={t("DMS.folderFiltersTitle")}
-                aria-expanded={showFolderFilters}
+                onClick={() => onViewChange("grid")}
+                aria-label={t("DMS.gridView")}
+                aria-pressed={viewMode === "grid"}
               >
-                <Icons.Filter size={15} />
-                <span className="dms-btn-label">{t("DMS.filter")}</span>
-              </Button>
-            ) : null}
-            {canCreateFolder ? (
-              <Button
-                size="sm"
-                variant="outline-secondary"
-                className="dms-action-btn"
-                onClick={onNewFolder}
+                <GridViewIcon sx={{ fontSize: 14 }} />
+              </button>
+            </Tooltip>
+            <Tooltip title={t("DMS.listView")}>
+              <button
+                type="button"
+                className={`dms-view-toggle-btn${
+                  viewMode === "list" ? " dms-view-active" : ""
+                }`}
+                onClick={() => onViewChange("list")}
+                aria-label={t("DMS.listView")}
+                aria-pressed={viewMode === "list"}
               >
-                <Icons.FolderPlus size={15} />
-                <span className="dms-btn-label">{t("DMS.newFolder")}</span>
-              </Button>
-            ) : null}
-            {canUploadDocuments ? (
-              <Button size="sm" className="dms-upload-btn" onClick={onUpload}>
-                <Icons.UploadCloud size={15} />
-                <span className="dms-btn-label">{t("DMS.upload")}</span>
-              </Button>
-            ) : null}
+                <ViewListIcon sx={{ fontSize: 14 }} />
+              </button>
+            </Tooltip>
           </div>
+
+          {onOpenMobileTree ? (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline-secondary"
+              className="dms-action-btn dms-mobile-tree-btn"
+              onClick={onOpenMobileTree}
+              aria-label={t("DMS.browseFolders")}
+            >
+              <Icons.Folders size={15} />
+              <span>{t("DMS.browseFolders")}</span>
+            </Button>
+          ) : null}
+          {isRoot ? (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline-secondary"
+              className={`dms-action-btn dms-folder-filter-btn${
+                hasRootFolderFilters ? " active" : ""
+              }`}
+              onClick={() => setShowFolderFilters((prev) => !prev)}
+              aria-label={t("DMS.folderFiltersTitle")}
+              aria-expanded={showFolderFilters}
+            >
+              <Icons.Filter size={15} />
+              <span className="dms-btn-label">{t("DMS.filter")}</span>
+            </Button>
+          ) : null}
+          {canCreateFolder ? (
+            <Button
+              size="sm"
+              variant="outline-secondary"
+              className="dms-action-btn"
+              onClick={onNewFolder}
+            >
+              <Icons.FolderPlus size={15} />
+              <span className="dms-btn-label">{t("DMS.newFolder")}</span>
+            </Button>
+          ) : null}
+          {canUploadDocuments ? (
+            <Button size="sm" className="dms-upload-btn" onClick={onUpload}>
+              <Icons.UploadCloud size={15} />
+              <span className="dms-btn-label">{t("DMS.upload")}</span>
+            </Button>
+          ) : null}
         </div>
       </div>
 

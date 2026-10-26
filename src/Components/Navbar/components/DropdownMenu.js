@@ -59,20 +59,25 @@ const DropdownMenu = ({
         />
       </button>
 
-      {isExpanded && isOpen && (
-        <div className="sidebar-submenu" id={panelId}>
-          {items.map((item) => (
-            <MenuItem
-              key={item.path}
-              item={item}
-              isOpen
-              className="menuLinks sidebar-sub-link"
-              onClick={item.isSubscriptionOnly ? (event) => onItemClick?.(event, item) : undefined}
-              onNavigate={onNavigate}
-            />
-          ))}
+      <div
+        className={`sidebar-submenu-wrapper${isExpanded && isOpen ? " sidebar-submenu-wrapper--open" : ""}`}
+        aria-hidden={!(isExpanded && isOpen)}
+      >
+        <div className="sidebar-submenu-inner">
+          <div className="sidebar-submenu" id={panelId}>
+            {items.map((item) => (
+              <MenuItem
+                key={item.path}
+                item={item}
+                isOpen={isOpen}
+                className="menuLinks sidebar-sub-link"
+                onClick={item.isSubscriptionOnly ? (event) => onItemClick?.(event, item) : undefined}
+                onNavigate={onNavigate}
+              />
+            ))}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

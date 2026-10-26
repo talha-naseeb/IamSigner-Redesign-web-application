@@ -60,7 +60,7 @@ const DMSGridView = ({
             ))}
             {canShowNewFolder ? (
               <div className="dms-add-folder-card" onClick={onNewFolder}>
-                <Icons.FolderPlus size={28} color="var(--border-color)" />
+                <Icons.FolderPlus size={32} className="text-[var(--modern-violet)]" color="var(--modern-violet)" />
                 <span>{t("DMS.newFolder")}</span>
               </div>
             ) : null}
@@ -83,7 +83,7 @@ const DMSGridView = ({
             />
           ))}
           <div className="dms-add-folder-card" onClick={onNewFolder}>
-            <Icons.FolderPlus size={28} color="var(--border-color)" />
+            <Icons.FolderPlus size={32} className="text-[var(--modern-violet)]" color="var(--modern-violet)" />
             <span>{t("DMS.newFolder")}</span>
           </div>
         </div>

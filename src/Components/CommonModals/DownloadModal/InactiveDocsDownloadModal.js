@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { FiDownload, FiFile } from "react-icons/fi";
 
 const InactiveDocsDownloadModal = ({ show, handleClose, docNameShow, selectedDocument, setSelectedDocument, handleFileDownload }) => {
@@ -45,11 +44,6 @@ const InactiveDocsDownloadModal = ({ show, handleClose, docNameShow, selectedDoc
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <Modal show={show} onHide={handleClose} backdrop='static' keyboard={false} dialogClassName='custom-modal-width'>
         <Modal.Header closeButton>
           <div className='header-content'>

@@ -9,7 +9,7 @@ function CustomToaster() {
       toastClassName='app-toast'
       bodyClassName='app-toast-body'
       progressClassName='app-toast-progress'
-      position='bottom-left'
+      position='top-right'
       style={{ zIndex: "1050" }}
       autoClose={2000}
       hideProgressBar={false}

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import documentService from "@/services/documentService";
 
 const DashboardCard = ({ compact = false }) => {
@@ -14,13 +13,13 @@ const DashboardCard = ({ compact = false }) => {
   const pathToCardMap = {
     "/pending-with-me": "pending-with-me",
     "/pending-with-others": "pending-with-others",
-    "/completed-status": "completed-status",
+    "/completed": "completed-status",
     "/drafts": "drafts",
     "/shared-with-me": "shared-with-me",
     "/shared-with-others": "shared-with-others",
     "/declined": "declined",
-    "/inactive-docs": "inactive-docs",
-    "/recall-docs": "recall-docs",
+    "/inactive": "inactive-docs",
+    "/recalled": "recall-docs",
   };
   const activeCard = pathToCardMap[location.pathname] || null;
 
@@ -69,7 +68,7 @@ const DashboardCard = ({ compact = false }) => {
     },
     {
       id: "completed-status",
-      path: "/completed-status",
+      path: "/completed",
       className: "completed-card",
       iconComponent: <Icons.Completed size={compact ? 20 : 22} color='#10b981' />,
       statusColor: "#10b981",
@@ -89,7 +88,7 @@ const DashboardCard = ({ compact = false }) => {
     },
     {
       id: "recall-docs",
-      path: "/recall-docs",
+      path: "/recalled",
       className: "recall-card",
       iconComponent: <Icons.Recall size={compact ? 18 : 20} color='#06b6d4' />,
       statusColor: "#06b6d4",
@@ -99,7 +98,7 @@ const DashboardCard = ({ compact = false }) => {
     },
     {
       id: "inactive-docs",
-      path: "/inactive-docs",
+      path: "/inactive",
       className: "inactive-card",
       iconComponent: <Icons.Inactive size={compact ? 18 : 20} color='#64748b' />,
       statusColor: "#64748b",
@@ -111,11 +110,6 @@ const DashboardCard = ({ compact = false }) => {
 
   return (
     <div className={`dashboard-cards-section w-full m-0 ${compact ? "dashboard-cards-section--compact" : ""}`}>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <nav
         className={`dashboard-statuses w-full m-0 ${
           compact

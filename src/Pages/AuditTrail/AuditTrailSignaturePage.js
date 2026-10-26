@@ -4,7 +4,6 @@ import "./AuditTrail.css";
 import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
 import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { applyThemeToDocument, getInitialTheme } from "@/Context/themeUtils";
 
 export default function AuditTrailSignaturePage({ url }) {
@@ -94,11 +93,6 @@ export default function AuditTrailSignaturePage({ url }) {
         <Icons.StepperLogo style={{ width: "140px", height: "40px" }} />
         <h4>{t("auditTrailScreen.auditTrail")}</h4>
       </div>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       <div className='signers-info'>
         <div>

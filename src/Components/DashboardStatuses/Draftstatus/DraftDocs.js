@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router-dom";
+import PATHS from "@/routes/paths";
 import InactiveConfirmationModal from "@/Components/CommonModals/InactiveConfirmationModal/InactiveConfirmationModal";
 import { Dropdown, Modal, Button } from "@/Components/UI/shadcnCompat";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import DraftSearchFilter from "@/Components/CommonModals/SearchFilters/DraftSearchFilter";
 import { useTranslation } from "react-i18next";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
 import { useUser } from "@/Context/UserContext";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { Icons } from "@/assets/Icons";
 import dashboardService from "@/services/dashboardService";
 import documentService from "@/services/documentService";
+import DocumentStatusTable, { formatTableDate } from "@/Components/DashboardStatuses/DocumentStatusTable";
 
 const DraftStatus = () => {
   const { t } = useTranslation();
+  const { pathname } = useLocation();
+  const isDashboardCardView = pathname === PATHS.DRAFTS;
   const { userAccess } = useUser("");
   const [data, setData] = useState([]);
   const [startDate, setStartDate] = useState("");
@@ -189,29 +192,13 @@ const DraftStatus = () => {
   };
 
   const columns = [
-    { label: t("tablesLabel.docName"), key: "docName" },
-    { label: t("tablesLabel.requestNumber"), key: "companyPrefixNo" },
-    { label: t("tablesLabel.date"), key: "createdOn" },
-    { label: t("tablesLabel.refNumber"), key: "referenceNumber" },
-    { label: t("tablesLabel.createdby"), key: "createdByName" },
-    { label: "", key: "actions" },
+    { label: t("tablesLabel.docName"), key: "docName", width: "28%" },
+    { label: t("tablesLabel.requestNumber"), key: "companyPrefixNo", width: "18%" },
+    { label: t("tablesLabel.date"), key: "createdOn", width: "18%" },
+    { label: t("tablesLabel.refNumber"), key: "referenceNumber", width: "16%" },
+    { label: t("tablesLabel.createdby"), key: "createdByName", width: "14%" },
+    { label: "", key: "actions", width: "6%", align: "right" },
   ];
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-
-    const formattedMinutes = (minutes < 10 ? "0" : "") + minutes;
-
-    return `${day}/${month}/${year} - ${hours}:${formattedMinutes} ${ampm}`;
-  };
 
   const handleCellClick = (event) => {
     const cell = event.target;
@@ -219,19 +206,12 @@ const DraftStatus = () => {
   };
 
   return (
-    <Grid className='container' style={{ marginTop: "12px" }}>
-      <Grid>
-        {/* Loader overlay */}
-        {isLoading && (
-          <div className='loader-overlay'>
-            <Loader />
-          </div>
-        )}
-
-        <div className='py-3 p-3 container pendingtable'>
-          <div className="document-status-toolbar">
-            <h4>{t("dashboardCardStatuses.draftdoc")}</h4>
-
+    <Grid className='container'>
+      <Grid item xs={12}>
+        <DocumentStatusTable
+          title={t("dashboardCardStatuses.draftdoc")}
+          count={searchResults.length}
+          searchFilter={
             <DraftSearchFilter
               startDate={startDate}
               endDate={endDate}
@@ -246,103 +226,58 @@ const DraftStatus = () => {
               handleSearch={handleSearch}
               clearSearch={clearSearch}
             />
-          </div>
+          }
+          columns={columns}
+          data={searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+          totalItems={searchResults.length}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handleChangePage}
+          tableContainerStyle={{ maxHeight: isDashboardCardView ? "38vh" : "calc(100vh - 280px)" }}
+          renderRow={(row, index) => (
+            <TableRow key={row.registerSignID || index} hover>
+              <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell font-medium text-[var(--modern-text)]' title={row.docName} style={{ width: "28%" }}>
+                {row.docName}
+              </TableCell>
+              <TableCell className='TableCell' style={{ width: "18%" }}>{row.companyPrefixNo}</TableCell>
+              <TableCell className='TableCell text-[var(--modern-muted)]' style={{ width: "18%" }}>{row.createdOnFormatted ? formatTableDate(row.createdOnFormatted) : "—"}</TableCell>
+              <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell truncate-ref-cell' title={row.referenceNumber} style={{ width: "16%" }}>
+                {row.referenceNumber}
+              </TableCell>
+              <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell' style={{ width: "14%" }}>
+                <UserInitialsBadge name={row.createdByName} />
+              </TableCell>
 
-          {/* Table */}
-          <TableContainer
-            component={Paper}
-            className='custom-table-scrollbar'
-            style={{
-              maxWidth: "100%",
-              overflowX: "auto",
-              height: "70vh",
-            }}
-          >
-            <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
-              {/* Table Headers */}
-              <TableHead className='customTableHead'>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell key={column.label} className='TableHeaderCell'>
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-
-              {/* Table Body */}
-              <TableBody>
-                {searchResults.length === 0 && (
-                  <TableRow>
-                    <td colSpan='6' className='p-5 text-center'>
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                        <Icons.BulkDocuments size={50} />
-                        {t("dashboardCardStatuses.notDocsFound")}
-                      </div>
-                    </td>
-                  </TableRow>
-                )}
-
-                {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                  <TableRow key={index}>
-                    {/* Table Cells */}
-                    <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                      {row.docName}
-                    </TableCell>
-                    <TableCell className='TableCell'>{row.companyPrefixNo}</TableCell>
-                    <TableCell className='TableCell'>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
-                    <TableCell className='TableCell'>{row.referenceNumber}</TableCell>
-                    <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                      {row.createdByName}
-                    </TableCell>
-
-                    {userAccess.remainingDays <= 0 ? (
-                      <>
-                        <TableCell className='TableCell p-0'>
-                          <Dropdown>
-                            <Dropdown.Toggle as={CustomToggle} />
-                          </Dropdown>
-                        </TableCell>
-                      </>
-                    ) : (
-                      <>
-                        <TableCell className='TableCell p-0'>
-                          <Dropdown>
-                            <Dropdown.Toggle as={CustomToggle} />
-                            <Dropdown.Menu>
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleOpenConfirmation(row)}>
-                                <Icons.InactiveAction size={20} />
-                                {t("dashboardCardStatuses.inactive")}
-                              </Dropdown.Item>
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleEditDoc(row.registerSignID)}>
-                                <Icons.PenEdit size={20} />
-                                {t("dashboardCardStatuses.edit")}
-                              </Dropdown.Item>
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewRegisterSignId(row.registerSignID)}>
-                                <Icons.View size={20} />
-                                {t("dashboardCardStatuses.view")}
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </TableCell>
-                      </>
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          {/* Pagination */}
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-            <div className='showHideNoDocs'>
-              {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
-            </div>
-            <Stack spacing={2}>
-              <Pagination count={Math.ceil(data.length / rowsPerPage)} variant='outlined' shape='rounded' page={page + 1} onChange={(event, newPage) => handleChangePage(event, newPage - 1)} />
-            </Stack>
-          </div>
-        </div>
+              {userAccess.remainingDays <= 0 ? (
+                <TableCell className='TableCell p-0' align='right' style={{ width: "6%" }}>
+                  <Dropdown>
+                    <Dropdown.Toggle as={CustomToggle} />
+                  </Dropdown>
+                </TableCell>
+              ) : (
+                <TableCell className='TableCell p-0' align='right' style={{ width: "6%" }}>
+                  <Dropdown>
+                    <Dropdown.Toggle as={CustomToggle} />
+                    <Dropdown.Menu align='end'>
+                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleOpenConfirmation(row)}>
+                        <Icons.InactiveAction size={20} />
+                        {t("dashboardCardStatuses.inactive")}
+                      </Dropdown.Item>
+                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleEditDoc(row.registerSignID)}>
+                        <Icons.PenEdit size={20} />
+                        {t("dashboardCardStatuses.edit")}
+                      </Dropdown.Item>
+                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewRegisterSignId(row.registerSignID)}>
+                        <Icons.View size={20} />
+                        {t("dashboardCardStatuses.view")}
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </TableCell>
+              )}
+            </TableRow>
+          )}
+        />
       </Grid>
       <Modal show={showDownloadModal} backdrop='static' keyboard={false} onHide={handleDownClose} dialogClassName='custom-modal-width'>
         <Modal.Header>

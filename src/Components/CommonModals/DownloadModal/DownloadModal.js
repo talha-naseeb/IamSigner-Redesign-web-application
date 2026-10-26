@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import verificationService from "@/services/verificationService";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import { useParams } from "react-router-dom";
 import { FiDownload, FiFile, FiFileText } from "react-icons/fi";
 import { TiDocumentAdd } from "react-icons/ti";
@@ -137,11 +136,6 @@ const DownloadModal = ({ show, handleClose, dataRow }) => {
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <Modal show={show} onHide={handleClose} backdrop='static' keyboard={false} dialogClassName='custom-modal-width'>
         <Modal.Header closeButton>
           <div className='header-content'>

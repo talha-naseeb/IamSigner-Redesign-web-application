@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { Modal, Button, Form, Spinner } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons/index";
+import { UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import { useUser } from "@/Context/UserContext";
 import userService from "@/services/userService";
 import { DMS_PERMISSION_NAMES, DMS_PERMISSION_OPTIONS } from "../constants/dmsConfig";
@@ -15,6 +16,7 @@ const ShareModal = ({ show, target, onHide, onSubmit, onManageAccess, canManageA
   const { user } = useUser();
   const inputRef = useRef(null);
 
+  const [emails, setEmails] = useState([]);
   const [emailInput, setEmailInput] = useState("");
   const [teamEmails, setTeamEmails] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
@@ -49,6 +51,7 @@ const ShareModal = ({ show, target, onHide, onSubmit, onManageAccess, canManageA
 
   useEffect(() => {
     if (show) {
+      setEmails([]);
       setEmailInput("");
       setEmailError("");
       setSuggestions([]);
@@ -66,10 +69,12 @@ const ShareModal = ({ show, target, onHide, onSubmit, onManageAccess, canManageA
 
   useEffect(() => {
     if (emailInput.trim()) {
+      const q = emailInput.trim().toLowerCase();
       const filtered = teamEmails.filter(
         (e) =>
-          e.toLowerCase().includes(emailInput.toLowerCase()) &&
-          e.toLowerCase() !== ownEmail
+          e.toLowerCase().includes(q) &&
+          e.toLowerCase() !== ownEmail &&
+          !emails.some((added) => added.toLowerCase() === e.toLowerCase())
       );
       setSuggestions(filtered.slice(0, 5));
       setShowSuggestions(filtered.length > 0);
@@ -77,7 +82,7 @@ const ShareModal = ({ show, target, onHide, onSubmit, onManageAccess, canManageA
       setSuggestions([]);
       setShowSuggestions(false);
     }
-  }, [emailInput, teamEmails, ownEmail]);
+  }, [emailInput, teamEmails, ownEmail, emails]);
 
   const fetchTeam = async () => {
     if (!user?.AccountID) return;
@@ -89,46 +94,86 @@ const ShareModal = ({ show, target, onHide, onSubmit, onManageAccess, canManageA
     }
   };
 
-  const validateEmail = (raw) => {
-    const trimmed = raw.trim().toLowerCase();
-    if (!trimmed) {
-      setEmailError(t("DMS.addAtLeastOneEmail"));
-      return null;
-    }
+  const addEmail = (raw) => {
+    const trimmed = String(raw || "").trim().toLowerCase();
+    if (!trimmed) return false;
     if (!EMAIL_REGEX.test(trimmed)) {
       setEmailError(t("DMS.invalidEmail"));
-      return null;
+      return false;
     }
-    if (trimmed.toLowerCase() === ownEmail) {
+    if (trimmed === ownEmail) {
       setEmailError(t("DMS.cannotShareWithYourself"));
-      return null;
+      return false;
     }
+    if (emails.some((e) => e.toLowerCase() === trimmed)) {
+      setEmailError(t("Folder.emailAlreadyAdded", "This email is already added"));
+      return false;
+    }
+    setEmails((prev) => [...prev, trimmed]);
+    setEmailInput("");
     setEmailError("");
-    return trimmed;
+    setShowSuggestions(false);
+    return true;
+  };
+
+  const removeEmail = (emailToRemove) => {
+    setEmails((prev) => prev.filter((e) => e !== emailToRemove));
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
-      inputRef.current?.form?.requestSubmit();
+      addEmail(emailInput);
+    } else if (e.key === "Backspace" && !emailInput && emails.length > 0) {
+      e.preventDefault();
+      setEmails((prev) => prev.slice(0, -1));
     }
   };
 
   const handleInputChange = (e) => {
-    setEmailInput(e.target.value);
-    setEmailError("");
+    const val = e.target.value;
+    if (val.endsWith(",")) {
+      addEmail(val.slice(0, -1));
+    } else {
+      setEmailInput(val);
+      setEmailError("");
+    }
+  };
+
+  const handleSuggestionSelect = (selectedEmail) => {
+    addEmail(selectedEmail);
+    inputRef.current?.focus();
   };
 
   const onFormSubmit = async (data) => {
-    const email = validateEmail(emailInput);
-    if (!email) return;
+    let finalEmails = [...emails];
+    if (emailInput.trim()) {
+      const trimmed = emailInput.trim().toLowerCase();
+      if (!EMAIL_REGEX.test(trimmed)) {
+        setEmailError(t("DMS.invalidEmail"));
+        return;
+      }
+      if (trimmed === ownEmail) {
+        setEmailError(t("DMS.cannotShareWithYourself"));
+        return;
+      }
+      if (!finalEmails.some((e) => e.toLowerCase() === trimmed)) {
+        finalEmails.push(trimmed);
+      }
+    }
+
+    if (finalEmails.length === 0) {
+      setEmailError(t("DMS.addAtLeastOneEmail"));
+      return;
+    }
 
     setSubmitLoading(true);
     try {
-      await onSubmit([email], {
+      await onSubmit(finalEmails, {
         permission: parsePermissionName(data.permission),
         canReshare: data.canReshare,
       });
+      setEmails([]);
       setEmailInput("");
     } catch {
       // interceptor may toast
@@ -148,9 +193,10 @@ const ShareModal = ({ show, target, onHide, onSubmit, onManageAccess, canManageA
       show={show}
       onHide={onHide}
       centered
+      size="md"
       backdrop="static"
       keyboard={false}
-      dialogClassName="custom-modal-width dms-share-invite-modal"
+      dialogClassName="dms-dialog-compact dms-share-invite-modal"
     >
       <Modal.Header closeButton className="pb-2">
         <div className="header-content">
@@ -161,39 +207,94 @@ const ShareModal = ({ show, target, onHide, onSubmit, onManageAccess, canManageA
             <Modal.Title>
               {isFolderTarget ? t("DMS.inviteToFolder") : t("DMS.shareDocument")}
             </Modal.Title>
-            {target?.name && <p className="header-subtitle">{target.name}</p>}
+            <p className="header-subtitle">
+              {isFolderTarget
+                ? t("DMS.inviteSubtitle", "Collaborate and grant access to this folder")
+                : t("DMS.shareSubtitle", "Share document with colleagues or team members")}
+            </p>
           </div>
         </div>
       </Modal.Header>
 
       <Form onSubmit={handleSubmit(onFormSubmit)}>
         <Modal.Body className="px-4 py-3">
+          <div className="dms-target-preview-card">
+            <div className="dms-target-preview-icon">
+              {isFolderTarget ? (
+                <Icons.FoldersFill size={22} className="text-[var(--modern-violet)]" />
+              ) : (
+                <Icons.DocumentReport size={22} className="text-[var(--modern-violet)]" />
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="dms-target-preview-type">
+                {isFolderTarget ? t("DMS.folder") : t("DMS.document")}
+              </div>
+              <strong className="dms-target-preview-name" title={target?.name}>
+                {target?.name ||
+                  (isFolderTarget
+                    ? t("DMS.untitledFolder")
+                    : t("DMS.untitledDocument"))}
+              </strong>
+            </div>
+          </div>
+
           {isShareTarget && canManageAccess && onManageAccess ? (
-            <button
-              type="button"
-              className="dms-share-manage-access-link"
-              onClick={handleOpenManageAccess}
-            >
-              {t("DMS.viewPeopleWithAccess")}
-            </button>
+            <div className="dms-share-manage-access-wrap mb-3">
+              <button
+                type="button"
+                className="dms-share-manage-access-link"
+                onClick={handleOpenManageAccess}
+              >
+                <Icons.Lock size={14} className="me-1 inline" />
+                <span>{t("DMS.viewPeopleWithAccess")}</span>
+              </button>
+            </div>
           ) : null}
 
           <Form.Group className="mt-1 position-relative">
             <Form.Label>{t("DMS.inviteByEmail")}</Form.Label>
 
-            <input
-              ref={inputRef}
-              className="form-control"
-              type="email"
-              placeholder={t("DMS.emailPlaceholder")}
-              value={emailInput}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-            />
+            <div
+              className="email-chips-input"
+              onClick={() => inputRef.current?.focus()}
+            >
+              {emails.map((email, idx) => (
+                <span key={`${email}-${idx}`} className="email-chip">
+                  <UserInitialsBadge name={email} avatarOnly className="dms-chip-avatar" />
+                  <span>{email}</span>
+                  <button
+                    type="button"
+                    className="email-chip-remove"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeEmail(email);
+                    }}
+                    aria-label={`Remove ${email}`}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+
+              <input
+                ref={inputRef}
+                className="email-chip-input"
+                type="email"
+                placeholder={
+                  emails.length === 0
+                    ? t("Folder.selectEmailPlaceholder", "Add email address...")
+                    : ""
+                }
+                value={emailInput}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              />
+            </div>
 
             {emailError ? (
-              <span className="text-danger" style={{ fontSize: 12 }}>
+              <span className="text-danger mt-1 d-block" style={{ fontSize: 12 }}>
                 {emailError}
               </span>
             ) : null}
@@ -206,12 +307,10 @@ const ShareModal = ({ show, target, onHide, onSubmit, onManageAccess, canManageA
                     className="email-suggestion-item"
                     onMouseDown={(ev) => {
                       ev.preventDefault();
-                      setEmailInput(e);
-                      setEmailError("");
-                      setShowSuggestions(false);
+                      handleSuggestionSelect(e);
                     }}
                   >
-                    {e}
+                    <UserInitialsBadge name={e} />
                   </div>
                 ))}
               </div>
@@ -220,7 +319,7 @@ const ShareModal = ({ show, target, onHide, onSubmit, onManageAccess, canManageA
 
           <Form.Group className="mt-3">
             <Form.Label>{t("DMS.permission")}</Form.Label>
-            <Form.Select {...register("permission")}>
+            <Form.Select className="dms-select-field" {...register("permission")}>
               {availablePermissionOptions.map((name) => (
                 <option key={name} value={name}>
                   {t(getPermissionLabelKey(name))}
@@ -236,6 +335,7 @@ const ShareModal = ({ show, target, onHide, onSubmit, onManageAccess, canManageA
               <Form.Check
                 type="checkbox"
                 id="dms-share-canReshare"
+                className="dms-checkbox"
                 label={t("DMS.canReshare")}
                 {...register("canReshare")}
               />
@@ -243,17 +343,30 @@ const ShareModal = ({ show, target, onHide, onSubmit, onManageAccess, canManageA
           ) : null}
         </Modal.Body>
 
-        <Modal.Footer className="mt-2 d-flex justify-content-between">
-          <Button type="button" variant="none" className="modalCancelButton" onClick={onHide}>
+        <Modal.Footer className="d-flex justify-content-between gap-2">
+          <Button
+            type="button"
+            variant="none"
+            className="modalCancelButton"
+            onClick={onHide}
+            disabled={submitLoading}
+          >
             {t("DMS.cancel")}
           </Button>
           <Button
             type="submit"
             variant="none"
             className="applyBtn"
-            disabled={!emailInput.trim() || submitLoading}
+            disabled={(!emails.length && !emailInput.trim()) || submitLoading}
           >
-            {submitLoading ? <Spinner animation="border" size="sm" /> : t("DMS.share")}
+            {submitLoading ? (
+              <span className="d-inline-flex align-items-center gap-2">
+                <Spinner animation="border" size="sm" />
+                <span>{t("DMS.sharing", "Sharing...")}</span>
+              </span>
+            ) : (
+              t("DMS.share")
+            )}
           </Button>
         </Modal.Footer>
       </Form>

@@ -10,7 +10,6 @@ import { UserProvider } from "@/Context/UserContext";
 import Stepper from "../Stepper/Stepper";
 import { useUser } from "@/Context/UserContext";
 import UserLisence from "../../UserLisence/UserLisence";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import Signatories from "../Signatories/Signatories";
 
 const UploadDoc = () => {
@@ -78,11 +77,7 @@ const UploadDoc = () => {
           </>
         ) : (
           <>
-            {isLoading ? (
-              <div className='loader-overlay'>
-                <Loader />
-              </div>
-            ) : (
+            {!isLoading && (
               <div>
                 <Stepper activeStep={activeStep} t={t} completedSteps={completedSteps} />
 

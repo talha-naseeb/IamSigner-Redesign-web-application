@@ -13,7 +13,6 @@ import { NavigationSetter } from "@/Helpers/navigation";
 import { ThemeProvider } from "@/Context/ThemeContext";
 import PATHS from "@/routes/paths";
 import { tokenManager } from "@/services/tokenManager";
-import { loadRecaptcha } from "@/utils/recaptcha";
 
 const RecaptchaPageScope = () => {
   const { pathname } = useLocation();
@@ -23,9 +22,6 @@ const RecaptchaPageScope = () => {
 
   useEffect(() => {
     document.body.classList.toggle("recaptcha-auth-page", isAuthPage);
-    if (isAuthPage) {
-      loadRecaptcha().catch(() => {});
-    }
     return () => document.body.classList.remove("recaptcha-auth-page");
   }, [isAuthPage]);
 

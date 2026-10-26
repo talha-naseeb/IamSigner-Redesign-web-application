@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import ImageThumbnails from "@/Components/ImageThumbnails/ImageThumbnails";
 import ConfirmationModal from "@/Pages/SignaturePage/ConfirmationModal";
 import { Icons } from "@/assets/Icons";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import InputEditors from "@/Pages/SignaturePage/InputEditors";
 import { PageNavigations } from "@/Components/DocumentPreparation";
 
@@ -578,11 +577,6 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
 
   return (
     <div className='w-full'>
-      {isLoading && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm'>
-          <Loader />
-        </div>
-      )}
 
       <div>
         <div className='w-full'>

@@ -1,10 +1,6 @@
-import React, { useState } from "react";
-import { AppDrawer } from "@/Components/Common/AppDrawer";
-import { Icons } from "@/assets/Icons";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import DateRangePicker from "@/Components/Common/DateRangePicker/DateRangePicker";
-import { DateObject } from "react-multi-date-picker";
-import { Button } from "@/Components/UI/shadcnCompat";
+import SharedFilterDrawer from "@/Components/CommonModals/SearchFilters/SharedFilterDrawer";
 
 function TemplatesSearchFilters({
   templateName,
@@ -15,139 +11,58 @@ function TemplatesSearchFilters({
   endDate,
   setStartDate,
   setEndDate,
-  docStatus,
-  setDocStatus,
   Scope,
   setScope,
 }) {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleDateChange = (dates) => {
-    if (dates && dates.length === 2) {
-      setStartDate(dates[0].format("YYYY-MM-DD"));
-      setEndDate(dates[1].format("YYYY-MM-DD"));
-    } else {
-      setStartDate("");
-      setEndDate("");
-    }
-  };
-
-  const dateValue = startDate && endDate ? [new DateObject(startDate), new DateObject(endDate)] : [];
-
-  // Enable Apply when ANY filter has a value
-  const canApply = Boolean(
-    (templateName && templateName.trim() !== "") ||
-      (startDate && startDate !== "") ||
-      (endDate && endDate !== "") ||
-      (Scope && Scope !== "") ||
-      (docStatus && docStatus !== "")
-  );
 
   const handleReset = () => {
     setTemplateName("");
     setStartDate("");
     setEndDate("");
-    setScope("");
-    setDocStatus("");
+    if (setScope) setScope("");
     if (typeof clearSearch === "function") clearSearch();
   };
 
-  const onApply = () => {
-    handleSearch();
-    setIsOpen(false);
-  };
+  const fields = [
+    {
+      name: "templateName",
+      label: t("templateUploadFlow.TemplateName"),
+      placeholder: t("editTemplateNameModal.enterTemplateName"),
+      value: templateName,
+      onChange: (val) => setTemplateName(val),
+    },
+    {
+      type: "radio",
+      name: "Scope",
+      label: t("tablesLabel.scope"),
+      value: Scope,
+      onChange: (val) => setScope(val),
+      options: [
+        { id: "individual", value: "I", label: t("templateUploadFlow.Individual") },
+        { id: "company", value: "B", label: t("templateUploadFlow.Company") },
+      ],
+    },
+    {
+      type: "dateRange",
+      name: "dateRange",
+      label: t("searchFilter.FilterRange"),
+      startDate,
+      endDate,
+      onStartDateChange: setStartDate,
+      onEndDateChange: setEndDate,
+    },
+  ];
 
   return (
-    <>
-      <button
-        type="button"
-        className="p-2 rounded-lg border border-[var(--modern-border,#cbd5e1)] text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)] transition-colors"
-        onClick={() => setIsOpen(true)}
-        aria-label={t("templateUploadFlow.Filter")}
-      >
-        <Icons.Filter />
-      </button>
-
-      <AppDrawer
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        title={t("templateUploadFlow.Filter")}
-        footer={
-          <div className="flex items-center justify-between w-full pt-4 border-t border-[var(--modern-border,#e2e8f0)]">
-            <Button variant="outline" onClick={handleReset}>
-              {t("templateUploadFlow.Reset")}
-            </Button>
-            <Button
-              variant="primary"
-              onClick={onApply}
-              disabled={!canApply}
-            >
-              {t("templateUploadFlow.Apply")}
-            </Button>
-          </div>
-        }
-      >
-        <div className="flex flex-col gap-4 py-2">
-          <div>
-            <label className="block text-sm font-medium mb-1.5 text-[var(--modern-text,#0f172a)]">
-              {t("templateUploadFlow.TemplateName")}
-            </label>
-            <input
-              name="templateName"
-              type="text"
-              placeholder={t("editTemplateNameModal.enterTemplateName")}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--modern-border,#cbd5e1)] bg-[var(--modern-bg,#ffffff)] text-[var(--modern-text,#0f172a)] focus:outline-none focus:ring-2 focus:ring-[var(--theme-color,#0284c7)]"
-              value={templateName}
-              onChange={(e) => setTemplateName(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1.5 text-[var(--modern-text,#0f172a)]">
-              {t("tablesLabel.scope")}
-            </label>
-            <div className="flex gap-4">
-              <div className="radio-container flex items-center gap-2">
-                <input
-                  id="individual"
-                  name="Scope"
-                  type="radio"
-                  className="input-radio"
-                  checked={Scope === "I"}
-                  value="I"
-                  onChange={(e) => setScope(e.target.value)}
-                />
-                <label htmlFor="individual" className="radio-label text-sm m-0">
-                  {t("templateUploadFlow.Individual")}
-                </label>
-              </div>
-              <div className="radio-container flex items-center gap-2">
-                <input
-                  id="company"
-                  name="Scope"
-                  type="radio"
-                  className="input-radio"
-                  checked={Scope === "B"}
-                  value="B"
-                  onChange={(e) => setScope(e.target.value)}
-                />
-                <label htmlFor="company" className="radio-label text-sm m-0">
-                  {t("templateUploadFlow.Company")}
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1.5 text-[var(--modern-text,#0f172a)]">
-              {t("searchFilter.FilterRange")}
-            </label>
-            <DateRangePicker value={dateValue} onChange={handleDateChange} />
-          </div>
-        </div>
-      </AppDrawer>
-    </>
+    <SharedFilterDrawer
+      title={t("templateUploadFlow.Filter")}
+      resetLabel={t("templateUploadFlow.Reset")}
+      applyLabel={t("templateUploadFlow.Apply")}
+      fields={fields}
+      onApply={handleSearch}
+      onReset={handleReset}
+    />
   );
 }
 

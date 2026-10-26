@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { toast } from "react-toastify";
-import "./style.css";
 import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
 import { useTranslation } from "react-i18next";
 import { Form, Button, Spinner } from "@/Components/UI/shadcnCompat";
@@ -9,27 +8,35 @@ import userService from "@/services/userService";
 import { Icons } from "@/assets/Icons";
 
 const PasswordField = ({ id, label, value, onChange, show, onToggle, error, placeholder }) => (
-  <Form.Group className='password-change-field' controlId={id}>
-    <Form.Label>{label}</Form.Label>
-    <div className='password-change-input-wrap'>
+  <Form.Group className='m-0' controlId={id}>
+    <Form.Label className='block mb-1.5 text-[14px] font-medium text-[var(--modern-text)]'>{label}</Form.Label>
+    <div className='relative'>
       <Form.Control
         type={show ? "text" : "password"}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         autoComplete={id === "oldPassword" ? "current-password" : "new-password"}
+        className='min-h-[44px] w-full rounded-lg border border-solid border-[var(--modern-border)] bg-[var(--modern-bg)] px-3 py-2 pe-11 text-[14px] text-start text-[var(--modern-text)] shadow-none focus:border-[var(--modern-violet)] focus:outline focus:outline-[3px] focus:outline-[var(--modern-focus)] focus:outline-offset-2'
       />
-      <button type='button' className='password-change-toggle' onClick={onToggle} aria-label='Toggle password visibility'>
+      <button
+        type='button'
+        className='absolute top-1/2 -translate-y-1/2 end-3 flex items-center justify-center p-0 border-0 bg-transparent text-[var(--modern-muted)] cursor-pointer hover:text-[var(--modern-text)]'
+        onClick={onToggle}
+        aria-label='Toggle password visibility'
+      >
         {show ? <RiEyeOffFill /> : <RiEyeFill />}
       </button>
     </div>
-    {error && <Form.Text className='password-change-error'>{error}</Form.Text>}
+    {error && <Form.Text className='block mt-1.5 text-[13px] text-[var(--color-danger)]'>{error}</Form.Text>}
   </Form.Group>
 );
 
 const RequirementItem = ({ met, label }) => (
-  <li className={`password-change-requirement${met ? " met" : ""}`}>
-    <Icons.Check size={14} />
+  <li className={`flex items-center gap-2 text-[13px] ${met ? "text-[var(--modern-text)]" : "text-[var(--modern-muted)]"}`}>
+    <span className={`flex-none inline-flex ${met ? "opacity-100 text-[var(--color-success,#10b981)]" : "opacity-35"}`}>
+      <Icons.Check size={14} />
+    </span>
     <span>{label}</span>
   </li>
 );
@@ -162,31 +169,70 @@ const PasswordChange = () => {
     }
   };
 
+  const primaryBtnClass =
+    "w-full sm:w-auto min-w-[120px] min-h-[42px] px-5 py-2 rounded-lg text-[14px] font-semibold text-white border-0 disabled:opacity-65 disabled:cursor-not-allowed";
+  const secondaryBtnClass =
+    "w-full sm:w-auto min-w-[120px] min-h-[42px] px-5 py-2 rounded-lg text-[14px] font-semibold bg-transparent text-[var(--modern-text)] border border-solid border-[var(--modern-border)] hover:bg-[var(--modern-bg)]";
+
   return (
-    <div className='password-change-card'>
-      <div className='password-change-header'>
-        <div className='password-change-icon-badge' aria-hidden='true'>
+    <div className='relative max-w-[520px] p-4 sm:p-7 rounded-[20px] border border-solid border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-text)] font-[var(--modern-font-ui)] transition-colors'>
+      <div className='flex items-start gap-4 mb-5'>
+        <div
+          className='flex-none flex items-center justify-center w-[52px] h-[52px] rounded-[14px] text-[var(--modern-violet)] border border-solid'
+          style={{
+            background: "color-mix(in srgb, var(--modern-violet) 14%, transparent)",
+            borderColor: "color-mix(in srgb, var(--modern-violet) 28%, transparent)",
+          }}
+          aria-hidden='true'
+        >
           <Icons.Lock size={26} />
         </div>
         <div>
-          <p className='password-change-eyebrow'>{t("changePassword.passwordmustcontain")}</p>
-          <p className='password-change-description'>{t("changePassword.validPassword")}</p>
+          <p className='m-0 mb-1 text-[14px] font-semibold text-[var(--modern-text)]'>{t("changePassword.passwordmustcontain")}</p>
+          <p className='m-0 text-[13px] leading-normal text-[var(--modern-muted)]'>{t("changePassword.validPassword")}</p>
         </div>
       </div>
 
-      <div className='password-change-steps' aria-label='Password change progress'>
-        <div className={`password-change-step${!oldVerified ? " active" : " completed"}`}>
-          <span className='password-change-step-number'>1</span>
-          <span className='password-change-step-label'>{t("changePassword.oldPassword")}</span>
+      <div
+        className='flex flex-col sm:flex-row sm:items-center gap-3 mb-6 px-4 py-3 rounded-[10px] bg-[var(--modern-bg)] border border-solid border-[var(--modern-border)]'
+        aria-label='Password change progress'
+      >
+        <div className='flex items-center gap-2 flex-1 min-w-0 opacity-100'>
+          <span
+            className={`inline-flex items-center justify-center w-[26px] h-[26px] rounded-full text-xs font-bold flex-none border border-solid ${
+              !oldVerified
+                ? "bg-[var(--modern-violet)] border-[var(--modern-violet)] text-white"
+                : "text-[var(--modern-violet)]"
+            }`}
+            style={
+              oldVerified
+                ? {
+                    background: "color-mix(in srgb, var(--modern-violet) 12%, transparent)",
+                    borderColor: "color-mix(in srgb, var(--modern-violet) 35%, transparent)",
+                  }
+                : undefined
+            }
+          >
+            1
+          </span>
+          <span className='text-[13px] font-medium text-[var(--modern-text)] sm:truncate'>{t("changePassword.oldPassword")}</span>
         </div>
-        <div className='password-change-step-divider' />
-        <div className={`password-change-step${oldVerified ? " active" : ""}`}>
-          <span className='password-change-step-number'>2</span>
-          <span className='password-change-step-label'>{t("changePassword.newPassword")}</span>
+        <div className='w-full h-[1px] sm:w-6 sm:h-[2px] bg-[var(--modern-border)] flex-none' />
+        <div className={`flex items-center gap-2 flex-1 min-w-0 ${oldVerified ? "opacity-100" : "opacity-55"}`}>
+          <span
+            className={`inline-flex items-center justify-center w-[26px] h-[26px] rounded-full text-xs font-bold flex-none border border-solid ${
+              oldVerified
+                ? "bg-[var(--modern-violet)] border-[var(--modern-violet)] text-white"
+                : "bg-[var(--modern-raised)] border-[var(--modern-border)] text-[var(--modern-muted)]"
+            }`}
+          >
+            2
+          </span>
+          <span className='text-[13px] font-medium text-[var(--modern-text)] sm:truncate'>{t("changePassword.newPassword")}</span>
         </div>
       </div>
 
-      <Form onSubmit={handleSubmit} className='password-change-form'>
+      <Form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         {!oldVerified ? (
           <>
             <PasswordField
@@ -194,7 +240,7 @@ const PasswordChange = () => {
               label={
                 <>
                   {t("changePassword.oldPassword")}
-                  <span className='text-danger ms-1'>*</span>
+                  <span className='text-[var(--color-danger)] ms-1'>*</span>
                 </>
               }
               value={oldPassword}
@@ -203,12 +249,20 @@ const PasswordChange = () => {
               onToggle={() => setShowOldPassword(!showOldPassword)}
             />
             {oldPassword.trim().length > 0 && (
-              <div className='password-change-actions'>
-                <Button type='button' className='password-change-btn password-change-btn-primary' onClick={handleVerifyOldPassword} disabled={isVerifyingOld}>
+              <div className='flex flex-col sm:flex-row flex-wrap gap-3 mt-1'>
+                <Button
+                  type='button'
+                  className={primaryBtnClass}
+                  style={{
+                    background: "linear-gradient(110deg, var(--modern-action-violet), var(--modern-action-blue))",
+                  }}
+                  onClick={handleVerifyOldPassword}
+                  disabled={isVerifyingOld}
+                >
                   {isVerifyingOld && <Spinner animation='border' size='sm' className='inline-button-spinner' aria-hidden='true' />}
                   {t("changePassword.verify") || "Verify"}
                 </Button>
-                <Button type='button' className='password-change-btn password-change-btn-secondary' onClick={hanleCLearFields} disabled={isVerifyingOld}>
+                <Button type='button' className={secondaryBtnClass} onClick={hanleCLearFields} disabled={isVerifyingOld}>
                   {t("changePassword.cancel")}
                 </Button>
               </div>
@@ -216,8 +270,16 @@ const PasswordChange = () => {
           </>
         ) : (
           <>
-            <div className='password-change-verified-banner'>
-              <Icons.Completed size={18} aria-hidden='true' />
+            <div
+              className='flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-[13px] font-medium text-[var(--modern-text)] border border-solid'
+              style={{
+                background: "color-mix(in srgb, var(--modern-violet) 12%, var(--modern-card))",
+                borderColor: "color-mix(in srgb, var(--modern-violet) 25%, var(--modern-border))",
+              }}
+            >
+              <span className='flex-none text-[var(--modern-violet)] inline-flex'>
+                <Icons.Completed size={18} aria-hidden='true' />
+              </span>
               <span>{t("changePassword.oldpassVerified") || "Old password verified"}</span>
             </div>
 
@@ -226,7 +288,7 @@ const PasswordChange = () => {
               label={
                 <>
                   {t("changePassword.newPassword")}
-                  <span className='text-danger ms-1'>*</span>
+                  <span className='text-[var(--color-danger)] ms-1'>*</span>
                 </>
               }
               value={newPassword}
@@ -236,7 +298,7 @@ const PasswordChange = () => {
               error={newPasswordError}
             />
 
-            <ul className='password-change-requirements'>
+            <ul className='list-none m-0 px-4 py-3.5 rounded-lg bg-[var(--modern-bg)] border border-solid border-[var(--modern-border)] flex flex-col gap-2'>
               <RequirementItem met={passwordChecks.length} label={t("changePassword.lengthRequirement")} />
               <RequirementItem met={passwordChecks.uppercase} label={t("changePassword.uppercaseRequirement")} />
               <RequirementItem met={passwordChecks.special} label={t("changePassword.specialCharacterRequirement")} />
@@ -247,7 +309,7 @@ const PasswordChange = () => {
               label={
                 <>
                   {t("changePassword.confirmPassword")}
-                  <span className='text-danger ms-1'>*</span>
+                  <span className='text-[var(--color-danger)] ms-1'>*</span>
                 </>
               }
               value={confirmPassword}
@@ -257,12 +319,19 @@ const PasswordChange = () => {
               error={confirmPasswordError}
             />
 
-            <div className='password-change-actions'>
-              <Button type='submit' className='password-change-btn password-change-btn-primary' disabled={!isFormValid || isSubmittingPassword}>
+            <div className='flex flex-col sm:flex-row flex-wrap gap-3 mt-1'>
+              <Button
+                type='submit'
+                className={primaryBtnClass}
+                style={{
+                  background: "linear-gradient(110deg, var(--modern-action-violet), var(--modern-action-blue))",
+                }}
+                disabled={!isFormValid || isSubmittingPassword}
+              >
                 {isSubmittingPassword && <Spinner animation='border' size='sm' className='inline-button-spinner' aria-hidden='true' />}
                 {t("changePassword.submit")}
               </Button>
-              <Button type='button' className='password-change-btn password-change-btn-secondary' onClick={hanleCLearFields} disabled={isSubmittingPassword}>
+              <Button type='button' className={secondaryBtnClass} onClick={hanleCLearFields} disabled={isSubmittingPassword}>
                 {t("changePassword.cancel")}
               </Button>
             </div>

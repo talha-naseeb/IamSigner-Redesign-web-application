@@ -8,7 +8,6 @@ import rectangleBox from "@/assets/images/rectangle.png";
 import { GoDownload } from "react-icons/go";
 import { Link, useLocation } from "react-router-dom";
 import { useUser } from "@/Context/UserContext";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import integrationService from "@/services/integrationService";
 
 function ManuallyGenerateComponent() {
@@ -229,11 +228,6 @@ function ManuallyGenerateComponent() {
       {userAccess.macAI === true && userAccess.remainingDays > 0 ? (
         <>
           <div className='container my-3'>
-            {isLoading && (
-              <div className='loader-overlay'>
-                <Loader />
-              </div>
-            )}
             <Row className='my-3 gap-4 justify-content-center'>
               <Col md={3}>
                 <div style={{ position: "relative", display: "inline-block" }}>

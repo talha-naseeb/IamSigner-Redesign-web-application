@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { FiChevronRight } from "react-icons/fi";
 
 const MenuItem = ({
   item,
@@ -59,6 +60,11 @@ const MenuItem = ({
         )}
       </span>
       {label}
+      {item.className === "dms-section" && isOpen && (
+        <span className="dms-sidebar-tab-arrow" aria-hidden="true">
+          <FiChevronRight size={14} />
+        </span>
+      )}
     </NavLink>
   );
 };

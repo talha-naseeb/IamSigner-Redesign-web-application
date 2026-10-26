@@ -7,7 +7,6 @@ import { Icons } from "@/assets/Icons";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import DocStatusFilter from "./DocStatusFilter";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import documentService from "@/services/documentService";
 import userService from "@/services/userService";
 import "../CompanyAdminPanel/style.css";
@@ -217,11 +216,6 @@ function UserDocReport() {
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       {user.AccountType === "B" && (user.RoleID === 1 || user.RoleID === 4) && userAccess.remainingDays >= 0 ? (
         <div className='my-3 container users-report-page user-document-report'>
           <Accordion defaultActiveKey='0' className='users-report-accordion'>
@@ -276,7 +270,9 @@ function UserDocReport() {
                           style={{
                             maxWidth: "100%",
                             overflowX: "auto",
-                            height: "57vh",
+                            minHeight: "440px",
+                            height: "calc(100vh - 280px)",
+                            maxHeight: "calc(100vh - 280px)",
                           }}
                         >
                           <Table stickyHeader className='report-table'>

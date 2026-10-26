@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Pagination, Stack } from "@/Components/UI/dataPrimitives";
 import { Offcanvas } from "@/Components/UI/shadcnCompat";
@@ -6,9 +7,9 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import userService from "@/services/userService";
 import { Icons } from "@/assets/Icons/index";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 import { DMS_MAX_UPLOAD_BYTES, ROWS_PER_PAGE } from "./constants/dmsConfig";
 import {
@@ -105,6 +106,25 @@ const DMS = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [contentFilter, setContentFilter] = useState("both");
   const [selectedDocIds, setSelectedDocIds] = useState(() => new Set());
+  const [isTreeCollapsed, setIsTreeCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("iamsigner_dms_tree_collapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const toggleTreeCollapsed = useCallback(() => {
+    setIsTreeCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("iamsigner_dms_tree_collapsed", String(next));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  }, []);
 
   // ── Panel / modal visibility ─────────────────────────────────
   const [showDetailPanel, setShowDetailPanel] = useState(false);
@@ -202,6 +222,24 @@ const DMS = () => {
   const [documentActivities, setDocumentActivities] = useState([]);
   const [documentActivityLoading, setDocumentActivityLoading] = useState(false);
   const didInitDmsRef = useRef(false);
+  const [subpanelPortalNode, setSubpanelPortalNode] = useState(null);
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const el = document.getElementById("dms-subpanel-portal");
+      if (el) setSubpanelPortalNode(el);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (subpanelPortalNode) {
+      if (isTreeCollapsed) {
+        subpanelPortalNode.classList.add("sidebar-subpanel--collapsed");
+      } else {
+        subpanelPortalNode.classList.remove("sidebar-subpanel--collapsed");
+      }
+    }
+  }, [subpanelPortalNode, isTreeCollapsed]);
 
   const refreshAfterMutation = (args) =>
     refreshDmsAfterMutation(args, setSelectedFolder);
@@ -1788,76 +1826,58 @@ const DMS = () => {
     return <UserLisence />;
   }
 
+  const desktopFolderTree = (
+    <FolderTree
+      folderTree={treeRoot}
+      selectedTreeKey={selectedTreeKey}
+      expandedFolders={expandedFolders}
+      isRoot={isRoot}
+      docCount={sidebarDocCount}
+      folderCount={sidebarFolderCount}
+      storage={myStorage}
+      loadedChildrenFor={loadedChildrenFor}
+      onGoHome={handleGoHome}
+      onSelect={handleFolderSelect}
+      onToggle={handleToggleExpand}
+      collapsed={isTreeCollapsed}
+      onToggleCollapse={toggleTreeCollapsed}
+    />
+  );
+
   return (
     <div className="dms-root">
-      {isLoading ||
-      dmsViewLoading ||
-      signDocumentLoading ||
-      deleteDocumentLoading ||
-      deleteFolderLoading ||
-      createFolderLoading ||
-      rootFolderFilterLoading ||
-      (isRoot && allDocumentsLoading) ||
-      folderContentLoading ||
-      sharedListLoading ? (
-        <div className="loader-overlay">
-          <Loader />
-        </div>
-      ) : null}
+      {/* Portaled two-tier docked secondary sidebar when on desktop */}
+      {subpanelPortalNode && createPortal(desktopFolderTree, subpanelPortalNode)}
 
-      {/* Left panel: folder tree (desktop) */}
-      <FolderTree
-        folderTree={treeRoot}
-        selectedTreeKey={selectedTreeKey}
-        expandedFolders={expandedFolders}
-        isRoot={isRoot}
-        docCount={sidebarDocCount}
-        folderCount={sidebarFolderCount}
-        storage={myStorage}
-        loadedChildrenFor={loadedChildrenFor}
-        onGoHome={handleGoHome}
-        onSelect={handleFolderSelect}
-        onToggle={handleToggleExpand}
-      />
+      {/* Unified single-window workspace container */}
+      <div className={`dms-workspace-container${isTreeCollapsed ? " dms-tree-collapsed" : ""}`}>
+        {/* Inline fallback if not portaled */}
+        {!subpanelPortalNode && desktopFolderTree}
 
-      {/* Mobile folder navigation */}
-      <Offcanvas
-        show={showMobileTree}
-        onHide={() => setShowMobileTree(false)}
-        placement="start"
-        backdrop
-        scroll
-        className="dms-mobile-tree-offcanvas"
-      >
-        <Offcanvas.Header closeButton className="dms-mobile-tree-header">
-          <Offcanvas.Title>{t("DMS.browseFolders")}</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body className="dms-mobile-tree-body p-0">
-          <FolderTree
-            embedded
-            folderTree={treeRoot}
-            selectedTreeKey={selectedTreeKey}
-            expandedFolders={expandedFolders}
-            isRoot={isRoot}
-            docCount={sidebarDocCount}
-            folderCount={sidebarFolderCount}
-            storage={myStorage}
-            loadedChildrenFor={loadedChildrenFor}
+        {/* Floating boundary collapse/expand button (fallback when not docked into sidebar rail) */}
+        {!subpanelPortalNode && (
+          <button
+            type="button"
+            className="dms-tree-boundary-toggle"
+            onClick={toggleTreeCollapsed}
+            aria-label={isTreeCollapsed ? t("DMS.expandSidebar", "Expand sidebar") : t("DMS.collapseSidebar", "Collapse sidebar")}
+            title={isTreeCollapsed ? t("DMS.expandSidebar", "Expand sidebar") : t("DMS.collapseSidebar", "Collapse sidebar")}
+          >
+            {isTreeCollapsed ? (
+              <FiChevronRight size={14} className="dms-boundary-toggle-icon" />
+            ) : (
+              <FiChevronLeft size={14} className="dms-boundary-toggle-icon" />
+            )}
+          </button>
+        )}
+
+        {/* Right panel: content */}
+        <main className="dms-content-panel">
+          <DMSBreadcrumb
+            breadcrumb={breadcrumb}
             onGoHome={handleGoHome}
-            onSelect={handleFolderSelect}
-            onToggle={handleToggleExpand}
-            onNavigate={() => setShowMobileTree(false)}
+            onSelectFolder={handleFolderSelect}
           />
-        </Offcanvas.Body>
-      </Offcanvas>
-
-      {/* Right panel: content */}
-      <main className="dms-content-panel">
-        <DMSBreadcrumb
-          breadcrumb={breadcrumb}
-          onGoHome={handleGoHome}
-          onSelectFolder={handleFolderSelect}
-        />
 
         <div className="dms-content-card">
           <DMSToolbar
@@ -1969,8 +1989,40 @@ const DMS = () => {
           </div>
         </div>
       </main>
+    </div>
 
-      {/* Document metadata / actions — offcanvas */}
+    {/* Mobile folder navigation */}
+    <Offcanvas
+      show={showMobileTree}
+      onHide={() => setShowMobileTree(false)}
+      placement="start"
+      backdrop
+      scroll
+      className="dms-mobile-tree-offcanvas"
+    >
+      <Offcanvas.Header closeButton className="dms-mobile-tree-header">
+        <Offcanvas.Title>{t("DMS.browseFolders")}</Offcanvas.Title>
+      </Offcanvas.Header>
+      <Offcanvas.Body className="dms-mobile-tree-body p-0">
+        <FolderTree
+          embedded
+          folderTree={treeRoot}
+          selectedTreeKey={selectedTreeKey}
+          expandedFolders={expandedFolders}
+          isRoot={isRoot}
+          docCount={sidebarDocCount}
+          folderCount={sidebarFolderCount}
+          storage={myStorage}
+          loadedChildrenFor={loadedChildrenFor}
+          onGoHome={handleGoHome}
+          onSelect={handleFolderSelect}
+          onToggle={handleToggleExpand}
+          onNavigate={() => setShowMobileTree(false)}
+        />
+      </Offcanvas.Body>
+    </Offcanvas>
+
+    {/* Document metadata / actions — offcanvas */}
       <DMSDetailPanel
         show={showDetailPanel}
         doc={selectedDoc}

@@ -5,7 +5,6 @@ import { useDrop } from "react-dnd";
 import { useTranslation } from "react-i18next";
 import ImageWithControls from "@/Components/DocumentPreparation/Step2_Canvas/ImageWithControls";
 import useDragAutoScroll from "@/Components/SignaturePlacement/useDragAutoScroll";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import { Icons } from "@/assets/Icons";
 import { emptyAlignmentGuides, getControlDimensions, getNewControlDimensions, snapToControls as getSnappedControlPosition } from "@/Components/SignaturePlacement/SmartGuides";
@@ -546,11 +545,6 @@ const ImageWithDropZone = ({
 
   return (
     <>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
 
       <ImageWithControls
         selectedImage={selectedImage}

@@ -137,16 +137,14 @@ const ShareFolderModal = ({ show, handleClose, folderId, GetFolders, GetShareWit
   return (
     <Modal show={show} onHide={handleCloseModal} backdrop='static' keyboard={false} dialogClassName='custom-modal-width'>
       <Modal.Header closeButton>
-        <Modal.Title>
-          <div className='header-content'>
-            <div className='header-icon'>
-              <Icons.Folders size={24} />
-            </div>
-            <div className='header-text'>
-              <Modal.Title>{t("Folder.Sharefolder")}</Modal.Title>
-            </div>
+        <div className='header-content'>
+          <div className='header-icon'>
+            <Icons.Folders size={24} />
           </div>
-        </Modal.Title>
+          <div className='header-text'>
+            <Modal.Title>{t("Folder.Sharefolder")}</Modal.Title>
+          </div>
+        </div>
       </Modal.Header>
       <Modal.Body className='p-4'>
         <Form>

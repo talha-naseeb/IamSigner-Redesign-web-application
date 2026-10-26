@@ -8,7 +8,6 @@ import ImageWithDropZone from "./DisplayCenterImage";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ImageThumbnails from "@/Components/ImageThumbnails/ImageThumbnails";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 
 const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
   const { t } = useTranslation();
@@ -56,7 +55,6 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
     setButtonClicked(value);
     setButtonLabel(label);
     setControlID(controlID);
-    // console.log("controlID", controlID);
   };
 
   useEffect(() => {
@@ -71,7 +69,6 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
 
           const masterDocIDs = response.data.response.primaryDocs.map((doc) => doc.masterDocID);
           setMasterDocIDs(masterDocIDs);
-          // setDefaultMasterDocID(masterDocIDs[0]);
           const firstDocument = response.data.response.primaryDocs[0];
           const firstDocName = firstDocument.docName;
           const truncatedName = firstDocName.length > 10 ? firstDocName.slice(0, 7) + ".." : firstDocName;
@@ -251,11 +248,6 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
 
   return (
     <div className='w-full'>
-      {isLoading && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm'>
-          <Loader />
-        </div>
-      )}
 
       <div className='w-full'>
         <div className='flex flex-col-reverse md:flex-row p-0 m-0'>

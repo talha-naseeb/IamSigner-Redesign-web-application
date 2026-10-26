@@ -9,7 +9,6 @@ import { useUser } from "@/Context/UserContext";
 import { Icons } from "@/assets/Icons";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import Loader from "@/Components/CommonModals/Loader/Loader";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import userService from "@/services/userService";
 
@@ -491,11 +490,6 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
   };
   return (
     <div className='signatories-forms'>
-      {isLoading && (
-        <div className='loader-overlay'>
-          <Loader />
-        </div>
-      )}
       <div className='signatory-form-container'>
         <Form>
           <DragDropContext onDragEnd={handleDragEnd}>

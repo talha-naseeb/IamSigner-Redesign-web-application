@@ -7,7 +7,7 @@ const SignedMessage = ({ message }) => (
     icon={thankyouIcon}
     iconClassName="success-icon"
     title="Thank You !"
-    titleColor="#24B032"
+    titleColor="var(--color-success)"
     titleStyle={{ marginTop: "5px" }}
     messages={[message, "Shortly you will find a confirmation in your email."]}
   />

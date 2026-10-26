@@ -25,10 +25,10 @@ export const Forbidden403 = ({ reason }) => {
               "You do not have permission to access this resource. Please contact your administrator if you believe this is an error."
             )}
         </p>
-        <div className='flex flex-wrap justify-center gap-4'>
+        <div className='flex flex-col sm:flex-row justify-center gap-3'>
           <button
             type='button'
-            className='inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-[var(--modern-violet,#7357dc)] hover:bg-[var(--modern-violet-hover,#6245cb)] text-white border border-transparent rounded-lg font-semibold text-sm cursor-pointer no-underline transition-colors focus-visible:outline-2 focus-visible:outline-[var(--modern-violet,#7357dc)] focus-visible:outline-offset-2'
+            className='inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 px-6 py-[11px] bg-transparent hover:bg-[var(--modern-violet-soft)] text-[var(--modern-text)] hover:text-[var(--modern-violet)] border border-[var(--modern-border-strong)] hover:border-[var(--modern-violet)] rounded-[var(--radius-md,12px)] font-semibold text-[15px] cursor-pointer no-underline transition-colors focus-visible:outline-2 focus-visible:outline-[var(--modern-violet,#7357dc)] focus-visible:outline-offset-2'
             onClick={() => navigate(-1)}
             aria-label='Go back to previous page'
           >
@@ -37,7 +37,10 @@ export const Forbidden403 = ({ reason }) => {
           </button>
           <Link
             to={PATHS.home}
-            className='inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-[var(--modern-violet,#7357dc)] hover:bg-[var(--modern-violet-hover,#6245cb)] text-white border border-transparent rounded-lg font-semibold text-sm cursor-pointer no-underline transition-colors focus-visible:outline-2 focus-visible:outline-[var(--modern-violet,#7357dc)] focus-visible:outline-offset-2'
+            className='inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 px-6 py-[11px] text-white border border-transparent rounded-[var(--radius-md,12px)] font-semibold text-[15px] cursor-pointer no-underline transition-opacity hover:opacity-95 focus-visible:outline-2 focus-visible:outline-[var(--modern-violet,#7357dc)] focus-visible:outline-offset-2'
+            style={{
+              background: "linear-gradient(110deg, var(--modern-action-violet), var(--modern-action-blue))",
+            }}
             aria-label='Go to dashboard'
           >
             <FiHome aria-hidden='true' />

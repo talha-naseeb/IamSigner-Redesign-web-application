@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
   });
 
   return {
+    envPrefix: ["VITE_", "REACT_APP_"],
     plugins: [
       react({
         include: /\.(jsx|js)$/,

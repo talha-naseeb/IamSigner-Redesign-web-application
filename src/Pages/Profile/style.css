@@ -289,6 +289,11 @@
   outline-offset: 2px;
 }
 
+.profile-page .form-control.is-invalid,
+.delegation-section .form-control.is-invalid {
+  border-color: var(--modern-danger, #ef4444) !important;
+}
+
 .profile-page .profile-phone-input,
 .delegation-section .delegation-phone-input {
   position: relative;
@@ -389,6 +394,25 @@
   border-color: var(--modern-violet) !important;
   background: var(--modern-violet-soft);
   color: var(--modern-violet);
+}
+
+/* Wrapper must not draw its own box behind the individual rounded items */
+.profile-accordion,
+.delegation-accordion {
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.profile-accordion > .accordion-item,
+.delegation-accordion > .accordion-item {
+  border-top-width: 1px !important;
+}
+
+/* Header button sits flush inside the item; the item owns the single border */
+.profile-accordion .accordion-button,
+.delegation-accordion .accordion-button {
+  border: 0 !important;
+  border-radius: 0 !important;
 }
 
 .profile-accordion .accordion-item,
