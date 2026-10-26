@@ -9,7 +9,7 @@ import { useUser } from "@/Context/UserContext";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import userService from "@/services/userService";
 import { Icons } from "@/assets/Icons/index";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { DMS_MAX_UPLOAD_BYTES, ROWS_PER_PAGE } from "./constants/dmsConfig";
 import {
@@ -1864,9 +1864,9 @@ const DMS = () => {
             title={isTreeCollapsed ? t("DMS.expandSidebar", "Expand sidebar") : t("DMS.collapseSidebar", "Collapse sidebar")}
           >
             {isTreeCollapsed ? (
-              <FiChevronRight size={14} className="dms-boundary-toggle-icon" />
+              <ChevronRight size={14} className="dms-boundary-toggle-icon" />
             ) : (
-              <FiChevronLeft size={14} className="dms-boundary-toggle-icon" />
+              <ChevronLeft size={14} className="dms-boundary-toggle-icon" />
             )}
           </button>
         )}

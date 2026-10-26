@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { IoArrowBack } from "react-icons/io5";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Container, Row, Col, Form, Button, Modal, Spinner } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import ForgotCarousel from "@/Pages/Auth/Carousels/Forgot/ForgotCarousel";
 import LangSelector from "@/Components/Language/LangSelector";
-import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
 import lockIcon from "@/assets/images/resetpassSuccess.svg";
 import authService from "@/services/authService";
 import { validate } from "@/utils/validators";
@@ -141,7 +139,7 @@ const ResetPassword = () => {
     <div className='flex items-center justify-between gap-4 mb-8'>
       <div className='flex gap-2 items-center'>
         <Link to='/' className='inline-flex items-center text-[var(--modern-text)]'>
-          <IoArrowBack
+          <ArrowLeft
             size={22}
             className={document.documentElement.dir === "rtl" ? "rotate-180 cursor-pointer" : "cursor-pointer"}
           />
@@ -221,7 +219,7 @@ const ResetPassword = () => {
                         className='absolute z-[2] end-2 inline-flex h-9 w-9 items-center justify-center rounded-md border-0 bg-transparent p-0 text-[var(--modern-muted)] cursor-pointer hover:text-[var(--modern-text)]'
                         onClick={() => setShowNewPassword(!showNewPassword)}
                       >
-                        {showNewPassword ? <RiEyeOffFill /> : <RiEyeFill />}
+                        {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
                     {newPasswordError && <Form.Text className='mt-1 block text-xs text-[var(--color-danger)]'>{newPasswordError}</Form.Text>}
@@ -243,7 +241,7 @@ const ResetPassword = () => {
                         className='absolute z-[2] end-2 inline-flex h-9 w-9 items-center justify-center rounded-md border-0 bg-transparent p-0 text-[var(--modern-muted)] cursor-pointer hover:text-[var(--modern-text)]'
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       >
-                        {showConfirmPassword ? <RiEyeOffFill /> : <RiEyeFill />}
+                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
                     {confirmPasswordError && (

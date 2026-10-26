@@ -3,8 +3,7 @@ import { Container, Row, Col, Form, Button, Nav, InputGroup, Spinner } from "@/C
 import LoginCarousel from "@/Pages/Auth/Carousels/Login/LoginCarousel";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { MdRemoveRedEye } from "react-icons/md";
-import { FaEyeSlash } from "react-icons/fa";
+import { Eye, EyeOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import Otpinput from "@/Pages/Auth/VerifyOtp/VerifyOtpPage";
@@ -184,7 +183,7 @@ const Login = ({ onLogin }) => {
                       aria-label={showPassword ? t("logScreens.hidePassword") : t("logScreens.showPassword")}
                       aria-pressed={showPassword}
                     >
-                      {showPassword ? <FaEyeSlash /> : <MdRemoveRedEye />}
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                   {passwordError && (

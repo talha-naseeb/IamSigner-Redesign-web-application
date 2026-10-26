@@ -4,7 +4,7 @@ import arabic from "react-date-object/calendars/arabic";
 import gregorian from "react-date-object/calendars/gregorian";
 import arabic_en from "react-date-object/locales/arabic_en";
 import gregorian_en from "react-date-object/locales/gregorian_en";
-import { MdSwapHoriz } from "react-icons/md";
+import { ArrowLeftRight } from "lucide-react";
 import "./HomeCalendar.css";
 
 const HomeCalendar = () => {
@@ -126,7 +126,7 @@ const HomeCalendar = () => {
         <div className="cal-conv-header">
           <span className={`cal-conv-label ${!swapped ? "active" : ""}`}>Gregorian</span>
           <button className="cal-swap-btn" onClick={handleSwap} title="Swap calendars">
-            <MdSwapHoriz size={18} />
+            <ArrowLeftRight size={18} />
           </button>
           <span className={`cal-conv-label ${swapped ? "active" : ""}`}>Hijri</span>
         </div>

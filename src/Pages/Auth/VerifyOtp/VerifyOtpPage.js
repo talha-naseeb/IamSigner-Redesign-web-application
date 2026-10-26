@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import authService from "@/services/authService";
 import { getRecaptchaToken } from "@/utils/recaptcha";
-import { FiMail, FiShield } from "react-icons/fi";
+import { Mail, Shield } from "lucide-react";
 import "./style.css";
 import { useUser } from "@/Context/UserContext";
 import { tokenManager } from "@/services/tokenManager";
@@ -341,7 +341,7 @@ const OtpInput = ({ length = 4, show, handleClose, email, password, onLogin }) =
       <Modal.Header closeButton className='otp-modal-header'>
         <div className='otp-modal-heading'>
           <span className='otp-modal-symbol' aria-hidden='true'>
-            <FiShield />
+            <Shield size={20} />
           </span>
           <Modal.Title>{t("logScreens.otpDesc")}</Modal.Title>
         </div>
@@ -350,7 +350,7 @@ const OtpInput = ({ length = 4, show, handleClose, email, password, onLogin }) =
         <div className='otp-modal-body'>
           <div className='otp-delivery-card'>
             <span className='otp-delivery-icon' aria-hidden='true'>
-              <FiMail />
+              <Mail size={18} />
             </span>
             <div className='otp-delivery-copy'>
               <p>{t("logScreens.emailSent")}</p>

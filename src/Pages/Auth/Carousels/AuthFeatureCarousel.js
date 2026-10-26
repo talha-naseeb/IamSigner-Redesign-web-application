@@ -2,19 +2,19 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Carousel } from "@/Components/UI/shadcnCompat";
 import {
-  FiActivity,
-  FiCheck,
-  FiCheckCircle,
-  FiCloud,
-  FiFileText,
-  FiFolder,
-  FiKey,
-  FiLock,
-  FiMail,
-  FiPenTool,
-  FiShield,
-  FiUser,
-} from "react-icons/fi";
+  Activity,
+  Check,
+  CheckCircle,
+  Cloud,
+  FileText,
+  Folder,
+  Key,
+  Lock,
+  Mail,
+  PenTool,
+  Shield,
+  User,
+} from "lucide-react";
 import { useTheme } from "@/Context/ThemeContext";
 
 const loginSlides = [
@@ -128,7 +128,7 @@ const UploadArtwork = () => (
       className='absolute bottom-[38px] start-[18%] flex h-[104px] w-[82px] -rotate-3 items-start justify-center gap-2 rounded-[13px] border border-solid border-[var(--modern-border-strong)] p-3.5 text-[19px] text-[var(--modern-violet)] shadow-md'
       style={floatingCardStyle}
     >
-      <FiFileText />
+      <FileText />
       <span className='flex w-[34px] flex-col gap-1.5 pt-1'>
         <i className='block h-1 rounded-full' style={linePrimaryStyle} />
         <i className='block h-1 rounded-full' style={lineMutedStyle} />
@@ -149,7 +149,7 @@ const UploadArtwork = () => (
           boxShadow: "0 8px 22px var(--modern-glow-violet)",
         }}
       >
-        <FiCloud />
+        <Cloud />
       </span>
       <span className='mb-2 h-1.5 w-[112px] rounded-full' style={linePrimaryStyle} />
       <span className='mb-4 h-1.5 w-[71px] rounded-full' style={lineMutedStyle} />
@@ -164,7 +164,7 @@ const UploadArtwork = () => (
       className='absolute top-[48px] end-[8%] flex rotate-3 items-center gap-2 rounded-[14px] border border-solid border-[var(--modern-border-strong)] px-3 py-2.5 text-[19px] text-[var(--modern-cyan)] shadow-md'
       style={floatingCardStyle}
     >
-      <FiCheckCircle />
+      <CheckCircle />
       <span className='flex w-[50px] flex-col gap-1'>
         <i className='block h-[5px] rounded-full' style={linePrimaryStyle} />
         <i className='block h-1 w-[68%] rounded-full' style={lineMutedStyle} />
@@ -233,7 +233,7 @@ const ParticipantsArtwork = () => (
       style={floatingCardStyle}
     >
       <div className='flex items-center gap-2 text-[16px] text-[var(--modern-violet)]'>
-        <FiFileText />
+        <FileText />
         <span className='flex w-[68%] flex-col gap-1'>
           <i className='block h-[5px] w-[85%] rounded-full' style={linePrimaryStyle} />
           <i className='block h-1 w-[55%] rounded-full' style={lineMutedStyle} />
@@ -247,17 +247,17 @@ const ParticipantsArtwork = () => (
         <i className='block h-[5px] rounded-full' style={lineMutedStyle} />
       </div>
       <div className='flex items-center gap-2 rounded-lg border border-solid border-[var(--modern-border)] bg-[var(--modern-violet-soft)] p-2 text-[var(--modern-violet)]'>
-        <FiPenTool />
+        <PenTool />
         <span
           className='h-1 w-[60%] rounded-full'
           style={{ background: "color-mix(in srgb, var(--modern-violet) 35%, var(--modern-card))" }}
         />
       </div>
     </div>
-    <ParticipantBadge letter='A' className='top-[32px] start-[4%] text-[var(--modern-cyan)]' icon={FiCheck} />
-    <ParticipantBadge letter='M' className='top-[34px] end-[4%] text-[var(--modern-violet)]' icon={FiPenTool} />
-    <ParticipantBadge letter='J' className='bottom-[31px] start-[4%] text-[var(--modern-cyan)]' icon={FiCheck} />
-    <ParticipantBadge letter='S' className='bottom-[30px] end-[4%] text-[var(--modern-violet)]' icon={FiCheck} />
+    <ParticipantBadge letter='A' className='top-[32px] start-[4%] text-[var(--modern-cyan)]' icon={Check} />
+    <ParticipantBadge letter='M' className='top-[34px] end-[4%] text-[var(--modern-violet)]' icon={PenTool} />
+    <ParticipantBadge letter='J' className='bottom-[31px] start-[4%] text-[var(--modern-cyan)]' icon={Check} />
+    <ParticipantBadge letter='S' className='bottom-[30px] end-[4%] text-[var(--modern-violet)]' icon={Check} />
     <SparkOne />
     <SparkTwo />
   </ArtworkShell>
@@ -272,7 +272,7 @@ const SendArtwork = () => (
       style={floatingCardStyle}
     >
       <span className='grid h-[33px] w-[33px] place-items-center rounded-[10px] bg-[var(--modern-violet-soft)] text-[17px] text-[var(--modern-violet)]'>
-        <FiFileText />
+        <FileText />
       </span>
       <span className='flex flex-col gap-1.5'>
         <i className='block h-[5px] rounded-full' style={lineMutedStyle} />
@@ -280,7 +280,7 @@ const SendArtwork = () => (
         <i className='block h-[5px] rounded-full' style={lineMutedStyle} />
       </span>
       <span className='absolute bottom-[18px] end-[17px] grid h-[29px] w-[47px] place-items-center border-b border-solid border-[var(--modern-cyan)] text-[var(--modern-cyan)]'>
-        <FiPenTool />
+        <PenTool />
       </span>
     </div>
     <div
@@ -315,7 +315,7 @@ const SendArtwork = () => (
         className='grid h-[28px] w-[28px] place-items-center rounded-[9px] text-[var(--modern-cyan)]'
         style={{ background: "color-mix(in srgb, var(--modern-cyan) 13%, var(--modern-card))" }}
       >
-        <FiCheck />
+        <Check />
       </span>
       <span className='flex w-[51px] flex-col gap-1'>
         <i className='block h-[5px] w-[90%] rounded-full' style={linePrimaryStyle} />
@@ -326,7 +326,7 @@ const SendArtwork = () => (
       className='absolute bottom-[46px] start-[11%] grid h-[46px] w-[46px] -rotate-6 place-items-center rounded-[15px] border border-solid border-[var(--modern-border-strong)] text-[21px] text-[var(--modern-violet)] shadow-md'
       style={floatingCardStyle}
     >
-      <FiMail />
+      <Mail />
     </div>
     <SparkOne />
     <SparkTwo />
@@ -356,7 +356,7 @@ const AccountArtwork = () => (
           background: "linear-gradient(135deg, var(--modern-violet), var(--modern-blue))",
         }}
       >
-        <FiUser />
+        <User />
       </div>
       <span className='flex w-[79%] flex-col items-center gap-1.5'>
         <i className='block h-1.5 w-[78%] rounded-full' style={linePrimaryStyle} />
@@ -366,21 +366,21 @@ const AccountArtwork = () => (
         className='flex h-[34px] w-full items-center gap-2 rounded-[9px] border border-solid border-[var(--modern-border)] px-2.5 text-[13px] text-[var(--modern-muted)]'
         style={{ background: "color-mix(in srgb, var(--modern-raised) 48%, var(--modern-card))" }}
       >
-        <FiMail />
+        <Mail />
         <span className='h-1 w-[68%] rounded-full' style={lineMutedStyle} />
       </div>
       <div
         className='flex h-[34px] w-full items-center gap-2 rounded-[9px] border border-solid border-[var(--modern-border)] px-2.5 text-[13px] text-[var(--modern-muted)]'
         style={{ background: "color-mix(in srgb, var(--modern-raised) 48%, var(--modern-card))" }}
       >
-        <FiLock />
+        <Lock />
         <span className='h-1 w-[68%] rounded-full' style={lineMutedStyle} />
       </div>
       <div
         className='flex h-[30px] w-full items-center justify-center gap-2 rounded-[9px] text-xs text-white'
         style={{ background: "linear-gradient(105deg, var(--modern-violet), var(--modern-blue))" }}
       >
-        <FiCheck />
+        <Check />
         <span className='h-1 w-[57px] rounded-full bg-white/75' />
       </div>
     </div>
@@ -388,7 +388,7 @@ const AccountArtwork = () => (
       className='absolute top-[46px] end-[16%] grid h-[48px] w-[48px] rotate-6 place-items-center rounded-[16px] border border-solid border-[var(--modern-border-strong)] text-[22px] text-[var(--modern-cyan)] shadow-md'
       style={floatingCardStyle}
     >
-      <FiShield />
+      <Shield />
     </div>
     <SparkOne />
   </ArtworkShell>
@@ -430,17 +430,17 @@ const LibraryArtwork = () => (
         <span className='h-1.5 w-1.5 rounded-full bg-[var(--modern-border-strong)]' />
       </div>
       <div className='grid h-[calc(100%-32px)] grid-cols-2 gap-2 md:gap-3 p-3 md:p-5'>
-        <LibraryFolderTile icon={FiFolder} colorVar='--modern-violet' />
-        <LibraryFolderTile icon={FiFileText} colorVar='--modern-blue' />
-        <LibraryFolderTile icon={FiFolder} colorVar='--modern-cyan' />
-        <LibraryFolderTile icon={FiFileText} colorVar='--modern-pink' />
+        <LibraryFolderTile icon={Folder} colorVar='--modern-violet' />
+        <LibraryFolderTile icon={FileText} colorVar='--modern-blue' />
+        <LibraryFolderTile icon={Folder} colorVar='--modern-cyan' />
+        <LibraryFolderTile icon={FileText} colorVar='--modern-pink' />
       </div>
     </div>
     <div
       className='absolute bottom-[47px] end-[8%] flex -rotate-3 items-center gap-2 rounded-[13px] border border-solid border-[var(--modern-border-strong)] p-2.5 text-[var(--modern-violet)] shadow-md'
       style={floatingCardStyle}
     >
-      <FiActivity />
+      <Activity />
       <span className='flex w-[41px] flex-col gap-1'>
         <i className='block h-[5px] w-[90%] rounded-full' style={linePrimaryStyle} />
         <i className='block h-1 rounded-full' style={lineMutedStyle} />
@@ -453,7 +453,7 @@ const LibraryArtwork = () => (
       className='absolute top-[52px] start-[7%] grid h-[42px] w-[42px] -rotate-6 place-items-center rounded-[14px] border border-solid border-[var(--modern-border-strong)] text-[19px] text-[var(--modern-cyan)] shadow-md'
       style={floatingCardStyle}
     >
-      <FiCheckCircle />
+      <CheckCircle />
     </div>
     <SparkTwo />
   </ArtworkShell>
@@ -474,7 +474,7 @@ const ReadyArtwork = () => (
           background: "color-mix(in srgb, var(--modern-cyan) 12%, var(--modern-card))",
         }}
       >
-        <FiCheck />
+        <Check />
       </span>
       <span className='flex w-[76%] flex-col items-center gap-1.5'>
         <i className='block h-1.5 w-full rounded-full' style={linePrimaryStyle} />
@@ -486,7 +486,7 @@ const ReadyArtwork = () => (
         <i className='block h-1 w-[61%] rounded-full' style={lineMutedStyle} />
       </span>
       <span className='grid h-[27px] w-[71px] self-end place-items-center border-b border-solid border-[var(--modern-violet)] text-[17px] text-[var(--modern-violet)]'>
-        <FiPenTool />
+        <PenTool />
       </span>
     </div>
     <div className='absolute top-[43px] start-[23%] text-[23px] text-[var(--modern-cyan)]'>✦</div>
@@ -496,7 +496,7 @@ const ReadyArtwork = () => (
       className='absolute bottom-[34px] start-[19%] grid h-[41px] w-[41px] rotate-6 place-items-center rounded-[14px] border border-solid border-[var(--modern-border-strong)] text-[20px] text-[var(--modern-violet)] shadow-md'
       style={floatingCardStyle}
     >
-      <FiCheckCircle />
+      <CheckCircle />
     </div>
   </ArtworkShell>
 );
@@ -527,25 +527,25 @@ const RecoveryArtwork = () => (
         boxShadow: "0 18px 45px var(--modern-glow-violet), inset 0 0 24px var(--modern-glow-violet)",
       }}
     >
-      <FiShield className='block h-[84px] w-[84px]' style={{ strokeWidth: 1.5 }} />
+      <Shield className='block h-[84px] w-[84px]' style={{ strokeWidth: 1.5 }} />
       <span
         className='absolute top-[47%] left-1/2 grid h-[32px] w-[32px] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[10px] border border-solid border-[var(--modern-border-strong)] text-[16px] text-[var(--modern-cyan)] shadow-sm'
         style={floatingCardStyle}
       >
-        <FiLock />
+        <Lock />
       </span>
     </div>
     <div
       className='absolute top-[61px] end-[24%] grid h-[48px] w-[48px] rotate-12 place-items-center rounded-[16px] border border-solid border-[var(--modern-border-strong)] text-[20px] text-[var(--modern-blue)] shadow-md'
       style={floatingCardStyle}
     >
-      <FiKey />
+      <Key />
     </div>
     <div
       className='absolute bottom-[53px] start-[17%] flex -rotate-3 items-center gap-2 rounded-[14px] border border-solid border-[var(--modern-border-strong)] px-3 py-2 text-[18px] text-[var(--modern-cyan)] shadow-md'
       style={floatingCardStyle}
     >
-      <FiCheckCircle />
+      <CheckCircle />
       <span className='flex w-[52px] flex-col gap-1'>
         <i className='block h-[5px] w-[87%] rounded-full' style={linePrimaryStyle} />
         <i className='block h-1 rounded-full' style={lineMutedStyle} />

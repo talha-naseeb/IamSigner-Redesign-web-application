@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { IoArrowBack } from "react-icons/io5";
+import { ArrowLeft } from "lucide-react";
 import { Container, Row, Col, Form, Button, Modal, Spinner } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
@@ -93,7 +93,7 @@ const ForgotPassword = () => {
               <div className='flex items-center justify-between gap-4 mb-8'>
                 <div className='flex gap-2 items-center'>
                   <Link to='/' className='inline-flex items-center text-[var(--modern-text)]'>
-                    <IoArrowBack
+                    <ArrowLeft
                       size={22}
                       className={document.documentElement.dir === "rtl" ? "rotate-180 cursor-pointer" : "cursor-pointer"}
                     />

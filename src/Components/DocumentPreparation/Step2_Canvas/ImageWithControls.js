@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { RxCross2 } from "react-icons/rx";
 import { Button } from "@/Components/UI/shadcnCompat";
 import ResizableButtons from "./ResizableButtons";
 import Draggable from "react-draggable";
-import { RiEdit2Fill } from "react-icons/ri";
+import { X, Pen } from "lucide-react";
 import ControlsFotmatting from "./ControlsFotmatting";
 import SmartGuides from "@/Components/SignaturePlacement/SmartGuides";
 
@@ -424,11 +423,11 @@ export const ButtonsOnImage = ({
       )}
 
       <Button className='remove-button' onClick={() => handleButtonRemove(index, button.controlLocationID)}>
-        <RxCross2 size={9} />
+        <X size={9} />
       </Button>
 
       <Button className='draggableEdit-button' onClick={toggleOffcanvas}>
-        <RiEdit2Fill size={9} />
+        <Pen size={9} />
       </Button>
 
       {showOffcanvas && (

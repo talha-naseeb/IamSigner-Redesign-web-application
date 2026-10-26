@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Dropdown, Offcanvas } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useUser } from "@/Context/UserContext";
-import { MdControlPointDuplicate } from "react-icons/md";
+import { CopyPlus } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import uploadFlowService from "@/services/uploadFlowService";
@@ -427,7 +427,7 @@ const ControlsFotmatting = ({ show, onHide, button, onUpdateControlsLocation, se
           <div className='buttonProperties d-flex justify-content-between align-items-center '>
             <h6 className='m-0'>{t("controlsFormatting.pasteOnAllPages")}</h6>
             <Button className='modalCancelButton w-auto' style={{ border: "1px solid #ccc" }} onClick={handlePasteControl}>
-              <MdControlPointDuplicate />
+              <CopyPlus size={18} />
             </Button>
           </div>
           <div className='formatting-buttons d-flex justify-content-end p-2'>

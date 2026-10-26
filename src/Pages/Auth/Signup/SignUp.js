@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Row, Col, Container, Modal, Form, FormGroup, Button, Spinner } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
-import { IoArrowBack } from "react-icons/io5";
 import SignUpCarousel from "@/Pages/Auth/Carousels/SignUp/SignUpCarousel";
 import LangSelector from "@/Components/Language/LangSelector";
 import successAnimation from "@/assets/images/success-animation.webp";
@@ -150,7 +149,7 @@ const Signup = () => {
               <div className='flex items-center justify-between gap-4 mb-8'>
                 <div className='flex gap-2 items-center'>
                   <Link to='/' className='inline-flex items-center text-[var(--modern-text)]'>
-                    <IoArrowBack
+                    <ArrowLeft
                       size={22}
                       className={document.documentElement.dir === "rtl" ? "rotate-180 cursor-pointer" : "cursor-pointer"}
                     />
@@ -320,7 +319,7 @@ const Signup = () => {
                         className='absolute z-[2] end-2 top-1/2 -translate-y-1/2 inline-flex h-9 w-9 items-center justify-center rounded-md border-0 bg-transparent p-0 text-[var(--modern-muted)] cursor-pointer hover:text-[var(--modern-text)]'
                         onClick={() => togglePasswordVisibility(setShowPassword)}
                       >
-                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
                     {errors.Password && <div className='mt-1 text-xs text-[var(--color-danger)]'>{errors.Password.message}</div>}
@@ -348,7 +347,7 @@ const Signup = () => {
                         className='absolute z-[2] end-2 top-1/2 -translate-y-1/2 inline-flex h-9 w-9 items-center justify-center rounded-md border-0 bg-transparent p-0 text-[var(--modern-muted)] cursor-pointer hover:text-[var(--modern-text)]'
                         onClick={() => togglePasswordVisibility(setShowConfirmPassword)}
                       >
-                        {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
                     {errors.ConfirmPassword && (

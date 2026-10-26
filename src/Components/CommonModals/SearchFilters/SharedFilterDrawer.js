@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Navbar, Container, Offcanvas, Form } from "@/Components/UI/shadcnCompat";
-import { CiFilter } from "react-icons/ci";
+import { Filter } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import DateRangePicker from "@/Components/Common/DateRangePicker/DateRangePicker";
 import { DateObject } from "react-multi-date-picker";
@@ -91,7 +91,7 @@ function SharedFilterDrawer({
           aria-label={title || t("searchFilter.Filter")}
           onClick={() => setShowOffcanvas(true)}
         >
-          {icon || <CiFilter />}
+          {icon || <Filter size={18} />}
         </Navbar.Toggle>
         <Navbar.Offcanvas
           id="shared-filter-offcanvas"

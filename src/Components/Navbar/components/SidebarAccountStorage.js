@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { HiOutlineDatabase } from "react-icons/hi";
+import { Database } from "lucide-react";
 import documentService from "@/services/documentService";
 
 const normalizeFolderSize = (payload) => {
@@ -104,7 +104,7 @@ const SidebarAccountStorage = ({ accountId, isOpen }) => {
         className="sidebar-storage-collapsed-icon"
         aria-hidden={isOpen}
       >
-        <HiOutlineDatabase size={20} />
+        <Database size={20} />
       </div>
     </div>
   );

@@ -1,9 +1,6 @@
 import React from "react";
-import { FiChevronDown, FiChevronLeft, FiUsers, FiShare2 } from "react-icons/fi";
+import { ChevronDown, ChevronLeft, Users, Share2, Folder, FolderOpen, Database } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { FaRegFolder } from "react-icons/fa6";
-import { IoFolderOpenOutline } from "react-icons/io5";
-import { HiOutlineDatabase } from "react-icons/hi";
 import { Icons } from "@/assets/Icons/index";
 import { ALL_DOCUMENTS_ICON } from "../constants/dmsConfig";
 import { hasSelectedChild } from "../utils/dmsHelpers";
@@ -42,15 +39,15 @@ const FolderTreeItem = ({
 
   const renderIcon = () => {
     if (item.id === "dms-shared-me") {
-      return <FiUsers size={16} color={folderColor} />;
+      return <Users size={16} color={folderColor} />;
     }
     if (item.id === "dms-shared-others") {
-      return <FiShare2 size={16} color={folderColor} />;
+      return <Share2 size={16} color={folderColor} />;
     }
     if (isExpanded && showChevron && !collapsed) {
-      return <IoFolderOpenOutline size={17} color={folderColor} />;
+      return <FolderOpen size={17} color={folderColor} />;
     }
-    return <FaRegFolder size={17} color={folderColor} />;
+    return <Folder size={17} color={folderColor} />;
   };
 
   return (
@@ -79,7 +76,7 @@ const FolderTreeItem = ({
             }}
             aria-hidden="true"
           >
-            <FiChevronDown size={14} />
+            <ChevronDown size={14} />
           </span>
         ) : null}
       </div>
@@ -203,7 +200,7 @@ const FolderTree = ({
                   : t("DMS.collapseSidebar", "Collapse sidebar")
               }
             >
-              <FiChevronLeft
+              <ChevronLeft
                 size={18}
                 className={`dms-tree-toggle-icon${collapsed ? " dms-tree-toggle-icon--collapsed" : ""}${direction === "rtl" ? " dms-tree-toggle-icon--rtl" : ""}`}
               />
@@ -358,7 +355,7 @@ const FolderTree = ({
               }
               aria-label={t("DMS.macdStorage", "MAC D Storage")}
             >
-              <HiOutlineDatabase size={20} />
+              <Database size={20} />
             </div>
           )}
         </div>

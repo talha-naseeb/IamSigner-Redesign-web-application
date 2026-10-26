@@ -7,7 +7,7 @@ import RecentDocsHome from "@/Components/DashboardStatuses/Dashboard/RecentDocsH
 import { useUser } from "@/Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import ExpireImage from "@/assets/images/ExpireImage.png";
-import { FiShield, FiUploadCloud, FiEdit3, FiFileText, FiLayers } from "react-icons/fi";
+import { Shield, UploadCloud, Edit3, FileText, Layers } from "lucide-react";
 import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
 
 const Home = () => {
@@ -95,7 +95,7 @@ const Home = () => {
           <div className='home-hero-content'>
             <div className='home-hero-meta'>
               <span className='home-hero-badge'>
-                <FiShield aria-hidden='true' />
+                <Shield aria-hidden='true' size={14} />
                 <span>{t("home.workspaceLabel", "Workspace")}</span>
               </span>
               <span className='home-hero-date'>{todayFormatted}</span>
@@ -116,7 +116,7 @@ const Home = () => {
                 onClick={handleStartUpload}
                 aria-label={t("Sidebar.uploadDoc", "Upload & Send")}
               >
-                <FiUploadCloud aria-hidden='true' size={18} />
+                <UploadCloud aria-hidden='true' size={18} />
                 <span>{t("home.StartNow", "Upload & Send")}</span>
               </Button>
 
@@ -126,7 +126,7 @@ const Home = () => {
                 onClick={handleSelfSign}
                 aria-label={t("Sidebar.SelfSign", "Sign Myself")}
               >
-                <FiEdit3 aria-hidden='true' size={16} />
+                <Edit3 aria-hidden='true' size={16} />
                 <span>{t("Sidebar.SelfSign", "Sign Myself")}</span>
               </Button>
 
@@ -136,7 +136,7 @@ const Home = () => {
                 onClick={handleTemplates}
                 aria-label={t("Sidebar.Templates", "Templates")}
               >
-                <FiFileText aria-hidden='true' size={16} />
+                <FileText aria-hidden='true' size={16} />
                 <span>{t("Sidebar.Templates", "Templates")}</span>
               </Button>
 
@@ -147,7 +147,7 @@ const Home = () => {
                   onClick={handleBulkUpload}
                   aria-label={t("Sidebar.BulkSend", "Bulk Send")}
                 >
-                  <FiLayers aria-hidden='true' size={16} />
+                  <Layers aria-hidden='true' size={16} />
                   <span>{t("Sidebar.BulkSend", "Bulk Send")}</span>
                 </Button>
               )}

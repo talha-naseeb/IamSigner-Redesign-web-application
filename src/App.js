@@ -13,6 +13,7 @@ import { NavigationSetter } from "@/Helpers/navigation";
 import { ThemeProvider } from "@/Context/ThemeContext";
 import PATHS from "@/routes/paths";
 import { tokenManager } from "@/services/tokenManager";
+import SignOrderModalHost from "@/Components/CommonModals/SignOrder/SignOrderModalHost";
 
 const RecaptchaPageScope = () => {
   const { pathname } = useLocation();
@@ -65,6 +66,7 @@ function App() {
           <UserProvider>
             <AppTourProvider>
               <CustomToaster />
+              <SignOrderModalHost />
               {isToken && <UserActivityStatus />}
               <AppRouter onLogin={handleLogin} />
             </AppTourProvider>

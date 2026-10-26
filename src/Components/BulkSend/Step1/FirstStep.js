@@ -10,7 +10,7 @@ import {
   UploadedDocumentsTable,
 } from "@/Components/DocumentPreparation";
 import { useTranslation } from "react-i18next";
-import { FcTemplate } from "react-icons/fc";
+import { LayoutTemplate } from "lucide-react";
 import { useUser } from "@/Context/UserContext";
 import { Icons } from "@/assets/Icons";
 import { useDropzone } from "react-dropzone";
@@ -365,7 +365,7 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
             onDeleteFile={handleShowConfirmModal}
             renderTemplateBadge={() => (
               <span className="inline-flex items-center" title="Template is applied on document" aria-label="Template is applied on document">
-                <FcTemplate size={18} className="text-[var(--modern-primary,#6366f1)]" aria-hidden="true" />
+                <LayoutTemplate size={18} className="text-[var(--modern-primary,#6366f1)]" aria-hidden="true" />
               </span>
             )}
             t={t}

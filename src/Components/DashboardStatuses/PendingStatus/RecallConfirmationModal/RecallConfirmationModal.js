@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { FiRefreshCw } from "react-icons/fi";
+import { RefreshCw } from "lucide-react";
 import dashboardService from "@/services/dashboardService";
 import { Icons } from "@/assets/Icons";
 
@@ -39,7 +39,7 @@ const RecallConfirmationModal = ({ show, onHide, selectedRow, onSuccess }) => {
         <Modal.Header closeButton>
           <div className='header-content'>
             <div className='header-icon'>
-              <FiRefreshCw size={22} />
+              <RefreshCw size={22} />
             </div>
             <div className='header-text'>
               <Modal.Title>{t("dashboardCardStatuses.confirmRecall")}</Modal.Title>

@@ -4,8 +4,7 @@ import { useTranslation } from "react-i18next";
 import RecentDocsFilter from "./RecentDocsFilter";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-import { FaDownload } from "react-icons/fa6";
-import { PiMicrosoftExcelLogo } from "react-icons/pi";
+import { Download, FileSpreadsheet } from "lucide-react";
 import { Dropdown as Dropdown } from "@/Components/UI/shadcnCompat";
 import { useUser } from "@/Context/UserContext";
 import documentService from "@/services/documentService";
@@ -159,13 +158,13 @@ const RecentDocuments = () => {
                 <div>
                   <Dropdown>
                     <Dropdown.Toggle variant='primary' size='sm' className='inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg bg-[var(--modern-violet)] hover:bg-[var(--modern-violet-hover)] text-white border-0 transition-colors'>
-                      <FaDownload size={14} />
+                      <Download size={14} />
                       {t("createTeam.Export")}
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
                       <Dropdown.Item onClick={exportToExcel} className='d-flex gap-2 align-items-center'>
-                        <PiMicrosoftExcelLogo size={22} />
+                        <FileSpreadsheet size={20} />
                         {t("createTeam.exportExcel")}
                       </Dropdown.Item>
                     </Dropdown.Menu>

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import RecentDocsFilter from "./RecentDocsFilter";
 import documentService from "@/services/documentService";
 import { Icons } from "@/assets/Icons";
-import { FiSearch, FiX, FiFileText } from "react-icons/fi";
+import { Search, X, FileText } from "lucide-react";
 
 const getStatusBucket = (value) => {
   const status = String(value ?? "").trim().toLowerCase();
@@ -194,7 +194,7 @@ const RecentDocsHome = () => {
             <div className='recentdocs-actions-group'>
               {/* Quick Instant Search */}
               <div className='recentdocs-search-box'>
-                <FiSearch className='search-icon' size={15} aria-hidden='true' />
+                <Search className='search-icon' size={15} aria-hidden='true' />
                 <input
                   type='text'
                   placeholder={t("searchFilter.searchPlaceholder", "Search by document, ref, or signer...")}
@@ -210,7 +210,7 @@ const RecentDocsHome = () => {
                     onClick={() => setSearchQuery("")}
                     aria-label='Clear search'
                   >
-                    <FiX size={13} />
+                    <X size={13} />
                   </button>
                 )}
               </div>
@@ -254,7 +254,7 @@ const RecentDocsHome = () => {
 
             {hasVisibleFilters && (
               <button type='button' className='recentdocs-reset-filters-btn' onClick={clearSearch}>
-                <FiX size={13} />
+                <X size={13} />
                 <span>{t("searchFilter.reset", "Reset Filters")}</span>
               </button>
             )}
@@ -286,7 +286,7 @@ const RecentDocsHome = () => {
                   <TableCell colSpan={columns.length} className='home-documents-empty-state'>
                     <div className='empty-state-container'>
                       <div className='empty-state-icon-wrapper'>
-                        <FiFileText size={32} />
+                        <FileText size={32} />
                       </div>
                       <p className='empty-state-title'>
                         {loadError

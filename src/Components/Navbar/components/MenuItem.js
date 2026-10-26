@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { FiChevronRight } from "react-icons/fi";
+import { ChevronRight } from "lucide-react";
 
 const MenuItem = ({
   item,
@@ -62,7 +62,7 @@ const MenuItem = ({
       {label}
       {item.className === "dms-section" && isOpen && (
         <span className="dms-sidebar-tab-arrow" aria-hidden="true">
-          <FiChevronRight size={14} />
+          <ChevronRight size={14} />
         </span>
       )}
     </NavLink>

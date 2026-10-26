@@ -5,8 +5,7 @@ import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import verificationService from "@/services/verificationService";
 import { useParams } from "react-router-dom";
-import { FiDownload, FiFile, FiFileText } from "react-icons/fi";
-import { TiDocumentAdd } from "react-icons/ti";
+import { Download, File, FileText, FilePlus } from "lucide-react";
 
 const DownloadModal = ({ show, handleClose, dataRow }) => {
   const { docName: docNameFromParams } = useParams();
@@ -140,7 +139,7 @@ const DownloadModal = ({ show, handleClose, dataRow }) => {
         <Modal.Header closeButton>
           <div className='header-content'>
             <div className='header-icon'>
-              <FiDownload size={18} />
+              <Download size={18} />
             </div>
             <div className='header-text'>
               <Modal.Title>{t("viewModal.downloadDoc")}</Modal.Title>
@@ -175,7 +174,7 @@ const DownloadModal = ({ show, handleClose, dataRow }) => {
                       border: "1px solid var(--border-color)",
                     }}
                   >
-                    <FiFile size={16} />
+                    <File size={16} />
                   </div>
                   <div>
                     <div className='fw-medium'>{t("viewModal.orgDoc")}</div>
@@ -198,7 +197,7 @@ const DownloadModal = ({ show, handleClose, dataRow }) => {
                       border: "1px solid var(--border-color)",
                     }}
                   >
-                    <FiFileText size={16} />
+                    <FileText size={16} />
                   </div>
                   <div>
                     <div className='fw-medium'>{t("viewModal.auditTrail")}</div>
@@ -221,7 +220,7 @@ const DownloadModal = ({ show, handleClose, dataRow }) => {
                       border: "1px solid var(--border-color)",
                     }}
                   >
-                    <TiDocumentAdd size={18} />
+                    <FilePlus size={18} />
                   </div>
                   <div>
                     <div className='fw-medium'>{t("viewModal.supportingDoc")}</div>
@@ -245,7 +244,7 @@ const DownloadModal = ({ show, handleClose, dataRow }) => {
             {t("viewModal.close")}
           </Button>
           <Button className='applyBtn' variant='none' onClick={handleDownload} disabled={isDownloadButtonDisabled() || isLoading}>
-            <FiDownload className='me-2' size={16} />
+            <Download className='me-2' size={16} />
             {t("viewModal.download")}
           </Button>
         </Modal.Footer>

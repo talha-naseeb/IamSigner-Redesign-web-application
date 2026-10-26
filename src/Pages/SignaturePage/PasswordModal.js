@@ -3,7 +3,7 @@ import { Modal } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import verificationService from "@/services/verificationService";
 import { useTranslation } from "react-i18next";
-import { FiShield } from "react-icons/fi";
+import { Shield } from "lucide-react";
 import "@/Pages/Auth/VerifyOtp/style.css";
 
 const PasswordModal = ({
@@ -259,7 +259,7 @@ const PasswordModal = ({
       <Modal.Header closeButton={false} className='otp-modal-header'>
         <div className='otp-modal-heading'>
           <span className='otp-modal-symbol' aria-hidden='true'>
-            <FiShield />
+            <Shield size={16} />
           </span>
           <Modal.Title>{t("signaturePage.enterPass")}</Modal.Title>
         </div>

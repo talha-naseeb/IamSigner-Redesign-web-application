@@ -4,11 +4,10 @@ import uploadFlowService from "@/services/uploadFlowService";
 import { toast } from "react-toastify";
 import { useUser } from "@/Context/UserContext";
 import { useDropzone } from "react-dropzone";
-import { BiErrorCircle } from "react-icons/bi";
+import { AlertCircle, Download } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { useNavigate } from "react-router-dom";
-import { AiOutlineDownload } from "react-icons/ai";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import { Icons } from "@/assets/Icons/index";
 import UploadSourceCard from "@/Components/Common/CloudPickers/UploadSourceCard";
@@ -235,7 +234,7 @@ const UploadSupportingDocs = ({ show, onClose, masterDocID, registerSignID }) =>
           </UploadSourceCard>
           {errorMessage && (
             <p className="mt-2 flex items-start gap-2 text-sm text-[var(--modern-danger,#ef4444)]">
-              <BiErrorCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
               {errorMessage}
             </p>
           )}
@@ -285,7 +284,7 @@ const UploadSupportingDocs = ({ show, onClose, masterDocID, registerSignID }) =>
             <p>
               {t("uploadDocFlow.previewfile")}
               <Button className='applyBtn' variant='none' onClick={() => handleFileDownload(documentPath)}>
-                <AiOutlineDownload size={18} />
+                <Download size={18} />
               </Button>
             </p>
           )}

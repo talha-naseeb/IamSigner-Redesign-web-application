@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { FiDownload, FiFile } from "react-icons/fi";
+import { Download, File } from "lucide-react";
 
 const InactiveDocsDownloadModal = ({ show, handleClose, docNameShow, selectedDocument, setSelectedDocument, handleFileDownload }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +48,7 @@ const InactiveDocsDownloadModal = ({ show, handleClose, docNameShow, selectedDoc
         <Modal.Header closeButton>
           <div className='header-content'>
             <div className='header-icon'>
-              <FiDownload size={18} />
+              <Download size={18} />
             </div>
             <div className='header-text'>
               <Modal.Title>{t("dashboardCardStatuses.downloadDoc")}</Modal.Title>
@@ -72,7 +72,7 @@ const InactiveDocsDownloadModal = ({ show, handleClose, docNameShow, selectedDoc
                         border: "1px solid #dee2e6",
                       }}
                     >
-                      <FiFile size={16} />
+                      <File size={16} />
                     </div>
                     <div>
                       <div className='fw-medium'>{doc.docName}</div>
@@ -97,7 +97,7 @@ const InactiveDocsDownloadModal = ({ show, handleClose, docNameShow, selectedDoc
             {t("dashboardCardStatuses.cancel")}
           </Button>
           <Button className='applyBtn' variant='none' onClick={handleDownload} disabled={isDownloadButtonDisabled() || isLoading}>
-            <FiDownload className='me-2' size={16} />
+            <Download className='me-2' size={16} />
             {t("dashboardCardStatuses.download")}
           </Button>
         </Modal.Footer>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { toast } from "react-toastify";
-import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
+import { Eye, EyeOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Form, Button, Spinner } from "@/Components/UI/shadcnCompat";
 import { useUser } from "@/Context/UserContext";
@@ -25,7 +25,7 @@ const PasswordField = ({ id, label, value, onChange, show, onToggle, error, plac
         onClick={onToggle}
         aria-label='Toggle password visibility'
       >
-        {show ? <RiEyeOffFill /> : <RiEyeFill />}
+        {show ? <EyeOff size={18} /> : <Eye size={18} />}
       </button>
     </div>
     {error && <Form.Text className='block mt-1.5 text-[13px] text-[var(--color-danger)]'>{error}</Form.Text>}

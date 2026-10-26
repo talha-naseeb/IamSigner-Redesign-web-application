@@ -3,7 +3,7 @@ import { Modal } from "@/Components/UI/shadcnCompat";
 import { Link, useLocation } from "react-router-dom";
 import { useUser } from "@/Context/UserContext";
 import { useTranslation } from "react-i18next";
-import { FiChevronLeft, FiX } from "react-icons/fi";
+import { ChevronLeft, X } from "lucide-react";
 import "./sidebarStyle.css";
 import { Icons } from "@/assets/Icons";
 import { toast } from "react-toastify";
@@ -202,9 +202,9 @@ const Sidebar = ({ children }) => {
                   }
                 >
                   {isMobile ? (
-                    <FiX size={18} />
+                    <X size={18} />
                   ) : (
-                    <FiChevronLeft
+                    <ChevronLeft
                       size={18}
                       className={`${isCollapsed ? "sidebar-toggle-icon--collapsed " : ""}${direction === "rtl" ? "sidebar-toggle-icon--rtl" : ""}`}
                     />

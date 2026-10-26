@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { FiChevronDown } from "react-icons/fi";
+import { ChevronDown } from "lucide-react";
 import MenuItem from "./MenuItem";
 
 const pathIsActive = (pathname, path) =>
@@ -52,7 +52,7 @@ const DropdownMenu = ({
         <span className="link_text" aria-hidden={!isOpen}>
           {triggerLabel}
         </span>
-        <FiChevronDown
+        <ChevronDown
           className={`sidebar-group-chevron${isExpanded ? " sidebar-group-chevron--open" : ""}`}
           size={15}
           aria-hidden="true"

@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import userService from "@/services/userService";
 import { useUser } from "@/Context/UserContext";
-import { FiShare2 } from "react-icons/fi";
+import { Share2 } from "lucide-react";
 
 const ShareModal = ({ show, handleClose, masterDocID, registerSignID }) => {
   const { t } = useTranslation();
@@ -170,7 +170,7 @@ const ShareModal = ({ show, handleClose, masterDocID, registerSignID }) => {
         <Modal.Header closeButton>
           <div className='header-content'>
             <div className='header-icon'>
-              <FiShare2 size={22} />
+              <Share2 size={22} />
             </div>
             <div className='header-text'>
               <Modal.Title>{t("shareModal.shareDoc")}</Modal.Title>

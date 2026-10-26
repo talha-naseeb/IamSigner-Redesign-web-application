@@ -5,7 +5,7 @@ import "react-quill-new/dist/quill.snow.css";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import rectangleBox from "@/assets/images/rectangle.png";
-import { GoDownload } from "react-icons/go";
+import { Download } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useUser } from "@/Context/UserContext";
 import integrationService from "@/services/integrationService";
@@ -307,7 +307,7 @@ function ManuallyGenerateComponent() {
                       </Button>
                       <Button variant='none' className='ImageCancelBtn' onClick={handleDownload}>
                         {t("macAi.docDownload")}
-                        <GoDownload className='mx-2' size={22} />
+                        <Download className='mx-2' size={22} />
                       </Button>
                     </>
                   ) : (
