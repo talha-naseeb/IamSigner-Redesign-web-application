@@ -137,3 +137,12 @@
   border-bottom: none;
 }
 
+/* Enhanced Share Document Modal */
+.share-document-modal .modal-content {
+  border: 1px solid var(--modern-border) !important;
+  background-color: var(--modern-card) !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  box-shadow: none !important;
+}
+

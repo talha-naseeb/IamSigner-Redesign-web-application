@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   formatTableDate,
   getStatusBadgeClass,
+  getStatusColor,
   computePaginationRange,
   formatScope,
 } from "./statusTableConfig.js";
@@ -107,6 +108,21 @@ describe("Document Status Table Config Unit Tests (ENG-02)", () => {
       assert.equal(formatScope("B"), "Company");
       assert.equal(formatScope("X"), "X");
       assert.equal(formatScope(null), "—");
+    });
+  });
+
+  describe("getStatusColor & STATUS_COLORS", () => {
+    it("returns correct color tokens matching recent dashboard", () => {
+      assert.equal(getStatusColor("Completed"), "#10b981");
+      assert.equal(getStatusColor("Signed"), "#10b981");
+      assert.equal(getStatusColor("Pending"), "#f59e0b");
+      assert.equal(getStatusColor("Declined"), "#ef4444");
+      assert.equal(getStatusColor("Draft"), "#4c8bff");
+      assert.equal(getStatusColor("Recalled"), "#06b6d4");
+      assert.equal(getStatusColor("InActive"), "#64748b");
+      assert.equal(getStatusColor("Bulk"), "#8b6cff");
+      assert.equal(getStatusColor("unknown"), "#8b6cff");
+      assert.equal(getStatusColor(null), "#8b6cff");
     });
   });
 });

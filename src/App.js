@@ -14,6 +14,7 @@ import { ThemeProvider } from "@/Context/ThemeContext";
 import PATHS from "@/routes/paths";
 import { tokenManager } from "@/services/tokenManager";
 import SignOrderModalHost from "@/Components/CommonModals/SignOrder/SignOrderModalHost";
+import DashboardCommentsHost from "@/Components/CommonModals/DocumentsComments/DashboardCommentsHost";
 
 const RecaptchaPageScope = () => {
   const { pathname } = useLocation();
@@ -67,6 +68,7 @@ function App() {
             <AppTourProvider>
               <CustomToaster />
               <SignOrderModalHost />
+              <DashboardCommentsHost />
               {isToken && <UserActivityStatus />}
               <AppRouter onLogin={handleLogin} />
             </AppTourProvider>

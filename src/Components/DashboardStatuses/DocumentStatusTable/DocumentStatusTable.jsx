@@ -13,20 +13,22 @@ import {
 } from "@/Components/UI/dataPrimitives";
 import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
-import { computePaginationRange, getStatusBadgeClass } from "./statusTableConfig";
+import { computePaginationRange, getStatusBadgeClass, getStatusColor } from "./statusTableConfig";
 
 /**
- * StatusBadge component renders a token-styled badge for document statuses.
+ * StatusBadge component renders a modern token-styled status pill matching Recent Documents.
  */
-export const StatusBadge = ({ status, label, className = "" }) => {
+export const StatusBadge = ({ status, label, className = "", style = {} }) => {
   const displayLabel = label || status || "—";
-  const badgeClass = getStatusBadgeClass(status);
+  const statusColor = getStatusColor(status);
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${badgeClass} ${className}`.trim()}
+      className={`home-status-pill ${className}`.trim()}
+      style={{ "--status-color": statusColor, ...style }}
     >
-      {displayLabel}
+      <span className="status-dot" aria-hidden="true" />
+      <span>{displayLabel}</span>
     </span>
   );
 };

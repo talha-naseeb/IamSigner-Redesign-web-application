@@ -68,6 +68,40 @@ export const getStatusBadgeClass = (status) => {
 };
 
 /**
+ * Standard status hex color palette matching the Recent Documents Dashboard.
+ */
+export const STATUS_COLORS = {
+  completed: "#10b981",
+  active: "#10b981",
+  signed: "#10b981",
+  success: "#10b981",
+  draft: "#4c8bff",
+  declined: "#ef4444",
+  rejected: "#ef4444",
+  failed: "#ef4444",
+  expired: "#ef4444",
+  inactive: "#64748b",
+  pending: "#f59e0b",
+  waiting: "#f59e0b",
+  pendingwithme: "#f59e0b",
+  pendingwithothers: "#f59e0b",
+  share: "#06b6d4",
+  recalled: "#06b6d4",
+  recall: "#06b6d4",
+  voided: "#06b6d4",
+  bulk: "#8b6cff",
+};
+
+/**
+ * Resolves status color matching the Recent Documents Dashboard palette.
+ */
+export const getStatusColor = (status) => {
+  if (!status || typeof status !== "string") return STATUS_COLORS.bulk;
+  const key = status.trim().toLowerCase().replace(/[\s_-]/g, "");
+  return STATUS_COLORS[key] || STATUS_COLORS.bulk;
+};
+
+/**
  * Calculates zero-indexed pagination indices and summary bounds.
  */
 export const computePaginationRange = (page = 0, rowsPerPage = 30, totalItems = 0) => {

@@ -2,62 +2,64 @@ import React, { useMemo } from "react";
 import { Modal, Button } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
+import { CheckCircle2, Clock, XCircle, Eye, RefreshCw, FileText, ArrowDown, ArrowRight, UserCheck } from "lucide-react";
 
 export const STATUS_MAP = {
   originator: {
-    bg: "bg-slate-100 dark:bg-slate-800",
-    text: "text-slate-700 dark:text-slate-300",
-    border: "border-slate-300 dark:border-slate-700",
-    dot: "#94a3b8",
+    label: "Originator",
+    color: "#64748b",
+    icon: UserCheck,
+    bg: "rgba(100, 116, 139, 0.1)",
+    border: "rgba(100, 116, 139, 0.3)",
   },
   signed: {
-    bg: "bg-emerald-50 dark:bg-emerald-950/60",
-    text: "text-emerald-700 dark:text-emerald-300",
-    border: "border-emerald-300 dark:border-emerald-800",
-    dot: "#10b981",
+    label: "Signed",
+    color: "#10b981",
+    icon: CheckCircle2,
+    bg: "rgba(16, 185, 129, 0.1)",
+    border: "rgba(16, 185, 129, 0.3)",
   },
   pending: {
-    bg: "bg-amber-50 dark:bg-amber-950/60",
-    text: "text-amber-700 dark:text-amber-300",
-    border: "border-amber-300 dark:border-amber-800",
-    dot: "#f59e0b",
+    label: "Pending",
+    color: "#f59e0b",
+    icon: Clock,
+    bg: "rgba(245, 158, 11, 0.1)",
+    border: "rgba(245, 158, 11, 0.3)",
   },
   notstarted: {
-    bg: "bg-slate-100 dark:bg-slate-800",
-    text: "text-slate-600 dark:text-slate-300",
-    border: "border-slate-300 dark:border-slate-700",
-    dot: "#94a3b8",
+    label: "Not Started",
+    color: "#94a3b8",
+    icon: Clock,
+    bg: "rgba(148, 163, 184, 0.1)",
+    border: "rgba(148, 163, 184, 0.3)",
   },
   declined: {
-    bg: "bg-rose-50 dark:bg-rose-950/60",
-    text: "text-rose-700 dark:text-rose-300",
-    border: "border-rose-300 dark:border-rose-800",
-    dot: "#ef4444",
+    label: "Declined",
+    color: "#ef4444",
+    icon: XCircle,
+    bg: "rgba(239, 68, 68, 0.1)",
+    border: "rgba(239, 68, 68, 0.3)",
   },
   viewed: {
-    bg: "bg-indigo-50 dark:bg-indigo-950/60",
-    text: "text-indigo-700 dark:text-indigo-300",
-    border: "border-indigo-300 dark:border-indigo-800",
-    dot: "#6366f1",
+    label: "Viewed",
+    color: "#6366f1",
+    icon: Eye,
+    bg: "rgba(99, 102, 241, 0.1)",
+    border: "rgba(99, 102, 241, 0.3)",
   },
   recalled: {
-    bg: "bg-cyan-50 dark:bg-cyan-950/60",
-    text: "text-cyan-700 dark:text-cyan-300",
-    border: "border-cyan-300 dark:border-cyan-800",
-    dot: "#06b6d4",
-  },
-  review: {
-    bg: "bg-purple-50 dark:bg-purple-950/60",
-    text: "text-purple-700 dark:text-purple-300",
-    border: "border-purple-300 dark:border-purple-800",
-    dot: "#a855f7",
+    label: "Recalled",
+    color: "#06b6d4",
+    icon: RefreshCw,
+    bg: "rgba(6, 182, 212, 0.1)",
+    border: "rgba(6, 182, 212, 0.3)",
   },
 };
 
-export const getStatusStyle = (status) => {
-  if (!status) return STATUS_MAP.notstarted;
+export const getStatusMeta = (status) => {
+  if (!status) return STATUS_MAP.pending;
   const key = String(status).toLowerCase().replace(/[\s_-]/g, "");
-  return STATUS_MAP[key] || STATUS_MAP.pending || STATUS_MAP.notstarted;
+  return STATUS_MAP[key] || STATUS_MAP.pending;
 };
 
 export const SignOrderModal = ({
@@ -73,7 +75,7 @@ export const SignOrderModal = ({
 
   const colorOptions = useMemo(
     () => [
-      { key: "originator", color: "#94a3b8", name: t("signOrderDaigram.originator") || "Originator" },
+      { key: "originator", color: "#64748b", name: t("signOrderDaigram.originator") || "Originator" },
       { key: "signed", color: "#10b981", name: t("signOrderDaigram.signed") || "Signed" },
       { key: "pending", color: "#f59e0b", name: t("signOrderDaigram.pending") || "Pending" },
       { key: "notstarted", color: "#94a3b8", name: t("signOrderDaigram.notStarted") || "Not Started" },
@@ -109,12 +111,42 @@ export const SignOrderModal = ({
   const originator = useMemo(() => {
     if (uniqueSignatories.length > 0) {
       return {
-        name: uniqueSignatories[0].createdByName || uniqueSignatories[0].name || uniqueSignatories[0].createdBy || t("signOrderDaigram.originator") || "Originator",
+        name:
+          uniqueSignatories[0].createdByName ||
+          uniqueSignatories[0].name ||
+          uniqueSignatories[0].createdBy ||
+          t("signOrderDaigram.originator") ||
+          "Originator",
         email: uniqueSignatories[0].createdBy || uniqueSignatories[0].email || "",
       };
     }
     return null;
   }, [uniqueSignatories, t]);
+
+  const progressSummary = useMemo(() => {
+    if (uniqueSignatories.length === 0) return { signedCount: 0, total: 0, percent: 0 };
+    const signedCount = uniqueSignatories.filter((s) => {
+      const st = String(s.signStatus || "").toLowerCase();
+      return st.includes("sign") || st.includes("complet");
+    }).length;
+    const total = uniqueSignatories.length;
+    return {
+      signedCount,
+      total,
+      percent: Math.round((signedCount / total) * 100),
+    };
+  }, [uniqueSignatories]);
+
+  const getInitials = (name, email) => {
+    if (name) {
+      const parts = name.trim().split(" ");
+      return parts.slice(0, 2).map((p) => p[0]?.toUpperCase()).join("");
+    }
+    if (email) {
+      return email.slice(0, 2).toUpperCase();
+    }
+    return "U";
+  };
 
   return (
     <Modal
@@ -126,23 +158,34 @@ export const SignOrderModal = ({
       keyboard={false}
       className='sign-order-modal'
     >
-      <Modal.Header closeButton>
-        <Modal.Title className='flex items-center gap-2 text-base md:text-lg font-semibold text-[var(--modern-text)]'>
-          <Icons.SignOrder size={20} className='text-[var(--modern-primary)] shrink-0' />
-          <span>{t("signOrderDaigram.Signorder") || "Sign Order"}</span>
-        </Modal.Title>
+      {/* Enhanced Header */}
+      <Modal.Header closeButton className='border-b border-[var(--modern-border)] px-5 py-4'>
+        <div className='flex items-center gap-3'>
+          <div className='w-10 h-10 rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border)] flex items-center justify-center text-[var(--modern-primary)] shrink-0'>
+            <Icons.SignOrder size={20} />
+          </div>
+          <div>
+            <Modal.Title className='text-base md:text-lg font-semibold text-[var(--modern-text)] m-0 leading-tight'>
+              {t("signOrderDaigram.Signorder") || "Signature Order & Workflow"}
+            </Modal.Title>
+            <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5'>
+              {t("signOrderDaigram.workflowSubtitle") ||
+                "Sequential signing route and real-time delivery status."}
+            </p>
+          </div>
+        </div>
       </Modal.Header>
 
-      <Modal.Body className='p-4 md:p-6 max-h-[75vh] overflow-y-auto space-y-4'>
-        {/* Status Legend */}
+      <Modal.Body className='p-4 md:p-6 max-h-[75vh] overflow-y-auto space-y-5 custom-table-scrollbar'>
+        {/* Status Legend Bar */}
         <div className='flex flex-wrap items-center justify-center md:justify-start gap-2 p-3 rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border)]'>
           {colorOptions.map((item) => (
             <div
               key={item.key}
-              className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--modern-card)] border border-[var(--modern-border)] text-xs text-[var(--modern-text)]'
+              className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--modern-card)] border border-[var(--modern-border)] text-xs text-[var(--modern-text)]'
             >
               <span
-                className='w-2.5 h-2.5 rounded-full shrink-0'
+                className='w-2 h-2 rounded-full shrink-0'
                 style={{ backgroundColor: item.color }}
               />
               <span className='font-medium whitespace-nowrap'>{item.name}</span>
@@ -163,212 +206,169 @@ export const SignOrderModal = ({
         {/* Error or Empty State */}
         {!isLoading && (error || uniqueSignatories.length === 0) && (
           <div className='flex flex-col items-center justify-center py-12 px-4 text-center space-y-3'>
-            <div className='w-12 h-12 rounded-full bg-[var(--modern-raised)] border border-[var(--modern-border)] flex items-center justify-center text-[var(--modern-muted)]'>
+            <div className='w-12 h-12 rounded-2xl bg-[var(--modern-raised)] border border-[var(--modern-border)] flex items-center justify-center text-[var(--modern-muted)]'>
               <Icons.SignOrder size={24} />
             </div>
             <div className='space-y-1'>
-              <p className='text-sm font-semibold text-[var(--modern-text)]'>
+              <p className='text-sm font-semibold text-[var(--modern-text)] m-0'>
                 {error || t("signOrderDaigram.notDocsFound") || "No sign order information available"}
               </p>
-              <p className='text-xs text-[var(--modern-muted)] max-w-sm'>
-                {t("signOrderDaigram.emptyDescription") || "No signatories were found for this document."}
+              <p className='text-xs text-[var(--modern-muted)] m-0 max-w-sm'>
+                {t("signOrderDaigram.emptyDescription") ||
+                  "No signatories were recorded for this document."}
               </p>
             </div>
             {onRetry && (
-              <Button
-                variant='secondary'
-                size='sm'
-                onClick={onRetry}
-                className='mt-2'
-              >
+              <Button variant='secondary' size='sm' onClick={onRetry} className='mt-2'>
                 {t("common.retry") || "Retry"}
               </Button>
             )}
           </div>
         )}
 
-        {/* Sign Order Flow Diagram */}
+        {/* Enhanced Workflow Timeline Diagram */}
         {!isLoading && !error && uniqueSignatories.length > 0 && (
-          <div className='sign-order-flow space-y-4'>
-            {/* Desktop Table Header */}
-            <div className='hidden md:grid grid-cols-12 gap-4 pb-2 border-b border-[var(--modern-border)] text-xs font-semibold uppercase tracking-wider text-[var(--modern-muted)] text-center'>
-              <div className='col-span-3'>{t("signOrderDaigram.originator") || "Originator"}</div>
-              <div className='col-span-6'>{t("signOrderDaigram.signatories") || "Signatories"}</div>
-              <div className='col-span-3'>{t("signOrderDaigram.status") || "Status"}</div>
+          <div className='space-y-5'>
+            {/* Workflow Progress Banner */}
+            <div className='flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)]'>
+              <div className='flex items-center gap-2'>
+                <FileText size={16} className='text-[var(--modern-primary)]' />
+                <span className='text-xs font-semibold text-[var(--modern-text)]'>
+                  {t("signOrderDaigram.workflowProgress") || "Workflow Progress"}:
+                </span>
+                <span className='text-xs text-[var(--modern-muted)]'>
+                  {progressSummary.signedCount} {t("signOrderDaigram.of") || "of"}{" "}
+                  {progressSummary.total} {t("signOrderDaigram.signed") || "completed"}
+                </span>
+              </div>
+              <div className='flex items-center gap-2 min-w-[120px]'>
+                <div className='flex-1 h-2 rounded-full bg-[var(--modern-raised)] overflow-hidden border border-[var(--modern-border)]'>
+                  <div
+                    className='h-full bg-emerald-500 transition-all duration-300'
+                    style={{ width: `${progressSummary.percent}%` }}
+                  />
+                </div>
+                <span className='text-xs font-bold text-[var(--modern-text)]'>
+                  {progressSummary.percent}%
+                </span>
+              </div>
             </div>
 
-            {/* Desktop Grid Layout */}
-            <div className='hidden md:grid grid-cols-12 gap-4 items-start pt-2'>
-              {/* Originator Column */}
-              <div className='col-span-3 flex justify-center'>
-                <div
-                  className='w-full max-w-[180px] p-3 rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border-strong)] text-center transition-colors'
-                  title={originator?.email || originator?.name}
-                >
-                  <div className='text-xs font-medium text-[var(--modern-muted)] uppercase tracking-wider mb-1'>
-                    {t("signOrderDaigram.originator") || "Originator"}
+            {/* Visual Flow Track */}
+            <div className='relative pl-4 pr-2 space-y-4'>
+              {/* Originator Node */}
+              <div className='relative flex items-start gap-3.5'>
+                <div className='flex flex-col items-center shrink-0'>
+                  <div className='w-8 h-8 rounded-full bg-[var(--modern-raised)] border-2 border-[var(--modern-border-strong)] flex items-center justify-center text-xs font-bold text-[var(--modern-text)]'>
+                    {getInitials(originator?.name, originator?.email)}
                   </div>
-                  <div className='font-semibold text-sm text-[var(--modern-text)] break-words line-clamp-2'>
-                    {originator?.name}
-                  </div>
-                  {originator?.email && (
-                    <div className='text-[11px] text-[var(--modern-muted)] break-all mt-0.5 line-clamp-1'>
-                      {originator.email}
+                  <div className='w-0.5 h-10 bg-[var(--modern-border)] my-1' />
+                </div>
+
+                <div className='flex-1 p-3.5 rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border)] flex flex-wrap items-center justify-between gap-2'>
+                  <div>
+                    <div className='inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[var(--modern-card)] border border-[var(--modern-border)] text-[10px] font-bold uppercase tracking-wider text-[var(--modern-muted)] mb-1'>
+                      <UserCheck size={11} className='text-slate-500' />
+                      {t("signOrderDaigram.originator") || "Originator"}
                     </div>
-                  )}
+                    <div className='font-semibold text-sm text-[var(--modern-text)]'>
+                      {originator?.name}
+                    </div>
+                    {originator?.email && (
+                      <div className='text-xs text-[var(--modern-muted)]'>{originator.email}</div>
+                    )}
+                  </div>
+                  <span
+                    className='home-status-pill text-xs'
+                    style={{ "--status-color": "#64748b" }}
+                  >
+                    <span className='status-dot' />
+                    {t("signOrderDaigram.creator") || "Document Creator"}
+                  </span>
                 </div>
               </div>
 
-              {/* Arrow + Signatories Stack Column */}
-              <div className='col-span-6 flex flex-col items-center relative'>
-                {/* Horizontal Connector Arrow from Originator */}
-                <div
-                  className='absolute top-4 -left-4 flex items-center justify-center text-[var(--modern-muted)]'
-                  style={{ transform: isRtl ? "rotate(180deg)" : "none" }}
-                  aria-hidden='true'
-                >
-                  <Icons.ArrowRightLong size={22} />
-                </div>
+              {/* Signatories Sequence Nodes */}
+              {uniqueSignatories.map((signatory, index) => {
+                const meta = getStatusMeta(signatory.signStatus);
+                const isSigned =
+                  String(signatory.signStatus || "").toLowerCase().includes("sign") ||
+                  String(signatory.signStatus || "").toLowerCase().includes("complet");
+                const isLast = index === uniqueSignatories.length - 1;
 
-                {/* Signatories Stack */}
-                <div className='w-full flex flex-col items-center space-y-2'>
-                  {uniqueSignatories.map((signatory, index) => {
-                    const statusStyle = getStatusStyle(signatory.signStatus);
-                    return (
-                      <React.Fragment key={signatory.signatoriesID || signatory.email || index}>
+                return (
+                  <div
+                    key={signatory.signatoriesID || signatory.email || index}
+                    className='relative flex items-start gap-3.5'
+                  >
+                    {/* Vertical Connector Line & Step Circle */}
+                    <div className='flex flex-col items-center shrink-0'>
+                      <div
+                        className='w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors'
+                        style={{
+                          backgroundColor: isSigned ? "#10b981" : "var(--modern-card)",
+                          borderColor: isSigned ? "#10b981" : meta.color,
+                          color: isSigned ? "#ffffff" : "var(--modern-text)",
+                        }}
+                      >
+                        {isSigned ? <CheckCircle2 size={16} /> : index + 1}
+                      </div>
+                      {!isLast && (
                         <div
-                          className={`w-full max-w-[240px] p-3 rounded-xl bg-[var(--modern-card)] border-2 ${statusStyle.border} text-center transition-colors`}
-                          title={signatory.email || signatory.name}
-                        >
-                          <div className='flex items-center justify-center gap-1.5 mb-0.5'>
-                            <span className='inline-flex items-center justify-center w-5 h-5 rounded-full bg-[var(--modern-raised)] text-[10px] font-bold text-[var(--modern-muted)]'>
-                              {index + 1}
-                            </span>
-                            <span className='font-semibold text-sm text-[var(--modern-text)] break-words line-clamp-1'>
-                              {signatory.name || signatory.email || "Signatory"}
-                            </span>
-                          </div>
-                          {signatory.email && (
-                            <div className='text-[11px] text-[var(--modern-muted)] break-all line-clamp-1'>
-                              {signatory.email}
-                            </div>
-                          )}
-                        </div>
+                          className='w-0.5 h-12 my-1'
+                          style={{
+                            backgroundColor: isSigned ? "#10b981" : "var(--modern-border)",
+                          }}
+                        />
+                      )}
+                    </div>
 
-                        {index < uniqueSignatories.length - 1 && (
-                          <div className='py-1 text-[var(--modern-muted)]' aria-hidden='true'>
-                            <Icons.ArrowDownLong size={20} />
+                    {/* Signatory Card */}
+                    <div className='flex-1 p-3.5 rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] hover:border-[var(--modern-border-strong)] transition-colors flex flex-wrap items-center justify-between gap-3'>
+                      <div className='min-w-0'>
+                        <div className='flex items-center gap-2 mb-1'>
+                          <span className='px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[var(--modern-raised)] text-[var(--modern-muted)] border border-[var(--modern-border)]'>
+                            {t("signOrderDaigram.step") || "Step"} {index + 1}
+                          </span>
+                          <span className='font-semibold text-sm text-[var(--modern-text)] truncate'>
+                            {signatory.name || signatory.email || "Signatory"}
+                          </span>
+                        </div>
+                        {signatory.email && (
+                          <div className='text-xs text-[var(--modern-muted)] truncate'>
+                            {signatory.email}
                           </div>
                         )}
-                      </React.Fragment>
-                    );
-                  })}
-                </div>
-              </div>
+                        {signatory.signingDate && (
+                          <div className='text-[10px] text-[var(--modern-muted)] mt-1 flex items-center gap-1'>
+                            <Clock size={11} />
+                            <span>{signatory.signingDate}</span>
+                          </div>
+                        )}
+                      </div>
 
-              {/* Status Column */}
-              <div className='col-span-3 flex flex-col items-center space-y-2'>
-                {uniqueSignatories.map((signatory, index) => {
-                  const statusStyle = getStatusStyle(signatory.signStatus);
-                  const isLast = index === uniqueSignatories.length - 1;
-                  return (
-                    <div
-                      key={`status-${signatory.signatoriesID || signatory.email || index}`}
-                      className='w-full flex items-center justify-center'
-                      style={{
-                        minHeight: isLast ? "64px" : "96px",
-                        alignItems: "flex-start",
-                        paddingTop: "10px",
-                      }}
-                    >
+                      {/* Status Pill with colored dot */}
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${statusStyle.bg} ${statusStyle.text} ${statusStyle.border}`}
-                        title={signatory.signStatus || "Status"}
+                        className='home-status-pill text-xs'
+                        style={{ "--status-color": meta.color }}
                       >
+                        <span className='status-dot' />
                         {signatory.signStatus || t("signOrderDaigram.pending") || "Pending"}
                       </span>
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Mobile Layout */}
-            <div className='md:hidden space-y-5 pt-1'>
-              {/* Originator Box */}
-              <div className='space-y-2 text-center'>
-                <div className='text-xs font-semibold uppercase tracking-wider text-[var(--modern-muted)]'>
-                  {t("signOrderDaigram.originator") || "Originator"}
-                </div>
-                <div
-                  className='mx-auto max-w-sm p-3.5 rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border-strong)] text-center'
-                  title={originator?.email || originator?.name}
-                >
-                  <div className='font-semibold text-sm text-[var(--modern-text)] break-words'>
-                    {originator?.name}
                   </div>
-                  {originator?.email && (
-                    <div className='text-xs text-[var(--modern-muted)] break-all mt-0.5'>
-                      {originator.email}
-                    </div>
-                  )}
-                </div>
-                <div className='flex justify-center text-[var(--modern-muted)] py-1'>
-                  <Icons.ArrowDownLong size={22} />
-                </div>
-              </div>
-
-              {/* Signatories List */}
-              <div className='space-y-3'>
-                <div className='text-xs font-semibold uppercase tracking-wider text-[var(--modern-muted)] text-center'>
-                  {t("signOrderDaigram.signatories") || "Signatories"} & {t("signOrderDaigram.status") || "Status"}
-                </div>
-
-                <div className='space-y-2.5'>
-                  {uniqueSignatories.map((signatory, index) => {
-                    const statusStyle = getStatusStyle(signatory.signStatus);
-                    return (
-                      <div
-                        key={`mob-${signatory.signatoriesID || signatory.email || index}`}
-                        className={`p-3.5 rounded-xl bg-[var(--modern-card)] border-2 ${statusStyle.border} space-y-2`}
-                      >
-                        <div className='flex items-center justify-between gap-2'>
-                          <div className='flex items-center gap-2 min-w-0'>
-                            <span className='inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--modern-raised)] text-xs font-bold text-[var(--modern-muted)] shrink-0'>
-                              {index + 1}
-                            </span>
-                            <div className='min-w-0'>
-                              <div className='font-semibold text-sm text-[var(--modern-text)] truncate'>
-                                {signatory.name || signatory.email || "Signatory"}
-                              </div>
-                              {signatory.email && (
-                                <div className='text-xs text-[var(--modern-muted)] truncate'>
-                                  {signatory.email}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold shrink-0 border ${statusStyle.bg} ${statusStyle.text} ${statusStyle.border}`}
-                          >
-                            {signatory.signStatus || t("signOrderDaigram.pending") || "Pending"}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
         )}
       </Modal.Body>
 
-      <Modal.Footer className='border-t border-[var(--modern-border)] px-4 py-3 flex justify-end'>
+      <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex justify-end'>
         <Button
           variant='secondary'
           onClick={onHide}
-          className='px-5 py-2 text-sm font-medium rounded-lg'
+          className='px-5 py-2 text-xs font-semibold rounded-lg'
         >
           {t("signOrderDaigram.close") || "Close"}
         </Button>

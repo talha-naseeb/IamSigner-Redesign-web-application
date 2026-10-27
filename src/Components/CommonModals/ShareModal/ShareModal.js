@@ -1,51 +1,68 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Modal, Button } from "@/Components/UI/shadcnCompat";
-import { Form as Form } from "@/Components/UI/shadcnCompat";
 import "./modal.css";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import userService from "@/services/userService";
 import { useUser } from "@/Context/UserContext";
-import { Share2 } from "lucide-react";
+import {
+  Share2,
+  Mail,
+  FileText,
+  FileCheck,
+  Files,
+  Check,
+  Send,
+  Loader2,
+  User,
+  X,
+} from "lucide-react";
 
-const ShareModal = ({ show, handleClose, masterDocID, registerSignID }) => {
+const ShareModal = ({
+  show,
+  handleClose,
+  masterDocID,
+  registerSignID,
+  formData: propFormData,
+  handleShare: propHandleShare,
+  handleChange: propHandleChange,
+}) => {
   const { t } = useTranslation();
+  const { user } = useUser();
+  const isRtl = typeof document !== "undefined" && document.documentElement.dir === "rtl";
+
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [teamEmails, setTeamEmails] = useState([]);
-  const { user } = useUser();
   const [emailSubject, setEmailSubject] = useState("");
   const [emailBody, setEmailBody] = useState("");
-  const [error, setError] = useState();
+  const [error, setError] = useState(null);
   const [emailError, setEmailError] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [filteredEmails, setFilteredEmails] = useState([]);
   const [selectedCheckboxes, setSelectedCheckboxes] = useState({
-    Document: false,
+    Document: true,
     AuditTrail: false,
     SupportingDocs: false,
   });
-  const [isDisabled, setIsDisabled] = useState(true);
 
-  // Email validation function
-  const validateEmail = (email) => {
+  const validateEmail = (val) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
+    return emailRegex.test(String(val || "").trim());
   };
 
-  useEffect(() => {
-    if (email && emailSubject && emailBody && validateEmail(email)) {
-      setIsDisabled(false);
-      setEmailError("");
-    } else {
-      setIsDisabled(true);
-      if (email && !validateEmail(email)) {
-        setEmailError(t("logScreens.emailAddress"));
-      } else {
-        setEmailError("");
-      }
-    }
-  }, [email, emailSubject, emailBody]);
+  const isFormValid = useMemo(() => {
+    const hasItems =
+      selectedCheckboxes.Document ||
+      selectedCheckboxes.AuditTrail ||
+      selectedCheckboxes.SupportingDocs;
+    return (
+      Boolean(email.trim()) &&
+      validateEmail(email) &&
+      Boolean(emailSubject.trim()) &&
+      Boolean(emailBody.trim()) &&
+      hasItems
+    );
+  }, [email, emailSubject, emailBody, selectedCheckboxes]);
 
   useEffect(() => {
     if (show) {
@@ -54,48 +71,107 @@ const ShareModal = ({ show, handleClose, masterDocID, registerSignID }) => {
     }
   }, [show]);
 
-  // Filter team emails based on input
-  useEffect(() => {
-    if (email) {
-      const filtered = teamEmails.filter((teamEmail) => teamEmail.toLowerCase().includes(email.toLowerCase()));
-      setFilteredEmails(filtered);
-    } else {
-      setFilteredEmails(teamEmails);
-    }
-  }, [email, teamEmails]);
-
   const fetchTeamMembers = async () => {
     try {
-      const response = await userService.getAppUserTeam(user.AccountID);
-      setTeamEmails(response.data.response.map((member) => member.emailID));
-    } catch (error) {
-      console.log("Error fetching team members", error);
+      if (user?.AccountID) {
+        const response = await userService.getAppUserTeam(user.AccountID);
+        const list = response?.data?.response || [];
+        setTeamEmails(
+          list
+            .map((member) => ({
+              email: member.emailID || member.email,
+              name: member.userName || member.fullName || member.name || "",
+            }))
+            .filter((m) => Boolean(m.email))
+        );
+      }
+    } catch (err) {
+      console.log("Error fetching team members", err);
     }
   };
 
-  const handleCheckboxChange = (checkbox) => {
-    setSelectedCheckboxes((prevSelected) => ({
-      ...prevSelected,
-      [checkbox]: !prevSelected[checkbox],
+  const filteredTeamMembers = useMemo(() => {
+    if (!email.trim()) return teamEmails.slice(0, 5);
+    const q = email.toLowerCase().trim();
+    return teamEmails
+      .filter((m) => m.email.toLowerCase().includes(q) || m.name.toLowerCase().includes(q))
+      .slice(0, 5);
+  }, [email, teamEmails]);
+
+  const handleCheckboxChange = (key) => {
+    setSelectedCheckboxes((prev) => ({
+      ...prev,
+      [key]: !prev[key],
     }));
   };
 
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setEmail(value);
-    setShowSuggestions(value.length > 0);
+    setShowSuggestions(true);
+    if (value && !validateEmail(value)) {
+      setEmailError(t("logScreens.emailAddress") || "Invalid email address");
+    } else {
+      setEmailError("");
+    }
   };
 
-  const handleEmailSelect = (selectedEmail) => {
+  const handleSelectEmail = (selectedEmail) => {
     setEmail(selectedEmail);
+    setEmailError("");
     setShowSuggestions(false);
   };
 
-  const handleShare = async () => {
+  const resetFields = () => {
+    setEmail("");
+    setEmailSubject(t("shareModal.defaultSubject") || "Shared Document via IAMSigner");
+    setEmailBody(
+      t("shareModal.defaultBody") ||
+        "Hello,\n\nPlease find the attached shared document for your review."
+    );
+    setEmailError("");
+    setShowSuggestions(false);
+    setSelectedCheckboxes({
+      Document: true,
+      AuditTrail: false,
+      SupportingDocs: false,
+    });
+    setError(null);
+  };
+
+  const handleCloseModal = () => {
+    resetFields();
+    if (handleClose) handleClose();
+  };
+
+  const handleSubmit = async () => {
+    if (!email.trim() || !emailSubject.trim() || !emailBody.trim()) {
+      setError(t("shareModal.fieldRequired") || "All required fields must be filled");
+      return;
+    }
+    if (!validateEmail(email)) {
+      setEmailError(t("logScreens.emailAddress") || "Invalid email address");
+      return;
+    }
+    if (
+      !selectedCheckboxes.Document &&
+      !selectedCheckboxes.AuditTrail &&
+      !selectedCheckboxes.SupportingDocs
+    ) {
+      toast.error(
+        t("shareModal.selectAtLeastOneOption") ||
+          "Please select at least one document item to share"
+      );
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
     const requestBody = {
-      Email: email,
-      Subject: emailSubject,
-      Body: emailBody,
+      Email: email.trim(),
+      Subject: emailSubject.trim(),
+      Body: emailBody.trim(),
       MasterDocID: masterDocID,
       RegisterSignID: registerSignID,
       IsDocShared: selectedCheckboxes.Document,
@@ -103,170 +179,324 @@ const ShareModal = ({ show, handleClose, masterDocID, registerSignID }) => {
       IsSupportingDocShared: selectedCheckboxes.SupportingDocs,
     };
 
-    setIsLoading(true);
     try {
-      const response = await userService.createDocShared(requestBody);
-
-      if (response.data.statusCode === "1") {
-        toast.success(t("dashboardCardStatuses.shareFileSucessToast"));
-        resetFields();
-        handleClose();
+      if (typeof propHandleShare === "function") {
+        await propHandleShare(requestBody);
+      } else {
+        const response = await userService.createDocShared(requestBody);
+        if (response?.data?.statusCode === "1" || response?.status === 200) {
+          toast.success(
+            t("dashboardCardStatuses.shareFileSucessToast") ||
+              "Document shared successfully"
+          );
+        } else {
+          toast.info(response?.data?.message || t("dashboardCardStatuses.shareFileInfo"));
+        }
       }
+      handleCloseModal();
+    } catch (err) {
+      console.error("Share document error:", err);
+      if (err?.response?.statusCode === "4" || err?.response?.status === 401) {
+        toast.error(t("dashboardCardStatuses.unathorizedErrSharedFile") || "Unauthorized");
+      } else {
+        toast.error(
+          err?.response?.data?.message ||
+            t("shareModal.alreadyShared") ||
+            "Failed to share document"
+        );
+      }
+    } finally {
       setIsLoading(false);
-    } catch (error) {
-      handleError(error);
-      handleClose();
-      setIsLoading(false);
     }
-  };
-
-  const handleSubmit = () => {
-    if (!email || !emailSubject || !emailBody) {
-      setError(t("shareModal.fieldRequired"));
-      return;
-    } else if (!validateEmail(email)) {
-      setEmailError(t("logScreens.emailAddress"));
-      return;
-    } else if (!selectedCheckboxes.Document && !selectedCheckboxes.AuditTrail && !selectedCheckboxes.SupportingDocs) {
-      toast.error(t("shareModal.selectAtLeastOneOption"));
-    } else {
-      handleShare();
-    }
-  };
-
-  const resetFields = () => {
-    setEmail("");
-    setEmailSubject("");
-    setEmailBody("");
-    setEmailError("");
-    setShowSuggestions(false);
-    setSelectedCheckboxes({
-      Document: false,
-      AuditTrail: false,
-      SupportingDocs: false,
-    });
-    setError(null);
-  };
-
-  const handleError = (error) => {
-    if (error.response?.statusCode === "4") {
-      toast.error(t("dashboardCardStatuses.unathorizedErrSharedFile"));
-    } else if (error.response?.data?.statusCode === "3") {
-      toast.error(t("shareModal.alreadyShared"));
-    } else {
-      toast.error(t("shareModal.alreadyShared"));
-    }
-    resetFields();
-  };
-
-  const handleCloseModal = () => {
-    resetFields();
-    handleClose();
   };
 
   return (
-    <>
-      <Modal show={show} backdrop='static' keyboard={false} onHide={handleCloseModal} dialogClassName='custom-modal-width'>
-        <Modal.Header closeButton>
-          <div className='header-content'>
-            <div className='header-icon'>
-              <Share2 size={22} />
+    <Modal
+      show={show}
+      backdrop='static'
+      keyboard={false}
+      onHide={handleCloseModal}
+      centered
+      className='share-document-modal'
+    >
+      {/* Modern Header */}
+      <Modal.Header closeButton className='border-b border-[var(--modern-border)] px-5 py-4'>
+        <div className='flex items-center gap-3'>
+          <div className='w-10 h-10 rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border)] flex items-center justify-center text-[var(--modern-primary)] shrink-0'>
+            <Share2 size={20} />
+          </div>
+          <div>
+            <Modal.Title className='text-base md:text-lg font-semibold text-[var(--modern-text)] m-0 leading-tight'>
+              {t("shareModal.shareDoc") || "Share Document"}
+            </Modal.Title>
+            <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5'>
+              {t("shareModal.chooseDoc") ||
+                "Select which items to share and enter recipient details."}
+            </p>
+          </div>
+        </div>
+      </Modal.Header>
+
+      <Modal.Body className='p-4 md:p-6 space-y-4 max-h-[75vh] overflow-y-auto custom-table-scrollbar'>
+        {/* Item Selection Cards */}
+        <div>
+          <label className='block text-xs font-semibold text-[var(--modern-muted)] uppercase tracking-wider mb-2'>
+            {t("shareModal.includeInShare") || "Items to Include in Share"}
+          </label>
+          <div className='grid grid-cols-1 sm:grid-cols-3 gap-2.5'>
+            {/* Original Document Card */}
+            <div
+              role='checkbox'
+              aria-checked={selectedCheckboxes.Document}
+              tabIndex={0}
+              onClick={() => handleCheckboxChange("Document")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleCheckboxChange("Document");
+                }
+              }}
+              className={`p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between gap-2 ${
+                selectedCheckboxes.Document
+                  ? "bg-[var(--modern-raised)] border-[var(--modern-primary)]"
+                  : "bg-[var(--modern-card)] border-[var(--modern-border)] hover:border-[var(--modern-border-strong)]"
+              }`}
+            >
+              <div className='flex items-center justify-between'>
+                <div className='w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center'>
+                  <FileText size={15} />
+                </div>
+                <div
+                  className={`w-4 h-4 rounded-md flex items-center justify-center border transition-colors ${
+                    selectedCheckboxes.Document
+                      ? "bg-[var(--modern-primary)] border-[var(--modern-primary)] text-white"
+                      : "border-[var(--modern-border-strong)] bg-transparent"
+                  }`}
+                >
+                  {selectedCheckboxes.Document && <Check size={11} strokeWidth={3} />}
+                </div>
+              </div>
+              <div>
+                <div className='text-xs font-semibold text-[var(--modern-text)]'>
+                  {t("viewModal.orgDoc") || "Original Document"}
+                </div>
+                <div className='text-[10px] text-[var(--modern-muted)] mt-0.5'>
+                  {t("shareModal.signedPdf") || "Final signed PDF"}
+                </div>
+              </div>
             </div>
-            <div className='header-text'>
-              <Modal.Title>{t("shareModal.shareDoc")}</Modal.Title>
-              <p className='header-subtitle'>{t("shareModal.chooseDoc")}</p>
+
+            {/* Audit Trail Card */}
+            <div
+              role='checkbox'
+              aria-checked={selectedCheckboxes.AuditTrail}
+              tabIndex={0}
+              onClick={() => handleCheckboxChange("AuditTrail")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleCheckboxChange("AuditTrail");
+                }
+              }}
+              className={`p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between gap-2 ${
+                selectedCheckboxes.AuditTrail
+                  ? "bg-[var(--modern-raised)] border-[var(--modern-primary)]"
+                  : "bg-[var(--modern-card)] border-[var(--modern-border)] hover:border-[var(--modern-border-strong)]"
+              }`}
+            >
+              <div className='flex items-center justify-between'>
+                <div className='w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center'>
+                  <FileCheck size={15} />
+                </div>
+                <div
+                  className={`w-4 h-4 rounded-md flex items-center justify-center border transition-colors ${
+                    selectedCheckboxes.AuditTrail
+                      ? "bg-[var(--modern-primary)] border-[var(--modern-primary)] text-white"
+                      : "border-[var(--modern-border-strong)] bg-transparent"
+                  }`}
+                >
+                  {selectedCheckboxes.AuditTrail && <Check size={11} strokeWidth={3} />}
+                </div>
+              </div>
+              <div>
+                <div className='text-xs font-semibold text-[var(--modern-text)]'>
+                  {t("viewModal.auditTrail") || "Audit Certificate"}
+                </div>
+                <div className='text-[10px] text-[var(--modern-muted)] mt-0.5'>
+                  {t("shareModal.auditLog") || "Official verification trail"}
+                </div>
+              </div>
+            </div>
+
+            {/* Supporting Documents Card */}
+            <div
+              role='checkbox'
+              aria-checked={selectedCheckboxes.SupportingDocs}
+              tabIndex={0}
+              onClick={() => handleCheckboxChange("SupportingDocs")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleCheckboxChange("SupportingDocs");
+                }
+              }}
+              className={`p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between gap-2 ${
+                selectedCheckboxes.SupportingDocs
+                  ? "bg-[var(--modern-raised)] border-[var(--modern-primary)]"
+                  : "bg-[var(--modern-card)] border-[var(--modern-border)] hover:border-[var(--modern-border-strong)]"
+              }`}
+            >
+              <div className='flex items-center justify-between'>
+                <div className='w-7 h-7 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center'>
+                  <Files size={15} />
+                </div>
+                <div
+                  className={`w-4 h-4 rounded-md flex items-center justify-center border transition-colors ${
+                    selectedCheckboxes.SupportingDocs
+                      ? "bg-[var(--modern-primary)] border-[var(--modern-primary)] text-white"
+                      : "border-[var(--modern-border-strong)] bg-transparent"
+                  }`}
+                >
+                  {selectedCheckboxes.SupportingDocs && <Check size={11} strokeWidth={3} />}
+                </div>
+              </div>
+              <div>
+                <div className='text-xs font-semibold text-[var(--modern-text)]'>
+                  {t("viewModal.supportingDoc") || "Supporting Files"}
+                </div>
+                <div className='text-[10px] text-[var(--modern-muted)] mt-0.5'>
+                  {t("shareModal.attachments") || "Attached supplementary files"}
+                </div>
+              </div>
             </div>
           </div>
-        </Modal.Header>
-        <Modal.Body className='px-4 py-3'>
-          <div className='form-check mt-2'>
-            <input type='checkbox' className='form-check-input' id='shareDocument' checked={selectedCheckboxes.Document} onChange={() => handleCheckboxChange("Document")} />
-            <label className='form-check-label' htmlFor='shareDocument'>
-              {t("viewModal.orgDoc")}
-            </label>
-          </div>
+        </div>
 
-          <div className='form-check'>
-            <input type='checkbox' className='form-check-input' id='shareAuditTrail' checked={selectedCheckboxes.AuditTrail} onChange={() => handleCheckboxChange("AuditTrail")} />
-            <label className='form-check-label' htmlFor='shareAuditTrail'>
-              {t("viewModal.auditTrail")}
-            </label>
-          </div>
-
-          <div className='form-check mb-2'>
-            <input type='checkbox' className='form-check-input' id='shareSupportingDocs' checked={selectedCheckboxes.SupportingDocs} onChange={() => handleCheckboxChange("SupportingDocs")} />
-            <label className='form-check-label' htmlFor='shareSupportingDocs'>
-              {t("viewModal.supportingDoc")}
-            </label>
-          </div>
-
-          <Form.Group controlId='formBasicEmail' className='position-relative mt-3'>
-            <Form.Label>
-              {t("shareModal.email")}
-              <span className='text-danger mx-1'>*</span>
-            </Form.Label>
-            <Form.Control
+        {/* Recipient Email Input with Autocomplete */}
+        <div className='relative'>
+          <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1'>
+            {t("shareModal.email") || "Recipient Email"} <span className='text-rose-500'>*</span>
+          </label>
+          <div className='relative flex items-center'>
+            <div className='absolute left-3 text-[var(--modern-muted)] pointer-events-none'>
+              <Mail size={16} />
+            </div>
+            <input
               type='email'
-              placeholder={t("Folder.selectEmailPlaceholder")}
               value={email}
               onChange={handleEmailChange}
               onFocus={() => setShowSuggestions(true)}
-              onBlur={(e) => {
-                // Only hide suggestions if not clicking on suggestion items
-                if (!e.relatedTarget || !e.relatedTarget.closest(".email-suggestions")) {
-                  setTimeout(() => setShowSuggestions(false), 150);
-                }
-              }}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              placeholder={
+                t("Folder.selectEmailPlaceholder") || "Enter recipient email (e.g. colleague@acme.com)"
+              }
+              className='w-full pl-9 pr-3 py-2 text-sm rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] text-[var(--modern-text)] placeholder-[var(--modern-muted)] focus:outline-none focus:border-[var(--modern-primary)] transition-colors'
               required
             />
-            {showSuggestions && filteredEmails.length > 0 && (
-              <div className='email-suggestions'>
-                {filteredEmails.slice(0, 5).map((teamEmail, index) => (
-                  <div
-                    key={index}
-                    className='email-suggestion-item'
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      handleEmailSelect(teamEmail);
-                    }}
-                  >
-                    {teamEmail}
-                  </div>
-                ))}
+          </div>
+
+          {/* Autocomplete Suggestions Dropdown */}
+          {showSuggestions && filteredTeamMembers.length > 0 && (
+            <div className='absolute top-full left-0 right-0 mt-1 rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] shadow-lg z-50 overflow-hidden py-1'>
+              <div className='px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[var(--modern-muted)] bg-[var(--modern-raised)] border-b border-[var(--modern-border)]'>
+                {t("shareModal.teamSuggestions") || "Team Members"}
               </div>
-            )}
-            {emailError && <span className='text-danger'>{emailError}</span>}
-            {error && <span className='text-danger'>{error}</span>}
-          </Form.Group>
+              {filteredTeamMembers.map((member, i) => (
+                <div
+                  key={member.email || i}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    handleSelectEmail(member.email);
+                  }}
+                  className='px-3 py-2 text-xs flex items-center justify-between gap-2 cursor-pointer hover:bg-[var(--modern-raised)] transition-colors'
+                >
+                  <div className='flex items-center gap-2 min-w-0'>
+                    <div className='w-6 h-6 rounded-full bg-[var(--modern-raised)] border border-[var(--modern-border)] flex items-center justify-center text-[10px] font-bold text-[var(--modern-text)] shrink-0'>
+                      <User size={12} className='text-[var(--modern-muted)]' />
+                    </div>
+                    <div className='min-w-0'>
+                      {member.name && (
+                        <div className='font-semibold text-[var(--modern-text)] truncate'>
+                          {member.name}
+                        </div>
+                      )}
+                      <div className='text-[var(--modern-muted)] truncate'>{member.email}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
-          <Form.Group className='mt-3' controlId='formBasicSubject'>
-            <Form.Label>
-              {t("shareModal.subject")}
-              <span className='text-danger mx-1'>*</span>
-            </Form.Label>
-            <Form.Control type='text' placeholder={t("shareModal.subjectPlaceholder")} value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} required />
-            {error && <span className='text-danger'>{t("shareModal.fieldRequired")}</span>}
-          </Form.Group>
+          {emailError && <p className='text-xs text-rose-500 m-0 mt-1'>{emailError}</p>}
+        </div>
 
-          <Form.Group className='mt-3' controlId='formBasicBody'>
-            <Form.Label>
-              {t("shareModal.body")}
-              <span className='text-danger mx-1'>*</span>
-            </Form.Label>
-            <Form.Control as='textarea' placeholder={t("shareModal.bodyPlaceholder")} value={emailBody} onChange={(e) => setEmailBody(e.target.value)} rows={3} required />
-            {error && <span className='text-danger'>{t("shareModal.fieldRequired")}</span>}
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer className='mt-2 d-flex justify-content-between'>
-          <Button variant='none' className='modalCancelButton' onClick={handleCloseModal}>
-            {t("shareModal.cancel")}
-          </Button>
-          <Button className='applyBtn' variant='none' disabled={isDisabled} onClick={handleSubmit}>
-            {t("shareModal.shareFile")}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+        {/* Email Subject */}
+        <div>
+          <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1'>
+            {t("shareModal.subject") || "Email Subject"} <span className='text-rose-500'>*</span>
+          </label>
+          <input
+            type='text'
+            value={emailSubject}
+            onChange={(e) => setEmailSubject(e.target.value)}
+            placeholder={t("shareModal.subjectPlaceholder") || "Document Sharing Notification"}
+            className='w-full px-3 py-2 text-sm rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] text-[var(--modern-text)] placeholder-[var(--modern-muted)] focus:outline-none focus:border-[var(--modern-primary)] transition-colors'
+            required
+          />
+        </div>
+
+        {/* Email Body */}
+        <div>
+          <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1'>
+            {t("shareModal.body") || "Message"} <span className='text-rose-500'>*</span>
+          </label>
+          <textarea
+            rows={3}
+            value={emailBody}
+            onChange={(e) => setEmailBody(e.target.value)}
+            placeholder={
+              t("shareModal.bodyPlaceholder") ||
+              "Write a message for the recipient..."
+            }
+            className='w-full p-3 text-sm rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] text-[var(--modern-text)] placeholder-[var(--modern-muted)] focus:outline-none focus:border-[var(--modern-primary)] transition-colors resize-none'
+            required
+          />
+        </div>
+
+        {error && <p className='text-xs text-rose-500 m-0'>{error}</p>}
+      </Modal.Body>
+
+      {/* Enhanced Footer */}
+      <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-between'>
+        <Button
+          variant='secondary'
+          onClick={handleCloseModal}
+          disabled={isLoading}
+          className='px-4 py-2 text-xs font-semibold rounded-lg'
+        >
+          {t("shareModal.cancel") || "Cancel"}
+        </Button>
+        <Button
+          variant='default'
+          disabled={!isFormValid || isLoading}
+          onClick={handleSubmit}
+          className='inline-flex items-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--modern-primary)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity'
+        >
+          {isLoading ? (
+            <>
+              <Loader2 size={14} className='animate-spin' />
+              <span>{t("shareModal.sharing") || "Sharing..."}</span>
+            </>
+          ) : (
+            <>
+              <Send size={14} style={{ transform: isRtl ? "scaleX(-1)" : "none" }} />
+              <span>{t("shareModal.shareFile") || "Share Document"}</span>
+            </>
+          )}
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

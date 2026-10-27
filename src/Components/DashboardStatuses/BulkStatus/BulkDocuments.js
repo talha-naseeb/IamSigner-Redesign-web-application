@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import { useUser } from "@/Context/UserContext";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import DashboardComments from "@/Components/CommonModals/DocumentsComments/DashboardComments";
+import { StatusBadge } from "@/Components/DashboardStatuses/DocumentStatusTable";
 
 const BulkDocuments = () => {
   const navigate = useNavigate();
@@ -253,23 +254,7 @@ const BulkDocuments = () => {
                           {row.referenceNumber}
                         </TableCell>
                         <TableCell className='TableCell'>
-                          {(() => {
-                            const rawStatus = (row.docStatus || "").toLowerCase();
-                            const statusColor = statusColors[rawStatus] || "var(--inactive-status)";
-                            const label = row.docStatus === "" ? "Not Started" : row.docStatus;
-                            return (
-                              <span
-                                className='inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold'
-                                style={{
-                                  color: statusColor,
-                                  backgroundColor: `color-mix(in srgb, ${statusColor} 12%, var(--modern-card))`,
-                                  border: `1px solid color-mix(in srgb, ${statusColor} 35%, var(--modern-border))`,
-                                }}
-                              >
-                                {label}
-                              </span>
-                            );
-                          })()}
+                          <StatusBadge status={row.docStatus === "" ? "Not Started" : row.docStatus} />
                         </TableCell>
 
                         <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>

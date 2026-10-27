@@ -2359,3 +2359,30 @@ body:not(.recaptcha-auth-page) .grecaptcha-badge {
     font-size: 20px;
   }
 }
+
+/* ==========================================================================
+   Unified Modern Document Status Pill
+   Used across Recent Docs, Completed Docs, and DocumentStatusTable
+   ========================================================================== */
+.home-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 11px;
+  border: 1px solid color-mix(in srgb, var(--status-color, var(--modern-violet)) 30%, transparent);
+  border-radius: var(--radius-full, 9999px);
+  background: color-mix(in srgb, var(--status-color, var(--modern-violet)) 10%, var(--modern-card));
+  color: var(--modern-text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: var(--status-color, var(--modern-violet));
+}
