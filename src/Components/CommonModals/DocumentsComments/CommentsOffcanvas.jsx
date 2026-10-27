@@ -338,12 +338,20 @@ export const CommentsOffcanvas = ({
                       </div>
 
                       {/* Comment Content */}
-                      <p className='text-xs md:text-sm text-[var(--modern-text)] leading-relaxed m-0 whitespace-pre-wrap break-words pl-9.5'>
+                      <p
+                        className={`text-xs md:text-sm text-[var(--modern-text)] leading-relaxed m-0 whitespace-pre-wrap break-words ${
+                          isRtl ? "pr-9 pl-0 text-right" : "pl-9 pr-0 text-left"
+                        }`}
+                      >
                         {comment.comments}
                       </p>
 
                       {/* Footer Timestamps */}
-                      <div className='flex items-center gap-2 text-[10px] text-[var(--modern-muted)] pl-9.5'>
+                      <div
+                        className={`flex items-center gap-2 text-[10px] text-[var(--modern-muted)] ${
+                          isRtl ? "pr-9 pl-0" : "pl-9 pr-0"
+                        }`}
+                      >
                         <span>{comment.createdDate}</span>
                         {comment.createdTime && <span>{comment.createdTime}</span>}
                         {comment.modifiedOn && (

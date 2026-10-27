@@ -67,7 +67,12 @@
     "welcomeAdminPanel": "مرحبًا بك في لوحة الإدارة",
     "ManageData": "إدارة بيانات المستخدمين لـ",
     "IamSigner": "أنا الموقّع",
-    "existingUser": "المستخدمون النشطون"
+    "existingUser": "المستخدمون النشطون",
+    "noDocsPrompt": "قم بتحميل مستند لبدء سير عمل التوقيع الخاص بك.",
+    "goodMorning": "صباح الخير",
+    "goodAfternoon": "مساء الخير",
+    "goodEvening": "مساء الخير",
+    "statusOverviewSub": "نظرة عامة على طلبات التوقيع والمستندات الأخيرة"
   },
   "header": {
     "notification": "الإشعارات",
@@ -86,7 +91,10 @@
     "lightMode": "فاتح",
     "darkMode": "داكن",
     "switchToLightMode": "التبديل إلى الوضع الفاتح",
-    "switchToDarkMode": "التبديل إلى الوضع الداكن"
+    "switchToDarkMode": "التبديل إلى الوضع الداكن",
+    "colorPalette": "لوحة الألوان",
+    "conceptTwoPalette": "المفهوم 2",
+    "azaManagementPalette": "لوحة إدارة AZA"
   },
   "Sidebar": {
     "OnlyView": "يمكنك فقط عرض هذا الحساب!",
@@ -122,7 +130,12 @@
     "AIAssistant": "وكيل التوقيع",
     "availableOnSubscription": "هذه الميزة متاحة على أساس الاشتراك.",
     "accountStorage": "تخزين الحساب",
-    "storageBytes": "{{bytes}} بايت"
+    "storageBytes": "{{bytes}} بايت",
+    "openNavigation": "فتح القائمة",
+    "closeNavigation": "إغلاق القائمة",
+    "mainNavigation": "التنقل الرئيسي",
+    "expandNavigation": "توسيع الشريط الجانبي",
+    "collapseNavigation": "طي الشريط الجانبي"
   },
   "userProfile": {
     "fullNameMaxChars": "الاسم الكامل لا يمكن أن يتجاوز 25 حرفًا",
@@ -217,7 +230,6 @@
     "referenceNumberOptional": "الرقم المرجعي (اختياري)",
     "uploadDescription": "عند استخدام نظام التوقيع الإلكتروني لدينا ، يكون من الضروري الحفاظ على وثائق وتنظيم سليمين. لتحقيق ذلك ، قد تضيف رقم مرجعي أو معرفًا لكل وثيقة. يساعد الرقم المرجعي في تبسيط عملية إدارة الوثائق الخاصة بك ، مما يجعل من السهل العثور على الوثائق الخاصة بك وتتبعها واسترجاعها في المستقبل."
   },
-
   "dashboardCardStatuses": {
     "notSignatoryLeft": "لا يوجد أي موقعين على التحديث.",
     "noAuditTrail": "لا يوجد أي سجل تدقيق!",
@@ -295,7 +307,10 @@
     "failedToInactivate": "فشل إلغاء تفعيل المستند",
     "confirmInactivate": "تأكيد إلغاء التفعيل",
     "inActiveNotificationSubtitle": "سيتم وضع هذا المستند كغير نشط.",
-    "sureInActiveNotification": "هل أنت متأكد أنك تريد إلغاء تفعيل هذا المستند؟"
+    "sureInActiveNotification": "هل أنت متأكد أنك تريد إلغاء تفعيل هذا المستند؟",
+    "pendingDocs": "مستندات قيد الانتظار",
+    "clear": "مسح",
+    "errorFetchingSignedDocKey": "خطأ في جلب مفتاح المستند الموقع"
   },
   "tablesLabel": {
     "existing": "القائم على",
@@ -363,7 +378,15 @@
     "signatories": "الموقعون",
     "status": "الحالة",
     "close": "إغلاق",
-    "loading": "تحميل"
+    "loading": "تحميل",
+    "workflowSubtitle": "مسار التوقيع المتسلسل وحالة التسليم في الوقت الفعلي.",
+    "workflowProgress": "تقدم سير العمل",
+    "of": "من",
+    "creator": "منشئ المستند",
+    "step": "الخطوة",
+    "emptyDescription": "لم يتم تسجيل أي موقعين لهذا المستند.",
+    "notDocsFound": "لا توجد معلومات حول ترتيب التوقيع",
+    "failedToLoad": "فشل في تحميل ترتيب التوقيع"
   },
   "auditTrailModal": {
     "auditTrail": "سجل التدقيق",
@@ -386,7 +409,11 @@
     "deleteComment": "حذف التعليق",
     "noComments": "لا توجد تعليقات بعد",
     "noSupportingDocs": "لا توجد مستندات داعمة",
-    "characters": "الحرف"
+    "characters": "الحرف",
+    "subTitle": "الملاحظات والتحديثات الخاصة بهذا المستند",
+    "loading": "جارٍ تحميل المناقشة...",
+    "startConversation": "اترك ملاحظة أو سؤالاً أو تحديثاً للمتعاونين في هذا المستند.",
+    "pressEnter": "اضغط على Enter للإرسال، وShift+Enter لسطر جديد"
   },
   "viewModal": {
     "close": "إغلاق",
@@ -414,7 +441,15 @@
     "templateName": "اسم القالب",
     "Filter": "تصفية",
     "FilterRange": "نطاق التاريخ",
-    "status": "حالات المستند"
+    "status": "حالات المستند",
+    "searchPlaceholder": "البحث حسب المستند أو الرقم المرجعي أو الموقع...",
+    "loadError": "تعذر تحميل المستندات من الخادم",
+    "noSearchResults": "لم يتم العثور على مستندات مطابقة",
+    "loadErrorHelp": "يرجى المحاولة مرة أخرى بعد لحظات.",
+    "tryClearing": "جرّب تعديل معايير البحث أو مسح عوامل التصفية.",
+    "retry": "إعادة المحاولة",
+    "clearAll": "مسح جميع الفلاتر",
+    "noMatch": "لم يتم العثور على نتائج مطابقة"
   },
   "shareModal": {
     "shareDoc": "مشاركة المستند",
@@ -434,7 +469,15 @@
     "selectAtLeastOneOption": "يجب أن يتم تحديد على الأقل خيار واحد",
     "emailAlreadyAdded": "البريد الإلكتروني مضاف بالفعل",
     "subjectPlaceholder": "مثال: الموضوع",
-    "bodyPlaceholder": "أدخل رسالتك هنا"
+    "bodyPlaceholder": "أدخل رسالتك هنا",
+    "defaultSubject": "مستند تمت مشاركته عبر IAMSigner",
+    "defaultBody": "مرحباً،\n\nيرجى الاطلاع على المستند المشترك المرفق للمراجعة.",
+    "includeInShare": "العناصر المراد تضمينها في المشاركة",
+    "signedPdf": "ملف PDF النهائي الموقع",
+    "auditLog": "سجل التحقق والتدقيق الرسمي",
+    "attachments": "الملفات الإضافية المرفقة",
+    "teamSuggestions": "أعضاء الفريق",
+    "sharing": "جارٍ المشاركة..."
   },
   "confirmationModal": {
     "inActiveDocument": "مستند غير نشط",
@@ -571,7 +614,8 @@
     "alreadyChanged": "لقد قمت بتغيير كلمة السر بالفعل، شكرًا لك!",
     "successFullyChanged": "تم تغيير كلمة السر بنجاح",
     "sent": "ارسال",
-    "passwordResetLink": "تم إرسال رابط إعادة تعيين كلمة السر إلى بريدك الإلكتروني"
+    "passwordResetLink": "تم إرسال رابط إعادة تعيين كلمة السر إلى بريدك الإلكتروني",
+    "passwordMismatch": "كلمات المرور غير متطابقة"
   },
   "uploadDocScreen": {
     "uploadDocument": "تحميل المستند",
@@ -834,7 +878,20 @@
     "noNeed": "لا حاجة",
     "setNewDate": "تحديد تاريخ جديد",
     "previousDateExpired": "التاريخ السابق قد انتهى",
-    "uploadCSV": "يرجى تحميل ملف CSV صالح."
+    "uploadCSV": "يرجى تحميل ملف CSV صالح.",
+    "failedToUpdate": "فشل في التحديث",
+    "pleaseUploadDoc": "يرجى تحميل مستند",
+    "addCCemail": "إضافة بريد نسخة مطابقة (CC)",
+    "optionalCCemail": "مستلمو النسخة الإضافيون (اختياري)",
+    "emailPlaceHolder": "أدخل عنوان البريد الإلكتروني",
+    "cannotDeleteCurrentSigner": "لا يمكن حذف موقع قيد التوقيع أو مكتمل",
+    "updateSignatory": "تحديث الموقع",
+    "updateSignatoriesSubtitle": "تعديل بيانات المستلم وقنوات التسليم وطرق التحقق.",
+    "noEditableSignatories": "لم يتم العثور على موقعين يمكن تعديلهم لهذا المستند.",
+    "additionalEmailHint": "أضف عناوين بريد إلكتروني إضافية لتلقي نسخ من الإشعارات.",
+    "verificationHint": "طلب التحقق بخطوتين قبل السماح بالتوقيع.",
+    "saveChanges": "حفظ التغييرات",
+    "saving": "جارٍ الحفظ..."
   },
   "templateUploadFlow": {
     "tempApplied": "تم تطبيق القالب بنجاح",
@@ -1291,7 +1348,8 @@
     "selectEmails": "اختر البريد الإلكتروني",
     "selectEmailPlaceholder": "اختر عنوان البريد الإلكتروني",
     "selectedEmails": "البريد الإلكتروني المحدد",
-    "subTitle": "حذف المجلد"
+    "subTitle": "حذف المجلد",
+    "emailAlreadyAdded": "البريد الإلكتروني مضاف بالفعل"
   },
   "AIAssistant": {
     "AIAssistant": "المساعد الذكي",
@@ -1731,7 +1789,7 @@
     "searchDocuments": "بحث في المستندات…",
     "fileTooLarge": "يجب ألا يتجاوز حجم كل ملف 100 ميجابايت.",
     "uploadProgress": "جاري الرفع… {{percent}}%",
-    "uploading": "جاري الرفع...",
+    "uploading": "جارٍ الرفع...",
     "removeFile": "إزالة الملف",
     "bulkActions": "إجراءات جماعية",
     "selectedCount": "{{count}} محدد",
@@ -1792,7 +1850,6 @@
     "moveDocumentHint": "اختر المكان الذي تريد نقل {{name}} إليه.",
     "document": "مستند",
     "documentMoved": "تم نقل المستند بنجاح.",
-    "moveTo": "نقل إلى",
     "moveSameLocation": "اختر موقعًا مختلفًا للمجلد.",
     "folderActivity": "نشاط المجلد",
     "performedBy": "تم بواسطة",
@@ -1803,7 +1860,6 @@
     "loadingActivity": "جارٍ تحميل النشاط...",
     "noFolderActivity": "لم يتم العثور على نشاط لهذا المجلد.",
     "noDocumentActivity": "لم يتم العثور على نشاط لهذا المستند.",
-    "uploading": "جارٍ الرفع...",
     "deleteConfirmPrefix": "هل أنت متأكد أنك تريد حذف",
     "shareEmailSubject": "مستند تمت مشاركته: {{name}}",
     "shareEmailBody": "تمت مشاركة مستند معك: {{name}}",
@@ -1891,6 +1947,28 @@
     "storageUser": "العضو",
     "storageTotal": "التخزين",
     "storageUserId": "معرّف المستخدم",
-    "noTeamStorageRows": "لا تتوفر بيانات تخزين بعد."
+    "noTeamStorageRows": "لا تتوفر بيانات تخزين بعد.",
+    "expandSidebar": "توسيع الشريط الجانبي",
+    "collapseSidebar": "طي الشريط الجانبي",
+    "viewMode": "وضع العرض",
+    "edited": "تم التعديل",
+    "management": "الإدارة",
+    "categories": "التصنيفات",
+    "inviteSubtitle": "دعوة متعاونين للوصول إلى هذا المجلد",
+    "shareSubtitle": "مشاركة المجلد أو المستندات مع أعضاء الفريق",
+    "sharing": "جارٍ المشاركة..."
+  },
+  "common": {
+    "retry": "إعادة المحاولة",
+    "back": "رجوع",
+    "loading": "جارٍ التحميل...",
+    "goBack": "الرجوع للخلف",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "confirm": "تأكيد"
+  },
+  "errors": {
+    "accessDenied": "تم رفض الوصول",
+    "forbiddenMessage": "ليس لديك الإذن للوصول إلى هذه الصفحة أو المورد."
   }
 }

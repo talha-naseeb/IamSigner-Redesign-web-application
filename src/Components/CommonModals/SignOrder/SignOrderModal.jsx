@@ -255,7 +255,7 @@ export const SignOrderModal = ({
             </div>
 
             {/* Visual Flow Track */}
-            <div className='relative pl-4 pr-2 space-y-4'>
+            <div className={`relative ${isRtl ? "pr-4 pl-2" : "pl-4 pr-2"} space-y-4`}>
               {/* Originator Node */}
               <div className='relative flex items-start gap-3.5'>
                 <div className='flex flex-col items-center shrink-0'>
@@ -266,7 +266,7 @@ export const SignOrderModal = ({
                 </div>
 
                 <div className='flex-1 p-3.5 rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border)] flex flex-wrap items-center justify-between gap-2'>
-                  <div>
+                  <div className={isRtl ? "text-right" : "text-left"}>
                     <div className='inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[var(--modern-card)] border border-[var(--modern-border)] text-[10px] font-bold uppercase tracking-wider text-[var(--modern-muted)] mb-1'>
                       <UserCheck size={11} className='text-slate-500' />
                       {t("signOrderDaigram.originator") || "Originator"}
@@ -325,7 +325,7 @@ export const SignOrderModal = ({
 
                     {/* Signatory Card */}
                     <div className='flex-1 p-3.5 rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] hover:border-[var(--modern-border-strong)] transition-colors flex flex-wrap items-center justify-between gap-3'>
-                      <div className='min-w-0'>
+                      <div className={`min-w-0 ${isRtl ? "text-right" : "text-left"}`}>
                         <div className='flex items-center gap-2 mb-1'>
                           <span className='px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[var(--modern-raised)] text-[var(--modern-muted)] border border-[var(--modern-border)]'>
                             {t("signOrderDaigram.step") || "Step"} {index + 1}

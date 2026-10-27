@@ -240,7 +240,7 @@ const ShareModal = ({
       <Modal.Body className='p-4 md:p-6 space-y-4 max-h-[75vh] overflow-y-auto custom-table-scrollbar'>
         {/* Item Selection Cards */}
         <div>
-          <label className='block text-xs font-semibold text-[var(--modern-muted)] uppercase tracking-wider mb-2'>
+          <label className={`block text-xs font-semibold text-[var(--modern-muted)] uppercase tracking-wider mb-2 ${isRtl ? "text-right" : "text-left"}`}>
             {t("shareModal.includeInShare") || "Items to Include in Share"}
           </label>
           <div className='grid grid-cols-1 sm:grid-cols-3 gap-2.5'>
@@ -276,7 +276,7 @@ const ShareModal = ({
                   {selectedCheckboxes.Document && <Check size={11} strokeWidth={3} />}
                 </div>
               </div>
-              <div>
+              <div className={isRtl ? "text-right" : "text-left"}>
                 <div className='text-xs font-semibold text-[var(--modern-text)]'>
                   {t("viewModal.orgDoc") || "Original Document"}
                 </div>
@@ -318,7 +318,7 @@ const ShareModal = ({
                   {selectedCheckboxes.AuditTrail && <Check size={11} strokeWidth={3} />}
                 </div>
               </div>
-              <div>
+              <div className={isRtl ? "text-right" : "text-left"}>
                 <div className='text-xs font-semibold text-[var(--modern-text)]'>
                   {t("viewModal.auditTrail") || "Audit Certificate"}
                 </div>
@@ -360,7 +360,7 @@ const ShareModal = ({
                   {selectedCheckboxes.SupportingDocs && <Check size={11} strokeWidth={3} />}
                 </div>
               </div>
-              <div>
+              <div className={isRtl ? "text-right" : "text-left"}>
                 <div className='text-xs font-semibold text-[var(--modern-text)]'>
                   {t("viewModal.supportingDoc") || "Supporting Files"}
                 </div>
@@ -374,11 +374,11 @@ const ShareModal = ({
 
         {/* Recipient Email Input with Autocomplete */}
         <div className='relative'>
-          <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1'>
+          <label className={`block text-xs font-semibold text-[var(--modern-text)] mb-1 ${isRtl ? "text-right" : "text-left"}`}>
             {t("shareModal.email") || "Recipient Email"} <span className='text-rose-500'>*</span>
           </label>
           <div className='relative flex items-center'>
-            <div className='absolute left-3 text-[var(--modern-muted)] pointer-events-none'>
+            <div className={`absolute ${isRtl ? "right-3" : "left-3"} text-[var(--modern-muted)] pointer-events-none`}>
               <Mail size={16} />
             </div>
             <input
@@ -390,7 +390,9 @@ const ShareModal = ({
               placeholder={
                 t("Folder.selectEmailPlaceholder") || "Enter recipient email (e.g. colleague@acme.com)"
               }
-              className='w-full pl-9 pr-3 py-2 text-sm rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] text-[var(--modern-text)] placeholder-[var(--modern-muted)] focus:outline-none focus:border-[var(--modern-primary)] transition-colors'
+              className={`w-full ${
+                isRtl ? "pr-9 pl-3 text-right" : "pl-9 pr-3 text-left"
+              } py-2 text-sm rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] text-[var(--modern-text)] placeholder-[var(--modern-muted)] focus:outline-none focus:border-[var(--modern-primary)] transition-colors`}
               required
             />
           </div>
@@ -398,7 +400,7 @@ const ShareModal = ({
           {/* Autocomplete Suggestions Dropdown */}
           {showSuggestions && filteredTeamMembers.length > 0 && (
             <div className='absolute top-full left-0 right-0 mt-1 rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] shadow-lg z-50 overflow-hidden py-1'>
-              <div className='px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[var(--modern-muted)] bg-[var(--modern-raised)] border-b border-[var(--modern-border)]'>
+              <div className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[var(--modern-muted)] bg-[var(--modern-raised)] border-b border-[var(--modern-border)] ${isRtl ? "text-right" : "text-left"}`}>
                 {t("shareModal.teamSuggestions") || "Team Members"}
               </div>
               {filteredTeamMembers.map((member, i) => (
@@ -428,12 +430,12 @@ const ShareModal = ({
             </div>
           )}
 
-          {emailError && <p className='text-xs text-rose-500 m-0 mt-1'>{emailError}</p>}
+          {emailError && <p className={`text-xs text-rose-500 m-0 mt-1 ${isRtl ? "text-right" : "text-left"}`}>{emailError}</p>}
         </div>
 
         {/* Email Subject */}
         <div>
-          <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1'>
+          <label className={`block text-xs font-semibold text-[var(--modern-text)] mb-1 ${isRtl ? "text-right" : "text-left"}`}>
             {t("shareModal.subject") || "Email Subject"} <span className='text-rose-500'>*</span>
           </label>
           <input
@@ -441,14 +443,16 @@ const ShareModal = ({
             value={emailSubject}
             onChange={(e) => setEmailSubject(e.target.value)}
             placeholder={t("shareModal.subjectPlaceholder") || "Document Sharing Notification"}
-            className='w-full px-3 py-2 text-sm rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] text-[var(--modern-text)] placeholder-[var(--modern-muted)] focus:outline-none focus:border-[var(--modern-primary)] transition-colors'
+            className={`w-full px-3 py-2 text-sm rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] text-[var(--modern-text)] placeholder-[var(--modern-muted)] focus:outline-none focus:border-[var(--modern-primary)] transition-colors ${
+              isRtl ? "text-right" : "text-left"
+            }`}
             required
           />
         </div>
 
         {/* Email Body */}
         <div>
-          <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1'>
+          <label className={`block text-xs font-semibold text-[var(--modern-text)] mb-1 ${isRtl ? "text-right" : "text-left"}`}>
             {t("shareModal.body") || "Message"} <span className='text-rose-500'>*</span>
           </label>
           <textarea
@@ -459,7 +463,9 @@ const ShareModal = ({
               t("shareModal.bodyPlaceholder") ||
               "Write a message for the recipient..."
             }
-            className='w-full p-3 text-sm rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] text-[var(--modern-text)] placeholder-[var(--modern-muted)] focus:outline-none focus:border-[var(--modern-primary)] transition-colors resize-none'
+            className={`w-full p-3 text-sm rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] text-[var(--modern-text)] placeholder-[var(--modern-muted)] focus:outline-none focus:border-[var(--modern-primary)] transition-colors resize-none ${
+              isRtl ? "text-right" : "text-left"
+            }`}
             required
           />
         </div>

@@ -66,7 +66,12 @@
     "welcomeAdminPanel": "Welcome to Admin Panel",
     "ManageData": "Manage you Users Data for",
     "IamSigner": "IamSigner",
-    "existingUser": "Active Users"
+    "existingUser": "Active Users",
+    "noDocsPrompt": "Upload a document to start your signing workflow.",
+    "goodMorning": "Good morning",
+    "goodAfternoon": "Good afternoon",
+    "goodEvening": "Good evening",
+    "statusOverviewSub": "Overview of your recent signing requests and documents"
   },
   "header": {
     "notification": "Notifications",
@@ -124,7 +129,12 @@
     "AIAssistant": "Iamsigner agent",
     "availableOnSubscription": "This feature is available on subscription basis.",
     "accountStorage": "Account storage",
-    "storageBytes": "{{bytes}} bytes"
+    "storageBytes": "{{bytes}} bytes",
+    "openNavigation": "Open navigation",
+    "closeNavigation": "Close navigation",
+    "mainNavigation": "Main navigation",
+    "expandNavigation": "Expand sidebar",
+    "collapseNavigation": "Collapse sidebar"
   },
   "userProfile": {
     "fullNameMaxChars": "Full name cannot exceed 25 characters",
@@ -295,7 +305,9 @@
     "failedToInactivate": "Failed to inactivate document",
     "confirmInactivate": "Confirm Inactivate",
     "inActiveNotificationSubtitle": "This action will mark the document as inactive.",
-    "sureInActiveNotification": "Are you sure you want to inactivate this document?"
+    "sureInActiveNotification": "Are you sure you want to inactivate this document?",
+    "clear": "Clear",
+    "errorFetchingSignedDocKey": "Error fetching signed document key"
   },
   "tablesLabel": {
     "existing": "existing of",
@@ -363,7 +375,15 @@
     "signatories": "Signatories",
     "status": "Status",
     "close": "Close",
-    "loading": "Loading"
+    "loading": "Loading",
+    "workflowSubtitle": "Sequential signing route and real-time delivery status.",
+    "workflowProgress": "Workflow Progress",
+    "of": "of",
+    "creator": "Document Creator",
+    "step": "Step",
+    "emptyDescription": "No signatories were recorded for this document.",
+    "notDocsFound": "No sign order information available",
+    "failedToLoad": "Failed to load sign order"
   },
   "auditTrailModal": {
     "auditTrail": "Audit Trail",
@@ -385,7 +405,11 @@
     "noComments": "No comments yet",
     "noSupportingDocs": "No supporting documents",
     "CustomMessage": "Dear ,\n\nPlease review the document and sign it.\n\nBest regards .",
-    "characters": "Characters"
+    "characters": "Characters",
+    "subTitle": "Notes and updates on this document",
+    "loading": "Loading discussion...",
+    "startConversation": "Leave a note, question, or update for collaborators on this document.",
+    "pressEnter": "Press Enter to submit, Shift+Enter for new line"
   },
   "viewModal": {
     "close": "Close",
@@ -413,7 +437,15 @@
     "templateName": "Template Name",
     "Filter": "Filter",
     "FilterRange": "Start Date & End Date",
-    "status": "Document Statuses"
+    "status": "Document Statuses",
+    "searchPlaceholder": "Search by document, ref, or signer...",
+    "loadError": "Could not load documents from the server",
+    "noSearchResults": "No matching documents found",
+    "loadErrorHelp": "Please try again in a moment.",
+    "tryClearing": "Try adjusting your search criteria or clearing your filters.",
+    "retry": "Retry",
+    "clearAll": "Clear all filters",
+    "noMatch": "No matching results found"
   },
   "shareModal": {
     "shareDoc": "Share Document",
@@ -433,7 +465,15 @@
     "selectAtLeastOneOption": "Select at least one option",
     "emailAlreadyAdded": "Email already added",
     "subjectPlaceholder": "e.g subject",
-    "bodyPlaceholder": "Enter your message here"
+    "bodyPlaceholder": "Enter your message here",
+    "defaultSubject": "Shared Document via IAMSigner",
+    "defaultBody": "Hello,\n\nPlease find the attached shared document for your review.",
+    "includeInShare": "Items to Include in Share",
+    "signedPdf": "Final signed PDF",
+    "auditLog": "Official verification trail",
+    "attachments": "Attached supplementary files",
+    "teamSuggestions": "Team Members",
+    "sharing": "Sharing..."
   },
   "confirmationModal": {
     "inActiveDocument": "In Active Document",
@@ -570,7 +610,8 @@
     "alreadyChanged": "You have already changed the Password thankyou!",
     "successFullyChanged": "Your Password is SuccessFully Changed",
     "sent": "Sent",
-    "passwordResetLink": "The password reset link has been sent to your email"
+    "passwordResetLink": "The password reset link has been sent to your email",
+    "passwordMismatch": "Passwords do not match"
   },
   "Stepper": {
     "uploadDocument": "Upload Document",
@@ -584,7 +625,7 @@
     "reminderSendError": "Email didn't send. Try Again!",
     "reminderSend": "Reminder email successfully sent",
     "workflowContinued": "Workflow Continued",
-    "cannotDeleteLastSignatory": "Can not delete last signatory",
+    "cannotDeleteLastSignatory": "Cannot delete last signatory",
     "notificationSettings": "Notification Settings",
     "sendtoAll": "Send notifications to all signatories.",
     "initiatorsOnly": "Send notifications to initiator only.",
@@ -643,7 +684,7 @@
     "fileuploadSuccessfully": "File Uploaded successfully",
     "apireqFailed": "API request failed",
     "errorUploadFile": "Error in uploading files. Please try again.",
-    "pleaseUploadDoc": "Upload document again to use!",
+    "pleaseUploadDoc": "Please upload a document",
     "googleerrorUploadFile": "File is not publicly avaiable!",
     "filecantView": "File can't be viewed. Try again",
     "fileDeleted": "File deleted successfully",
@@ -828,7 +869,19 @@
     "noNeed": "No Need",
     "setNewDate": "Set New Date",
     "previousDateExpired": "Previous date has expired",
-    "uploadCSV": "Please upload a valid CSV file."
+    "uploadCSV": "Please upload a valid CSV file.",
+    "failedToUpdate": "Failed to update",
+    "addCCemail": "Add CC Email",
+    "optionalCCemail": "Optional CC recipients",
+    "emailPlaceHolder": "Enter email address",
+    "cannotDeleteCurrentSigner": "Cannot delete an in-progress or completed signatory",
+    "updateSignatory": "Update Signatory",
+    "updateSignatoriesSubtitle": "Modify recipient information, delivery channels, and verification methods.",
+    "noEditableSignatories": "No editable signatories found for this document.",
+    "additionalEmailHint": "Add extra email addresses to receive copies of notifications.",
+    "verificationHint": "Require two-factor verification before allowing signature.",
+    "saveChanges": "Save Changes",
+    "saving": "Saving..."
   },
   "templateUploadFlow": {
     "tempApplied": "Template applied successfully",
@@ -1073,7 +1126,6 @@
     "loseAccess": "This user will lose access to the system immediately.",
     "regainAccess": "This user will regain access to the system immediately."
   },
-
   "carousel": {
     "uploadDoc": "Upload Documents",
     "pdfImage": "Pdf, Images etc",
@@ -1287,7 +1339,8 @@
     "selectEmails": "Select emails",
     "selectEmailPlaceholder": "Select email address ",
     "selectedEmails": "Selected emails",
-    "subTitle": "Delete Folder"
+    "subTitle": "Delete Folder",
+    "emailAlreadyAdded": "Email already added"
   },
   "AIAssistant": {
     "AIAssistant": "AI Assistant",
@@ -1798,7 +1851,6 @@
     "loadingActivity": "Loading activity...",
     "noFolderActivity": "No activity found for this folder.",
     "noDocumentActivity": "No activity found for this document.",
-    "uploading": "Uploading...",
     "deleteConfirmPrefix": "Are you sure you want to delete",
     "shareEmailSubject": "Shared document: {{name}}",
     "shareEmailBody": "A document has been shared with you: {{name}}",
@@ -1886,6 +1938,28 @@
     "storageUser": "Member",
     "storageTotal": "Storage",
     "storageUserId": "User identifier",
-    "noTeamStorageRows": "No storage data available yet."
+    "noTeamStorageRows": "No storage data available yet.",
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar",
+    "viewMode": "View mode",
+    "edited": "Edited",
+    "management": "Management",
+    "categories": "Categories",
+    "inviteSubtitle": "Invite collaborators to access this folder",
+    "shareSubtitle": "Share folder or documents with team members",
+    "sharing": "Sharing..."
+  },
+  "common": {
+    "retry": "Retry",
+    "back": "Back",
+    "loading": "Loading...",
+    "goBack": "Go Back",
+    "cancel": "Cancel",
+    "save": "Save",
+    "confirm": "Confirm"
+  },
+  "errors": {
+    "accessDenied": "Access Denied",
+    "forbiddenMessage": "You do not have permission to view this page or resource."
   }
 }
