@@ -448,6 +448,7 @@
     "noMatch": "No matching results found"
   },
   "shareModal": {
+    "to": "To",
     "shareDoc": "Share Document",
     "chooseDoc": "Choose the documents you want to share",
     "errshareFile": "Error sharing Document",
@@ -1340,7 +1341,17 @@
     "selectEmailPlaceholder": "Select email address ",
     "selectedEmails": "Selected emails",
     "subTitle": "Delete Folder",
-    "emailAlreadyAdded": "Email already added"
+    "emailAlreadyAdded": "Email already added",
+    "manageFoldersSubtitle": "Organize, access, and share your workspace folders and documents",
+    "noDescription": "No description provided.",
+    "readMore": "Read more",
+    "users": "users",
+    "subfolders": "subfolders",
+    "files": "files",
+    "file": "file",
+    "subfolder": "subfolder",
+    "sharedWithUsers": "Shared with {{count}} users",
+    "documentsCount": "documents"
   },
   "AIAssistant": {
     "AIAssistant": "AI Assistant",
@@ -1950,6 +1961,7 @@
     "sharing": "Sharing..."
   },
   "common": {
+    "close": "Close",
     "retry": "Retry",
     "back": "Back",
     "loading": "Loading...",

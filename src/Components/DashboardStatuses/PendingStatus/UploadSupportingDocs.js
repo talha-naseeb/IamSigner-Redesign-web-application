@@ -218,12 +218,18 @@ const UploadSupportingDocs = ({ show, onClose, masterDocID, registerSignID }) =>
 
   return (
     <>
-      <Offcanvas show={show} onHide={onClose} placement={document.documentElement.dir === "rtl" ? "start" : "end"}>
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>{t("uploadDocFlow.UploadsupportedDocument")}</Offcanvas.Title>
+      <Offcanvas
+        show={show}
+        onHide={onClose}
+        placement={document.documentElement.dir === "rtl" ? "start" : "end"}
+        className='flex flex-col h-full bg-[var(--modern-card)]'
+      >
+        <Offcanvas.Header closeButton className='border-b border-[var(--modern-border)] px-5 py-4'>
+          <Offcanvas.Title className='text-base font-semibold text-[var(--modern-text)] m-0'>
+            {t("uploadDocFlow.UploadsupportedDocument")}
+          </Offcanvas.Title>
         </Offcanvas.Header>
-        <Offcanvas.Body>
-
+        <Offcanvas.Body className='flex-1 overflow-y-auto px-5 py-4 space-y-4'>
           <UploadSourceCard {...getRootProps()}>
             <input {...getInputProps()} className="sr-only" />
             <Icons.UploadCloud size={32} className="text-[var(--modern-primary,#6366f1)]" />
@@ -238,25 +244,25 @@ const UploadSupportingDocs = ({ show, onClose, masterDocID, registerSignID }) =>
               {errorMessage}
             </p>
           )}
-          <div className='mt-3 space-y-2' id='upload_file_bx'>
+          <div className='space-y-2' id='upload_file_bx'>
             {uploadedFiles.map((fileName, index) => (
               <div
                 key={index}
-                className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-md border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] px-3 py-2 text-[var(--modern-text,#0f172a)]"
+                className="flex min-w-0 items-center justify-between gap-3 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] px-3.5 py-2.5 text-[var(--modern-text)]"
               >
-                <p className='m-0 flex min-w-0 items-center gap-2 break-words text-sm'>
-                  <Icons.PDFs size={20} />
-                  {fileName}
+                <p className='m-0 flex min-w-0 items-center gap-2.5 break-words text-sm font-medium'>
+                  <Icons.PDFs size={20} className='text-[var(--theme-color)] shrink-0' />
+                  <span className='truncate'>{fileName}</span>
                 </p>
                 <Dropdown>
                   <Dropdown.Toggle as={CustomToggle} />
                   <Dropdown.Menu align='end'>
                     <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(supportingDocIDs[index])}>
-                      <Icons.View size={20} />
+                      <Icons.View size={18} />
                       {t("uploadDocFlow.view")}
                     </Dropdown.Item>
-                    <Dropdown.Item className='flex items-center gap-2' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
-                      <Icons.DeleteAction size={20} />
+                    <Dropdown.Item className='flex items-center gap-2 text-rose-500 hover:text-rose-600' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
+                      <Icons.DeleteAction size={18} />
                       {t("uploadDocFlow.delete")}
                     </Dropdown.Item>
                   </Dropdown.Menu>
@@ -264,12 +270,16 @@ const UploadSupportingDocs = ({ show, onClose, masterDocID, registerSignID }) =>
               </div>
             ))}
           </div>
-          <div className='newComment d-flex align-items-center justify-content-center w-100 p-3 py-4'>
-            <button variant='secondary' className='resetBtn w-100' onClick={handleCloseModal}>
-              {t("uploadDocFlow.close")}
-            </button>
-          </div>
         </Offcanvas.Body>
+        <div className='border-t border-[var(--modern-border)] bg-[var(--modern-card)] px-5 py-3.5 flex items-center justify-end gap-3 mt-auto sticky bottom-0 z-10'>
+          <button
+            type='button'
+            className='px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors'
+            onClick={handleCloseModal}
+          >
+            {t("uploadDocFlow.close")}
+          </button>
+        </div>
       </Offcanvas>
 
       {/* View modal */}

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import verificationService from "@/services/verificationService";
+import { Download, Loader2 } from "lucide-react";
 
 const ShareDownloadModal = ({ show, handleClose, dataRow }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -130,11 +131,15 @@ const ShareDownloadModal = ({ show, handleClose, dataRow }) => {
     <>
 
       <Modal show={show} onHide={handleClose} dialogClassName='custom-modal-width'>
-        <Modal.Header>
-          <h4>{t("viewModal.downloadDoc")}</h4>
+        <Modal.Header closeButton className='border-b border-[var(--modern-border)] px-5 py-4'>
+          <Modal.Title className='text-base font-semibold text-[var(--modern-text)] m-0'>
+            {t("viewModal.downloadDoc")}
+          </Modal.Title>
         </Modal.Header>
-        <Modal.Body className='p-3'>
-          <strong>{t("viewModal.selectDoc")}</strong>
+        <Modal.Body className='p-5 space-y-3 text-[var(--modern-text)]'>
+          <p className='text-xs font-semibold text-[var(--modern-muted)] uppercase tracking-wider mb-2'>
+            {t("viewModal.selectDoc")}
+          </p>
 
           {dataRow && dataRow.isDocShared && (
             <div className='form-check mt-3'>
@@ -148,7 +153,7 @@ const ShareDownloadModal = ({ show, handleClose, dataRow }) => {
           {dataRow && dataRow.isAuditTrailDocShared && (
             <div className='form-check'>
               <input type='checkbox' className='form-check-input' id='downloadAuditTrail' checked={selectedCheckboxes.AuditTrail} onChange={() => handleCheckboxChange("AuditTrail")} />
-              <label className='form-check-label' htmlFor='AuditTrail'>
+              <label className='form-check-label' htmlFor='downloadAuditTrail'>
                 {t("viewModal.auditTrail")}
               </label>
             </div>
@@ -164,11 +169,22 @@ const ShareDownloadModal = ({ show, handleClose, dataRow }) => {
           )}
         </Modal.Body>
 
-        <Modal.Footer>
-          <button className='modalCancelButton ' onClick={handleClose} style={{ height: "40px", width: "45%" }}>
+        <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]'>
+          <button 
+            type='button'
+            className='px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] active:scale-[0.98] transition-colors shadow-none disabled:opacity-50' 
+            onClick={handleClose}
+            disabled={isLoading}
+          >
             {t("viewModal.close")}
           </button>
-          <button className='applyBtn' onClick={handleDownload} disabled={isDownloadButtonDisabled()}>
+          <button 
+            type='button'
+            className='inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white border-0 hover:bg-[var(--theme-color)] hover:opacity-90 active:scale-[0.98] disabled:opacity-40 transition-all shadow-none' 
+            onClick={handleDownload} 
+            disabled={isDownloadButtonDisabled() || isLoading}
+          >
+            {isLoading ? <Loader2 className='w-4 h-4 animate-spin' /> : <Download size={16} />}
             {t("viewModal.download")}
           </button>
         </Modal.Footer>

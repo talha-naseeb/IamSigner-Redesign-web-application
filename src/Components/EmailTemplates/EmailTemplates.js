@@ -509,7 +509,7 @@ const EmailTemplates = () => {
             </div>
           )}
         </Modal.Body>
-        <Modal.Footer className='d-flex justify-content-between'>
+        <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]'>
           <button
             type='button'
             className='email-btn-secondary'

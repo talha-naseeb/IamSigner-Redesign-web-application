@@ -19,21 +19,21 @@ export const Button = forwardRef(function ShadcnButton(
 ) {
   const Component = as || (href ? "a" : "button");
   const variantClass = {
-    primary: "bg-[var(--modern-primary,#6366f1)] text-white hover:opacity-90",
-    success: "bg-[var(--modern-success,#16a34a)] text-white hover:opacity-90",
-    danger: "bg-[var(--modern-danger,#ef4444)] text-white hover:opacity-90",
-    destructive: "bg-[var(--modern-danger,#ef4444)] text-white hover:opacity-90",
-    warning: "bg-[var(--modern-warning,#f59e0b)] text-[var(--modern-text,#0f172a)] hover:opacity-90",
-    info: "bg-[var(--modern-primary,#6366f1)] text-white hover:opacity-90",
-    secondary: "bg-[var(--modern-raised,#f1f5f9)] text-[var(--modern-text,#0f172a)] hover:brightness-95",
-    light: "bg-[var(--modern-raised,#f1f5f9)] text-[var(--modern-text,#0f172a)] hover:brightness-95",
-    dark: "bg-[var(--modern-text,#0f172a)] text-[var(--modern-card,#fff)] hover:opacity-90",
+    primary: "border-0 bg-[var(--modern-primary,#6366f1)] text-white hover:opacity-90",
+    success: "border-0 bg-[var(--modern-success,#16a34a)] text-white hover:opacity-90",
+    danger: "border-0 bg-[var(--modern-danger,#ef4444)] text-white hover:opacity-90",
+    destructive: "border-0 bg-[var(--modern-danger,#ef4444)] text-white hover:opacity-90",
+    warning: "border-0 bg-[var(--modern-warning,#f59e0b)] text-[var(--modern-text,#0f172a)] hover:opacity-90",
+    info: "border-0 bg-[var(--modern-primary,#6366f1)] text-white hover:opacity-90",
+    secondary: "border-0 bg-[var(--modern-raised,#f1f5f9)] text-[var(--modern-text,#0f172a)] hover:brightness-95",
+    light: "border-0 bg-[var(--modern-raised,#f1f5f9)] text-[var(--modern-text,#0f172a)] hover:brightness-95",
+    dark: "border-0 bg-[var(--modern-text,#0f172a)] text-[var(--modern-card,#fff)] hover:opacity-90",
     outline: "border border-[var(--modern-border-strong,#cbd5e1)] bg-transparent text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)]",
     "outline-secondary": "border border-[var(--modern-border-strong,#cbd5e1)] bg-transparent text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)]",
-    link: "bg-transparent text-[var(--modern-primary,#6366f1)] underline-offset-4 hover:underline",
-    text: "bg-transparent text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)]",
-    none: "bg-transparent text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)]",
-  }[variant] || "bg-[var(--modern-primary,#6366f1)] text-white hover:opacity-90";
+    link: "border-0 bg-transparent text-[var(--modern-primary,#6366f1)] underline-offset-4 hover:underline",
+    text: "border-0 bg-transparent text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)]",
+    none: "border-0 bg-transparent",
+  }[variant] || "border-0 bg-[var(--modern-primary,#6366f1)] text-white hover:opacity-90";
   const sizeClass = { sm: "min-h-8 px-3 text-sm", lg: "min-h-11 px-5", md: "min-h-9 px-4" }[size] || "min-h-9 px-4";
   return element(Component, "button", {
     ...props,

@@ -1,10 +1,47 @@
 import React, { useState, useEffect } from "react";
 import "./AuditTrailInternal.css";
 import { useTheme } from "@/Context/ThemeContext";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@/Components/UI/dataPrimitives";
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import { Icons } from "@/assets/Icons";
 import { useTranslation } from "react-i18next";
 import verificationService from "@/services/verificationService";
+
+const renderStatusBadge = (status) => {
+  const s = String(status || "").toLowerCase();
+  let dotColor = "bg-slate-400";
+  let textColor = "text-[var(--modern-text)]";
+  let bgColor = "bg-[var(--modern-raised)]";
+  let borderColor = "border-[var(--modern-border)]";
+
+  if (s.includes("signed") || s.includes("completed") || s.includes("success")) {
+    dotColor = "bg-emerald-500";
+    textColor = "text-emerald-700 dark:text-emerald-400";
+    bgColor = "bg-emerald-500/10";
+    borderColor = "border-emerald-500/20";
+  } else if (s.includes("pending") || s.includes("wait")) {
+    dotColor = "bg-amber-500";
+    textColor = "text-amber-700 dark:text-amber-400";
+    bgColor = "bg-amber-500/10";
+    borderColor = "border-amber-500/20";
+  } else if (s.includes("decline") || s.includes("reject") || s.includes("failed")) {
+    dotColor = "bg-rose-500";
+    textColor = "text-rose-700 dark:text-rose-400";
+    bgColor = "bg-rose-500/10";
+    borderColor = "border-rose-500/20";
+  } else if (s.includes("view") || s.includes("open") || s.includes("send")) {
+    dotColor = "bg-blue-500";
+    textColor = "text-blue-700 dark:text-blue-400";
+    bgColor = "bg-blue-500/10";
+    borderColor = "border-blue-500/20";
+  }
+
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${bgColor} ${textColor} ${borderColor}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
+      <span>{status || "—"}</span>
+    </span>
+  );
+};
 
 export default function AuditTrail({ url }) {
   const { t } = useTranslation();
@@ -99,8 +136,8 @@ export default function AuditTrail({ url }) {
             <TableBody>
               <TableRow>
                 <TableCell>{signatoryData.createdOn ? formatDate(signatoryData.createdOn) : ""}</TableCell>
-                <TableCell>{signatoryData.docNames}</TableCell>
-                <TableCell>{signatoryData.masterDocIDs}</TableCell>
+                <TableCell className='font-medium text-[var(--modern-text)]'>{signatoryData.docNames}</TableCell>
+                <TableCell className='text-[var(--modern-muted)]'>{signatoryData.masterDocIDs}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -124,9 +161,13 @@ export default function AuditTrail({ url }) {
             <TableBody>
               <TableRow>
                 <TableCell>{signatoryData.createdOn ? formatDate(signatoryData.createdOn) : ""}</TableCell>
-                <TableCell>{signatoryData.senderName}</TableCell>
-                <TableCell>{signatoryData.senderEmail}</TableCell>
-                <TableCell>{anyPending ? "Pending" : allSigned ? "Signed" : signatoryData.docStatus}</TableCell>
+                <TableCell>
+                  <UserInitialsBadge name={signatoryData.senderName} />
+                </TableCell>
+                <TableCell className='text-[var(--modern-muted)]'>{signatoryData.senderEmail}</TableCell>
+                <TableCell>
+                  {renderStatusBadge(anyPending ? "Pending" : allSigned ? "Signed" : signatoryData.docStatus)}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -158,9 +199,11 @@ export default function AuditTrail({ url }) {
               {receivers.map((receiver, index) => (
                 <TableRow key={index}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell>{receiver.receiverName}</TableCell>
-                  <TableCell>{receiver.receiverEmail}</TableCell>
-                  <TableCell>{receiver.signStatus}</TableCell>
+                  <TableCell>
+                    <UserInitialsBadge name={receiver.receiverName} />
+                  </TableCell>
+                  <TableCell className='text-[var(--modern-muted)]'>{receiver.receiverEmail}</TableCell>
+                  <TableCell>{renderStatusBadge(receiver.signStatus)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -193,9 +236,9 @@ export default function AuditTrail({ url }) {
               {data.map((row, index) => (
                 <TableRow key={index}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
-                  <TableCell>{row.status}</TableCell>
-                  <TableCell>{row.message}</TableCell>
+                  <TableCell className='text-[var(--modern-muted)]'>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
+                  <TableCell>{renderStatusBadge(row.status)}</TableCell>
+                  <TableCell className='text-sm text-[var(--modern-text)]'>{row.message}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

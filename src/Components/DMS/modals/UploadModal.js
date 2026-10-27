@@ -306,11 +306,11 @@ const UploadModal = ({ show, onHide, defaultFolderId = "", onUpload }) => {
             </>
           ) : null}
         </Modal.Body>
-        <Modal.Footer className="d-flex justify-content-between">
+        <Modal.Footer className="border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]">
           <Button
             type="button"
             variant="none"
-            className="modalCancelButton"
+            className="px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors"
             onClick={onHide}
             disabled={isUploading}
           >
@@ -319,11 +319,11 @@ const UploadModal = ({ show, onHide, defaultFolderId = "", onUpload }) => {
           <Button
             type="submit"
             variant="none"
-            className="applyBtn"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity"
             disabled={!selectedFiles.length || isUploading}
           >
             {isUploading ? (
-              <span className="d-inline-flex align-items-center gap-2">
+              <span className="inline-flex items-center gap-2">
                 <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
                 <span>
                   {t("DMS.uploading") || "Uploading..."} {uploadProgress > 0 ? `(${uploadProgress}%)` : ""}

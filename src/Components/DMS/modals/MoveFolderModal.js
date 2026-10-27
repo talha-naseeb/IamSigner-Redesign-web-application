@@ -143,11 +143,11 @@ const MoveFolderModal = ({
           </Form.Group>
         </Modal.Body>
 
-        <Modal.Footer className="d-flex justify-content-between gap-2">
+        <Modal.Footer className="border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]">
           <Button
             type="button"
             variant="none"
-            className="modalCancelButton"
+            className="px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors"
             onClick={handleClose}
             disabled={saving}
           >
@@ -156,7 +156,7 @@ const MoveFolderModal = ({
           <Button
             type="submit"
             variant="none"
-            className="applyBtn"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity"
             disabled={saving}
           >
             {saving ? <Icons.Loading className="animate-spin" size={16} /> : null}

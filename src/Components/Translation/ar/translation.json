@@ -452,6 +452,7 @@
     "noMatch": "لم يتم العثور على نتائج مطابقة"
   },
   "shareModal": {
+    "to": "إلى",
     "shareDoc": "مشاركة المستند",
     "chooseDoc": "اختر المستندات التي تريد مشاركتها",
     "errshareFile": "خطأ في مشاركة المستند",
@@ -1349,7 +1350,17 @@
     "selectEmailPlaceholder": "اختر عنوان البريد الإلكتروني",
     "selectedEmails": "البريد الإلكتروني المحدد",
     "subTitle": "حذف المجلد",
-    "emailAlreadyAdded": "البريد الإلكتروني مضاف بالفعل"
+    "emailAlreadyAdded": "البريد الإلكتروني مضاف بالفعل",
+    "manageFoldersSubtitle": "تنظيم والوصول إلى مجلدات ومستندات مساحة العمل ومشاركتها",
+    "noDescription": "لا يوجد وصف مقدم.",
+    "readMore": "قراءة المزيد",
+    "users": "مستخدمين",
+    "subfolders": "مجلدات فرعية",
+    "files": "ملفات",
+    "file": "ملف",
+    "subfolder": "مجلد فرعي",
+    "sharedWithUsers": "تمت المشاركة مع {{count}} مستخدمين",
+    "documentsCount": "مستندات"
   },
   "AIAssistant": {
     "AIAssistant": "المساعد الذكي",
@@ -1959,6 +1970,7 @@
     "sharing": "جارٍ المشاركة..."
   },
   "common": {
+    "close": "إغلاق",
     "retry": "إعادة المحاولة",
     "back": "رجوع",
     "loading": "جارٍ التحميل...",

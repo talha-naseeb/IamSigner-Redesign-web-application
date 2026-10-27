@@ -777,33 +777,62 @@ table,
 }
 
 .folder-view-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem;
+  background: var(--modern-raised);
+  border: 1px solid var(--modern-border);
+  border-radius: 0.75rem;
 }
 
 .folder-view-tab {
-  min-height: 2.25rem !important;
-  border: 1px solid var(--modern-border) !important;
-  border-radius: var(--radius-full, 9999px) !important;
-  background: var(--modern-raised) !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.125rem !important;
+  padding: 0.375rem 0.875rem !important;
+  border: 1px solid transparent !important;
+  border-radius: 0.5rem !important;
+  background: transparent !important;
   color: var(--modern-muted) !important;
   font-family: var(--modern-font-ui);
   font-size: 0.8125rem;
   font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
 }
 
 .folder-view-tab:hover {
-  border-color: var(--modern-violet) !important;
-  background: var(--modern-violet-soft) !important;
-  color: var(--modern-violet) !important;
+  color: var(--modern-text) !important;
+  background: color-mix(in srgb, var(--modern-card) 60%, transparent) !important;
 }
 
 .folder-view-tab.is-active {
-  border-color: var(--modern-violet) !important;
-  background: var(--modern-violet-soft) !important;
-  color: var(--modern-violet) !important;
+  border-color: var(--modern-border) !important;
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
+  box-shadow: none !important;
+}
+
+.folder-view-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background: var(--modern-raised);
+  border: 1px solid var(--modern-border);
+  color: var(--modern-muted);
+  transition: all 0.15s ease-in-out;
+}
+
+.folder-view-tab.is-active .folder-view-tab-badge {
+  background: color-mix(in srgb, var(--theme-color) 12%, var(--modern-card));
+  border-color: color-mix(in srgb, var(--theme-color) 30%, var(--modern-border));
+  color: var(--theme-color);
 }
 
 .ui-pagination,
@@ -2386,3 +2415,18 @@ body:not(.recaptcha-auth-page) .grecaptcha-badge {
   border-radius: 50%;
   background: var(--status-color, var(--modern-violet));
 }
+
+/* ==========================================================================
+   Folder Module Breadcrumbs & Button Reset (guard for preflight: false)
+   ========================================================================== */
+.folder-route button.border-0.bg-transparent,
+.folder-document-route button.border-0.bg-transparent,
+.folder-subfolder-route button.border-0.bg-transparent {
+  background: transparent !important;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none;
+  appearance: none;
+}
+

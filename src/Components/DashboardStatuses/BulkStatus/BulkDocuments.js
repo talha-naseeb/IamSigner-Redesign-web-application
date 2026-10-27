@@ -385,12 +385,20 @@ const BulkDocuments = () => {
             </div>
           </div>
         </Modal.Body>
-        <Modal.Footer className='d-flex justify-content-between'>
-          <Button variant='none' className='modalCancelButton' onClick={() => setShowDownloadModal(false)}>
+        <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]'>
+          <Button 
+            variant='none' 
+            className='px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors' 
+            onClick={() => setShowDownloadModal(false)}
+          >
             {t("dashboardCardStatuses.cancel")}
           </Button>
-          <Button className='applyBtn' variant='none' onClick={handleDownloadBulkDocuments}>
-            <Icons.Download className='me-2' size={16} />
+          <Button 
+            className='inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity' 
+            variant='none' 
+            onClick={handleDownloadBulkDocuments}
+          >
+            <Icons.Download size={16} />
             {t("dashboardCardStatuses.download")}
           </Button>
         </Modal.Footer>

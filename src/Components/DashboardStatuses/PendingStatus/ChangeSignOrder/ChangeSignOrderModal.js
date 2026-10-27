@@ -925,7 +925,7 @@ const ChangeOrderModal = ({ show, handleClose, registerSignID, signedDocKey }) =
       </Modal.Body>
 
       {/* Enhanced Footer */}
-      <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-between bg-[var(--modern-card)]'>
+      <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]'>
         <Button
           variant='secondary'
           onClick={handleClose}

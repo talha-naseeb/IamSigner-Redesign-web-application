@@ -1,9 +1,9 @@
 .audit-trail-internal {
   box-sizing: border-box;
   width: 100%;
-  max-width: 1320px;
+  max-width: 100%;
   margin-inline: auto;
-  padding: clamp(1rem, 3vw, 2rem);
+  padding: clamp(1rem, 2.5vw, 2rem);
   background: var(--modern-bg);
   color: var(--modern-text);
   font-family: var(--modern-font-ui);

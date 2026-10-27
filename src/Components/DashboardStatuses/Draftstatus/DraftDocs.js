@@ -14,6 +14,7 @@ import { Icons } from "@/assets/Icons";
 import dashboardService from "@/services/dashboardService";
 import documentService from "@/services/documentService";
 import DocumentStatusTable, { formatTableDate } from "@/Components/DashboardStatuses/DocumentStatusTable";
+import { FileText, Check, Loader2 } from "lucide-react";
 
 const DraftStatus = () => {
   const { t } = useTranslation();
@@ -280,25 +281,43 @@ const DraftStatus = () => {
         />
       </Grid>
       <Modal show={showDownloadModal} backdrop='static' keyboard={false} onHide={handleDownClose} dialogClassName='custom-modal-width'>
-        <Modal.Header>
-          <Modal.Title>{t("dashboardCardStatuses.viewDocument")}</Modal.Title>
+        <Modal.Header closeButton className='border-b border-[var(--modern-border)] px-5 py-4 bg-[var(--modern-card)]'>
+          <Modal.Title className='text-base font-semibold text-[var(--modern-text)]'>{t("dashboardCardStatuses.viewDocument")}</Modal.Title>
         </Modal.Header>
-        <Modal.Body className='px-3 py-2'>
-          <p>{t("dashboardCardStatuses.selectDoc")}</p>
-          {docNameview.map((doc, index) => (
-            <div className='form-check' key={index}>
-              <input type='checkbox' className='form-check-input' id={`checkbox${index}`} checked={selectedDocument === doc} onChange={() => handleCheckboxChange(doc)} />
-              <label className='form-check-label' htmlFor={`checkbox${index}`}>
-                {doc.docName}
-              </label>
-            </div>
-          ))}
+        <Modal.Body className='p-5 bg-[var(--modern-card)]'>
+          <p className='text-xs text-[var(--modern-muted)] mb-3'>{t("dashboardCardStatuses.selectDoc")}</p>
+          <div className='space-y-2 max-h-60 overflow-y-auto'>
+            {docNameview.map((doc, index) => (
+              <div
+                key={index}
+                onClick={() => handleCheckboxChange(doc)}
+                className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${
+                  selectedDocument === doc ? "bg-[var(--modern-raised)] border-[var(--theme-color)]" : "bg-[var(--modern-card)] border-[var(--modern-border)] hover:bg-[var(--modern-raised)]"
+                }`}
+              >
+                <div className='flex items-center gap-2.5 min-w-0'>
+                  <FileText size={16} className={selectedDocument === doc ? "text-[var(--theme-color)]" : "text-[var(--modern-muted)]"} />
+                  <span className='text-xs font-medium text-[var(--modern-text)] truncate'>{doc.docName}</span>
+                </div>
+                {selectedDocument === doc && <Check size={16} className='text-[var(--theme-color)] shrink-0' />}
+              </div>
+            ))}
+          </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant='none' className='modalCancelButton' onClick={handleDownClose}>
+        <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]'>
+          <Button
+            variant='none'
+            className='px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors'
+            onClick={handleDownClose}
+          >
             {t("dashboardCardStatuses.cancel")}
           </Button>
-          <Button variant='none' className='applyBtn' onClick={handleView} disabled={downloadDisabled}>
+          <Button
+            variant='none'
+            className='inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity'
+            onClick={handleView}
+            disabled={downloadDisabled}
+          >
             {t("dashboardCardStatuses.confirm")}
           </Button>
         </Modal.Footer>

@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import verificationService from "@/services/verificationService";
 import { useParams } from "react-router-dom";
-import { Download, File, FileText, FilePlus } from "lucide-react";
+import { Download, File, FileText, FilePlus, Loader2 } from "lucide-react";
 
 const DownloadModal = ({ show, handleClose, dataRow }) => {
   const { docName: docNameFromParams } = useParams();
@@ -239,12 +239,22 @@ const DownloadModal = ({ show, handleClose, dataRow }) => {
             </div>
           )}
         </Modal.Body>
-        <Modal.Footer className='d-flex justify-content-between'>
-          <Button variant='none' className='modalCancelButton' onClick={handleClose} disabled={isLoading}>
+        <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3'>
+          <Button 
+            variant='none' 
+            className='px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors' 
+            onClick={handleClose} 
+            disabled={isLoading}
+          >
             {t("viewModal.close")}
           </Button>
-          <Button className='applyBtn' variant='none' onClick={handleDownload} disabled={isDownloadButtonDisabled() || isLoading}>
-            <Download className='me-2' size={16} />
+          <Button 
+            className='inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity' 
+            variant='none' 
+            onClick={handleDownload} 
+            disabled={isDownloadButtonDisabled() || isLoading}
+          >
+            {isLoading ? <Loader2 className='w-4 h-4 animate-spin' /> : <Download size={16} />}
             {t("viewModal.download")}
           </Button>
         </Modal.Footer>

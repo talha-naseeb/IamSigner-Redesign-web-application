@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form } from "@/Components/UI/shadcnCompat";
+import { Modal, Form } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
 import userService from "@/services/userService";
 import dashboardService from "@/services/dashboardService";
+import { Loader2 } from "lucide-react";
 import { Icons } from "@/assets/Icons/index";
 
 const TransferOwnershipModal = ({ show, handleClose, masterDocID, docName }) => {
@@ -172,13 +173,24 @@ const TransferOwnershipModal = ({ show, handleClose, masterDocID, docName }) => 
           </div>
         </Modal.Body>
 
-        <Modal.Footer className='flex justify-between pt-3 border-t border-[var(--modern-border)]'>
-          <Button variant='outline' onClick={handleCloseModal} disabled={isLoading}>
+        <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]'>
+          <button
+            type='button'
+            onClick={handleCloseModal}
+            disabled={isLoading}
+            className='px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors disabled:opacity-50'
+          >
             {t("dashboardCardStatuses.cancel")}
-          </Button>
-          <Button variant='primary' onClick={handleTransfer} disabled={isLoading || !newOwner || !validateEmail(newOwner)}>
-            {t("dashboardCardStatuses.confirm")}
-          </Button>
+          </button>
+          <button
+            type='button'
+            onClick={handleTransfer}
+            disabled={isLoading || !newOwner || !validateEmail(newOwner)}
+            className='inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity'
+          >
+            {isLoading && <Loader2 size={14} className='animate-spin' />}
+            <span>{t("dashboardCardStatuses.confirm")}</span>
+          </button>
         </Modal.Footer>
       </Modal>
     </>

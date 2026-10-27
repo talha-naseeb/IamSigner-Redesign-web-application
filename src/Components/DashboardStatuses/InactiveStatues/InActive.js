@@ -15,6 +15,7 @@ import { Icons } from "@/assets/Icons";
 import dashboardService from "@/services/dashboardService";
 import documentService from "@/services/documentService";
 import DocumentStatusTable, { formatTableDate } from "@/Components/DashboardStatuses/DocumentStatusTable";
+import { Loader2 } from "lucide-react";
 
 const InActive = () => {
   const { t } = useTranslation();
@@ -327,27 +328,69 @@ const InActive = () => {
       />
 
       <Modal show={showViewModal} backdrop='static' keyboard={false} onHide={handleDownClose} dialogClassName='custom-modal-width'>
-        <Modal.Header>
-          <Modal.Title>{t("dashboardCardStatuses.viewDocument")}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className='px-3 py-2'>
-          <p>{t("dashboardCardStatuses.selectDoc")}</p>
-          {docNameview.map((doc, index) => (
-            <div className='form-check' key={index}>
-              <input type='checkbox' className='form-check-input' id={`checkbox${index}`} checked={selectedDocument === doc} onChange={() => setSelectedDocument(doc)} />
-              <label className='form-check-label' htmlFor={`checkbox${index}`}>
-                {doc.docName}
-              </label>
+        <Modal.Header closeButton className='border-b border-[var(--modern-border)] px-5 py-4'>
+          <div className='flex items-center gap-3'>
+            <div className='flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--modern-raised)] text-[var(--theme-color)] border border-[var(--modern-border)]'>
+              <Icons.View size={20} />
             </div>
-          ))}
+            <div>
+              <Modal.Title className='text-base font-semibold text-[var(--modern-text)] m-0'>
+                {t("dashboardCardStatuses.viewDocument")}
+              </Modal.Title>
+            </div>
+          </div>
+        </Modal.Header>
+        <Modal.Body className='px-5 py-4 space-y-4'>
+          <p className='text-xs text-[var(--modern-muted)] m-0'>{t("dashboardCardStatuses.selectDoc")}</p>
+          <div className='space-y-2'>
+            {docNameview.map((doc, index) => {
+              const isSelected = selectedDocument === doc;
+              return (
+                <div
+                  key={index}
+                  onClick={() => setSelectedDocument(isSelected ? null : doc)}
+                  className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
+                    isSelected
+                      ? "border-[var(--theme-color)] bg-[var(--modern-raised)] text-[var(--modern-text)]"
+                      : "border-[var(--modern-border)] bg-[var(--modern-card)] hover:bg-[var(--modern-raised)] text-[var(--modern-text)]"
+                  }`}
+                >
+                  <div
+                    className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
+                      isSelected
+                        ? "bg-[var(--theme-color)] border-[var(--theme-color)] text-white"
+                        : "border-[var(--modern-border-strong)] bg-[var(--modern-bg)]"
+                    }`}
+                  >
+                    {isSelected && <span className='text-xs font-bold'>✓</span>}
+                  </div>
+                  <div className='flex items-center gap-2.5 min-w-0 flex-1'>
+                    <Icons.PDFs size={18} className='text-[var(--theme-color)] shrink-0' />
+                    <span className='text-sm font-medium truncate'>{doc.docName}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant='none' className='modalCancelButton' onClick={handleDownClose}>
+        <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]'>
+          <button
+            type='button'
+            className='px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors'
+            onClick={handleDownClose}
+            disabled={isLoading}
+          >
             {t("dashboardCardStatuses.cancel")}
-          </Button>
-          <Button variant='none' className='applyBtn' onClick={handleView} disabled={!selectedDocument}>
-            {t("dashboardCardStatuses.confirm")}
-          </Button>
+          </button>
+          <button
+            type='button'
+            className='inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity'
+            onClick={handleView}
+            disabled={!selectedDocument || isLoading}
+          >
+            {isLoading && <Loader2 size={14} className='animate-spin' />}
+            <span>{t("dashboardCardStatuses.confirm")}</span>
+          </button>
         </Modal.Footer>
       </Modal>
     </Grid>

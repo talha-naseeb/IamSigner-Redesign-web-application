@@ -136,20 +136,24 @@ const ShareFolderModal = ({ show, handleClose, folderId, GetFolders, GetShareWit
 
   return (
     <Modal show={show} onHide={handleCloseModal} backdrop='static' keyboard={false} dialogClassName='custom-modal-width'>
-      <Modal.Header closeButton>
-        <div className='header-content'>
-          <div className='header-icon'>
-            <Icons.Folders size={24} />
+      <Modal.Header closeButton className='border-b border-[var(--modern-border)] px-5 py-4'>
+        <div className='flex items-center gap-3'>
+          <div className='flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--modern-raised)] text-[var(--theme-color)] border border-[var(--modern-border)]'>
+            <Icons.Share size={20} />
           </div>
-          <div className='header-text'>
-            <Modal.Title>{t("Folder.Sharefolder")}</Modal.Title>
+          <div className='flex-1'>
+            <Modal.Title className='text-base font-semibold text-[var(--modern-text)] m-0'>
+              {t("Folder.Sharefolder")}
+            </Modal.Title>
           </div>
         </div>
       </Modal.Header>
-      <Modal.Body className='p-4'>
+      <Modal.Body className='p-5 space-y-4'>
         <Form>
-          <Form.Group className='mb-4 position-relative'>
-            <Form.Label className='fw-semibold mb-2'>To</Form.Label>
+          <Form.Group className='mb-3 position-relative'>
+            <Form.Label className='block text-xs font-semibold uppercase tracking-wider text-[var(--modern-muted)] mb-1.5'>
+              {t("shareModal.to")}
+            </Form.Label>
             <div className='email-input-container'>
               <div className='email-chips-input'>
                 {emails.map((email, index) => (
@@ -192,18 +196,27 @@ const ShareFolderModal = ({ show, handleClose, folderId, GetFolders, GetShareWit
                 </div>
               )}
             </div>
-            {emailError && <span className='text-danger small mt-1 d-block'>{emailError}</span>}
+            {emailError && <span className='text-rose-500 text-xs mt-1 block'>{emailError}</span>}
           </Form.Group>
         </Form>
-        <p className='mb-0'>{t("Folder.shareFolderUsers")}</p>
+        <p className='text-xs text-[var(--modern-muted)] m-0'>{t("Folder.shareFolderUsers")}</p>
       </Modal.Body>
-      <Modal.Footer className='d-flex justify-content-between'>
-        <Button variant='none' className='modalCancelButton' onClick={handleCloseModal}>
+      <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]'>
+        <button
+          type='button'
+          onClick={handleCloseModal}
+          className='px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] active:scale-[0.98] transition-colors shadow-none'
+        >
           {t("Folder.Cancel")}
-        </Button>
-        <Button className='applyBtn' variant='none' onClick={handleShareClick} disabled={isShareDisabled}>
-          {t("Folder.share")}
-        </Button>
+        </button>
+        <button
+          type='button'
+          onClick={handleShareClick}
+          disabled={isShareDisabled}
+          className='inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white border-0 hover:bg-[var(--theme-color)] hover:opacity-90 active:scale-[0.98] disabled:opacity-40 transition-all shadow-none'
+        >
+          <span>{t("Folder.share")}</span>
+        </button>
       </Modal.Footer>
     </Modal>
   );
