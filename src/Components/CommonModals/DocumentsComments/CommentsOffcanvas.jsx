@@ -262,29 +262,27 @@ export const CommentsOffcanvas = ({
                           }
                         }}
                       />
-                      <div className='flex items-center justify-end gap-2'>
-                        <Button
-                          variant='secondary'
-                          size='sm'
+                      <div className='flex items-center justify-end gap-2 pt-1'>
+                        <button
+                          type='button'
                           onClick={handleCancelEdit}
                           disabled={isSavingEdit}
-                          className='px-3 py-1 text-xs'
+                          className='px-3 py-1.5 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] active:scale-95 transition-all shadow-none cursor-pointer [appearance:none] [-webkit-appearance:none]'
                         >
                           {t("uploadDocFlow.cancel") || "Cancel"}
-                        </Button>
-                        <Button
-                          variant='default'
-                          size='sm'
+                        </button>
+                        <button
+                          type='button'
                           onClick={() => handleSaveEdit(comment.docCommentsID)}
                           disabled={isSavingEdit || !editedText.trim()}
-                          className='px-3 py-1 text-xs bg-[var(--modern-primary)] text-white'
+                          className='inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white border-0 hover:bg-[var(--theme-color)] hover:opacity-90 disabled:opacity-40 active:scale-95 transition-all shadow-none cursor-pointer [appearance:none] [-webkit-appearance:none]'
                         >
                           {isSavingEdit ? (
                             <Loader2 size={13} className='animate-spin' />
                           ) : (
                             t("addComment.save") || "Save"
                           )}
-                        </Button>
+                        </button>
                       </div>
                     </div>
                   ) : (
@@ -311,15 +309,15 @@ export const CommentsOffcanvas = ({
 
                         {/* Owner Actions */}
                         {isOwner && (
-                          <div className='flex items-center gap-1 shrink-0'>
+                          <div className='flex items-center gap-1.5 shrink-0'>
                             <button
                               type='button'
                               onClick={() => handleStartEdit(comment)}
-                              className='p-1 rounded-md text-[var(--modern-muted)] hover:text-[var(--modern-text)] hover:bg-[var(--modern-card)] transition-colors'
+                              className='w-7 h-7 inline-flex items-center justify-center rounded-lg border border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-muted)] hover:text-[var(--theme-color)] hover:border-[var(--theme-color)] hover:bg-[var(--modern-raised)] active:scale-95 transition-all shadow-none cursor-pointer [appearance:none] [-webkit-appearance:none]'
                               title={t("addComment.edit") || "Edit"}
                               aria-label='Edit comment'
                             >
-                              <Pencil size={13} />
+                              <Pencil size={13.5} />
                             </button>
                             <button
                               type='button'
@@ -327,11 +325,11 @@ export const CommentsOffcanvas = ({
                                 setDeletingId(comment.docCommentsID);
                                 setShowConfirmModal(true);
                               }}
-                              className='p-1 rounded-md text-[var(--modern-muted)] hover:text-rose-500 hover:bg-[var(--modern-card)] transition-colors'
+                              className='w-7 h-7 inline-flex items-center justify-center rounded-lg border border-rose-200 dark:border-rose-900/40 bg-[var(--modern-card)] text-rose-500 hover:text-rose-600 hover:border-rose-300 dark:hover:border-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 active:scale-95 transition-all shadow-none cursor-pointer [appearance:none] [-webkit-appearance:none]'
                               title={t("uploadDocFlow.delete") || "Delete"}
                               aria-label='Delete comment'
                             >
-                              <Trash2 size={13} />
+                              <Trash2 size={13.5} />
                             </button>
                           </div>
                         )}
@@ -385,11 +383,11 @@ export const CommentsOffcanvas = ({
                 }
               }}
             />
-            <Button
+            <button
               type='button'
               onClick={handleAddComment}
               disabled={isSubmitting || !newComment.trim()}
-              className='p-2 rounded-lg bg-[var(--modern-primary)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity shrink-0'
+              className='p-2 rounded-lg bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-40 active:scale-95 transition-all shrink-0 border-0 cursor-pointer [appearance:none] [-webkit-appearance:none]'
               aria-label='Send comment'
             >
               {isSubmitting ? (
@@ -397,7 +395,7 @@ export const CommentsOffcanvas = ({
               ) : (
                 <Send size={16} style={{ transform: isRtl ? "scaleX(-1)" : "none" }} />
               )}
-            </Button>
+            </button>
           </div>
           <p className='text-[10px] text-[var(--modern-muted)] m-0 mt-1.5 text-center'>
             {t("Comments.pressEnter") || "Press Enter to submit, Shift+Enter for new line"}

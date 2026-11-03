@@ -19,15 +19,20 @@ const UserDocuments = ({ documentMetrics = [] }) => {
   const textPrimary = getCssVar("--modern-text", theme === "dark" ? "#e9e8f5" : "#201b32");
   const textSecondary = getCssVar("--modern-muted", theme === "dark" ? "#9a98b8" : "#756f89");
   const cardBg = getCssVar("--modern-card", theme === "dark" ? "#12102a" : "#ffffff");
-  const metricColors = useMemo(() => ({
-    completedCount: getCssVar("--modern-success", "#16a34a"),
-    pendingCount: getCssVar("--modern-warning", "#f59e0b"),
-    draftCount: getCssVar("--modern-blue", "#4c8bff"),
-    sharedCount: getCssVar("--modern-cyan", "#078b99"),
-    declineCount: getCssVar("--modern-danger", "#ef4444"),
-    recalledCount: getCssVar("--modern-pink", "#d8509b"),
-    inActiveCount: getCssVar("--modern-muted", "#756f89"),
-  }), [theme]);
+
+  const metricColors = useMemo(
+    () => ({
+      completedCount: getCssVar("--modern-success", "#16a34a"),
+      pendingCount: getCssVar("--modern-warning", "#f59e0b"),
+      draftCount: getCssVar("--modern-blue", "#4c8bff"),
+      sharedCount: getCssVar("--modern-cyan", "#078b99"),
+      declineCount: getCssVar("--modern-danger", "#ef4444"),
+      recalledCount: getCssVar("--modern-pink", "#d8509b"),
+      inActiveCount: getCssVar("--modern-muted", "#756f89"),
+    }),
+    [theme]
+  );
+
   const getMetricColor = (metric) => metricColors[metric.key] || metric.color;
 
   const chartOptions = useMemo(() => {
@@ -70,8 +75,8 @@ const UserDocuments = ({ documentMetrics = [] }) => {
               },
               total: {
                 show: true,
-                label: t("UserDocs.totalDocs"),
-                fontSize: "12px",
+                label: t("UserDocs.totalDocs", "Total Documents"),
+                fontSize: "11px",
                 fontWeight: 500,
                 color: textSecondary,
                 formatter: () => totalDocs,
@@ -84,7 +89,7 @@ const UserDocuments = ({ documentMetrics = [] }) => {
       tooltip: {
         theme: theme === "dark" ? "dark" : "light",
         y: {
-          formatter: (val) => val,
+          formatter: (val) => `${val} documents`,
         },
       },
       series,
@@ -93,29 +98,46 @@ const UserDocuments = ({ documentMetrics = [] }) => {
 
   if (activeDocumentMetrics.length === 0) {
     return (
-      <div className='admin-lifecycle-empty'>
-        <p>{t("dashboardCardStatuses.notDocsFound")}</p>
+      <div className="py-12 text-center text-sm text-[var(--modern-muted)]">
+        <p className="m-0">{t("dashboardCardStatuses.notDocsFound", "No documents found.")}</p>
       </div>
     );
   }
 
   return (
-    <div className='admin-widget-content'>
-      <div className='admin-donut-layout'>
-        <div className='admin-donut-chart'>
-          <ReactApexChart options={chartOptions} series={chartOptions.series} type='donut' height={240} width='100%' />
-        </div>
-        <ul className='admin-lifecycle-list'>
-          {documentMetrics.map((doc) => (
-            <li key={doc.key} className='admin-lifecycle-item'>
-              <div className='admin-lifecycle-label'>
-                <span className='admin-stat-dot' style={{ backgroundColor: getMetricColor(doc) }} />
-                <span className='admin-lifecycle-name'>{doc.label}</span>
-              </div>
-              <strong className='admin-lifecycle-value'>{doc.value}</strong>
-            </li>
-          ))}
-        </ul>
+    <div className="flex flex-col lg:flex-row items-center gap-6">
+      {/* Chart */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center min-w-[220px]">
+        <ReactApexChart
+          options={chartOptions}
+          series={chartOptions.series}
+          type="donut"
+          height={230}
+          width="100%"
+        />
+      </div>
+
+      {/* Legend list */}
+      <div className="w-full lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {documentMetrics.map((doc) => (
+          <div
+            key={doc.key}
+            className="flex items-center justify-between px-3 py-2 rounded-xl bg-[var(--modern-bg)] border border-[var(--modern-border)]"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <span
+                className="w-2.5 h-2.5 rounded-full shrink-0"
+                style={{ backgroundColor: getMetricColor(doc) }}
+              />
+              <span className="text-xs font-medium text-[var(--modern-muted)] truncate">
+                {doc.label}
+              </span>
+            </div>
+            <strong className="text-xs font-bold text-[var(--modern-text)] shrink-0 ml-2">
+              {doc.value}
+            </strong>
+          </div>
+        ))}
       </div>
     </div>
   );

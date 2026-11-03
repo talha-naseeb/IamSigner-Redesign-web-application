@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
 import { Icons } from "@/assets/Icons";
 import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import userService from "@/services/userService";
 

@@ -1,14 +1,27 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Accordion, Dropdown } from "@/Components/UI/shadcnCompat";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination, Stack } from "@/Components/UI/dataPrimitives";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Dropdown } from "@/Components/UI/shadcnCompat";
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableEmptyState,
+  TableHead,
+  TableRow,
+  Pagination,
+  Stack,
+  UserInitialsBadge,
+} from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
-import { Icons } from "@/assets/Icons";
+import { Download, FileSpreadsheet, FileText, Users, Search, X } from "lucide-react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import DocStatusFilter from "./DocStatusFilter";
 import documentService from "@/services/documentService";
 import userService from "@/services/userService";
+import "@/Pages/Home/Home.css";
 import "../CompanyAdminPanel/style.css";
 
 function UserDocReport() {
@@ -17,9 +30,10 @@ function UserDocReport() {
 
   const [searchResults, setSearchResults] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [fullName, setFullName] = useState("");
   const [emailID, setEmailID] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChangePage = (event, newPage) => {
@@ -56,7 +70,7 @@ function UserDocReport() {
         }
       });
 
-      return statsMap; // Return the statsMap for immediate use
+      return statsMap;
     } catch (error) {
       console.error("Error fetching document statistics:", error);
       return {};
@@ -71,7 +85,6 @@ function UserDocReport() {
         return;
       }
       const response = await userService.getAppUserTeam(user.AccountID);
-
       const users = response.data.response || [];
 
       // Fetch document statistics for all users
@@ -100,16 +113,17 @@ function UserDocReport() {
     }
   }, [user.AccountID, fetchDocumentStatistics]);
 
-  // Search function
+  // Drawer Search function
   const handleUserSearch = async () => {
     try {
+      setIsLoading(true);
+      setSearchQuery("");
       const response = await userService.getAppUserTeam(user.AccountID, {
         fullName,
         emailID,
       });
 
       const users = response.data.response || [];
-
       const statsMap = await fetchDocumentStatistics(users);
 
       const processedData = users.map((user) => {
@@ -127,8 +141,11 @@ function UserDocReport() {
       });
 
       setSearchResults(processedData);
+      setPage(0);
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -136,6 +153,8 @@ function UserDocReport() {
   const clearUserSearch = () => {
     setFullName("");
     setEmailID("");
+    setSearchQuery("");
+    setPage(0);
     fetchUserDocumentStatus();
   };
 
@@ -143,31 +162,47 @@ function UserDocReport() {
     fetchUserDocumentStatus();
   }, [fetchUserDocumentStatus]);
 
+  // Client-side instant quick search
+  const visibleResults = useMemo(() => {
+    let list = searchResults;
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      list = list.filter(
+        (row) =>
+          (row.fullName && row.fullName.toLowerCase().includes(q)) ||
+          (row.emailID && row.emailID.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [searchResults, searchQuery]);
+
   const columns = [
-    { label: t("tablesLabel.serialNo"), key: "srNo" },
-    { label: t("tablesLabel.name"), key: "fullName" },
-    { label: t("tablesLabel.email"), key: "emailID" },
-    { label: t("menuButtons.draft"), key: "draft" },
-    { label: t("menuButtons.completed"), key: "completed" },
-    { label: t("menuButtons.pending"), key: "pending" },
-    { label: t("menuButtons.shared"), key: "shared" },
-    { label: t("menuButtons.declined"), key: "declined" },
-    { label: t("menuButtons.inactive"), key: "inactive" },
-    { label: t("menuButtons.recalled"), key: "recalled" },
+    { label: t("tablesLabel.serialNo", "Sr. No"), key: "srNo" },
+    { label: t("tablesLabel.name", "Name"), key: "fullName" },
+    { label: t("tablesLabel.email", "Email"), key: "emailID" },
+    { label: t("menuButtons.draft", "Draft"), key: "draft" },
+    { label: t("menuButtons.completed", "Completed"), key: "completed" },
+    { label: t("menuButtons.pending", "Pending"), key: "pending" },
+    { label: t("menuButtons.shared", "Shared"), key: "shared" },
+    { label: t("menuButtons.declined", "Declined"), key: "declined" },
+    { label: t("menuButtons.inactive", "Inactive"), key: "inactive" },
+    { label: t("menuButtons.recalled", "Recalled"), key: "recalled" },
   ];
 
   const exportToExcel = () => {
-    const worksheetData = searchResults.map((row, index) => ({
+    const worksheetData = visibleResults.map((row, index) => ({
       "Sr. No": index + 1,
-      Name: row.fullName,
-      Email: row.emailID,
-      Draft: row.draft,
-      Completed: row.completed,
-      Pending: row.pending,
-      Shared: row.shared,
-      Declined: row.declined,
-      Inactive: row.inactive,
-      Recalled: row.recalled,
+      Name: row.fullName || "",
+      Email: row.emailID || "",
+      Draft: row.draft ?? 0,
+      Completed: row.completed ?? 0,
+      Pending: row.pending ?? 0,
+      Shared: row.shared ?? 0,
+      Declined: row.declined ?? 0,
+      Inactive: row.inactive ?? 0,
+      Recalled: row.recalled ?? 0,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(worksheetData);
@@ -191,18 +226,18 @@ function UserDocReport() {
       '<table border="1" style="border-collapse: collapse; width: 100%;">' +
       "<tr><th>Sr. No</th><th>Name</th><th>Email</th><th>Draft</th><th>Completed</th><th>Pending</th><th>Shared</th><th>Declined</th><th>Inactive</th><th>Recalled</th></tr>";
 
-    searchResults.forEach((row, index) => {
+    visibleResults.forEach((row, index) => {
       htmlTable += `<tr>
         <td>${index + 1}</td>
-        <td>${row.fullName}</td>
-        <td>${row.emailID}</td>
-        <td>${row.draft}</td>
-        <td>${row.completed}</td>
-        <td>${row.pending}</td>
-        <td>${row.shared}</td>
-        <td>${row.declined}</td>
-        <td>${row.inactive}</td>
-        <td>${row.recalled}</td>
+        <td>${row.fullName || ""}</td>
+        <td>${row.emailID || ""}</td>
+        <td>${row.draft ?? 0}</td>
+        <td>${row.completed ?? 0}</td>
+        <td>${row.pending ?? 0}</td>
+        <td>${row.shared ?? 0}</td>
+        <td>${row.declined ?? 0}</td>
+        <td>${row.inactive ?? 0}</td>
+        <td>${row.recalled ?? 0}</td>
       </tr>`;
     });
 
@@ -214,161 +249,268 @@ function UserDocReport() {
     saveAs(blob, "UserDocumentStatus.doc");
   };
 
+  const hasAdvancedFilters = Boolean(fullName || emailID);
+  const hasVisibleFilters = Boolean(hasAdvancedFilters || searchQuery);
+
   return (
     <>
       {user.AccountType === "B" && (user.RoleID === 1 || user.RoleID === 4) && userAccess.remainingDays >= 0 ? (
-        <div className='my-3 container users-report-page user-document-report'>
-          <Accordion defaultActiveKey='0' className='users-report-accordion'>
-            <Accordion.Item eventKey='0'>
-              <Accordion.Header>
-                <div className='d-flex align-items-center justify-content-between w-100'>
-                  <div className='d-flex align-items-center gap-3'>
-                    <Icons.Users size={30} />
-                    <label className='users-report-title'>{t("createTeam.userDocStatus")}</label>
-                  </div>
+        <div className='w-full max-w-none m-0 py-6 px-4 sm:px-6 bg-[var(--modern-bg)] text-[var(--modern-text)] font-sans users-report-page user-document-report'>
+          <div className='w-full max-w-[1560px] mx-auto p-5 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)]'>
+            {/* Unified Hero Toolbar matching DepartmentList & CreateTeam */}
+            <div className='flex flex-wrap items-center justify-between gap-4 mb-4'>
+              <div className='flex items-center gap-3'>
+                <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--modern-violet-soft)] text-[var(--modern-violet)]'>
+                  <Users size={20} />
                 </div>
-              </Accordion.Header>
-              <Accordion.Body className='users-report-accordion-body'>
-                <div className='users-report-toolbar'>
-                  {showCompanyName && (
-                    <div className='users-report-company'>
-                      <span className='fw-semibold'>{showCompanyName}</span> {t("createTeam.userDocs")}
-                    </div>
-                  )}
-                  <div className='users-report-actions'>
-                    <Dropdown>
-                      <Dropdown.Toggle variant='success' size='sm' className='users-report-export-button d-flex align-items-center gap-2'>
-                        <Icons.Download size={14} />
-                        {t("createTeam.Export")}
-                      </Dropdown.Toggle>
-
-                      <Dropdown.Menu>
-                        <Dropdown.Item onClick={exportToExcel} className='d-flex gap-2 align-items-center'>
-                          <Icons.Excel size={22} />
-                          {t("createTeam.exportExcel")}
-                        </Dropdown.Item>
-
-                        <Dropdown.Item onClick={exportToWord} className='d-flex gap-2 align-items-center'>
-                          <Icons.Word size={20} />
-                          {t("createTeam.exportWord")}
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                      <div className='search-filters-container doc-report-filter-container'>
-                      <DocStatusFilter fullName={fullName} emailID={emailID} setFullName={setFullName} setEmailID={setEmailID} handleSearch={handleUserSearch} clearSearch={clearUserSearch} />
-                    </div>
-                  </div>
-                </div>
-
                 <div>
-                  <Grid>
-                    <Grid item xs={12}>
-                      <div>
-                        <TableContainer
-                          component={Paper}
-                          className='custom-table-scrollbar report-table-wrap'
-                          style={{
-                            maxWidth: "100%",
-                            overflowX: "auto",
-                            minHeight: "440px",
-                            height: "calc(100vh - 280px)",
-                            maxHeight: "calc(100vh - 280px)",
-                          }}
-                        >
-                          <Table stickyHeader className='report-table'>
-                            <TableHead>
-                              <TableRow>
-                                {columns.map((column) => (
-                                    <TableCell key={column.label} className='TableHeaderCell'>
-                                    {column.label}
-                                  </TableCell>
-                                ))}
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {searchResults.length === 0 && (
-                                <TableRow>
-                                  <td colSpan={columns.length} className='p-5 text-center'>
-                                    <div className='report-empty-content'>
-                                      <Icons.Users size={50} />
-                                      {t("createTeam.noUserFound")}
-                                    </div>
-                                  </td>
-                                </TableRow>
-                              )}
-
-                              {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                                <TableRow key={index}>
-                                  <TableCell className='TableCell'>{page * rowsPerPage + index + 1}</TableCell>
-                                  <TableCell className='TableCell'>{row.fullName}</TableCell>
-                                  <TableCell className='TableCell'>{row.emailID}</TableCell>
-                                  <TableCell className='TableCell'>
-                                    <span className='docsCounts report-count report-count--draft'>
-                                      {row.draft}
-                                    </span>
-                                  </TableCell>
-                                  <TableCell className='TableCell'>
-                                    <span className='docsCounts report-count report-count--completed'>
-                                      {row.completed}
-                                    </span>
-                                  </TableCell>
-                                  <TableCell className='TableCell'>
-                                    <span className='docsCounts report-count report-count--pending'>
-                                      {row.pending}
-                                    </span>
-                                  </TableCell>
-                                  <TableCell className='TableCell'>
-                                    <span className='docsCounts report-count report-count--shared'>
-                                      {row.shared}
-                                    </span>
-                                  </TableCell>
-                                  <TableCell className='TableCell'>
-                                    <span className='docsCounts report-count report-count--declined'>
-                                      {row.declined}
-                                    </span>
-                                  </TableCell>
-                                  <TableCell className='TableCell'>
-                                    <span className='docsCounts report-count report-count--inactive'>
-                                      {row.inactive}
-                                    </span>
-                                  </TableCell>
-                                  <TableCell className='TableCell'>
-                                    <span className='docsCounts report-count report-count--recalled'>
-                                      {row.recalled}
-                                    </span>
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-
-                        {/* Pagination */}
-                        <div className='users-report-pagination'>
-                          <div className='showHideNoDocs'>
-                            {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, searchResults.length)} {t("tablesLabel.existing")} {searchResults.length} {t("tablesLabel.existingUser")}
-                          </div>
-                          <Stack spacing={2}>
-                            <Pagination
-                              count={Math.ceil(searchResults.length / rowsPerPage)}
-                              variant='outlined'
-                              shape='rounded'
-                              page={page + 1}
-                              onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
-                            />
-                          </Stack>
-                        </div>
-                      </div>
-                    </Grid>
-                  </Grid>
+                  <div className='flex items-center gap-2'>
+                    <h1 className='text-xl sm:text-2xl font-bold tracking-tight text-[var(--modern-text)] m-0'>
+                      {t("createTeam.userDocStatus", "User documents status report")}
+                    </h1>
+                    <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--modern-raised)] border border-[var(--modern-border)] text-[var(--modern-muted)]'>
+                      {visibleResults.length}{" "}
+                      {visibleResults.length === 1 ? t("tablesLabel.user", "user") : t("tablesLabel.users", "users")}
+                    </span>
+                  </div>
+                  <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5'>
+                    {showCompanyName ? (
+                      <span>
+                        <span className='font-semibold text-[var(--modern-text)]'>{showCompanyName}</span>{" "}
+                        {t("createTeam.userDocs")}
+                      </span>
+                    ) : (
+                      t("createTeam.userDocStatusSubtitle", "Track and audit document lifecycle counts per team member")
+                    )}
+                  </p>
                 </div>
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
+              </div>
+
+              <div className='flex items-center gap-2.5 flex-wrap ml-auto'>
+                {/* Instant Quick Search */}
+                <div className='recentdocs-search-box'>
+                  <Search className='search-icon' size={15} aria-hidden='true' />
+                  <input
+                    type='text'
+                    placeholder={t("createTeam.searchUserDocPlaceholder", "Search by user name or email...")}
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setPage(0);
+                    }}
+                    className='recentdocs-search-input'
+                    aria-label='Search users'
+                  />
+                  {searchQuery && (
+                    <button
+                      type='button'
+                      className='search-clear-btn'
+                      onClick={() => {
+                        setSearchQuery("");
+                        setPage(0);
+                      }}
+                      aria-label='Clear search'
+                    >
+                      <X size={13} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Modern Export Dropdown */}
+                <Dropdown className='modern-export-dropdown'>
+                  <Dropdown.Toggle
+                    variant='none'
+                    size='sm'
+                    className='modern-export-btn'
+                  >
+                    <Download size={14} className='shrink-0' />
+                    <span>{t("createTeam.Export", "Export")}</span>
+                  </Dropdown.Toggle>
+
+                  <Dropdown.Menu align='end' className='modern-export-menu'>
+                    <Dropdown.Item onClick={exportToExcel} className='modern-export-item'>
+                      <FileSpreadsheet size={16} className='text-emerald-500 shrink-0' />
+                      <span>{t("createTeam.exportExcel", "Export to Excel")}</span>
+                    </Dropdown.Item>
+
+                    <Dropdown.Item onClick={exportToWord} className='modern-export-item'>
+                      <FileText size={16} className='text-blue-500 shrink-0' />
+                      <span>{t("createTeam.exportWord", "Export to Word")}</span>
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+
+                {/* Advanced Filter Drawer */}
+                <div className='search-filters-container doc-report-filter-container'>
+                  <DocStatusFilter
+                    fullName={fullName}
+                    emailID={emailID}
+                    setFullName={setFullName}
+                    setEmailID={setEmailID}
+                    handleSearch={handleUserSearch}
+                    clearSearch={clearUserSearch}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {hasVisibleFilters && (
+              <div className='flex items-center justify-end mb-3'>
+                <button type='button' className='recentdocs-reset-filters-btn' onClick={clearUserSearch}>
+                  <X size={13} />
+                  <span>{t("searchFilter.reset", "Reset Filters")}</span>
+                </button>
+              </div>
+            )}
+
+            {/* Table Container */}
+            <TableContainer
+              component={Paper}
+              className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
+              style={{
+                maxWidth: "100%",
+                overflowX: "auto",
+                minHeight: "440px",
+                height: "calc(100vh - 300px)",
+                maxHeight: "calc(100vh - 300px)",
+              }}
+            >
+              <Table stickyHeader style={{ border: "none", minWidth: "900px" }}>
+                <TableHead>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableCell key={column.key || column.label} className='TableHeaderCell'>
+                        {column.label}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {visibleResults.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className='table-empty-state-cell'>
+                        <TableEmptyState
+                          icon={<Users size={42} className='text-[var(--modern-muted)]' />}
+                          title={
+                            hasVisibleFilters
+                              ? t("searchFilter.noSearchResults", "No matching users found")
+                              : t("createTeam.noUserFound", "No user data found")
+                          }
+                          description={
+                            hasVisibleFilters
+                              ? t("searchFilter.tryClearing", "Try clearing your search terms or filters to see more results.")
+                              : t("createTeam.userDocs", "User document status counts will appear here.")
+                          }
+                          actionButton={
+                            hasVisibleFilters ? (
+                              <button
+                                type='button'
+                                className='px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-[var(--modern-raised)] border border-[var(--modern-border)] text-[var(--modern-text)] hover:bg-[var(--modern-hover)] transition-colors'
+                                onClick={clearUserSearch}
+                              >
+                                {t("searchFilter.clearAll", "Clear all filters")}
+                              </button>
+                            ) : null
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    visibleResults
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row, index) => (
+                        <TableRow key={row.appUserID || index} className='hover:bg-[var(--modern-raised)] transition-colors'>
+                          {/* Sr No */}
+                          <TableCell className='TableCell text-xs text-[var(--modern-muted)]'>
+                            {page * rowsPerPage + index + 1}
+                          </TableCell>
+
+                          {/* Full Name with Avatar */}
+                          <TableCell className='TableCell'>
+                            <UserInitialsBadge name={row.fullName} />
+                          </TableCell>
+
+                          {/* Email */}
+                          <TableCell className='TableCell text-xs text-[var(--modern-muted)]'>
+                            {row.emailID}
+                          </TableCell>
+
+                          {/* Draft Count */}
+                          <TableCell className='TableCell'>
+                            <span className='report-count report-count--draft font-semibold'>
+                              {row.draft ?? 0}
+                            </span>
+                          </TableCell>
+
+                          {/* Completed Count */}
+                          <TableCell className='TableCell'>
+                            <span className='report-count report-count--completed font-semibold'>
+                              {row.completed ?? 0}
+                            </span>
+                          </TableCell>
+
+                          {/* Pending Count */}
+                          <TableCell className='TableCell'>
+                            <span className='report-count report-count--pending font-semibold'>
+                              {row.pending ?? 0}
+                            </span>
+                          </TableCell>
+
+                          {/* Shared Count */}
+                          <TableCell className='TableCell'>
+                            <span className='report-count report-count--shared font-semibold'>
+                              {row.shared ?? 0}
+                            </span>
+                          </TableCell>
+
+                          {/* Declined Count */}
+                          <TableCell className='TableCell'>
+                            <span className='report-count report-count--declined font-semibold'>
+                              {row.declined ?? 0}
+                            </span>
+                          </TableCell>
+
+                          {/* Inactive Count */}
+                          <TableCell className='TableCell'>
+                            <span className='report-count report-count--inactive font-semibold'>
+                              {row.inactive ?? 0}
+                            </span>
+                          </TableCell>
+
+                          {/* Recalled Count */}
+                          <TableCell className='TableCell'>
+                            <span className='report-count report-count--recalled font-semibold'>
+                              {row.recalled ?? 0}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            {/* Pagination */}
+            <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4'>
+              <div className='text-xs text-[var(--modern-muted)]'>
+                {visibleResults.length ? page * rowsPerPage + 1 : 0} -{" "}
+                {Math.min((page + 1) * rowsPerPage, visibleResults.length)} {t("tablesLabel.existing")}{" "}
+                {visibleResults.length} {t("tablesLabel.existingUser")}
+              </div>
+              <Stack spacing={2}>
+                <Pagination
+                  count={Math.max(1, Math.ceil(visibleResults.length / rowsPerPage))}
+                  variant='outlined'
+                  shape='rounded'
+                  page={Math.min(page + 1, Math.max(1, Math.ceil(visibleResults.length / rowsPerPage)))}
+                  onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
+                />
+              </Stack>
+            </div>
+          </div>
         </div>
-      ) : (
-        <></>
-      )}
+      ) : null}
     </>
   );
 }

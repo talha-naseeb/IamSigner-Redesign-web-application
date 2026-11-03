@@ -384,8 +384,8 @@ const TemplatesPage = () => {
                     maxWidth: "100%",
                     overflowX: "auto",
                     minHeight: "440px",
-                    height: "calc(100vh - 280px)",
-                    maxHeight: "calc(100vh - 280px)",
+                    height: "calc(99vh - 280px)",
+                    maxHeight: "calc(99vh - 280px)",
                   }}
                 >
                   <Table stickyHeader className='w-full' style={{ border: "none", minWidth: "750px" }}>

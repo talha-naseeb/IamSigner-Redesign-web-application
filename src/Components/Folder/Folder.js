@@ -285,19 +285,19 @@ function Folder() {
   };
 
   const columns = [
-    { label: t("home.Folder"), key: "folderName" },
-    { label: t("tablesLabel.date"), key: "createdOn" },
-    { label: t("coBranding.description"), key: "description" },
-    { label: t("tablesLabel.ShareWith"), key: "ShareWith" },
-    { label: t("tablesLabel.createdby"), key: "createdByName" },
-    { label: "", key: "actions" },
+    { label: t("home.Folder"), key: "folderName", width: "28%" },
+    { label: t("tablesLabel.date"), key: "createdOn", width: "16%" },
+    { label: t("coBranding.description"), key: "description", width: "24%" },
+    { label: t("tablesLabel.ShareWith"), key: "ShareWith", width: "14%" },
+    { label: t("tablesLabel.createdby"), key: "createdByName", width: "14%" },
+    { label: "", key: "actions", width: "4%", align: "right" },
   ];
   const SharedColumns = [
-    { label: t("home.Folder"), key: "folderName" },
-    { label: t("tablesLabel.date"), key: "createdOn" },
-    { label: t("coBranding.description"), key: "description" },
-    { label: t("tablesLabel.sharedBy"), key: "sharedBy" },
-    { label: "", key: "actions" },
+    { label: t("home.Folder"), key: "folderName", width: "30%" },
+    { label: t("tablesLabel.date"), key: "createdOn", width: "18%" },
+    { label: t("coBranding.description"), key: "description", width: "26%" },
+    { label: t("tablesLabel.sharedBy"), key: "sharedBy", width: "22%" },
+    { label: "", key: "actions", width: "4%", align: "right" },
   ];
 
   const formatDate = (dateString) => {
@@ -403,7 +403,7 @@ function Folder() {
         <>
           {userAccess.folders === true ? (
             <>
-              <div className='folder-route container mx-auto mt-4 px-3 sm:px-6 text-foreground [font-family:var(--modern-font-ui)]'>
+              <div className='folder-route w-full max-w-none mt-4 px-3 sm:px-6 text-foreground [font-family:var(--modern-font-ui)]'>
                 <div className='rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-5 md:p-6 text-foreground'>
                   {/* Top Header & Action Bar */}
                   <div className='flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-[var(--modern-border)]'>
@@ -490,11 +490,16 @@ function Folder() {
                           maxHeight: "calc(100vh - 300px)",
                         }}
                       >
-                        <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
+                        <Table stickyHeader style={{ border: "none", minWidth: "750px" }}>
                           <TableHead className='customTableHead'>
                             <TableRow>
                               {columns.map((column) => (
-                                <TableCell className='TableHeaderCell' key={column.key}>
+                                <TableCell
+                                  className='TableHeaderCell'
+                                  key={column.key}
+                                  align={column.align || "left"}
+                                  style={column.width ? { width: column.width } : undefined}
+                                >
                                   {column.label}
                                 </TableCell>
                               ))}
@@ -515,7 +520,7 @@ function Folder() {
                             {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                               <TableRow key={row.folderID || index} hover>
                                 <TableCell
-                                  style={{ cursor: "pointer" }}
+                                  style={{ cursor: "pointer", width: "28%" }}
                                   className='TableCell py-3.5'
                                   onClick={() => navigateToViewFiles(row.folderID, row.folderName)}
                                 >
@@ -537,18 +542,19 @@ function Folder() {
                                     </div>
                                   </div>
                                 </TableCell>
-                                <TableCell className='TableCell text-xs text-[var(--modern-muted)]'>
+                                <TableCell className='TableCell text-xs text-[var(--modern-muted)]' style={{ width: "16%" }}>
                                   {row.createdOnFormatted ? formatDate(row.createdOnFormatted) : "—"}
                                 </TableCell>
                                 <TableCell
                                   className={`TableCell truncate-cell ${row.description?.length > 50 ? "cursor-pointer" : ""}`}
+                                  style={{ width: "24%" }}
                                   onClick={(e) => (row.description?.length > 50 ? handleDescriptionClick(row.description, row.folderName) : handleCellClick(e))}
                                 >
                                   <span className={row.description ? "text-xs text-[var(--modern-text)]" : "text-xs text-[var(--modern-muted)] italic"}>
                                     {row.description || "—"}
                                   </span>
                                 </TableCell>
-                                <TableCell className='TableCell truncate-cell' onClick={(e) => handleCellClick(e)}>
+                                <TableCell className='TableCell truncate-cell' style={{ width: "14%" }} onClick={(e) => handleCellClick(e)}>
                                   {row.sharedWith ? (
                                     row.sharedWith.split(",").length === 1 ? (
                                       <span className='text-xs text-[var(--modern-text)]'>{row.sharedWith.trim()}</span>
@@ -570,47 +576,71 @@ function Folder() {
                                   )}
                                 </TableCell>
 
-                                <TableCell className='TableCell truncate-cell' onClick={(e) => handleCellClick(e)}>
+                                <TableCell className='TableCell truncate-cell' style={{ width: "14%" }} onClick={(e) => handleCellClick(e)}>
                                   <UserInitialsBadge name={row.createdByName} />
                                 </TableCell>
 
-                                <TableCell className='TableCell py-0 text-right'>
-                                  <Dropdown>
-                                    <Dropdown.Toggle as={CustomToggle} />
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleUpdateClick(row)}>
-                                        <Icons.PenEdit size={18} />
-                                        <span>{t("Folder.update")}</span>
-                                      </Dropdown.Item>
-                                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleShareClick(row.folderID, row.folderName)}>
-                                        <Icons.Share size={18} />
-                                        <span>{t("Folder.Sharefolder")}</span>
-                                      </Dropdown.Item>
-                                      {row.isShared ? (
-                                        <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleUnshareClick(row)}>
-                                          <Icons.Unshare size={18} />
-                                          <span>{t("Folder.UnShareFolder")}</span>
+                                <TableCell className='py-0 text-right' style={{ width: "4%", minWidth: "48px" }}>
+                                  <div className='flex items-center justify-end'>
+                                    <Dropdown>
+                                      <Dropdown.Toggle as={CustomToggle} />
+                                      <Dropdown.Menu align='end' className='rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-1.5 shadow-none'>
+                                        <Dropdown.Item
+                                          className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                          onClick={() => handleUpdateClick(row)}
+                                        >
+                                          <Icons.PenEdit size={16} />
+                                          <span>{t("Folder.update")}</span>
                                         </Dropdown.Item>
-                                      ) : null}
+                                        <Dropdown.Item
+                                          className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                          onClick={() => handleShareClick(row.folderID, row.folderName)}
+                                        >
+                                          <Icons.Share size={16} />
+                                          <span>{t("Folder.Sharefolder")}</span>
+                                        </Dropdown.Item>
+                                        {row.isShared ? (
+                                          <Dropdown.Item
+                                            className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                            onClick={() => handleUnshareClick(row)}
+                                          >
+                                            <Icons.Unshare size={16} />
+                                            <span>{t("Folder.UnShareFolder")}</span>
+                                          </Dropdown.Item>
+                                        ) : null}
 
-                                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewDocuments(row.folderID, row.folderName)}>
-                                        <Icons.View size={18} />
-                                        <span>{t("Folder.view")}</span>
-                                      </Dropdown.Item>
-                                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleAddDocumentClick(row.folderID)}>
-                                        <Icons.Upload size={18} />
-                                        <span>{t("Folder.add")}</span>
-                                      </Dropdown.Item>
-                                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleDeleteFolderModal(row.folderID)}>
-                                        <Icons.DeleteAction size={18} />
-                                        <span>{t("Folder.delete")}</span>
-                                      </Dropdown.Item>
-                                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleSubFolderCanvas(row.folderID)}>
-                                        <Icons.SubFolders size={18} />
-                                        <span>{t("Folder.CreateFolder")}</span>
-                                      </Dropdown.Item>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
+                                        <Dropdown.Item
+                                          className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                          onClick={() => handleViewDocuments(row.folderID, row.folderName)}
+                                        >
+                                          <Icons.View size={16} />
+                                          <span>{t("Folder.view")}</span>
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                          className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                          onClick={() => handleAddDocumentClick(row.folderID)}
+                                        >
+                                          <Icons.Upload size={16} />
+                                          <span>{t("Folder.add")}</span>
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                          className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                          onClick={() => handleSubFolderCanvas(row.folderID)}
+                                        >
+                                          <Icons.SubFolders size={16} />
+                                          <span>{t("Folder.CreateFolder")}</span>
+                                        </Dropdown.Item>
+                                        <Dropdown.Divider className='my-1 border-t border-[var(--modern-border)]' />
+                                        <Dropdown.Item
+                                          className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-rose-500 hover:bg-rose-500/10 transition-colors'
+                                          onClick={() => handleDeleteFolderModal(row.folderID)}
+                                        >
+                                          <Icons.DeleteAction size={16} />
+                                          <span>{t("Folder.delete")}</span>
+                                        </Dropdown.Item>
+                                      </Dropdown.Menu>
+                                    </Dropdown>
+                                  </div>
                                 </TableCell>
                               </TableRow>
                             ))}
@@ -646,11 +676,16 @@ function Folder() {
                           maxHeight: "calc(100vh - 300px)",
                         }}
                       >
-                        <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
+                        <Table stickyHeader style={{ border: "none", minWidth: "750px" }}>
                           <TableHead className='customTableHead'>
                             <TableRow>
                               {SharedColumns.map((column) => (
-                                <TableCell className='TableHeaderCell' key={column.key}>
+                                <TableCell
+                                  className='TableHeaderCell'
+                                  key={column.key}
+                                  align={column.align || "left"}
+                                  style={column.width ? { width: column.width } : undefined}
+                                >
                                   {column.label}
                                 </TableCell>
                               ))}
@@ -671,7 +706,7 @@ function Folder() {
                             {shareFolderData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                               <TableRow key={row.folderID || index} hover>
                                 <TableCell
-                                  style={{ cursor: "pointer" }}
+                                  style={{ cursor: "pointer", width: "30%" }}
                                   className='TableCell py-3.5'
                                   onClick={() => navigateToViewFiles(row.folderID, row.folderName)}
                                 >
@@ -693,40 +728,52 @@ function Folder() {
                                     </div>
                                   </div>
                                 </TableCell>
-                                <TableCell className='TableCell text-xs text-[var(--modern-muted)]'>
+                                <TableCell className='TableCell text-xs text-[var(--modern-muted)]' style={{ width: "18%" }}>
                                   {row.sharedOnFormatted ? formatDate(row.sharedOnFormatted) : "—"}
                                 </TableCell>
                                 <TableCell
                                   className={`TableCell truncate-cell ${row.description?.length > 50 ? "cursor-pointer" : ""}`}
+                                  style={{ width: "26%" }}
                                   onClick={(e) => (row.description?.length > 50 ? handleDescriptionClick(row.description, row.folderName) : handleCellClick(e))}
                                 >
                                   <span className={row.description ? "text-xs text-[var(--modern-text)]" : "text-xs text-[var(--modern-muted)] italic"}>
                                     {row.description || "—"}
                                   </span>
                                 </TableCell>
-                                <TableCell className='TableCell truncate-cell' onClick={(e) => handleCellClick(e)}>
+                                <TableCell className='TableCell truncate-cell' style={{ width: "22%" }} onClick={(e) => handleCellClick(e)}>
                                   <UserInitialsBadge name={row.sharedBy} />
                                 </TableCell>
 
-                                <TableCell className='TableCell py-0 text-right'>
-                                  <Dropdown>
-                                    <Dropdown.Toggle as={CustomToggle} />
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleUpdateClick(row)}>
-                                        <Icons.EditSquare size={18} />
-                                        <span>{t("Folder.update")}</span>
-                                      </Dropdown.Item>
+                                <TableCell className='py-0 text-right' style={{ width: "4%", minWidth: "48px" }}>
+                                  <div className='flex items-center justify-end'>
+                                    <Dropdown>
+                                      <Dropdown.Toggle as={CustomToggle} />
+                                      <Dropdown.Menu align='end' className='rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-1.5 shadow-none'>
+                                        <Dropdown.Item
+                                          className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                          onClick={() => handleUpdateClick(row)}
+                                        >
+                                          <Icons.EditSquare size={16} />
+                                          <span>{t("Folder.update")}</span>
+                                        </Dropdown.Item>
 
-                                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewDocuments(row.folderID, row.folderName)}>
-                                        <Icons.View size={18} />
-                                        <span>{t("Folder.view")}</span>
-                                      </Dropdown.Item>
-                                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleAddDocumentClick(row.folderID)}>
-                                        <Icons.FolderPlus size={18} />
-                                        <span>{t("Folder.add")}</span>
-                                      </Dropdown.Item>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
+                                        <Dropdown.Item
+                                          className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                          onClick={() => handleViewDocuments(row.folderID, row.folderName)}
+                                        >
+                                          <Icons.View size={16} />
+                                          <span>{t("Folder.view")}</span>
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                          className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                          onClick={() => handleAddDocumentClick(row.folderID)}
+                                        >
+                                          <Icons.FolderPlus size={16} />
+                                          <span>{t("Folder.add")}</span>
+                                        </Dropdown.Item>
+                                      </Dropdown.Menu>
+                                    </Dropdown>
+                                  </div>
                                 </TableCell>
                               </TableRow>
                             ))}

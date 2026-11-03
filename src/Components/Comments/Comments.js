@@ -398,26 +398,30 @@ const Comments = ({
                         <span>{comment.commentPostedBy || "no name"}</span>
                       </div>
                       {comment.createdBy === signatoryEmail ? (
-                        <div>
-                          <Button
-                            variant="none"
-                            className="action-button px-1 py-0"
+                        <div className="d-flex align-items-center gap-1.5">
+                          <button
+                            type="button"
+                            className="w-7 h-7 inline-flex items-center justify-center rounded-lg border border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-muted)] hover:text-[var(--theme-color)] hover:border-[var(--theme-color)] hover:bg-[var(--modern-raised)] active:scale-95 transition-all shadow-none cursor-pointer [appearance:none] [-webkit-appearance:none]"
                             onClick={() => toggleEdit(index)}
+                            title={t("addComment.edit") || "Edit"}
+                            aria-label="Edit comment"
                           >
-                            <Icons.PenEdit size={16} />
-                          </Button>
-                          <Button
-                            variant="none"
-                            className="action-button px-1 py-0"
+                            <Icons.PenEdit size={14} />
+                          </button>
+                          <button
+                            type="button"
+                            className="w-7 h-7 inline-flex items-center justify-center rounded-lg border border-rose-200 dark:border-rose-900/40 bg-[var(--modern-card)] text-rose-500 hover:text-rose-600 hover:border-rose-300 dark:hover:border-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 active:scale-95 transition-all shadow-none cursor-pointer [appearance:none] [-webkit-appearance:none]"
                             onClick={() =>
                               handleShowConfirmModal(
                                 docCommentsIDs[index],
                                 index
                               )
                             }
+                            title={t("uploadDocFlow.delete") || "Delete"}
+                            aria-label="Delete comment"
                           >
-                            <Icons.DeleteAction size={16} />
-                          </Button>
+                            <Icons.DeleteAction size={14} />
+                          </button>
                         </div>
                       ) : null}
                     </div>

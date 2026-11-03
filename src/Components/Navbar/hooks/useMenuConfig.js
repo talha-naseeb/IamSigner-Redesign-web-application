@@ -81,12 +81,6 @@ export const useMenuConfig = (user, userAccess, t, accountId) => {
       show: userAccess.teams,
     },
     {
-      icon: Icons.UserReport,
-      label: t("Sidebar.userReport"),
-      path: "/users-report",
-      show: userAccess.teams,
-    },
-    {
       icon: Icons.DocumentReport,
       iconHeight: 20,
       label: t("Sidebar.docReport"),

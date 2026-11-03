@@ -1,36 +1,53 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 
 const MostActiveUsers = ({ users = [] }) => {
   const { t } = useTranslation();
 
+  if (!users || users.length === 0) {
+    return (
+      <div className="py-8 text-center text-sm text-[var(--modern-muted)]">
+        {t("adminDashboard.noUserData", "No user activity data available.")}
+      </div>
+    );
+  }
+
   return (
-    <div className="admin-active-users-list">
-      {users.length === 0 ? (
-        <p className="admin-mini-meta">{t("adminDashboard.noUserData")}</p>
-      ) : null}
+    <div className="flex flex-col divide-y divide-[var(--modern-border)]">
       {users.map((user) => (
-        <div key={`${user.name}-${user.role}`} className="admin-active-user-row">
-          <div className="admin-active-user-left">
-            <div className="admin-active-avatar">
-              {user.name?.slice(0, 2)?.toUpperCase() || "NA"}
-            </div>
-            <div>
-              <h6>{user.name}</h6>
-              <p>
-                {user.role} • {user.lastActivity}
+        <div
+          key={`${user.name}-${user.role}`}
+          className="flex items-center justify-between py-3 px-1 gap-3 transition-colors hover:bg-[var(--modern-raised)]/40 rounded-lg"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <UserInitialsBadge name={user.name} avatarOnly className="shrink-0" />
+            <div className="min-w-0">
+              <h6 className="text-sm font-semibold text-[var(--modern-text)] truncate m-0 leading-tight">
+                {user.name}
+              </h6>
+              <p className="text-xs text-[var(--modern-muted)] truncate m-0 mt-0.5">
+                {user.role} {user.lastActivity ? `• ${user.lastActivity}` : ""}
               </p>
             </div>
           </div>
-          <div className="admin-active-user-right">
+
+          <div className="shrink-0 flex items-center">
             <span
-              className={`admin-user-status ${
-                user.isActive ? "active" : "inactive"
+              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                user.isActive
+                  ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                  : "bg-[var(--modern-raised)] text-[var(--modern-muted)] border border-[var(--modern-border)]"
               }`}
             >
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  user.isActive ? "bg-emerald-500" : "bg-gray-400"
+                }`}
+              />
               {user.isActive
-                ? t("adminDashboard.activeUsers")
-                : t("adminDashboard.inactiveUsers")}
+                ? t("adminDashboard.activeUsers", "Active")
+                : t("adminDashboard.inactiveUsers", "Inactive")}
             </span>
           </div>
         </div>

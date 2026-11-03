@@ -9,6 +9,7 @@ export const THEMES = {
 export const PALETTES = {
   concept2: "concept-2",
   management: "management",
+  concept3: "concept-3",
 };
 
 export const isThemeName = (theme) => Object.values(THEMES).includes(theme);

@@ -28,10 +28,10 @@ const DeleteConfirmationModal = ({
       className={className}
       showClose={!isLoading}
       footer={
-        <div className="flex w-full justify-between items-center gap-2 pt-2">
+        <div className="flex w-full justify-end items-center gap-3 pt-2">
           <button
             type="button"
-            className="modalCancelButton btn btn-secondary flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors disabled:opacity-50"
             onClick={onHide}
             disabled={isLoading}
           >
@@ -39,7 +39,7 @@ const DeleteConfirmationModal = ({
           </button>
           <button
             type="button"
-            className="applyBtn btn btn-danger flex-1 px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 min-w-[90px] transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-40 transition-colors"
             onClick={onConfirm}
             disabled={isLoading}
           >

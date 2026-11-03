@@ -91,6 +91,7 @@
     "darkMode": "Dark",
     "colorPalette": "Color palette",
     "conceptTwoPalette": "Concept 2",
+    "conceptThreePalette": "Concept 3",
     "azaManagementPalette": "AZA Management Palette",
     "switchToLightMode": "Switch to light mode",
     "switchToDarkMode": "Switch to dark mode"
@@ -1074,6 +1075,8 @@
     "userLicenseDetails": "App user report ",
     "noUserFound": "No user data found",
     "userDocStatus": "User documents status report",
+    "userDocStatusSubtitle": "Track and audit document lifecycle counts per team member",
+    "searchUserDocPlaceholder": "Search by user name or email...",
     "userDocs": "users doc's status",
     "errDepartments": "Unxpected error occurs, Try again Later!",
     "viewDetails": "View Details",
@@ -1111,7 +1114,12 @@
     "confirmActivate": "Are you sure you want to Activate user!",
     "activateUser": "Activate User",
     "MyTeam": "My Team",
+    "manageTeamSubtitle": "Manage company members, roles, and access permissions",
+    "searchPlaceholder": "Search by name, email, role, department...",
+    "teamMember": "member",
+    "teamMembersCount": "members",
     "AddNewTeam": "Add New Team",
+    "enterDetails": "Add a new member to collaborate in your organization",
     "fullNameRequired": "Full name is required",
     "emailRequired": "Email is required",
     "invalidEmail": "Invalid email address",
@@ -1200,6 +1208,14 @@
     "listMac": "List of MacAI Documents",
     "listCraft": "List of Craft Documents"
   },
+  "createCraftDocument": {
+    "createDoc": "Create Document",
+    "craftDoc": "Craft Document",
+    "craftDocTitle": "Craft Document",
+    "craftDocSubtitle": "Create and customize your document manually",
+    "seeHistory": "If you want to see your history",
+    "gotoList": "Go to List"
+  },
   "AuthIntegration": {
     "errAuth": "Error fetching integration configuration",
     "errApi": "Failed to create Api Key",
@@ -1230,7 +1246,16 @@
     "show": "Show",
     "keepKeySecure": "Keep this key secure and do not share it publicly.",
     "copyToClipboard": "Copy to clipboard",
-    "keyCopied": "Key copied to clipboard!"
+    "keyCopied": "Key copied to clipboard!",
+    "apiSubtitle": "Manage API tokens, credentials, and webhook endpoints",
+    "activeCredentials": "API Credentials & Secrets",
+    "credentialsHelp": "Use these secure credentials to integrate with the IAMSigner REST API",
+    "noKeyDesc": "No API credentials configured yet. Generate a key to start integrating programmatically.",
+    "copyKeyNotice": "Use this credential to authenticate external API requests",
+    "configNotice": "Official endpoints, guidelines, and parameter specifications",
+    "expirySecondsHelp": "Token expiration time in seconds (e.g. 3600 for 1 hour)",
+    "keySubTitle": "Configure application name and token expiration",
+    "updateCredentials": "Update integration details and token expiry"
   },
   "webhookIntegration": {
     "webhookCreate": "Webhook created successfully.",
@@ -1242,6 +1267,18 @@
     "activatWebhook": "Webhook integration activated successfully.",
     "deactiveWebhook": "Webhook integration deactivated successfully.",
     "createWebhookApi": "Create Webhook Api",
+    "webhookSubtitle": "Configure webhook endpoints and event triggers to receive real-time notifications",
+    "eventTriggers": "Event Triggers",
+    "eventTriggersDesc": "Select which document events should trigger a webhook dispatch",
+    "authSection": "Authentication Security",
+    "authSectionDesc": "Optionally configure HTTP Basic Authentication credentials for webhook requests",
+    "noAuthNotice": "Basic authentication is disabled. Webhook payloads will be sent without an Authorization header.",
+    "endpointConfig": "Endpoint Configuration",
+    "endpointSubtitle": "Specify the application name, target URL, and HTTP dispatch method",
+    "documentArtifacts": "Document Artifact Events",
+    "statusEvents": "Document Status Changes",
+    "infoNotice": "Payload schema parameters and dispatch guidelines",
+    "enterUserName": "Enter username",
     "appName": "App Name",
     "url": "URL",
     "ActionMethod": "Action Method",
@@ -1269,6 +1306,11 @@
     "create": "Create",
     "cancel": "Cancel",
     "Savechanges": "Save Changes"
+  },
+  "exportReport": {
+    "Export": "Export",
+    "exportExcel": "Export to Excel",
+    "exportWord": "Export to Word"
   },
   "imageWithControlsOverlay": {
     "controlIdentifier": "Control Identifier",
@@ -1587,6 +1629,10 @@
   },
   "departmentList": {
     "departmentListTitle": "Department List",
+    "all": "All",
+    "departments": "departments",
+    "manageSubtitle": "Manage company departments and organizational units",
+    "searchPlaceholder": "Search by title, description, creator...",
     "title": "Department name",
     "description": "Description",
     "actions": "Actions",

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import bulkService from "@/services/bulkService";
 import { Button, Dropdown, Modal } from "@/Components/UI/shadcnCompat";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Stack, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
+import { Grid, TableCell, TableRow, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 import DocumentSearchFilters from "@/Components/CommonModals/SearchFilters/DocSearchFilter";
 import { useTranslation } from "react-i18next";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
@@ -12,7 +12,8 @@ import { toast } from "react-toastify";
 import { useUser } from "@/Context/UserContext";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import DashboardComments from "@/Components/CommonModals/DocumentsComments/DashboardComments";
-import { StatusBadge } from "@/Components/DashboardStatuses/DocumentStatusTable";
+import DocumentStatusTable, { StatusBadge, formatTableDate } from "@/Components/DashboardStatuses/DocumentStatusTable";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 const BulkDocuments = () => {
   const navigate = useNavigate();
@@ -28,16 +29,6 @@ const BulkDocuments = () => {
   const [docNumber, setDocNumber] = useState("");
   const [docName, setDocName] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-
-  const statusColors = {
-    completed: "var(--completed-status)",
-    draft: "var(--draft-status)",
-    declined: "var(--decline-status)",
-    inactive: "var(--inactive-status)",
-    pending: "var(--pending-status)",
-    share: "var(--share-status)",
-    recalled: "var(--recall-status)",
-  };
   const [showATModal, setShowATModal] = useState(false);
   const [auditTrailURL, setAuditTrailURL] = useState("");
   const [page, setPage] = useState(0);
@@ -143,30 +134,14 @@ const BulkDocuments = () => {
   };
 
   const columns = [
-    { label: t("tablesLabel.docName"), key: "docName" },
-    { label: t("tablesLabel.docNumber"), key: "docCompanyPrefixNo" },
-    { label: t("tablesLabel.date"), key: "completedDate" },
-    { label: t("tablesLabel.refNumber"), key: "referenceNumber" },
-    { label: t("tablesLabel.status"), key: "docStatus" },
-    { label: t("tablesLabel.createdby"), key: "createdByName" },
-    { label: "", key: "actions" },
+    { label: t("tablesLabel.docName"), key: "docName", width: "24%" },
+    { label: t("tablesLabel.docNumber"), key: "docCompanyPrefixNo", width: "16%" },
+    { label: t("tablesLabel.date"), key: "completedDate", width: "16%" },
+    { label: t("tablesLabel.refNumber"), key: "referenceNumber", width: "16%" },
+    { label: t("tablesLabel.status"), key: "docStatus", width: "10%" },
+    { label: t("tablesLabel.createdby"), key: "createdByName", width: "12%" },
+    { label: "", key: "actions", width: "6%", align: "right" },
   ];
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-
-    const formattedMinutes = (minutes < 10 ? "0" : "") + minutes;
-
-    return `${day}/${month}/${year} - ${hours}:${formattedMinutes} ${ampm}`;
-  };
 
   const handleCellClick = (event) => {
     const cell = event.target;
@@ -179,157 +154,114 @@ const BulkDocuments = () => {
   };
 
   return (
-    <Grid className='container' style={{ marginTop: "12px" }}>
+    <Grid className='container'>
       {userAccess.isbulkCSVflow === true ? (
-        <>
-          <Grid>
+        <Grid item xs={12}>
+          <DocumentStatusTable
+            title={t("Sidebar.BulkDocuments")}
+            count={searchResults.length}
+            searchFilter={
+              <DocumentSearchFilters
+                startDate={startDate}
+                endDate={endDate}
+                referenceNo={referenceNo}
+                docNumber={docNumber}
+                docName={docName}
+                setStartDate={setStartDate}
+                setEndDate={setEndDate}
+                setReferenceNo={setReferenceNo}
+                setDocNumber={setDocNumber}
+                setDocName={setDocName}
+                handleSearch={handleSearch}
+                clearSearch={clearSearch}
+              />
+            }
+            columns={columns}
+            data={searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+            totalItems={searchResults.length}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            onPageChange={handleChangePage}
+            emptyStateIcon={<Icons.BulkDocuments size={50} />}
+            emptyStateTitle={t("dashboardCardStatuses.notDocsFound")}
+            renderRow={(row, index) => (
+              <TableRow key={row.registerSignID || index} hover>
+                <TableCell
+                  style={{ width: "24%", cursor: "pointer" }}
+                  title={row.docName}
+                  onClick={() => navigateToViewSignatories(row.docName, row.registerSignID, row.masterDocID)}
+                  className='TableCell truncate-cell font-medium text-[var(--modern-text)] hover:text-[var(--theme-color)] transition-colors'
+                >
+                  {row.docName}
+                </TableCell>
+                <TableCell className='TableCell' style={{ width: "16%" }}>
+                  {row.docCompanyPrefixNo || "—"}
+                </TableCell>
+                <TableCell className='TableCell text-[var(--modern-muted)]' style={{ width: "16%" }}>
+                  {row.createdOnFormatted ? formatTableDate(row.createdOnFormatted) : "—"}
+                </TableCell>
+                <TableCell
+                  onClick={(e) => handleCellClick(e)}
+                  className='TableCell truncate-cell truncate-ref-cell'
+                  title={row.referenceNumber}
+                  style={{ width: "16%" }}
+                >
+                  {row.referenceNumber || "—"}
+                </TableCell>
+                <TableCell className='TableCell' style={{ width: "10%" }}>
+                  <StatusBadge status={row.docStatus === "" ? "Not Started" : row.docStatus} />
+                </TableCell>
+                <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell' style={{ width: "12%" }}>
+                  <UserInitialsBadge name={row.createdByName} />
+                </TableCell>
+                <TableCell className='TableCell p-0 text-right' style={{ width: "6%" }}>
+                  {userAccess.remainingDays <= 0 ? (
+                    <Dropdown>
+                      <Dropdown.Toggle as={CustomToggle} />
+                    </Dropdown>
+                  ) : (
+                    <Dropdown>
+                      <Dropdown.Toggle as={CustomToggle} />
+                      <Dropdown.Menu align='end'>
+                        {row.docStatus === "Completed" ? (
+                          <Dropdown.Item
+                            className='d-flex gap-2 align-items-center'
+                            onClick={() => handleDownloadModal(row.registerSignID, row.docName)}
+                          >
+                            <Icons.Download size={20} />
+                            {t("dashboardCardStatuses.download")}
+                          </Dropdown.Item>
+                        ) : null}
 
-            <div className='py-3 p-3 container pendingtable'>
-              <div className='document-status-toolbar'>
-                <h4>{t("Sidebar.BulkDocuments")}</h4>
-
-                <div className='search-filters-container'>
-                  <DocumentSearchFilters
-                    startDate={startDate}
-                    endDate={endDate}
-                    referenceNo={referenceNo}
-                    docNumber={docNumber}
-                    docName={docName}
-                    setStartDate={setStartDate}
-                    setEndDate={setEndDate}
-                    setReferenceNo={setReferenceNo}
-                    setDocNumber={setDocNumber}
-                    setDocName={setDocName}
-                    handleSearch={handleSearch}
-                    clearSearch={clearSearch}
-                  />
-                </div>
-              </div>
-              {/* Table */}
-              <TableContainer
-                component={Paper}
-                className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
-                style={{
-                  maxWidth: "100%",
-                  overflowX: "auto",
-                  minHeight: "440px",
-                  height: "calc(100vh - 280px)",
-                  maxHeight: "calc(100vh - 280px)",
-                }}
-              >
-                <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
-                  {/* Table Headers */}
-                  <TableHead className='customTableHead'>
-                    <TableRow>
-                      {columns.map((column) => (
-                        <TableCell key={column.label} className='TableHeaderCell'>
-                          {column.label}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-
-                  {/* Table Body */}
-                  <TableBody>
-                    {searchResults.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={columns.length} className='table-empty-state-cell'>
-                          <TableEmptyState
-                            icon={<Icons.BulkDocuments size={50} />}
-                            title={t("dashboardCardStatuses.notDocsFound")}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    )}
-
-                    {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                      <TableRow key={index}>
-                        {/* Table Cells */}
-                        <TableCell style={{ cursor: "pointer" }} title={row.docName} onClick={() => navigateToViewSignatories(row.docName, row.registerSignID, row.masterDocID)} className='TableCell truncate-cell'>
-                          {row.docName}
-                        </TableCell>
-                        <TableCell className='TableCell'>{row.docCompanyPrefixNo}</TableCell>
-                        <TableCell className='TableCell'>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
-                        <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell truncate-ref-cell' title={row.referenceNumber}>
-                          {row.referenceNumber}
-                        </TableCell>
-                        <TableCell className='TableCell'>
-                          <StatusBadge status={row.docStatus === "" ? "Not Started" : row.docStatus} />
-                        </TableCell>
-
-                        <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                          <UserInitialsBadge name={row.createdByName} />
-                        </TableCell>
-
-                        {userAccess.remainingDays <= 0 ? (
-                          <>
-                            <TableCell className='TableCell p-0'>
-                              <Dropdown>
-                                <Dropdown.Toggle as={CustomToggle} />
-                              </Dropdown>
-                            </TableCell>
-                          </>
-                        ) : (
-                          <>
-                            <TableCell className='TableCell p-0'>
-                              <Dropdown>
-                                <Dropdown.Toggle as={CustomToggle} />
-
-                                <Dropdown.Menu>
-                                  {row.docStatus === "Completed" ? (
-                                    <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleDownloadModal(row.registerSignID, row.docName)}>
-                                      <Icons.Download size={20} />
-                                      {t("dashboardCardStatuses.download")}
-                                    </Dropdown.Item>
-                                  ) : null}
-
-                                  {userAccess.auditTrail === true ? (
-                                    <>
-                                      <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewAuditTrail(row.signedDocKey)}>
-                                        <Icons.AuditTrail size={20} />
-                                        {t("dashboardCardStatuses.viewAuditTrail")}
-                                      </Dropdown.Item>
-                                    </>
-                                  ) : (
-                                    <></>
-                                  )}
-
-                                  <Dropdown.Item>
-                                    <DashboardComments registerSignID={row.registerSignID} />
-                                  </Dropdown.Item>
-
-                                  <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => navigateToViewSignatories(row.docName, row.registerSignID, row.masterDocID)}>
-                                    <Icons.SelfSign size={25} />
-                                    {t("signOrderDaigram.signatories")}
-                                  </Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </TableCell>
-                          </>
+                        {userAccess.auditTrail === true && (
+                          <Dropdown.Item
+                            className='d-flex gap-2 align-items-center'
+                            onClick={() => handleViewAuditTrail(row.signedDocKey)}
+                          >
+                            <Icons.AuditTrail size={20} />
+                            {t("dashboardCardStatuses.viewAuditTrail")}
+                          </Dropdown.Item>
                         )}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
 
-              <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 text-xs text-[var(--modern-muted)]'>
-                <div>
-                  {data.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
-                </div>
-                <Stack spacing={2}>
-                  <Pagination
-                    count={Math.max(1, Math.ceil(data.length / rowsPerPage))}
-                    variant='outlined'
-                    shape='rounded'
-                    page={Math.min(page + 1, Math.max(1, Math.ceil(data.length / rowsPerPage)))}
-                    onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
-                  />
-                </Stack>
-              </div>
-            </div>
-          </Grid>
-        </>
+                        <Dropdown.Item>
+                          <DashboardComments registerSignID={row.registerSignID} />
+                        </Dropdown.Item>
+
+                        <Dropdown.Item
+                          className='d-flex gap-2 align-items-center'
+                          onClick={() => navigateToViewSignatories(row.docName, row.registerSignID, row.masterDocID)}
+                        >
+                          <Icons.SelfSign size={25} />
+                          {t("signOrderDaigram.signatories")}
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  )}
+                </TableCell>
+              </TableRow>
+            )}
+          />
+        </Grid>
       ) : null}
 
       {/* Share and View modals */}
@@ -352,53 +284,66 @@ const BulkDocuments = () => {
         }}
       />
 
-      <Modal show={showDownloadModal} backdrop='static' keyboard={false} onHide={() => setShowDownloadModal(false)} dialogClassName='custom-modal-width'>
-        <Modal.Header closeButton>
-          <div className='header-content'>
-            <div className='header-icon'>
+      <Modal
+        show={showDownloadModal}
+        backdrop='static'
+        keyboard={false}
+        onHide={() => setShowDownloadModal(false)}
+        dialogClassName='custom-modal-width'
+      >
+        <Modal.Header closeButton className='border-b border-[var(--modern-border)] px-5 py-4 bg-[var(--modern-card)]'>
+          <div className='flex items-center gap-3'>
+            <div className='flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--modern-raised)] text-[var(--theme-color)] border border-[var(--modern-border)] shrink-0'>
               <Icons.Download size={18} />
             </div>
-
-            <div className='header-text'>
-              <Modal.Title>{t("dashboardCardStatuses.donwloadBulk")}</Modal.Title>
-              <p className='header-subtitle'>{t("dashboardCardStatuses.clickToDownloadDocs")}</p>
+            <div>
+              <Modal.Title className='text-base font-semibold text-[var(--modern-text)] m-0'>
+                {t("dashboardCardStatuses.donwloadBulk")}
+              </Modal.Title>
+              <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5'>
+                {t("dashboardCardStatuses.clickToDownloadDocs")}
+              </p>
             </div>
           </div>
         </Modal.Header>
-        <Modal.Body className='transfer-modal-body'>
+        <Modal.Body className='px-5 py-4 space-y-3 bg-[var(--modern-card)]'>
           {selectedDocName && (
-            <div className='document-info'>
-              <div className='document-icon'>
-                <Icons.PDFs size={24} />
+            <div className='flex items-center gap-3 p-3.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)]'>
+              <div className='w-10 h-10 rounded-xl bg-[var(--modern-card)] border border-[var(--modern-border)] flex items-center justify-center shrink-0 text-[var(--theme-color)]'>
+                <Icons.PDFs size={22} />
               </div>
-
-              <div className='document-details'>
-                <h6 className='document-title'>{t("dashboardCardStatuses.document")}</h6>
-                <p className='document-name'>{selectedDocName}</p>
+              <div className='min-w-0 flex-1'>
+                <div className='text-xs font-medium text-[var(--modern-muted)]'>
+                  {t("dashboardCardStatuses.document")}
+                </div>
+                <div className='text-sm font-semibold text-[var(--modern-text)] truncate'>
+                  {selectedDocName}
+                </div>
               </div>
             </div>
           )}
 
-          <div className='transfer-warning-bulk'>
-            <div className='warning-text-bulk'>
-              <p>This will download a ZIP containing all signatories’ signed documents</p>
-            </div>
+          <div className='flex items-start gap-2.5 p-3 rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs'>
+            <AlertCircle size={16} className='shrink-0 mt-0.5' />
+            <span>This will download a ZIP containing all signatories’ signed documents</span>
           </div>
         </Modal.Body>
         <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]'>
-          <Button 
-            variant='none' 
-            className='px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors' 
+          <Button
+            variant='none'
+            disabled={isLoading}
+            className='px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors'
             onClick={() => setShowDownloadModal(false)}
           >
             {t("dashboardCardStatuses.cancel")}
           </Button>
-          <Button 
-            className='inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity' 
-            variant='none' 
+          <Button
+            disabled={isLoading}
+            className='inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity'
+            variant='none'
             onClick={handleDownloadBulkDocuments}
           >
-            <Icons.Download size={16} />
+            {isLoading ? <Loader2 size={15} className='animate-spin' /> : <Icons.Download size={16} />}
             {t("dashboardCardStatuses.download")}
           </Button>
         </Modal.Footer>

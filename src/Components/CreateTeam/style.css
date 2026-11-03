@@ -73,10 +73,12 @@
   max-width: 1320px;
   color: var(--modern-text);
   font-family: var(--modern-font-ui);
+  margin-top: clamp(1rem, 1.75vw, 1.5rem);
 }
 
 .team-members-page .createTemplate {
-  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
 }
 
 .team-members-page .pendingtable {
@@ -175,12 +177,21 @@
 
 .team-members-page .templateButton,
 .team-members-page .createTeamBtn {
+  min-height: 2.5rem;
+  padding: 0.625rem 1.25rem;
   border: 1px solid var(--modern-violet);
   border-radius: 0.625rem;
   background: var(--modern-violet);
   color: #fff;
   font-family: var(--modern-font-ui);
+  font-size: 0.875rem;
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, opacity 150ms ease;
 }
 
 .team-members-page .templateButton:hover,
@@ -328,40 +339,7 @@
   background: var(--modern-violet-hover);
 }
 
-.team-phone-control {
-  width: 100%;
-}
 
-.team-phone-control .team-phone-input {
-  width: 100% !important;
-  min-height: 2.75rem !important;
-  padding-inline-start: 3rem !important;
-  border: 1px solid var(--modern-border-strong) !important;
-  border-radius: 0.625rem !important;
-  background: var(--modern-raised) !important;
-  color: var(--modern-text) !important;
-  font-family: var(--modern-font-ui);
-  font-size: 0.875rem !important;
-}
-
-.team-phone-control .team-phone-country {
-  border: 1px solid var(--modern-border-strong) !important;
-  border-inline-end: 0 !important;
-  border-radius: 0.625rem 0 0 0.625rem !important;
-  background: var(--modern-raised) !important;
-}
-
-.team-phone-control .country-list {
-  border: 1px solid var(--modern-border) !important;
-  background: var(--modern-card) !important;
-  color: var(--modern-text) !important;
-}
-
-.team-phone-control .country-list .country:hover,
-.team-phone-control .country-list .country.highlight {
-  background: var(--modern-violet-soft) !important;
-  color: var(--modern-text) !important;
-}
 
 .team-confirm-dialog .modal-header {
   padding: 1rem 1.25rem;
@@ -481,9 +459,14 @@
 /* Department administration surfaces */
 .department-admin-page {
   max-width: 1480px;
+  margin-top: clamp(1rem, 1.75vw, 1.5rem);
 }
 
 .department-admin-page .createTemplate {
+  margin-top: 0.5rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
   justify-content: flex-end;
 }
 
@@ -745,3 +728,145 @@
     flex: 1 1 0;
   }
 }
+
+/* ==========================================================================
+   Create Team & Update User Modern Phone Input
+   Aligned with UserProfile and Delegation design system
+   ========================================================================== */
+.create-team-phone-input {
+  position: relative;
+  width: 100%;
+  height: 42px;
+  min-height: 42px;
+  box-sizing: border-box;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 1px solid var(--modern-border-strong) !important;
+  border-radius: 12px !important;
+  background: var(--modern-bg) !important;
+  transition: border-color var(--motion-base, 150ms) ease, outline var(--motion-base, 150ms) ease;
+}
+
+.create-team-phone-input:focus-within {
+  border-color: var(--modern-violet) !important;
+  outline: 3px solid var(--modern-focus) !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
+}
+
+.create-team-phone-input.is-invalid {
+  border-color: var(--modern-danger, #ef4444) !important;
+  outline: 3px solid var(--color-danger-bg, rgba(239, 68, 68, 0.2)) !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
+}
+
+.create-team-phone-input .form-control {
+  width: 100% !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  box-sizing: border-box !important;
+  border: 0 !important;
+  border-radius: 11px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui) !important;
+  font-size: 14px !important;
+  box-shadow: none !important;
+  outline: none !important;
+  margin: 0 !important;
+  padding-left: 48px !important;
+  padding-right: 14px !important;
+}
+
+.create-team-phone-input .flag-dropdown,
+.create-team-phone-input .selected-flag,
+.create-team-phone-input .flag-dropdown:hover,
+.create-team-phone-input .flag-dropdown:focus,
+.create-team-phone-input .selected-flag:hover,
+.create-team-phone-input .selected-flag:focus,
+.create-team-phone-input .selected-flag:active,
+.create-team-phone-input .flag-dropdown.open,
+.create-team-phone-input .flag-dropdown.open .selected-flag {
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.create-team-phone-input .flag-dropdown,
+.create-team-phone-input .selected-flag,
+.create-team-phone-input .flag-dropdown.open,
+.create-team-phone-input .flag-dropdown.open .selected-flag {
+  border-start-start-radius: 11px !important;
+  border-end-start-radius: 11px !important;
+  border-start-end-radius: 0 !important;
+  border-end-end-radius: 0 !important;
+}
+
+.create-team-phone-input .selected-flag .arrow {
+  display: none !important;
+}
+
+[dir="rtl"] .create-team-phone-input .flag-dropdown,
+[dir="rtl"] .create-team-phone-input .selected-flag,
+[dir="rtl"] .create-team-phone-input .flag-dropdown.open,
+[dir="rtl"] .create-team-phone-input .flag-dropdown.open .selected-flag {
+  border-start-start-radius: 0 !important;
+  border-end-start-radius: 0 !important;
+  border-start-end-radius: 11px !important;
+  border-end-end-radius: 11px !important;
+  right: 0 !important;
+  left: auto !important;
+}
+
+[dir="rtl"] .create-team-phone-input .form-control {
+  padding-right: 48px !important;
+  padding-left: 14px !important;
+  text-align: right;
+  direction: ltr;
+}
+
+.create-team-phone-input .country-list {
+  border: 1px solid var(--modern-border-strong) !important;
+  border-radius: 12px !important;
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+  z-index: 1060 !important;
+  margin-top: 4px !important;
+  overflow-y: auto !important;
+}
+
+.create-team-phone-input .country-list .search {
+  background: var(--modern-card) !important;
+  padding: 6px 10px !important;
+}
+
+.create-team-phone-input .country-list .search-box {
+  width: 100% !important;
+  border: 1px solid var(--modern-border-strong) !important;
+  border-radius: 8px !important;
+  background: var(--modern-bg) !important;
+  color: var(--modern-text) !important;
+  padding: 4px 8px !important;
+  font-size: 13px !important;
+}
+
+.create-team-phone-input .country-list .country {
+  padding: 8px 12px !important;
+  transition: background-color 100ms ease;
+  color: var(--modern-text) !important;
+}
+
+.create-team-phone-input .country-list .country:hover,
+.create-team-phone-input .country-list .country.highlight {
+  background: var(--modern-violet-soft) !important;
+  color: var(--modern-text) !important;
+}
+
+.create-team-phone-input .country-list .country .dial-code {
+  color: var(--modern-muted) !important;
+}
+

@@ -252,6 +252,10 @@
   background: linear-gradient(135deg, #8b6cff 0 40%, #4c8bff 40% 70%, #2be0e6 70%);
 }
 
+.palette-swatch--concept-3 {
+  background: linear-gradient(135deg, #4d8dff 0 40%, #7c7bff 40% 70%, #a5d3ff 70%);
+}
+
 .palette-swatch--management {
   background: #fe5800;
 }

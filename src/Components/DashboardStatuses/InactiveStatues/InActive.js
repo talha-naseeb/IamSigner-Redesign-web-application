@@ -298,7 +298,7 @@ const InActive = () => {
                 ) : (
                   <Dropdown>
                     <Dropdown.Toggle as={CustomToggle} />
-                    <Dropdown.Menu>
+                    <Dropdown.Menu align='end'>
                       <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleRegisterSignId(row.registerSignID)}>
                         <Icons.Download size={20} />
                         {t("dashboardCardStatuses.download")}

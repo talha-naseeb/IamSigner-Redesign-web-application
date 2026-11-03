@@ -463,6 +463,8 @@
 }
 
 .home-status-filter {
+  appearance: none;
+  -webkit-appearance: none;
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -477,6 +479,8 @@
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
+  outline: none;
+  box-shadow: none;
   cursor: pointer;
   transition: background-color var(--motion-fast, 150ms) ease,
               border-color var(--motion-fast, 150ms) ease,

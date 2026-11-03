@@ -2,24 +2,37 @@ import React, { useEffect, useState } from "react";
 import userService from "@/services/userService";
 import bulkService from "@/services/bulkService";
 import { toast } from "react-toastify";
-import { Dropdown as Dropdown } from "@/Components/UI/shadcnCompat";
+import { Dropdown } from "@/Components/UI/shadcnCompat";
 import ViewModal from "@/Components/CommonModals/ViewModal/ViewModal";
 import ShareModal from "@/Components/CommonModals/ShareModal/ShareModal";
 import { useForm } from "react-hook-form";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Stack, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableEmptyState,
+  TableHead,
+  TableRow,
+  Stack,
+  Pagination,
+  UserInitialsBadge,
+} from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
 import DownloadModal from "@/Components/CommonModals/DownloadModal/DownloadModal";
 import { Icons } from "@/assets/Icons";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useUser } from "@/Context/UserContext";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import DashboardComments from "@/Components/CommonModals/DocumentsComments/DashboardComments";
+import { StatusBadge, formatTableDate } from "@/Components/DashboardStatuses/DocumentStatusTable";
 
 const BulkSignatoriesList = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { registerSignID, masterDocID } = useParams();
+  const { docName, registerSignID, masterDocID } = useParams();
   const [dataRow, setDataRow] = useState();
   const { userAccess } = useUser("");
   const [data, setData] = useState([]);
@@ -29,17 +42,8 @@ const BulkSignatoriesList = () => {
   const [pdfUrl, setPdfUrl] = useState("");
   const { reset } = useForm();
   const [searchResults, setSearchResults] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const statusColors = {
-    signed: "var(--completed-status)",
-    completed: "var(--completed-status)",
-    draft: "var(--draft-status)",
-    declined: "var(--decline-status)",
-    inactive: "var(--inactive-status)",
-    pending: "var(--pending-status)",
-    share: "var(--share-status)",
-    recalled: "var(--recall-status)",
-  };
   const [showATModal, setShowATModal] = useState(false);
   const [auditTrailURL, setAuditTrailURL] = useState("");
   const [showDownloadModal, setShowDownloadModal] = useState(false);
@@ -54,11 +58,6 @@ const BulkSignatoriesList = () => {
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(30);
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -100,7 +99,7 @@ const BulkSignatoriesList = () => {
       console.log(error);
       if (error.response && error.response.statusCode === "4") {
         toast.error(t("dashboardCardStatuses.unathorizedErrSharedFile"));
-      } else if (error.response.statusCode === "500") {
+      } else if (error.response && error.response.statusCode === "500") {
         toast.error(t("dashboardCardStatuses.unathorizedErrSharedFile"));
       } else {
         toast.error(t("dashboardCardStatuses.shareFileToastErr"));
@@ -109,29 +108,29 @@ const BulkSignatoriesList = () => {
     }
   };
 
-  // Completed api
+  // Fetch Bulk Signatories api
   const FetchBulkDocumentsList = async () => {
     setIsLoading(true);
     try {
       const response = await bulkService.getBulkSignatories(registerSignID, masterDocID);
       if (response.data.successStatus) {
-        setData(response.data.response);
+        setData(response.data.response || []);
         setSearchResults(response.data.response || []);
-
-        setIsLoading(false);
       } else {
         console.error("API Error:", response.data.message);
       }
     } catch (error) {
-      console.error(t("dashboardCardStatuses.errorfetchingUserData"));
+      console.error(t("dashboardCardStatuses.errorfetchingUserData"), error);
+    } finally {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     FetchBulkDocumentsList();
-  }, []);
+  }, [registerSignID, masterDocID]);
 
-  //handle download and View
+  // Handle download and View
   const handleFileDownload = async (row) => {
     setDataRow(row);
     setShowDownloadModal(true);
@@ -160,190 +159,205 @@ const BulkSignatoriesList = () => {
   };
 
   const columns = [
-    { label: t("tablesLabel.name"), key: "docName" },
-    { label: t("tablesLabel.email"), key: "docCompanyPrefixNo" },
-    { label: t("tablesLabel.date"), key: "completedDate" },
+    { label: t("tablesLabel.name"), key: "name" },
+    { label: t("tablesLabel.email"), key: "email" },
+    { label: t("tablesLabel.date"), key: "signDate" },
     { label: t("tablesLabel.status"), key: "signStatus" },
-    { label: "", key: "actions" },
+    { label: "", key: "actions", align: "right" },
   ];
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-
-    const formattedMinutes = (minutes < 10 ? "0" : "") + minutes;
-
-    return `${day}/${month}/${year} ${hours}:${formattedMinutes} ${ampm}`;
-  };
-
-  const handleCellClick = (event) => {
-    const cell = event.target;
-    cell.classList.toggle("scrollable");
-  };
 
   const goBack = () => navigate(-1);
 
-  return (
-    <Grid className='container' style={{ marginTop: "12px" }}>
-      <Grid>
+  const filteredSignatories = searchResults.filter((row) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      (row.name || "").toLowerCase().includes(q) ||
+      (row.email || "").toLowerCase().includes(q) ||
+      (row.signStatus || "").toLowerCase().includes(q)
+    );
+  });
 
-        <div className='py-3 p-3 container pendingtable'>
-          <div style={{ display: "flex", gap: "5px", alignItems: "center", marginBottom: "1rem" }}>
-            <Icons.Back size={22} className={document.documentElement.dir === "rtl" ? "rtl-icon" : ""} onClick={goBack} style={{ cursor: "pointer" }} />
-            <label style={{ fontSize: "20px", fontWeight: "500" }}>{t("Sidebar.BulkSignatories")}</label>
+  return (
+    <div className='bulk-signatories-route w-full max-w-none mt-4 px-3 sm:px-6 text-foreground [font-family:var(--modern-font-ui)]'>
+      <div className='rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-5 md:p-6 text-foreground'>
+        {/* Top Header & Breadcrumb Toolbar */}
+        <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[var(--modern-border)]'>
+          <div className='flex items-center gap-3'>
+            <button
+              type='button'
+              onClick={goBack}
+              className='w-9 h-9 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] hover:border-[var(--theme-color)] hover:text-[var(--theme-color)] hover:bg-[var(--modern-primary-bg)] text-[var(--modern-text)] flex items-center justify-center transition-colors shrink-0 shadow-none outline-none cursor-pointer active:scale-[0.98]'
+              aria-label={t("common.back") || "Go back"}
+            >
+              <Icons.Back className={document.documentElement.dir === "rtl" ? "scale-x-[-1]" : ""} size={16} />
+            </button>
+            <div className='w-10 h-10 rounded-xl bg-[var(--modern-primary-bg)] text-[var(--theme-color)] border border-[color-mix(in_srgb,var(--theme-color)_25%,transparent)] flex items-center justify-center shrink-0'>
+              <Icons.BulkDocuments size={20} color='var(--theme-color)' />
+            </div>
+            <div className='min-w-0'>
+              <div className='flex items-center gap-2 flex-wrap'>
+                <Link
+                  to="/bulk-documents"
+                  className='breadcrumb-nav-link text-xs font-medium text-[var(--modern-muted)] hover:text-[var(--theme-color)] transition-colors inline-flex items-center no-underline hover:no-underline'
+                >
+                  {t("Sidebar.BulkDocuments") || "Bulk Documents"}
+                </Link>
+                <span className='text-xs text-[var(--modern-muted)]'>/</span>
+                <h1 className='text-base md:text-lg font-bold text-[var(--modern-text)] tracking-tight truncate m-0'>
+                  {docName ? decodeURIComponent(docName) : t("Sidebar.BulkSignatories")}
+                </h1>
+                <span className='px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--modern-raised)] border border-[var(--modern-border)] text-[var(--modern-muted)]'>
+                  {filteredSignatories.length}
+                </span>
+              </div>
+              <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5'>
+                {t("Sidebar.BulkSignatories")}
+              </p>
+            </div>
           </div>
 
-          {/* Table */}
-          <TableContainer
-            component={Paper}
-            className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
-            style={{
-              maxWidth: "100%",
-              overflowX: "auto",
-              minHeight: "440px",
-              height: "calc(100vh - 280px)",
-              maxHeight: "calc(100vh - 280px)",
-            }}
-          >
-            <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
-              {/* Table Headers */}
-              <TableHead className='customTableHead'>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell key={column.label} className='TableHeaderCell'>
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-
-              {/* Table Body */}
-              <TableBody>
-                {searchResults.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className='table-empty-state-cell'>
-                      <TableEmptyState
-                        icon={<Icons.BulkDocuments size={50} />}
-                        title={t("dashboardCardStatuses.notDocsFound")}
-                      />
-                    </TableCell>
-                  </TableRow>
-                )}
-
-                {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                  <TableRow key={index}>
-                    {/* Table Cells */}
-                    <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
-                      <div className='flex items-center gap-2'>
-                        <UserInitialsBadge name={row.name} />
-                        <span>{row.name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className='TableCell'>{row.email}</TableCell>
-                    <TableCell className='TableCell'>{row.signDate ? formatDate(row.signDate) : ""}</TableCell>
-                    <TableCell className='TableCell'>
-                      {(() => {
-                        const rawStatus = (row.signStatus || "pending").toLowerCase();
-                        const statusColor = statusColors[rawStatus] || "var(--inactive-status)";
-                        return (
-                          <span
-                            className='inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold'
-                            style={{
-                              color: statusColor,
-                              backgroundColor: `color-mix(in srgb, ${statusColor} 12%, var(--modern-card))`,
-                              border: `1px solid color-mix(in srgb, ${statusColor} 35%, var(--modern-border))`,
-                            }}
-                          >
-                            {row.signStatus || "Pending"}
-                          </span>
-                        );
-                      })()}
-                    </TableCell>
-
-                    {userAccess.remainingDays <= 0 ? (
-                      <>
-                        <TableCell className='TableCell p-0'>
-                          <Dropdown>
-                            <Dropdown.Toggle as={CustomToggle} />
-                          </Dropdown>
-                        </TableCell>
-                      </>
-                    ) : (
-                      <>
-                        <TableCell className='TableCell p-0'>
-                          <Dropdown>
-                            <Dropdown.Toggle as={CustomToggle} />
-
-                            <Dropdown.Menu>
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileDownload(row)}>
-                                <Icons.Download size={20} />
-                                {t("dashboardCardStatuses.download")}
-                              </Dropdown.Item>
-
-                              {userAccess.docShare === true ? (
-                                <>
-                                  <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleShareModalShow(row)}>
-                                    <Icons.Share size={20} />
-                                    {t("dashboardCardStatuses.share")}
-                                  </Dropdown.Item>
-                                </>
-                              ) : (
-                                <></>
-                              )}
-
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleView(row)}>
-                                <Icons.View size={20} />
-                                {t("dashboardCardStatuses.view")}
-                              </Dropdown.Item>
-
-                              {userAccess.auditTrail === true ? (
-                                <>
-                                  <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewAuditTrail(row.signedDocKey)}>
-                                    <Icons.AuditTrail size={20} />
-                                    {t("dashboardCardStatuses.viewAuditTrail")}
-                                  </Dropdown.Item>
-                                </>
-                              ) : (
-                                <></>
-                              )}
-
-                              <Dropdown.Item>
-                                <DashboardComments registerSignID={row.registerSignID} />
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </TableCell>
-                      </>
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 text-xs text-[var(--modern-muted)]'>
-            <div>
-              {data.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.documentsof")} {data.length} {t("tablesLabel.document")}
+          {/* Quick Search */}
+          <div className='relative w-full sm:w-64'>
+            <input
+              type='text'
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(0);
+              }}
+              placeholder={t("searchFilter.searchPlaceholder") || "Search signatories..."}
+              className={`w-full h-9 ${
+                document.documentElement.dir === "rtl" ? "pr-9 pl-3 text-right" : "pl-9 pr-3 text-left"
+              } text-xs rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border)] text-[var(--modern-text)] placeholder-[var(--modern-muted)] focus:outline-none focus:border-[var(--theme-color)] transition-colors`}
+            />
+            <div
+              className={`absolute top-1/2 -translate-y-1/2 text-[var(--modern-muted)] pointer-events-none ${
+                document.documentElement.dir === "rtl" ? "right-3" : "left-3"
+              }`}
+            >
+              <Icons.Search size={15} />
             </div>
-            <Stack spacing={2}>
-              <Pagination
-                count={Math.max(1, Math.ceil(data.length / rowsPerPage))}
-                variant='outlined'
-                shape='rounded'
-                page={Math.min(page + 1, Math.max(1, Math.ceil(data.length / rowsPerPage)))}
-                onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
-              />
-            </Stack>
           </div>
         </div>
-      </Grid>
+
+        {/* Table Container */}
+        <TableContainer
+          component={Paper}
+          className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)] mt-4'
+          style={{
+            maxWidth: "100%",
+            overflowX: "auto",
+            minHeight: "440px",
+            height: "calc(100vh - 280px)",
+            maxHeight: "calc(100vh - 280px)",
+          }}
+        >
+          <Table stickyHeader style={{ border: "none", minWidth: "750px" }}>
+            <TableHead className='customTableHead'>
+              <TableRow>
+                {columns.map((column, idx) => (
+                  <TableCell
+                    key={column.key || idx}
+                    className='TableHeaderCell'
+                    align={column.align || "left"}
+                    style={column.width ? { width: column.width } : undefined}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {filteredSignatories.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className='table-empty-state-cell'>
+                    <TableEmptyState
+                      icon={<Icons.BulkDocuments size={48} className='text-[var(--modern-muted)]' />}
+                      title={t("dashboardCardStatuses.notDocsFound")}
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredSignatories.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
+                  <TableRow key={row.registerSignID || index} hover className='transition-colors hover:bg-[var(--modern-raised)]/50'>
+                    <TableCell className='TableCell'>
+                      <div className='flex items-center gap-2.5 min-w-0'>
+                        <UserInitialsBadge name={row.name} avatarOnly />
+                        <span className='font-semibold text-sm text-[var(--modern-text)] truncate block'>
+                          {row.name || "—"}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className='TableCell text-xs text-[var(--modern-muted)] font-mono'>
+                      {row.email || "—"}
+                    </TableCell>
+                    <TableCell className='TableCell text-xs text-[var(--modern-muted)]'>
+                      {row.signDate ? formatTableDate(row.signDate) : "—"}
+                    </TableCell>
+                    <TableCell className='TableCell'>
+                      <StatusBadge status={row.signStatus || "pending"} />
+                    </TableCell>
+
+                    <TableCell className='TableCell p-0 text-right' align='right'>
+                      <Dropdown>
+                        <Dropdown.Toggle as={CustomToggle} />
+
+                        <Dropdown.Menu align='end'>
+                          <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileDownload(row)}>
+                            <Icons.Download size={20} />
+                            {t("dashboardCardStatuses.download")}
+                          </Dropdown.Item>
+
+                          {userAccess.docShare === true && (
+                            <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleShareModalShow(row)}>
+                              <Icons.Share size={20} />
+                              {t("dashboardCardStatuses.share")}
+                            </Dropdown.Item>
+                          )}
+
+                          <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleView(row)}>
+                            <Icons.View size={20} />
+                            {t("dashboardCardStatuses.view")}
+                          </Dropdown.Item>
+
+                          {userAccess.auditTrail === true && (
+                            <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewAuditTrail(row.signedDocKey)}>
+                              <Icons.AuditTrail size={20} />
+                              {t("dashboardCardStatuses.viewAuditTrail")}
+                            </Dropdown.Item>
+                          )}
+
+                          <Dropdown.Item>
+                            <DashboardComments registerSignID={row.registerSignID} />
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* Pagination Footer */}
+        <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 text-xs text-[var(--modern-muted)]'>
+          <div>
+            {filteredSignatories.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, filteredSignatories.length)} {t("tablesLabel.documentsof")} {filteredSignatories.length} {t("tablesLabel.document")}
+          </div>
+          <Stack spacing={2}>
+            <Pagination
+              count={Math.max(1, Math.ceil(filteredSignatories.length / rowsPerPage))}
+              variant='outlined'
+              shape='rounded'
+              page={Math.min(page + 1, Math.max(1, Math.ceil(filteredSignatories.length / rowsPerPage)))}
+              onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
+            />
+          </Stack>
+        </div>
+      </div>
 
       {/* Share and View modals */}
       <ShareModal
@@ -381,7 +395,8 @@ const BulkSignatoriesList = () => {
           setAuditTrailURL("");
         }}
       />
-    </Grid>
+    </div>
   );
 };
+
 export default BulkSignatoriesList;

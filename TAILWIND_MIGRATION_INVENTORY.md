@@ -194,7 +194,7 @@ Every entry is a migration review item. JSX in routes, providers, and helper ren
 
 ### Components/CommonModals/AIAssitant
 
-- [ ] `src/Components/CommonModals/AIAssitant/AIAssistant.js` — inline style prop present; inspect static vs data-driven style
+- [x] `src/Components/CommonModals/AIAssitant/AIAssistant.js` — migrated to shared tokens and Tailwind utilities; `AIAssistant.css` retired.
 
 ### Components/CommonModals/CustomDots
 
@@ -206,7 +206,7 @@ Every entry is a migration review item. JSX in routes, providers, and helper ren
 
 ### Components/CommonModals/DeleteConfirmationModal
 
-- [ ] `src/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal.js`
+- [x] `src/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal.js` — migrated to shared tokens, Tailwind utilities, and synced end-aligned footer buttons.
 
 ### Components/CommonModals/DocumentsComments
 
@@ -214,13 +214,13 @@ Every entry is a migration review item. JSX in routes, providers, and helper ren
 
 ### Components/CommonModals/DownloadModal
 
-- [ ] `src/Components/CommonModals/DownloadModal/DownloadModal.js` — inline style prop present; inspect static vs data-driven style
-- [ ] `src/Components/CommonModals/DownloadModal/InactiveDocsDownloadModal.js` — inline style prop present; inspect static vs data-driven style
-- [ ] `src/Components/CommonModals/DownloadModal/shareDownloadModal.js` — inline style prop present; inspect static vs data-driven style
+- [x] `src/Components/CommonModals/DownloadModal/DownloadModal.js` — migrated to shared tokens, interactive option cards, and Tailwind utilities.
+- [x] `src/Components/CommonModals/DownloadModal/InactiveDocsDownloadModal.js` — migrated to shared tokens, interactive option cards, and Tailwind utilities.
+- [x] `src/Components/CommonModals/DownloadModal/shareDownloadModal.js` — migrated to shared tokens, interactive option cards, and Tailwind utilities.
 
 ### Components/CommonModals/InactiveConfirmationModal
 
-- [ ] `src/Components/CommonModals/InactiveConfirmationModal/InactiveConfirmationModal.js`
+- [x] `src/Components/CommonModals/InactiveConfirmationModal/InactiveConfirmationModal.js` — uses `AppConfirmModal` and shared tokens.
 
 ### Components/CommonModals/Loader
 
@@ -241,14 +241,14 @@ Every entry is a migration review item. JSX in routes, providers, and helper ren
 
 ### Components/CommonModals/ViewModal
 
-- [ ] `src/Components/CommonModals/ViewModal/ViewModal.js` — inline style prop present; inspect static vs data-driven style
+- [x] `src/Components/CommonModals/ViewModal/ViewModal.js` — migrated to responsive viewer shell, shared tokens, and Tailwind utilities.
 
 ### Components/CreateTeam
 
 - [ ] `src/Components/CreateTeam/CreateTeam.js` — inline style prop present; inspect static vs data-driven style
 - [ ] `src/Components/CreateTeam/CreateTeamForm.js`
 - [ ] `src/Components/CreateTeam/UserSearchFilter.js` — inline style prop present; inspect static vs data-driven style
-- [ ] `src/Components/CreateTeam/ViewTeamDetails.js` — inline style prop present; inspect static vs data-driven style
+- [x] `src/Components/CreateTeam/ViewTeamDetails.js` — migrated to shared tokens, Tailwind grid cards, and tokenized status KPI counters.
 
 ### Components/DashboardStatuses
 
@@ -256,8 +256,8 @@ Every entry is a migration review item. JSX in routes, providers, and helper ren
 
 ### Components/DashboardStatuses/BulkStatus
 
-- [ ] `src/Components/DashboardStatuses/BulkStatus/BulkDocuments.js` — inline style prop present; inspect static vs data-driven style
-- [ ] `src/Components/DashboardStatuses/BulkStatus/BulkSignatoriesList.js` — inline style prop present; inspect static vs data-driven style
+- [x] `src/Components/DashboardStatuses/BulkStatus/BulkDocuments.js` — migrated to `DocumentStatusTable`, `formatTableDate`, `UserInitialsBadge`, and tokenized Bulk ZIP download modal.
+- [x] `src/Components/DashboardStatuses/BulkStatus/BulkSignatoriesList.js` — fully modernized with shared modern tokens, breadcrumbs, StatusBadge, search, and zero inline static styles
 
 ### Components/DashboardStatuses/CompleteStatus
 
@@ -568,7 +568,7 @@ Every entry is a migration review item. JSX in routes, providers, and helper ren
 
 ### Integrations/SmsIntegration
 
-- [ ] `src/Integrations/SmsIntegration/CreateSMSIntegration.js` — inline style prop present; inspect static vs data-driven style
+- [x] `src/Integrations/SmsIntegration/CreateSMSIntegration.js` — migrated to shared modern accordion, `TableEmptyState`, static bottom offcanvas footer, and Tailwind utilities.
 
 ### Integrations/webhookIntegration
 
@@ -745,7 +745,7 @@ Every source CSS file is listed below with its direct importers. Convert route-s
 
 ### Components/CommonModals/AIAssitant
 
-- [ ] `src/Components/CommonModals/AIAssitant/AIAssistant.css` — imported by `src/Components/CommonModals/AIAssitant/AIAssistant.js`
+- [x] `src/Components/CommonModals/AIAssitant/AIAssistant.css` — retired after migrating `AIAssistant.js` to shared tokens and Tailwind utilities.
 
 ### Components/CommonModals/CustomToast
 

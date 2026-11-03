@@ -172,8 +172,8 @@ const Sidebar = ({ children }) => {
                   to="/home"
                   className="sidebar-brand"
                   aria-label="IAmSigner home"
-                  aria-hidden={!isMobile && (isCollapsed || location.pathname.startsWith("/dms"))}
-                  tabIndex={!isMobile && (isCollapsed || location.pathname.startsWith("/dms")) ? -1 : undefined}
+                  aria-hidden={!isMobile && isCollapsed}
+                  tabIndex={!isMobile && isCollapsed ? -1 : undefined}
                   title="IAmSigner"
                   onClick={closeMobileSidebar}
                 >
@@ -218,7 +218,7 @@ const Sidebar = ({ children }) => {
                     <MenuItem
                       key={item.path}
                       item={item}
-                      isOpen={isOpen && !location.pathname.startsWith("/dms")}
+                      isOpen={isOpen}
                       onClick={item.type === "upload" ? handleUploadClick : clearStorage}
                       onNavigate={closeMobileSidebar}
                     />
@@ -228,7 +228,7 @@ const Sidebar = ({ children }) => {
                     items={menuConfig.documentStatusItems}
                     triggerIcon={Icons.DocumentStatus}
                     triggerLabel={t("Sidebar.DocumentStatus")}
-                    isOpen={isOpen && !location.pathname.startsWith("/dms")}
+                    isOpen={isOpen}
                     className="menuLinks doc-status-section"
                     onNavigate={closeMobileSidebar}
                     onExpandSidebar={() => setIsCollapsed(false)}
@@ -240,7 +240,7 @@ const Sidebar = ({ children }) => {
                     <MenuItem
                       key={item.path}
                       item={item}
-                      isOpen={isOpen && !location.pathname.startsWith("/dms")}
+                      isOpen={isOpen}
                       onClick={clearStorage}
                       onNavigate={closeMobileSidebar}
                     />
@@ -251,7 +251,7 @@ const Sidebar = ({ children }) => {
                       items={menuConfig.aiMenuItems}
                       triggerIcon={Icons.MacAI}
                       triggerLabel={t("Sidebar.MacAI")}
-                      isOpen={isOpen && !location.pathname.startsWith("/dms")}
+                      isOpen={isOpen}
                       onItemClick={handleAiItemClick}
                       onNavigate={closeMobileSidebar}
                       onExpandSidebar={() => setIsCollapsed(false)}
@@ -263,7 +263,7 @@ const Sidebar = ({ children }) => {
                       items={menuConfig.userReportItems}
                       triggerIcon={Icons.UserReportShield}
                       triggerLabel={t("Sidebar.userDashboard")}
-                      isOpen={isOpen && !location.pathname.startsWith("/dms")}
+                      isOpen={isOpen}
                       onNavigate={closeMobileSidebar}
                       onExpandSidebar={() => setIsCollapsed(false)}
                     />
@@ -274,7 +274,7 @@ const Sidebar = ({ children }) => {
                       items={menuConfig.adminMenuItems}
                       triggerIcon={Icons.AdminShield}
                       triggerLabel={t("Sidebar.AdminMenu")}
-                      isOpen={isOpen && !location.pathname.startsWith("/dms")}
+                      isOpen={isOpen}
                       onNavigate={closeMobileSidebar}
                       onExpandSidebar={() => setIsCollapsed(false)}
                     />
@@ -283,7 +283,7 @@ const Sidebar = ({ children }) => {
               </nav>
             </div>
 
-            {accountId && !location.pathname.startsWith("/dms") ? (
+            {accountId ? (
               <SidebarAccountStorage accountId={accountId} isOpen={isOpen} />
             ) : null}
           </div>

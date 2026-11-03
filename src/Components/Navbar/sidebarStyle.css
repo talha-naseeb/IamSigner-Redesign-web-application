@@ -42,6 +42,7 @@
 .modern-theme-shell .sticky-header.scrolled {
   border: 1px solid var(--modern-border);
   border-radius: 20px;
+  margin-bottom: 0.5rem;
   background: linear-gradient(
     110deg,
     color-mix(in srgb, var(--modern-violet) 8%, var(--modern-card)),

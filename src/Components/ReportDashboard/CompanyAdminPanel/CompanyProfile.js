@@ -24,22 +24,24 @@ function CompanyProfile() {
 
   if (!accessReady) {
     return (
-      <div className="company-profile-page">
-        <div className="admin-dashboard-shell">
-          <div className="admin-dashboard-grid admin-dashboard-grid--loading">
-            <div className="admin-kpi-strip">
-              {[1, 2, 3, 4, 5].map((item) => (
-                <div key={item} className="admin-kpi-item admin-skeleton-card">
-                  <div className="admin-skeleton-line short" />
-                  <div className="admin-skeleton-line" />
-                  <div className="admin-skeleton-line tiny" />
-                </div>
-              ))}
-            </div>
-            <div className="admin-chart-card admin-skeleton-panel" />
-            <div className="admin-chart-card admin-skeleton-panel" />
-            <div className="admin-chart-card admin-skeleton-panel" />
-            <div className="admin-chart-card admin-skeleton-panel" />
+      <div className="w-full max-w-none m-0 py-6 px-4 sm:px-6 bg-[var(--modern-bg)] text-[var(--modern-text)]">
+        <div className="w-full max-w-[1560px] mx-auto space-y-6">
+          <div className="p-6 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] animate-pulse h-28" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {[1, 2, 3, 4, 5].map((item) => (
+              <div
+                key={item}
+                className="p-4 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] animate-pulse h-24"
+              />
+            ))}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {[1, 2, 3, 4].map((item) => (
+              <div
+                key={item}
+                className="p-5 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] animate-pulse h-72"
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -48,25 +50,36 @@ function CompanyProfile() {
 
   if (hasAccess) {
     return (
-      <div className="company-profile-page">
-        <AdminHome />
+      <div className="w-full max-w-none m-0 py-6 px-4 sm:px-6 bg-[var(--modern-bg)] text-[var(--modern-text)]">
+        <div className="w-full max-w-[1560px] mx-auto">
+          <AdminHome />
+        </div>
       </div>
     );
   }
 
   if (isExpired) {
     return (
-      <div className="company-profile-page">
-        <UserLisence />
+      <div className="w-full max-w-none m-0 py-6 px-4 sm:px-6 bg-[var(--modern-bg)] text-[var(--modern-text)]">
+        <div className="w-full max-w-[1560px] mx-auto">
+          <UserLisence />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="company-profile-page">
-      <div className="admin-no-access">
-        <h4>{t("adminDashboard.noAccessTitle")}</h4>
-        <p>{t("adminDashboard.noAccessDescription")}</p>
+    <div className="w-full max-w-none m-0 py-6 px-4 sm:px-6 bg-[var(--modern-bg)] text-[var(--modern-text)]">
+      <div className="w-full max-w-[1560px] mx-auto p-12 text-center rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)]">
+        <h4 className="text-lg font-bold text-[var(--modern-text)] mb-2">
+          {t("adminDashboard.noAccessTitle", "Company profile access unavailable")}
+        </h4>
+        <p className="text-sm text-[var(--modern-muted)] max-w-md mx-auto m-0">
+          {t(
+            "adminDashboard.noAccessDescription",
+            "This account does not currently have access to the admin company dashboard."
+          )}
+        </p>
       </div>
     </div>
   );

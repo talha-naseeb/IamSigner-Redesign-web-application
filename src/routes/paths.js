@@ -24,7 +24,6 @@ const PATHS = {
   inactiveDocs: "/inactive-docs",
   teamMembers: "/app-users",
   documentReport: "/users-documents-report",
-  userReport: "/users-report",
   accountSettings: "/account-settings",
   declined: "/declined",
   declineDocs: "/declined-docs",

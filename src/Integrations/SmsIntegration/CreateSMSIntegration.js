@@ -6,8 +6,8 @@ import integrationService from "@/services/integrationService";
 import { toast } from "react-toastify";
 import { useUser } from "@/Context/UserContext";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Grid } from "@/Components/UI/dataPrimitives";
-import SMSIcon from "@/assets/images/sms-edit.svg";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Grid } from "@/Components/UI/dataPrimitives";
+import { MessageSquare, Plus, Loader2 } from "lucide-react";
 
 const providers = ["Twilio", "Nexmo", "Plivo"];
 
@@ -81,24 +81,33 @@ function CreateSMSIntegration() {
     { label: t("SMSIntegration.provider"), key: "provider" },
     { label: t("SMSIntegration.apiKey"), key: "apiKey" },
     { label: t("SMSIntegration.apiUrl"), key: "apiURL" },
-    { label: t("SMSIntegration.actions"), key: "actions" },
+    { label: t("SMSIntegration.actions"), key: "actions", align: "right" },
   ];
 
   return (
     <>
       <Accordion defaultActiveKey='0' className='accordion'>
-        <Accordion.Item eventKey='0'>
-          <Accordion.Header>
-            <div className='d-flex align-items-center gap-3'>
-              <img src={SMSIcon} alt='sms icon' style={{ height: "30px" }} />
-              <label style={{ fontSize: "20px", fontWeight: "500" }}>{t("SMSIntegration.title")}</label>
+        <Accordion.Item eventKey='0' className='rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] overflow-hidden'>
+          <Accordion.Header className='px-5 py-4'>
+            <div className='flex items-center gap-3'>
+              <div className='flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--modern-raised)] text-[var(--theme-color)] border border-[var(--modern-border)] shrink-0'>
+                <MessageSquare size={20} />
+              </div>
+              <span className='text-base font-bold text-[var(--modern-text)]'>
+                {t("SMSIntegration.title")}
+              </span>
             </div>
           </Accordion.Header>
-          <Accordion.Body>
+          <Accordion.Body className='p-5 pt-2 bg-[var(--modern-card)]'>
             <Grid>
-              <div className='d-flex justify-content-start mb-3'>
-                <Button variant='none' className='ImageCancelBtn' onClick={() => setShowOffcanvas(true)}>
-                  {t("SMSIntegration.createButton")}
+              <div className='flex items-center justify-between mb-4'>
+                <Button
+                  variant='none'
+                  className='inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-[var(--theme-color)] text-white hover:opacity-90 transition-opacity'
+                  onClick={() => setShowOffcanvas(true)}
+                >
+                  <Plus size={15} />
+                  <span>{t("SMSIntegration.createButton")}</span>
                 </Button>
               </div>
               <div className='pendingtable'>
@@ -112,10 +121,10 @@ function CreateSMSIntegration() {
                   }}
                 >
                   <Table stickyHeader style={{ border: "none" }}>
-                    <TableHead>
+                    <TableHead className='customTableHead'>
                       <TableRow>
                         {columns.map((column) => (
-                          <TableCell key={column.key} className='TableHeaderCell'>
+                          <TableCell key={column.key} align={column.align || "left"} className='TableHeaderCell'>
                             {column.label}
                           </TableCell>
                         ))}
@@ -124,14 +133,14 @@ function CreateSMSIntegration() {
                     <TableBody>
                       {smsIntegrations.length > 0 ? (
                         smsIntegrations.map((row, index) => (
-                          <TableRow key={index}>
-                            <TableCell>{row.provider}</TableCell>
-                            <TableCell>{row.apiKey}</TableCell>
-                            <TableCell>{row.apiURL}</TableCell>
-                            <TableCell>
+                          <TableRow key={index} hover>
+                            <TableCell className='TableCell font-medium text-[var(--modern-text)]'>{row.provider}</TableCell>
+                            <TableCell className='TableCell font-mono text-xs text-[var(--modern-muted)]'>{row.apiKey}</TableCell>
+                            <TableCell className='TableCell text-[var(--modern-muted)]'>{row.apiURL}</TableCell>
+                            <TableCell className='TableCell p-0 text-right'>
                               <Dropdown>
                                 <Dropdown.Toggle as={CustomToggle} />
-                                <Dropdown.Menu>
+                                <Dropdown.Menu align='end'>
                                   <Dropdown.Item>{t("SMSIntegration.edit")}</Dropdown.Item>
                                   <Dropdown.Item>{t("SMSIntegration.delete")}</Dropdown.Item>
                                 </Dropdown.Menu>
@@ -141,8 +150,11 @@ function CreateSMSIntegration() {
                         ))
                       ) : (
                         <TableRow>
-                          <TableCell colSpan={4} className='text-center'>
-                            {t("SMSIntegration.noData")}
+                          <TableCell colSpan={4} className='table-empty-state-cell p-0'>
+                            <TableEmptyState
+                              icon={<MessageSquare size={40} />}
+                              title={t("SMSIntegration.noData")}
+                            />
                           </TableCell>
                         </TableRow>
                       )}
@@ -155,58 +167,107 @@ function CreateSMSIntegration() {
         </Accordion.Item>
       </Accordion>
 
-      <Offcanvas show={showOffcanvas} onHide={handleCancel} placement='end'>
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>{t("SMSIntegration.title")}</Offcanvas.Title>
+      <Offcanvas show={showOffcanvas} onHide={handleCancel} placement={document.documentElement.dir === "rtl" ? "start" : "end"}>
+        <Offcanvas.Header closeButton className='border-b border-[var(--modern-border)] px-5 py-4 bg-[var(--modern-card)]'>
+          <div className='flex items-center gap-3'>
+            <div className='flex items-center justify-center w-9 h-9 rounded-xl bg-[var(--modern-raised)] text-[var(--theme-color)] border border-[var(--modern-border)] shrink-0'>
+              <MessageSquare size={18} />
+            </div>
+            <Offcanvas.Title className='text-base font-bold text-[var(--modern-text)] m-0'>
+              {t("SMSIntegration.title")}
+            </Offcanvas.Title>
+          </div>
         </Offcanvas.Header>
-        <Offcanvas.Body>
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            <Form.Group className='mb-3'>
-              <Form.Label>{t("SMSIntegration.provider")}</Form.Label>
-              <Form.Select {...register("Provider", { required: t("SMSIntegration.required") })}>
-                <option value=''>{t("SMSIntegration.selectProvider")}</option>
-                {providers.map((prov) => (
-                  <option key={prov} value={prov}>
-                    {prov}
-                  </option>
-                ))}
-              </Form.Select>
-              {errors.Provider && <div style={{ color: "red", marginTop: "4px" }}>{errors.Provider.message}</div>}
-            </Form.Group>
+        <Offcanvas.Body className='p-0 flex flex-col h-full bg-[var(--modern-card)] text-[var(--modern-text)]'>
+          <Form onSubmit={handleSubmit(onSubmit)} className='flex flex-col flex-1 h-full'>
+            <div className='p-5 space-y-4 flex-1 overflow-y-auto'>
+              <Form.Group>
+                <Form.Label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("SMSIntegration.provider")}
+                </Form.Label>
+                <Form.Select
+                  className='w-full px-3.5 py-2 text-sm rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] focus:outline-none focus:border-[var(--theme-color)]'
+                  {...register("Provider", { required: t("SMSIntegration.required") })}
+                >
+                  <option value=''>{t("SMSIntegration.selectProvider")}</option>
+                  {providers.map((prov) => (
+                    <option key={prov} value={prov}>
+                      {prov}
+                    </option>
+                  ))}
+                </Form.Select>
+                {errors.Provider && (
+                  <div className='text-xs text-rose-500 mt-1'>{errors.Provider.message}</div>
+                )}
+              </Form.Group>
 
-            <Form.Group className='mb-3'>
-              <Form.Label>{t("SMSIntegration.apiKey")}</Form.Label>
-              <Form.Control type='text' {...register("ApiKey", { required: t("SMSIntegration.required") })} />
-              {errors.ApiKey && <div style={{ color: "red", marginTop: "4px" }}>{errors.ApiKey.message}</div>}
-            </Form.Group>
+              <Form.Group>
+                <Form.Label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("SMSIntegration.apiKey")}
+                </Form.Label>
+                <Form.Control
+                  type='text'
+                  className='w-full px-3.5 py-2 text-sm rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] focus:outline-none focus:border-[var(--theme-color)]'
+                  {...register("ApiKey", { required: t("SMSIntegration.required") })}
+                />
+                {errors.ApiKey && (
+                  <div className='text-xs text-rose-500 mt-1'>{errors.ApiKey.message}</div>
+                )}
+              </Form.Group>
 
-            <Form.Group className='mb-3'>
-              <Form.Label>{t("SMSIntegration.apiSecret")}</Form.Label>
-              <Form.Control type='password' {...register("ApiSecret", { required: t("SMSIntegration.required") })} />
-              {errors.ApiSecret && <div style={{ color: "red", marginTop: "4px" }}>{errors.ApiSecret.message}</div>}
-            </Form.Group>
+              <Form.Group>
+                <Form.Label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("SMSIntegration.apiSecret")}
+                </Form.Label>
+                <Form.Control
+                  type='password'
+                  className='w-full px-3.5 py-2 text-sm rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] focus:outline-none focus:border-[var(--theme-color)]'
+                  {...register("ApiSecret", { required: t("SMSIntegration.required") })}
+                />
+                {errors.ApiSecret && (
+                  <div className='text-xs text-rose-500 mt-1'>{errors.ApiSecret.message}</div>
+                )}
+              </Form.Group>
 
-            <Form.Group className='mb-3'>
-              <Form.Label>{t("SMSIntegration.apiUrl")}</Form.Label>
-              <Form.Control
-                type='url'
-                {...register("ApiURL", {
-                  required: t("SMSIntegration.required"),
-                  pattern: {
-                    value: /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(:[0-9]{1,5})?(\/.*)?$/,
-                    message: t("SMSIntegration.invalidUrl"),
-                  },
-                })}
-              />
-              {errors.ApiURL && <div style={{ color: "red", marginTop: "4px" }}>{errors.ApiURL.message}</div>}
-            </Form.Group>
+              <Form.Group>
+                <Form.Label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("SMSIntegration.apiUrl")}
+                </Form.Label>
+                <Form.Control
+                  type='url'
+                  className='w-full px-3.5 py-2 text-sm rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] focus:outline-none focus:border-[var(--theme-color)]'
+                  {...register("ApiURL", {
+                    required: t("SMSIntegration.required"),
+                    pattern: {
+                      value: /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(:[0-9]{1,5})?(\/.*)?$/,
+                      message: t("SMSIntegration.invalidUrl"),
+                    },
+                  })}
+                />
+                {errors.ApiURL && (
+                  <div className='text-xs text-rose-500 mt-1'>{errors.ApiURL.message}</div>
+                )}
+              </Form.Group>
+            </div>
 
-            <div className='newComment d-flex align-items-center justify-content-between w-100 p-3 py-4'>
-              <Button variant='secondary' className='resetBtn' onClick={handleCancel}>
+            <div className='sticky bottom-0 mt-auto border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]'>
+              <Button
+                variant='none'
+                type='button'
+                disabled={isLoading}
+                className='px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors'
+                onClick={handleCancel}
+              >
                 {t("SMSIntegration.cancel")}
               </Button>
-              <Button variant='primary' className='applyBtn' type='submit'>
-                {t("SMSIntegration.submit")}
+              <Button
+                variant='none'
+                type='submit'
+                disabled={isLoading}
+                className='inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-40 transition-opacity'
+              >
+                {isLoading && <Loader2 size={14} className='animate-spin' />}
+                <span>{t("SMSIntegration.submit")}</span>
               </Button>
             </div>
           </Form>

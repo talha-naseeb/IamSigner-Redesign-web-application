@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Modal, Button, Dropdown } from "@/Components/UI/shadcnCompat";
+import { Modal, Button, Dropdown, Form } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
 import dashboardService from "@/services/dashboardService";
 import uploadFlowService from "@/services/uploadFlowService";
@@ -790,7 +790,7 @@ const ChangeOrderModal = ({ show, handleClose, registerSignID, signedDocKey }) =
                       {t("logScreens.mobileNumber") || "Mobile Number"} <span className='text-rose-500'>*</span>
                     </label>
                     <div className='flex items-center gap-2'>
-                      <select
+                      <Form.Select
                         value={form.countryCode || ""}
                         onChange={(e) => handleInputChange(index, "countryCode", e.target.value)}
                         className='w-28 shrink-0 px-2.5 py-2 text-sm rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border)] text-[var(--modern-text)] focus:border-[var(--modern-primary)] focus:outline-none transition-colors'
@@ -804,7 +804,7 @@ const ChangeOrderModal = ({ show, handleClose, registerSignID, signedDocKey }) =
                             {code.lookupID}
                           </option>
                         ))}
-                      </select>
+                      </Form.Select>
 
                       <div className='relative flex-1 flex items-center'>
                         <div

@@ -156,7 +156,7 @@ const RecentDocsHome = () => {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return dateString;
     const day = date.getDate();
-    const month = date.toLocaleString("en-US", { month: "short" });
+    const month = date.getMonth() + 1;
     const year = date.getFullYear();
     let hours = date.getHours();
     const minutes = date.getMinutes();
@@ -166,7 +166,7 @@ const RecentDocsHome = () => {
 
     const formattedMinutes = (minutes < 10 ? "0" : "") + minutes;
 
-    return `${day} ${month} ${year}, ${hours}:${formattedMinutes} ${ampm}`;
+    return `${day}/${month}/${year} ${hours}:${formattedMinutes} ${ampm}`;
   };
 
   const hasActiveFilters = Boolean(startDate || endDate || docStatus || docName || referenceNo);

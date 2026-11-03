@@ -5,16 +5,18 @@
    ========================================================================== */
 
 .cobranding-page {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 1.5rem 1rem 3.5rem;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 1.25rem clamp(1rem, 2vw, 1.5rem) 3.5rem;
   color: var(--modern-text);
   font-family: var(--modern-font-ui);
+  box-sizing: border-box;
 }
 
 /* Page Header & Breadcrumbs */
 .cobranding-header {
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.5rem;
 }
 
 .cobranding-header-title {
@@ -31,14 +33,19 @@
   margin: 0;
 }
 
-/* Modern Accordion */
+/* Modern Accordion - Matched with Delegation Accordion */
+.cobranding-accordion {
+  border: 0 !important;
+  background: transparent !important;
+}
+
 .cobranding-accordion .accordion-item {
   overflow: hidden;
   border: 1px solid var(--modern-border) !important;
-  border-radius: 20px !important;
+  border-radius: 18px !important;
   background: var(--modern-card) !important;
   box-shadow: none !important;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.85rem;
   transition: border-color var(--motion-fast) var(--motion-standard);
 }
 
@@ -48,12 +55,13 @@
 
 .cobranding-accordion .accordion-button {
   min-height: 68px;
-  padding: 1.15rem 1.4rem;
+  padding: 1rem 1.25rem;
   background: var(--modern-card) !important;
   color: var(--modern-text) !important;
   font-family: var(--modern-font-ui);
   font-weight: 650;
   box-shadow: none !important;
+  border-radius: 0 !important;
 }
 
 .cobranding-accordion .accordion-button:focus {
@@ -63,6 +71,7 @@
 
 .cobranding-accordion .accordion-button:not(.collapsed) {
   background: var(--modern-raised) !important;
+  color: var(--modern-text) !important;
   border-bottom: 1px solid var(--modern-border);
 }
 
@@ -71,7 +80,8 @@
 }
 
 .cobranding-accordion .accordion-body {
-  padding: clamp(1.25rem, 2.5vw, 2rem);
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  border-top: 1px solid var(--modern-border);
   background: var(--modern-card);
 }
 
@@ -80,12 +90,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 12px;
-  border: 1px solid var(--modern-border);
   background: var(--modern-raised);
-  color: var(--modern-violet);
+  border: 1px solid var(--modern-border);
+  color: var(--theme-color);
   flex-shrink: 0;
 }
 

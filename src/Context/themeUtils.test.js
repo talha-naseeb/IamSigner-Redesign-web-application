@@ -60,9 +60,10 @@ describe("Theme & Palette Engine Unit Tests (UI-03)", () => {
   });
 
   describe("Palette Name Validation", () => {
-    it("recognizes valid concept-2 and management palettes", () => {
+    it("recognizes valid concept-2, management, and concept-3 palettes", () => {
       assert.strictEqual(isPaletteName(PALETTES.concept2), true);
       assert.strictEqual(isPaletteName(PALETTES.management), true);
+      assert.strictEqual(isPaletteName(PALETTES.concept3), true);
     });
 
     it("rejects invalid palette names", () => {
@@ -113,6 +114,11 @@ describe("Theme & Palette Engine Unit Tests (UI-03)", () => {
       assert.strictEqual(getInitialPalette({ storage }), "concept-2");
     });
 
+    it("restores valid concept-3 palette from storage", () => {
+      const storage = createMockStorage({ [PALETTE_STORAGE_KEY]: "concept-3" });
+      assert.strictEqual(getInitialPalette({ storage }), "concept-3");
+    });
+
     it("falls back to default concept-2 when storage is empty or invalid", () => {
       const storage = createMockStorage({ [PALETTE_STORAGE_KEY]: "unknown" });
       assert.strictEqual(getInitialPalette({ storage }), "concept-2");
@@ -136,6 +142,8 @@ describe("Theme & Palette Engine Unit Tests (UI-03)", () => {
       const doc = createMockDocument();
       applyPaletteToDocument("management", doc);
       assert.strictEqual(doc.documentElement.getAttribute("data-palette"), "management");
+      applyPaletteToDocument("concept-3", doc);
+      assert.strictEqual(doc.documentElement.getAttribute("data-palette"), "concept-3");
     });
 
     it("falls back to default palette if invalid palette applied", () => {

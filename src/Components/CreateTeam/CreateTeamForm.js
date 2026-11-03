@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Offcanvas } from "@/Components/UI/shadcnCompat";
+import { Button, Form, Modal } from "@/Components/UI/shadcnCompat";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
 import PhoneInput from "react-phone-input-2";
 import userService from "@/services/userService";
+import { Plus, UserPlus, Loader2 } from "lucide-react";
+import "./style.css";
 
 function CreateTeamForm({ fetchTeam }) {
   const { t } = useTranslation();
@@ -226,99 +228,163 @@ function CreateTeamForm({ fetchTeam }) {
   };
 
   return (
-    <div>
+    <div className='inline-flex'>
+      <button type='button' onClick={() => setShowCreateTeam(true)} className='templateButton'>
+        <Plus size={16} />
+        <span>{t("createTeam.createTeam")}</span>
+      </button>
 
-      <div className='createTemplate'>
-        <button onClick={() => setShowCreateTeam(true)} className='templateButton mb-3'>
-          {t("createTeam.createTeam")}
-        </button>
-      </div>
+      <Modal
+        show={showCreateTeam}
+        onHide={handleCloseCreateTeam}
+        centered
+        dialogClassName='max-w-xl'
+        contentClassName='overflow-visible'
+        backdrop='static'
+      >
+        <Modal.Header closeButton className='border-b border-[var(--modern-border)] px-6 py-4 bg-[var(--modern-card)] rounded-t-xl'>
+          <div className='flex items-center gap-3'>
+            <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--modern-violet-soft)] text-[var(--modern-violet)]'>
+              <UserPlus size={20} />
+            </div>
+            <div>
+              <Modal.Title className='text-base sm:text-lg font-bold text-[var(--modern-text)] m-0'>
+                {t("createTeam.AddNewTeam")}
+              </Modal.Title>
+              <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5'>
+                {t("createTeam.enterDetails") || "Add a new member to collaborate in your organization"}
+              </p>
+            </div>
+          </div>
+        </Modal.Header>
 
-      <Offcanvas show={showCreateTeam} className='team-form-panel' onHide={handleCloseCreateTeam} scroll={true} placement={document.documentElement.dir === "rtl" ? "start" : "end"}>
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title className='fw-bold'>{t("createTeam.AddNewTeam")}</Offcanvas.Title>
-        </Offcanvas.Header>
-        <hr className='team-form-divider' />
-        <Offcanvas.Body>
-          <Form>
-            <Form.Group className='mt-2' controlId='FullName'>
-              <Form.Label>
-                {t("createTeam.fullName")}
-                <span className='text-danger mx-1'>*</span>
-              </Form.Label>
-              <Form.Control type='text' placeholder={t("createTeam.enterfullName")} name='FullName' value={formData.FullName} onChange={handleInputChange} />
-              {errors.FullName && <div className='text-danger'>{errors.FullName}</div>}
-            </Form.Group>
+        <Modal.Body className='p-6 bg-[var(--modern-card)] text-[var(--modern-text)]'>
+          <Form onSubmit={(e) => { e.preventDefault(); CreateAppUser(); }}>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              {/* Full Name */}
+              <div>
+                <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("createTeam.fullName")} <span className='text-rose-500'>*</span>
+                </label>
+                <Form.Control
+                  type='text'
+                  placeholder={t("createTeam.enterfullName")}
+                  name='FullName'
+                  value={formData.FullName}
+                  onChange={handleInputChange}
+                  className='w-full px-3.5 py-2 text-sm rounded-xl bg-[var(--modern-bg)] border border-[var(--modern-border-strong)] text-[var(--modern-text)] placeholder:text-[var(--modern-muted)] focus:border-[var(--theme-color)] focus:outline-none transition-colors'
+                />
+                {errors.FullName && <div className='text-xs text-rose-500 mt-1'>{errors.FullName}</div>}
+              </div>
 
-            <Form.Group className='mt-2' controlId='EmailID'>
-              <Form.Label>
-                {t("createTeam.email")}
-                <span className='text-danger mx-1'>*</span>
-              </Form.Label>
-              <Form.Control type='email' placeholder={t("createTeam.enterEmail")} name='EmailID' value={formData.EmailID} onChange={handleInputChange} required />
-              {errors.EmailID && <div className='text-danger'>{errors.EmailID}</div>}
-            </Form.Group>
+              {/* Email */}
+              <div>
+                <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("createTeam.email")} <span className='text-rose-500'>*</span>
+                </label>
+                <Form.Control
+                  type='email'
+                  placeholder={t("createTeam.enterEmail")}
+                  name='EmailID'
+                  value={formData.EmailID}
+                  onChange={handleInputChange}
+                  required
+                  className='w-full px-3.5 py-2 text-sm rounded-xl bg-[var(--modern-bg)] border border-[var(--modern-border-strong)] text-[var(--modern-text)] placeholder:text-[var(--modern-muted)] focus:border-[var(--theme-color)] focus:outline-none transition-colors'
+                />
+                {errors.EmailID && <div className='text-xs text-rose-500 mt-1'>{errors.EmailID}</div>}
+              </div>
 
-            <Form.Group className='mt-2' controlId='RoleID'>
-              <Form.Label>
-                {t("createTeam.role")}
-                <span className='text-danger mx-1'>*</span>
-              </Form.Label>
-              <Form.Select as='select' name='RoleID' value={formData.RoleID} onChange={handleInputChange}>
-                <option value=''>{t("createTeam.choose")}</option>
-                {roles.map((role) => (
-                  <option key={role.id} value={role.id}>
-                    {role.roleNameEn}
-                  </option>
-                ))}
-              </Form.Select>
-              {errors.RoleID && <div className='text-danger'>{errors.RoleID}</div>}
-            </Form.Group>
+              {/* Role */}
+              <div>
+                <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("createTeam.role")} <span className='text-rose-500'>*</span>
+                </label>
+                <Form.Select
+                  as='select'
+                  name='RoleID'
+                  value={formData.RoleID}
+                  onChange={handleInputChange}
+                  className='w-full px-3.5 py-2 text-sm rounded-xl bg-[var(--modern-bg)] border border-[var(--modern-border-strong)] text-[var(--modern-text)] focus:border-[var(--theme-color)] focus:outline-none transition-colors'
+                >
+                  <option value=''>{t("createTeam.choose")}</option>
+                  {roles.map((role) => (
+                    <option key={role.id} value={role.id}>
+                      {role.roleNameEn}
+                    </option>
+                  ))}
+                </Form.Select>
+                {errors.RoleID && <div className='text-xs text-rose-500 mt-1'>{errors.RoleID}</div>}
+              </div>
 
-            <Form.Group className='mt-2' controlId='DepartmentID'>
-              <Form.Label>
-                {t("createTeam.department")}
-                <span className='mx-1 text-muted'>({t("createTeam.optional")})</span>
-              </Form.Label>
-              <Form.Select as='select' name='DepartmentID' value={formData.DepartmentID || ""} onChange={handleInputChange}>
-                <option value=''>{t("createTeam.choose")}</option>
-                {departments.map((dept) => (
-                  <option key={dept.departmentID} value={dept.departmentID}>
-                    {dept.title}
-                  </option>
-                ))}
-              </Form.Select>
-              {/* {errors.DepartmentID && <div className='text-danger'>{errors.DepartmentID}</div>} */}
-            </Form.Group>
+              {/* Department (Optional) */}
+              <div>
+                <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("createTeam.department")}{" "}
+                  <span className='text-xs text-[var(--modern-muted)] font-normal'>
+                    ({t("createTeam.optional")})
+                  </span>
+                </label>
+                <Form.Select
+                  as='select'
+                  name='DepartmentID'
+                  value={formData.DepartmentID || ""}
+                  onChange={handleInputChange}
+                  className='w-full px-3.5 py-2 text-sm rounded-xl bg-[var(--modern-bg)] border border-[var(--modern-border-strong)] text-[var(--modern-text)] focus:border-[var(--theme-color)] focus:outline-none transition-colors'
+                >
+                  <option value=''>{t("createTeam.choose")}</option>
+                  {departments.map((dept) => (
+                    <option key={dept.departmentID} value={dept.departmentID}>
+                      {dept.title}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
 
-            <Form.Group className='mt-2' controlId='MobileNumber'>
-              <Form.Label>
-                {t("createTeam.mobileNumber")}
-                <span className='mx-1 text-muted'>({t("createTeam.optional")})</span>
-              </Form.Label>
-              <PhoneInput
-                excludeCountries={["il"]}
-                country={"sa"}
-                value={phoneNumber}
-                onChange={handlePhoneChange}
-                containerClass='team-phone-control'
-                inputClass='team-phone-input'
-                buttonClass='team-phone-country'
-              />
-              {errors.MobileNumber && <div className='text-danger'>{errors.MobileNumber}</div>}
-            </Form.Group>
-
-            <div className='team-form-actions'>
-              <Button variant='none' className='modalCancelButton' onClick={handleCancel}>
-                {t("createTeam.cancel")}
-              </Button>
-              <Button variant='none' onClick={CreateAppUser} className='applyBtn'>
-                {t("createTeam.createTeam")}
-              </Button>
+              {/* Mobile Number (Optional) */}
+              <div>
+                <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("createTeam.mobileNumber")}{" "}
+                  <span className='text-xs text-[var(--modern-muted)] font-normal'>
+                    ({t("createTeam.optional")})
+                  </span>
+                </label>
+                <PhoneInput
+                  excludeCountries={["il"]}
+                  country={"sa"}
+                  value={phoneNumber}
+                  onChange={handlePhoneChange}
+                  containerClass={`phone-input-container create-team-phone-input ${errors.MobileNumber ? "is-invalid" : ""}`}
+                />
+                {errors.MobileNumber && (
+                  <div className='text-xs text-rose-500 mt-1'>{errors.MobileNumber}</div>
+                )}
+              </div>
             </div>
           </Form>
-        </Offcanvas.Body>
-      </Offcanvas>
+        </Modal.Body>
+
+        <Modal.Footer className='border-t border-[var(--modern-border)] px-6 py-4 flex items-center justify-end gap-3 bg-[var(--modern-card)] rounded-b-xl'>
+          <Button
+            variant='none'
+            type='button'
+            onClick={handleCancel}
+            disabled={isLoading}
+            className='px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] hover:bg-[var(--modern-border)] transition-colors'
+          >
+            {t("createTeam.cancel")}
+          </Button>
+          <Button
+            variant='none'
+            type='button'
+            onClick={CreateAppUser}
+            disabled={isLoading}
+            className='inline-flex items-center justify-center gap-2 px-5 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-50 transition-opacity'
+          >
+            {isLoading && <Loader2 size={16} className='animate-spin' />}
+            <span>{t("createTeam.createTeam")}</span>
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

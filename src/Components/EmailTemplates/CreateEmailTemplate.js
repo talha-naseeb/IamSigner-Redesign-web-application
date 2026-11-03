@@ -307,7 +307,7 @@ const CreateEmailTemplate = () => {
                           {t("emailTemplates.templateType")}
                           <span className='required'>*</span>
                         </label>
-                        <select
+                        <Form.Select
                           className='email-form-select'
                           value={templateType}
                           disabled={!!emailTemplateID}
@@ -322,7 +322,7 @@ const CreateEmailTemplate = () => {
                           <option value='PasswordReset'>{t("emailTemplates.PasswordReset")}</option>
                           <option value='CreateTeam'>{t("emailTemplates.Createteam")}</option>
                           <option value='SigningDocument'>{t("emailTemplates.SigningDocument")}</option>
-                        </select>
+                        </Form.Select>
                       </Form.Group>
                     </Col>
 

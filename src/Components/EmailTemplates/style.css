@@ -6,10 +6,12 @@
 
 /* ── Common Shell & Layout ─────────────────────────────────────────────── */
 .email-templates-container {
-  padding: 1.75rem clamp(1.25rem, 2.5vw, 2.5rem) 4rem;
-  max-width: 1240px;
-  margin: 0 auto;
   width: 100%;
+  max-width: 100%;
+  padding-inline: clamp(1rem, 2vw, 1.5rem);
+  padding-top: 0.5rem;
+  padding-bottom: 3rem;
+  margin: 0;
   box-sizing: border-box;
 }
 
@@ -242,18 +244,20 @@
 
 .email-search-input {
   width: 100%;
-  padding: 0.6rem 0.75rem 0.6rem 2.25rem;
-  font-size: 0.875rem;
-  border-radius: 8px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0 0.75rem 0 2.25rem;
+  font-size: 0.85rem;
+  border-radius: 10px;
   background-color: var(--modern-bg, #ffffff) !important;
-  border: 1px solid var(--modern-border-strong, #cbd5e1) !important;
+  border: 1px solid var(--modern-border, #e2e8f0) !important;
   color: var(--modern-text, #0f172a) !important;
   outline: none;
   transition: border-color 0.15s ease;
 }
 
 [dir="rtl"] .email-search-input {
-  padding: 0.6rem 2.25rem 0.6rem 0.75rem;
+  padding: 0 2.25rem 0 0.75rem;
 }
 
 .email-search-input:focus {
@@ -269,26 +273,18 @@
 }
 
 .email-filter-select {
-  padding: 0.6rem 2rem 0.6rem 0.875rem;
-  font-size: 0.875rem;
-  border-radius: 8px;
+  min-width: 150px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0 0.875rem;
+  font-size: 0.85rem;
+  border-radius: 10px;
   background-color: var(--modern-bg, #ffffff) !important;
-  border: 1px solid var(--modern-border-strong, #cbd5e1) !important;
+  border: 1px solid var(--modern-border, #e2e8f0) !important;
   color: var(--modern-text, #0f172a) !important;
   outline: none;
   cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 1rem;
   transition: border-color 0.15s ease;
-}
-
-[dir="rtl"] .email-filter-select {
-  padding: 0.6rem 0.875rem 0.6rem 2rem;
-  background-position: left 0.75rem center;
 }
 
 .email-filter-select:focus {
@@ -615,20 +611,7 @@
 }
 
 .email-form-select {
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.85rem center;
-  background-size: 1.1rem;
-  padding-right: 2.5rem;
   cursor: pointer;
-}
-
-[dir="rtl"] .email-form-select {
-  background-position: left 0.85rem center;
-  padding-right: 0.875rem;
-  padding-left: 2.5rem;
 }
 
 .email-form-select option {

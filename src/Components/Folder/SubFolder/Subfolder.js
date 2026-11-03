@@ -185,7 +185,7 @@ function SubFolder() {
       ) : (
         <>
           {userAccess.folders === true ? (
-            <div className='folder-route folder-subfolder-route container mx-auto mt-4 px-3 sm:px-6 text-foreground [font-family:var(--modern-font-ui)]'>
+            <div className='folder-route folder-subfolder-route w-full max-w-none mt-4 px-3 sm:px-6 text-foreground [font-family:var(--modern-font-ui)]'>
               <div className='rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-5 md:p-6 text-foreground'>
                 {/* Top Header Toolbar */}
                 <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[var(--modern-border)]'>
@@ -254,28 +254,41 @@ function SubFolder() {
                             )}
                           </div>
                         </div>
-                        <div className='flex items-center justify-end gap-3 shrink-0'>
+                        <div onClick={(e) => e.stopPropagation()} className='flex items-center justify-end gap-3 shrink-0'>
                           <span className='px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--modern-raised)] border border-[var(--modern-border)] text-[var(--modern-muted)]'>
                             {row.numberOfFiles} {t("Folder.files")}
                           </span>
                           <Dropdown>
                             <Dropdown.Toggle as={CustomToggle} />
 
-                            <Dropdown.Menu>
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleUpdateClick(row)}>
-                                <Icons.EditSquare size={18} />
+                            <Dropdown.Menu align='end' className='rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-1.5 shadow-none'>
+                              <Dropdown.Item
+                                className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                onClick={() => handleUpdateClick(row)}
+                              >
+                                <Icons.EditSquare size={16} />
                                 <span>{t("Folder.update")}</span>
                               </Dropdown.Item>
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewDocuments(row.folderName, row.subFolderID)}>
-                                <Icons.View size={18} />
+                              <Dropdown.Item
+                                className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                onClick={() => handleViewDocuments(row.folderName, row.subFolderID)}
+                              >
+                                <Icons.View size={16} />
                                 <span>{t("Folder.view")}</span>
                               </Dropdown.Item>
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleAddDocumentClick(row.subFolderID)}>
-                                <Icons.FolderPlus size={18} />
+                              <Dropdown.Item
+                                className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                onClick={() => handleAddDocumentClick(row.subFolderID)}
+                              >
+                                <Icons.FolderPlus size={16} />
                                 <span>{t("Folder.add")}</span>
                               </Dropdown.Item>
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleDeleteFolderModal(row.subFolderID)}>
-                                <Icons.DeleteAction size={18} />
+                              <Dropdown.Divider className='my-1 border-t border-[var(--modern-border)]' />
+                              <Dropdown.Item
+                                className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-rose-500 hover:bg-rose-500/10 transition-colors'
+                                onClick={() => handleDeleteFolderModal(row.subFolderID)}
+                              >
+                                <Icons.DeleteAction size={16} />
                                 <span>{t("Folder.delete")}</span>
                               </Dropdown.Item>
                             </Dropdown.Menu>

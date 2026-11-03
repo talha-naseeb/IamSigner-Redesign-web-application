@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import AppSwitch from "@/Components/Common/AppSwitch/AppSwitch";
 import PhoneInput from "react-phone-input-2";
 import { Icons } from "@/assets/Icons";
-import "react-phone-input-2/lib/style.css";
 import DateRangePicker from "@/Components/Common/DateRangePicker/DateRangePicker";
 import { DateObject } from "react-multi-date-picker";
 import userService from "@/services/userService";
@@ -339,8 +338,8 @@ function Delegation() {
                           id='delegation-active-toggle'
                           checked={activeDelegate}
                           onChange={handleToggleChange}
-                          onColor={palette === "management" ? "#FE5800" : "#8b6cff"}
-                          offColor={palette === "management" ? "#FFAD7D" : "#d9d1ff"}
+                          onColor={palette === "management" ? "#FE5800" : palette === "concept-3" ? "#4d8dff" : "#8b6cff"}
+                          offColor={palette === "management" ? "#FFAD7D" : palette === "concept-3" ? "#a5d3ff" : "#d9d1ff"}
                           onHandleColor='#ffffff'
                           handleDiameter={18}
                           uncheckedIcon={false}

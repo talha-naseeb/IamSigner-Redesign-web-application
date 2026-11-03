@@ -309,5 +309,7 @@ export const useAdminDashboardData = ({ accountId, t, fromDate, toDate }) => {
     departmentMetrics,
     roleBreakdown,
     mostActiveUsers,
+    team,
+    departments,
   };
 };

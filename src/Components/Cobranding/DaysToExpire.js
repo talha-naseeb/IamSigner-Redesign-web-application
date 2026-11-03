@@ -25,7 +25,7 @@ function DaysToExpire() {
 
   return (
     <div className='subscribed-plan-details-wrapper'>
-      <Accordion defaultActiveKey='0' className='cobranding-accordion my-3'>
+      <Accordion defaultActiveKey='0' className='cobranding-accordion mb-3'>
         <Accordion.Item eventKey='0'>
           <Accordion.Header>
             <div className='d-flex align-items-center gap-3 w-100 me-3'>

@@ -94,6 +94,7 @@
     "switchToDarkMode": "التبديل إلى الوضع الداكن",
     "colorPalette": "لوحة الألوان",
     "conceptTwoPalette": "المفهوم 2",
+    "conceptThreePalette": "المفهوم 3",
     "azaManagementPalette": "لوحة إدارة AZA"
   },
   "Sidebar": {
@@ -1083,6 +1084,8 @@
     "userLicenseDetails": "تفاصيل ترخيص المستخدم",
     "noUserFound": "لم يتم العثور على بيانات مستخدم",
     "userDocStatus": "ملخص حالة مستندات المستخدم",
+    "userDocStatusSubtitle": "متابعة وتدقيق إحصائيات المستندات لكل عضو في الفريق",
+    "searchUserDocPlaceholder": "البحث بالاسم أو البريد الإلكتروني...",
     "userDocs": "حالة مستندات المستخدمين",
     "errDepartments": "حدث خطأ غير متوقع، يرجى المحاولة لاحقًا!",
     "viewDetails": "عرض التفاصيل",
@@ -1120,7 +1123,12 @@
     "confirmActivate": "هل أنت متأكد أنك تريد تنشيط المستخدم!",
     "activateUser": "تفعيل المستخدم",
     "MyTeam": "فريقي",
+    "manageTeamSubtitle": "إدارة أعضاء الشركة والأدوار وصلاحيات الوصول",
+    "searchPlaceholder": "البحث بالاسم، البريد، الدور، القسم...",
+    "teamMember": "عضو",
+    "teamMembersCount": "أعضاء",
     "AddNewTeam": "إضافة فريق جديد",
+    "enterDetails": "إضافة عضو جديد للتعاون في مؤسستك",
     "fullNameRequired": "الاسم الكامل مطلوب",
     "emailRequired": "البريد الإلكتروني مطلوب",
     "invalidEmail": "عنوان البريد الإلكتروني غير صالح",
@@ -1209,6 +1217,14 @@
     "listMac": "قائمة المستندات التي تم إنشاؤها بواسطة MacAI",
     "listCraft": "قائمة المستندات التي تم إنشاؤها بواسطة Craft"
   },
+  "createCraftDocument": {
+    "createDoc": "إنشاء مستند",
+    "craftDoc": "صياغة المستند",
+    "craftDocTitle": "صياغة المستند",
+    "craftDocSubtitle": "إنشاء وتخصيص مستندك يدوياً",
+    "seeHistory": "إذا كنت ترغب في رؤية سجلك",
+    "gotoList": "الانتقال إلى القائمة"
+  },
   "AuthIntegration": {
     "errAuth": "حدث خطأ أثناء جلب تكوين التكامل",
     "errApi": "فشل في إنشاء مفتاح واجهة برمجة التطبيقات",
@@ -1239,7 +1255,16 @@
     "show": "عرض",
     "keepKeySecure": "احتفظ بهذا المفتاح بأمان ولا تشاركه علنًا.",
     "copyToClipboard": "نسخ إلى الحافظة",
-    "keyCopied": "تم نسخ المفتاح إلى الحافظة!"
+    "keyCopied": "تم نسخ المفتاح إلى الحافظة!",
+    "apiSubtitle": "إدارة رموز واجهة برمجة التطبيقات وبيانات الاعتماد ومحفزات الويب هوك",
+    "activeCredentials": "بيانات اعتماد ومفاتيح واجهة برمجة التطبيقات",
+    "credentialsHelp": "استخدم بيانات الاعتماد الآمنة هذه للتكامل مع واجهة برمجة تطبيقات IAMSigner",
+    "noKeyDesc": "لم يتم تكوين بيانات اعتماد API بعد. قم بإنشاء مفتاح لبدء التكامل برمجياً.",
+    "copyKeyNotice": "استخدم بيانات الاعتماد هذه لمصادقة طلبات واجهة برمجة التطبيقات الخارجية",
+    "configNotice": "نقاط النهاية الرسمية والإرشادات ومواصفات المعلمات",
+    "expirySecondsHelp": "وقت انتهاء صلاحية الرمز بالثواني (مثال: 3600 لساعة واحدة)",
+    "keySubTitle": "قم بتكوين اسم التطبيق وانتهاء صلاحية الرمز",
+    "updateCredentials": "تحديث تفاصيل التكامل وانتهاء صلاحية الرمز"
   },
   "webhookIntegration": {
     "webhookCreate": "تم إنشاء الويب هوك بنجاح.",
@@ -1251,6 +1276,18 @@
     "activatWebhook": "تم تنشيط التكامل مع الويب هوك بنجاح.",
     "deactiveWebhook": "تم إلغاء تنشيط التكامل مع الويب هوك بنجاح.",
     "createWebhookApi": "إنشاء ويب هوك Api",
+    "webhookSubtitle": "تكوين نقاط نهاية الويب هوك ومحفزات الأحداث لتلقي الإشعارات الفورية",
+    "eventTriggers": "محفزات الأحداث",
+    "eventTriggersDesc": "حدد أحداث المستند التي يجب أن تؤدي إلى إرسال الويب هوك",
+    "authSection": "أمان المصادقة",
+    "authSectionDesc": "قم بتكوين بيانات اعتماد مصادقة HTTP الأساسية اختيارياً لطلبات الويب هوك",
+    "noAuthNotice": "المصادقة الأساسية معطلة. سيتم إرسال حمولات الويب هوك بدون ترويسة تفويض.",
+    "endpointConfig": "تكوين نقطة النهاية",
+    "endpointSubtitle": "حدد اسم التطبيق وعنوان URL الهدف وطريقة إرسال HTTP",
+    "documentArtifacts": "أحداث وثائق المستندات",
+    "statusEvents": "تغييرات حالة المستند",
+    "infoNotice": "معلمات مخطط الحمولة وإرشادات الإرسال",
+    "enterUserName": "أدخل اسم المستخدم",
     "appName": "اسم التطبيق",
     "url": "رابط",
     "ActionMethod": "طريقة العمل",
@@ -1278,6 +1315,11 @@
     "create": "إنشاء",
     "cancel": "إلغاء",
     "Savechanges": "حفظ التغييرات"
+  },
+  "exportReport": {
+    "Export": "تصدير",
+    "exportExcel": "تصدير إلى إكسل",
+    "exportWord": "تصدير إلى وورد"
   },
   "imageWithControlsOverlay": {
     "controlIdentifier": "معرف التحكم",
@@ -1596,6 +1638,10 @@
   },
   "departmentList": {
     "departmentListTitle": "قائمة الأقسام",
+    "all": "الكل",
+    "departments": "أقسام",
+    "manageSubtitle": "إدارة أقسام الشركة والوحدات التنظيمية",
+    "searchPlaceholder": "البحث بالاسم، الوصف، المنشئ...",
     "title": "اسم القسم",
     "description": "الوصف",
     "actions": "الإجراءات",

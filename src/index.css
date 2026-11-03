@@ -230,7 +230,20 @@
   --management-orange-soft: #ffad7d;
   --management-text: #ffffff;
   --management-muted: #999999;
-  --management-border: rgba(255, 255, 255, 0.09);
+  --management-border: rgba(255, 255, 255, 0.18);
+
+  /* Concept 3 palette (Modern AI SaaS) */
+  --concept3-bg: #050d1f;
+  --concept3-panel: #091733;
+  --concept3-card: #0d1f45;
+  --concept3-raised: #123066;
+  --concept3-blue: #4d8dff;
+  --concept3-indigo: #7c7bff;
+  --concept3-ice: #a5d3ff;
+  --concept3-mint: #6ee7d8;
+  --concept3-text: #eaf1ff;
+  --concept3-muted: #98a9cc;
+  --concept3-border: rgba(255, 255, 255, 0.09);
 }
 
 [data-theme="dark"] {
@@ -344,10 +357,10 @@
   --text-secondary: var(--management-muted);
   --text-muted: var(--management-muted);
   --border-color: var(--management-border);
-  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-subtle: rgba(255, 255, 255, 0.08);
   --input-bg: var(--management-panel);
   --input-text: var(--management-text);
-  --input-border: rgba(255, 255, 255, 0.18);
+  --input-border: rgba(255, 255, 255, 0.24);
   --header-bg: var(--management-bg);
   --sidebar-bg: var(--management-bg);
   --sidebar-text: var(--management-text);
@@ -372,7 +385,7 @@
   --modern-text: var(--management-text);
   --modern-muted: var(--management-muted);
   --modern-border: var(--management-border);
-  --modern-border-strong: rgba(255, 255, 255, 0.18);
+  --modern-border-strong: rgba(255, 255, 255, 0.28);
   --modern-violet: var(--management-orange);
   --modern-violet-hover: #e74e00;
   --modern-violet-soft: rgba(254, 88, 0, 0.14);
@@ -431,6 +444,151 @@
   --modern-hero: linear-gradient(115deg, #fff7f2, #ffffff 58%, #fff0e6);
   --modern-card-shadow: 0 10px 32px rgba(0, 22, 41, 0.08);
   --modern-float-shadow: 0 18px 48px rgba(0, 22, 41, 0.14);
+}
+
+/* Concept 3 — Modern AI SaaS Theme (from landing page concept)
+   Features deep oceanic cosmic navy (#050d1f), mid-navy panels (#091733),
+   rich card surfaces (#0d1f45), electric blue (#4d8dff), electric indigo (#7c7bff),
+   ice cyan (#a5d3ff), and mint spark (#6ee7d8). */
+:root[data-palette="concept-3"] {
+  --bg-primary: #050d1f;
+  --bg-secondary: #091733;
+  --surface-0: #050d1f;
+  --surface-50: #091733;
+  --surface-100: #0d1f45;
+  --surface-200: #123066;
+  --surface-card: #0d1f45;
+  --text-primary: #eaf1ff;
+  --text-secondary: #98a9cc;
+  --text-muted: #98a9cc;
+  --border-color: rgba(255, 255, 255, 0.09);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --input-bg: #091733;
+  --input-text: #eaf1ff;
+  --input-border: rgba(77, 141, 255, 0.28);
+  --input-focus-border: #4d8dff;
+  --header-bg: #050d1f;
+  --sidebar-bg: #050d1f;
+  --sidebar-text: #98a9cc;
+  --sidebar-hover: rgba(77, 141, 255, 0.12);
+  --sidebar-active: #4d8dff;
+  --sidebar-active-bg: rgba(77, 141, 255, 0.18);
+  --dropdown-bg: #0d1f45;
+  --modal-bg: #0d1f45;
+  --card-bg: #0d1f45;
+  --glass-bg: rgba(9, 23, 51, 0.9);
+  --glass-border: rgba(77, 141, 255, 0.2);
+  --theme-color: #4d8dff !important;
+  --theme-hover: #3a7ced !important;
+  --theme-light: rgba(77, 141, 255, 0.16) !important;
+  --theme-active: #4d8dff !important;
+  --theme-color-rgb: 77, 141, 255;
+  --theme-text: #ffffff;
+  --modern-bg: #050d1f;
+  --modern-raised: #091733;
+  --modern-surface: #0d1f45;
+  --modern-card: #0d1f45;
+  --modern-text: #eaf1ff;
+  --modern-muted: #98a9cc;
+  --modern-border: rgba(255, 255, 255, 0.09);
+  --modern-border-strong: rgba(77, 141, 255, 0.35);
+  --modern-violet: #4d8dff;
+  --modern-violet-hover: #3a7ced;
+  --modern-violet-soft: rgba(77, 141, 255, 0.16);
+  --modern-primary: #4d8dff;
+  --modern-primary-foreground: #ffffff;
+  --modern-blue: #4d8dff;
+  --modern-action-violet: #7c7bff;
+  --modern-action-blue: #4d8dff;
+  --modern-cyan: #a5d3ff;
+  --modern-pink: #6ee7d8;
+  --modern-focus: rgba(77, 141, 255, 0.45);
+  --modern-glow-violet: rgba(77, 141, 255, 0.25);
+  --modern-glow-blue: rgba(165, 211, 255, 0.15);
+  --modern-hero: radial-gradient(600px 300px at 20% 0%, rgba(77, 141, 255, 0.32), transparent 70%), linear-gradient(115deg, #091733 0%, #0d1f45 58%, #050d1f 100%);
+  --modern-card-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
+  --modern-float-shadow: 0 22px 56px rgba(0, 0, 0, 0.5);
+
+  /* Table Header Status Colors */
+  --header-pending: #0d1f45;
+  --header-complete: #0d1f45;
+  --header-draft: #0d1f45;
+  --header-declined: #0d1f45;
+  --header-inactive: #0d1f45;
+  --header-shared: #0d1f45;
+  --header-recall: #0d1f45;
+  --header-default: #0d1f45;
+}
+
+/* Concept 3 in light mode: pristine, modern tech surface derived from the document canvas */
+:root[data-theme="light"][data-palette="concept-3"] {
+  --bg-primary: #f2f6fd;
+  --bg-secondary: #e6eefb;
+  --surface-0: #ffffff;
+  --surface-50: #f2f6fd;
+  --surface-100: #e6eefb;
+  --surface-200: rgba(13, 31, 69, 0.12);
+  --surface-card: #ffffff;
+  --text-primary: #0c1833;
+  --text-secondary: #475a80;
+  --text-muted: #62759c;
+  --border-color: rgba(13, 31, 69, 0.12);
+  --border-subtle: rgba(13, 31, 69, 0.06);
+  --input-bg: #ffffff;
+  --input-text: #0c1833;
+  --input-border: rgba(13, 31, 69, 0.22);
+  --input-focus-border: #2e72f6;
+  --header-bg: #ffffff;
+  --sidebar-bg: #ffffff;
+  --sidebar-text: #475a80;
+  --sidebar-hover: rgba(77, 141, 255, 0.08);
+  --sidebar-active: #2e72f6;
+  --sidebar-active-bg: rgba(77, 141, 255, 0.12);
+  --dropdown-bg: #ffffff;
+  --modal-bg: #ffffff;
+  --card-bg: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(13, 31, 69, 0.1);
+  --theme-color: #2e72f6 !important;
+  --theme-hover: #1e5fd4 !important;
+  --theme-light: rgba(46, 114, 246, 0.12) !important;
+  --theme-active: #2e72f6 !important;
+  --theme-color-rgb: 46, 114, 246;
+  --theme-text: #ffffff;
+  --modern-bg: #f2f6fd;
+  --modern-raised: #e6eefb;
+  --modern-surface: #f8fbff;
+  --modern-card: #ffffff;
+  --modern-text: #0c1833;
+  --modern-muted: #62759c;
+  --modern-border: rgba(13, 31, 69, 0.12);
+  --modern-border-strong: rgba(77, 141, 255, 0.3);
+  --modern-violet: #2e72f6;
+  --modern-violet-hover: #1e5fd4;
+  --modern-violet-soft: rgba(46, 114, 246, 0.12);
+  --modern-primary: #2e72f6;
+  --modern-primary-foreground: #ffffff;
+  --modern-blue: #4d8dff;
+  --modern-action-violet: #6366f1;
+  --modern-action-blue: #2e72f6;
+  --modern-cyan: #0284c7;
+  --modern-pink: #0d9488;
+  --modern-focus: rgba(46, 114, 246, 0.35);
+  --modern-glow-violet: rgba(46, 114, 246, 0.16);
+  --modern-glow-blue: rgba(77, 141, 255, 0.12);
+  --modern-hero: linear-gradient(115deg, #eaf2ff 0%, #f4f8ff 58%, #e8f7f5 100%);
+  --modern-card-shadow: 0 10px 32px rgba(13, 31, 69, 0.06);
+  --modern-float-shadow: 0 18px 48px rgba(13, 31, 69, 0.12);
+
+  /* Table Header Status Colors */
+  --header-pending: #eaf1fc;
+  --header-complete: #eaf1fc;
+  --header-draft: #eaf1fc;
+  --header-declined: #eaf1fc;
+  --header-inactive: #eaf1fc;
+  --header-shared: #eaf1fc;
+  --header-recall: #eaf1fc;
+  --header-default: #eaf1fc;
 }
 
 html.theme-switching,
@@ -587,7 +745,7 @@ body,
 }
 
 .dropdown-table .dropdown {
-  position: unset !important;
+  position: relative !important;
 }
 
 /* Custom Table Scrollbars */
@@ -1022,30 +1180,76 @@ table,
 }
 
 .dropdown-menu {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 12rem !important;
   background-color: var(--modern-card, #fff) !important;
   border: 1px solid var(--modern-border, #e2e8f0) !important;
   color: var(--modern-text, #0f172a) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  padding: 0.375rem !important;
+  z-index: 1060;
+  box-sizing: border-box !important;
+}
+
+[data-theme="dark"] .dropdown-menu {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5) !important;
 }
 
 .dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  width: 100%;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.625rem !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
   border: 0 !important;
-  background: transparent;
+  border-radius: 0.5rem !important;
+  padding: 0.5rem 0.75rem !important;
+  background: transparent !important;
   color: var(--modern-text, #0f172a) !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
   cursor: pointer;
-  text-decoration: none;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
 .dropdown-item svg {
   flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  color: var(--modern-muted);
+  transition: color 150ms ease;
 }
 
 .dropdown-item:hover,
 .dropdown-item:focus-visible {
   background-color: var(--modern-raised, #f1f5f9) !important;
+  color: var(--modern-text, #0f172a) !important;
+}
+
+.dropdown-item:hover svg,
+.dropdown-item:focus-visible svg {
+  color: var(--theme-color, var(--modern-violet));
+}
+
+.dropdown-item.text-danger,
+.dropdown-item.dropdown-item-danger {
+  color: var(--modern-danger, #ef4444) !important;
+}
+
+.dropdown-item.text-danger svg,
+.dropdown-item.dropdown-item-danger svg {
+  color: var(--modern-danger, #ef4444) !important;
+}
+
+.dropdown-item.text-danger:hover,
+.dropdown-item.dropdown-item-danger:hover {
+  background-color: color-mix(in srgb, var(--modern-danger, #ef4444) 10%, transparent) !important;
 }
 
 .form-check {
@@ -1314,68 +1518,319 @@ textarea:disabled {
   border-top: 1px solid var(--modern-border, #e2e8f0) !important;
 }
 
-/* Third-party PhoneInput (react-phone-input-2) overrides for SignUp */
-.signup-phone-input {
+/* ==========================================================================
+   Shared Modern Phone Input (react-phone-input-2) Design System
+   Matches Delegation and UserProfile across all forms, dialogs, & SignUp
+   ========================================================================== */
+.react-tel-input.phone-input-container,
+.react-tel-input.signup-phone-input,
+.react-tel-input.profile-phone-input,
+.react-tel-input.delegation-phone-input,
+.react-tel-input.create-team-phone-input,
+.phone-input-container,
+.signup-phone-input,
+.profile-phone-input,
+.delegation-phone-input,
+.create-team-phone-input {
   position: relative;
   width: 100%;
-  height: 48px;
+  height: 42px;
+  min-height: 42px;
   box-sizing: border-box;
+  padding: 0 !important;
+  margin: 0 !important;
   border: 1px solid var(--modern-border-strong);
-  border-radius: var(--radius-md, 12px);
-  background-color: var(--modern-raised);
-  transition: border-color var(--motion-base) var(--motion-standard), box-shadow var(--motion-base) var(--motion-standard);
+  border-radius: 12px;
+  background: var(--modern-raised) !important;
+  background-color: var(--modern-raised) !important;
+  transition: border-color var(--motion-base, 150ms) ease, outline var(--motion-base, 150ms) ease;
 }
 
-.signup-phone-input .form-control {
-  width: 100% !important;
-  min-height: 46px !important;
-  height: 46px !important;
-  box-sizing: border-box;
-  border: 0 !important;
-  border-radius: var(--radius-md, 12px) !important;
-  background-color: transparent !important;
-  color: var(--modern-text) !important;
-  font-family: var(--modern-font-ui);
-  font-size: 14px !important;
+/* Modal and dialog phone input surfaces */
+.modal-body .react-tel-input,
+.modal-content .react-tel-input,
+.modal-body .phone-input-container,
+.modal-content .phone-input-container,
+.modal .phone-input-container,
+.create-team-phone-input,
+.react-tel-input.create-team-phone-input {
+  background: var(--modern-bg) !important;
+  background-color: var(--modern-bg) !important;
+  border-color: var(--modern-border-strong) !important;
+}
+
+.react-tel-input.signup-phone-input,
+.signup-phone-input {
+  height: 48px !important;
+  min-height: 48px !important;
+}
+
+.react-tel-input:focus-within,
+.phone-input-container:focus-within,
+.signup-phone-input:focus-within,
+.profile-phone-input:focus-within,
+.delegation-phone-input:focus-within,
+.create-team-phone-input:focus-within {
+  border-color: var(--modern-violet) !important;
+  outline: 3px solid var(--modern-focus) !important;
+  outline-offset: 2px !important;
   box-shadow: none !important;
 }
 
-.signup-phone-input:focus-within {
-  border-color: var(--modern-violet);
-  box-shadow: 0 0 0 3px var(--modern-focus);
+/* Inner Input Field */
+.react-tel-input .form-control,
+.phone-input-container .form-control,
+.signup-phone-input .form-control,
+.profile-phone-input .form-control,
+.delegation-phone-input .form-control,
+.create-team-phone-input .form-control {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 40px !important;
+  box-sizing: border-box !important;
+  border: 0 !important;
+  border-radius: 11px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui) !important;
+  font-size: 14px !important;
+  box-shadow: none !important;
+  outline: none !important;
+  margin: 0 !important;
+  padding-left: 48px !important;
+  padding-right: 14px !important;
 }
 
+.react-tel-input.signup-phone-input .form-control,
+.signup-phone-input .form-control {
+  min-height: 46px !important;
+}
+
+/* Flag Dropdown Button - Complete Transparency & Reset */
+.react-tel-input .flag-dropdown,
+.react-tel-input .selected-flag,
+.react-tel-input .flag-dropdown:hover,
+.react-tel-input .flag-dropdown:focus,
+.react-tel-input .selected-flag:hover,
+.react-tel-input .selected-flag:focus,
+.react-tel-input .selected-flag:active,
+.react-tel-input .flag-dropdown.open,
+.react-tel-input .flag-dropdown.open .selected-flag,
+.phone-input-container .flag-dropdown,
+.phone-input-container .selected-flag,
+.signup-phone-input .flag-dropdown,
+.signup-phone-input .selected-flag,
+.profile-phone-input .flag-dropdown,
+.profile-phone-input .selected-flag,
+.delegation-phone-input .flag-dropdown,
+.delegation-phone-input .selected-flag,
+.create-team-phone-input .flag-dropdown,
+.create-team-phone-input .selected-flag,
+.phone-input-container .flag-dropdown.open,
+.signup-phone-input .flag-dropdown.open,
+.phone-input-container .selected-flag:hover,
+.phone-input-container .selected-flag:focus,
+.signup-phone-input .selected-flag:hover,
+.signup-phone-input .selected-flag:focus,
+.profile-phone-input .selected-flag:hover,
+.profile-phone-input .selected-flag:focus,
+.delegation-phone-input .selected-flag:hover,
+.delegation-phone-input .selected-flag:focus,
+.create-team-phone-input .selected-flag:hover,
+.create-team-phone-input .selected-flag:focus,
+.phone-input-container .flag-dropdown.open .selected-flag,
+.signup-phone-input .flag-dropdown.open .selected-flag,
+.profile-phone-input .flag-dropdown.open .selected-flag,
+.delegation-phone-input .flag-dropdown.open .selected-flag,
+.create-team-phone-input .flag-dropdown.open .selected-flag {
+  border: 0 !important;
+  border-color: transparent !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.react-tel-input .flag-dropdown,
+.react-tel-input .selected-flag,
+.react-tel-input .flag-dropdown.open,
+.react-tel-input .flag-dropdown.open .selected-flag,
+.phone-input-container .flag-dropdown,
+.phone-input-container .selected-flag,
+.phone-input-container .flag-dropdown.open,
+.phone-input-container .flag-dropdown.open .selected-flag,
 .signup-phone-input .flag-dropdown,
 .signup-phone-input .selected-flag,
 .signup-phone-input .flag-dropdown.open,
-.signup-phone-input .flag-dropdown.open .selected-flag {
-  border: 0 !important;
-  border-start-start-radius: var(--radius-md, 12px) !important;
-  border-end-start-radius: var(--radius-md, 12px) !important;
+.signup-phone-input .flag-dropdown.open .selected-flag,
+.profile-phone-input .flag-dropdown,
+.profile-phone-input .selected-flag,
+.profile-phone-input .flag-dropdown.open,
+.profile-phone-input .flag-dropdown.open .selected-flag,
+.delegation-phone-input .flag-dropdown,
+.delegation-phone-input .selected-flag,
+.delegation-phone-input .flag-dropdown.open,
+.delegation-phone-input .flag-dropdown.open .selected-flag,
+.create-team-phone-input .flag-dropdown,
+.create-team-phone-input .selected-flag,
+.create-team-phone-input .flag-dropdown.open,
+.create-team-phone-input .flag-dropdown.open .selected-flag {
+  border-start-start-radius: 11px !important;
+  border-end-start-radius: 11px !important;
   border-start-end-radius: 0 !important;
   border-end-end-radius: 0 !important;
-  background: transparent !important;
 }
 
-.signup-phone-input.is-invalid {
-  border-color: var(--color-danger);
-  box-shadow: 0 0 0 3px var(--color-danger-bg) !important;
+.react-tel-input .selected-flag .arrow,
+.phone-input-container .selected-flag .arrow,
+.signup-phone-input .selected-flag .arrow,
+.profile-phone-input .selected-flag .arrow,
+.delegation-phone-input .selected-flag .arrow,
+.create-team-phone-input .selected-flag .arrow {
+  display: none !important;
 }
 
-.signup-phone-input.is-invalid .flag-dropdown {
-  color: var(--color-danger);
+/* RTL Support */
+[dir="rtl"] .react-tel-input .flag-dropdown,
+[dir="rtl"] .react-tel-input .selected-flag,
+[dir="rtl"] .react-tel-input .flag-dropdown.open,
+[dir="rtl"] .react-tel-input .flag-dropdown.open .selected-flag,
+[dir="rtl"] .phone-input-container .flag-dropdown,
+[dir="rtl"] .phone-input-container .selected-flag,
+[dir="rtl"] .phone-input-container .flag-dropdown.open,
+[dir="rtl"] .phone-input-container .flag-dropdown.open .selected-flag,
+[dir="rtl"] .signup-phone-input .flag-dropdown,
+[dir="rtl"] .signup-phone-input .selected-flag,
+[dir="rtl"] .signup-phone-input .flag-dropdown.open,
+[dir="rtl"] .signup-phone-input .flag-dropdown.open .selected-flag,
+[dir="rtl"] .profile-phone-input .flag-dropdown,
+[dir="rtl"] .profile-phone-input .selected-flag,
+[dir="rtl"] .profile-phone-input .flag-dropdown.open,
+[dir="rtl"] .profile-phone-input .flag-dropdown.open .selected-flag,
+[dir="rtl"] .delegation-phone-input .flag-dropdown,
+[dir="rtl"] .delegation-phone-input .selected-flag,
+[dir="rtl"] .delegation-phone-input .flag-dropdown.open,
+[dir="rtl"] .delegation-phone-input .flag-dropdown.open .selected-flag,
+[dir="rtl"] .create-team-phone-input .flag-dropdown,
+[dir="rtl"] .create-team-phone-input .selected-flag,
+[dir="rtl"] .create-team-phone-input .flag-dropdown.open,
+[dir="rtl"] .create-team-phone-input .flag-dropdown.open .selected-flag {
+  border-start-start-radius: 0 !important;
+  border-end-start-radius: 0 !important;
+  border-start-end-radius: 11px !important;
+  border-end-end-radius: 11px !important;
+  right: 0 !important;
+  left: auto !important;
 }
 
-.signup-phone-input .country-list {
-  border-color: var(--modern-border-strong);
-  background: var(--modern-card);
-  color: var(--modern-text);
+[dir="rtl"] .react-tel-input .form-control,
+[dir="rtl"] .phone-input-container .form-control,
+[dir="rtl"] .signup-phone-input .form-control,
+[dir="rtl"] .profile-phone-input .form-control,
+[dir="rtl"] .delegation-phone-input .form-control,
+[dir="rtl"] .create-team-phone-input .form-control {
+  padding-right: 48px !important;
+  padding-left: 14px !important;
+  text-align: right;
+  direction: ltr;
 }
 
+/* Invalid / Error State */
+.react-tel-input.is-invalid,
+.phone-input-container.is-invalid,
+.signup-phone-input.is-invalid,
+.profile-phone-input.is-invalid,
+.delegation-phone-input.is-invalid,
+.create-team-phone-input.is-invalid {
+  border-color: var(--color-danger, #ef4444) !important;
+  outline: 3px solid var(--color-danger-bg, rgba(239, 68, 68, 0.2)) !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
+}
+
+.react-tel-input.is-invalid .flag-dropdown,
+.phone-input-container.is-invalid .flag-dropdown,
+.signup-phone-input.is-invalid .flag-dropdown,
+.create-team-phone-input.is-invalid .flag-dropdown {
+  color: var(--color-danger, #ef4444);
+}
+
+/* Country List Dropdown Panel */
+.react-tel-input .country-list,
+.phone-input-container .country-list,
+.signup-phone-input .country-list,
+.profile-phone-input .country-list,
+.delegation-phone-input .country-list,
+.create-team-phone-input .country-list {
+  border: 1px solid var(--modern-border) !important;
+  border-radius: 12px !important;
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+  z-index: 1050 !important;
+  margin-top: 4px !important;
+  overflow-y: auto !important;
+}
+
+.react-tel-input .country-list .search,
+.phone-input-container .country-list .search,
+.signup-phone-input .country-list .search,
+.profile-phone-input .country-list .search,
+.delegation-phone-input .country-list .search,
+.create-team-phone-input .country-list .search {
+  background: var(--modern-card) !important;
+  padding: 6px 10px !important;
+}
+
+.react-tel-input .country-list .search-box,
+.phone-input-container .country-list .search-box,
+.signup-phone-input .country-list .search-box,
+.profile-phone-input .country-list .search-box,
+.delegation-phone-input .country-list .search-box,
+.create-team-phone-input .country-list .search-box {
+  width: 100% !important;
+  border: 1px solid var(--modern-border) !important;
+  border-radius: 8px !important;
+  background: var(--modern-bg) !important;
+  color: var(--modern-text) !important;
+  padding: 4px 8px !important;
+  font-size: 13px !important;
+}
+
+.react-tel-input .country-list .country,
+.phone-input-container .country-list .country,
+.signup-phone-input .country-list .country,
+.profile-phone-input .country-list .country,
+.delegation-phone-input .country-list .country,
+.create-team-phone-input .country-list .country {
+  padding: 8px 12px !important;
+  transition: background-color 100ms ease;
+  color: var(--modern-text) !important;
+}
+
+.react-tel-input .country-list .country:hover,
+.react-tel-input .country-list .country.highlight,
+.phone-input-container .country-list .country:hover,
+.phone-input-container .country-list .country.highlight,
 .signup-phone-input .country-list .country:hover,
-.signup-phone-input .country-list .country.highlight {
-  background: var(--modern-violet-soft);
-  color: var(--modern-text);
+.signup-phone-input .country-list .country.highlight,
+.profile-phone-input .country-list .country:hover,
+.profile-phone-input .country-list .country.highlight,
+.delegation-phone-input .country-list .country:hover,
+.delegation-phone-input .country-list .country.highlight,
+.create-team-phone-input .country-list .country:hover,
+.create-team-phone-input .country-list .country.highlight {
+  background: var(--modern-violet-soft) !important;
+  color: var(--modern-text) !important;
+}
+
+.react-tel-input .country-list .country .dial-code,
+.phone-input-container .country-list .country .dial-code,
+.signup-phone-input .country-list .country .dial-code,
+.profile-phone-input .country-list .country .dial-code,
+.delegation-phone-input .country-list .country .dial-code,
+.create-team-phone-input .country-list .country .dial-code {
+  color: var(--modern-muted) !important;
 }
 
 /* -------------------------------
@@ -1417,42 +1872,7 @@ textarea:disabled {
   -webkit-user-drag: none !important;
 }
 
-.react-tel-input .selected-flag .arrow {
-  display: none !important;
-}
 
-.react-tel-input .flag-dropdown {
-  border-top: 1px solid var(--border-color) !important;
-  border-right: none !important;
-  border-bottom: 1px solid var(--border-color) !important;
-  border-left: 1px solid var(--border-color) !important;
-  border-image: initial !important;
-  border-radius: 4px 0px 0px 4px !important;
-  background-color: transparent !important;
-}
-.react-tel-input .selected-flag {
-  padding: 0px 8px !important;
-  width: 38px !important;
-  background-color: var(--bg-secondary) !important;
-  border: 1px solid var(--bg-secondary) !important;
-  border-radius: 4px 0px 0px 4px !important;
-  border-right: none !important;
-}
-
-[dir="rtl"] .react-tel-input .selected-flag {
-  border-right: 1px solid var(--bg-secondary) !important;
-  border-left: none !important;
-  border-radius: 0px 4px 4px 0px !important;
-}
-
-[dir="rtl"] .react-tel-input .form-control {
-  padding-right: 50px;
-  padding-left: none !important;
-  border-right: none !important;
-  border-left: 1px solid var(--border-color) !important;
-  border-image: initial !important;
-  border-radius: 4px 0px 0px 4px !important;
-}
 body:not(.recaptcha-auth-page) .grecaptcha-badge {
   visibility: hidden !important;
   opacity: 0 !important;
@@ -1618,12 +2038,169 @@ body:not(.recaptcha-auth-page) .grecaptcha-badge {
 }
 
 /* Shared document lifecycle surfaces */
-/* Shared layout for the document lifecycle tables and filters. */
-.modern-theme-shell .mainbody .container:has(.pendingtable) {
+/* Shared layout for the document lifecycle tables, folders, and filters. */
+.modern-theme-shell .mainbody .container:has(.pendingtable),
+.modern-theme-shell .mainbody .container:has(.TableContainer),
+.modern-theme-shell .mainbody .container:has(.custom-table-scrollbar),
+.modern-theme-shell .mainbody .container:has(table),
+.modern-theme-shell .mainbody .folder-route,
+.modern-theme-shell .mainbody .folder-document-route,
+.modern-theme-shell .mainbody .folder-subfolder-route,
+.modern-theme-shell .mainbody .bulk-signatories-route {
   width: 100% !important;
   max-width: 100% !important;
-  padding-inline: 0 !important;
-  margin-top: 0 !important;
+  padding-inline: clamp(1rem, 2vw, 1.5rem) !important;
+  margin-top: clamp(1rem, 1.75vw, 1.5rem) !important;
+  box-sizing: border-box !important;
+}
+
+.modern-theme-shell .mainbody .dashboard-cards-wrapper + .container:has(.pendingtable),
+.modern-theme-shell .mainbody .dashboard-cards-wrapper + * .container:has(.pendingtable),
+.modern-theme-shell .mainbody .dashboard-cards-wrapper + * .pendingtable {
+  margin-top: 0.5rem !important;
+}
+
+.modern-theme-shell .mainbody .team-members-page,
+.modern-theme-shell .mainbody .department-admin-page,
+.modern-theme-shell .mainbody .cobranding-page,
+.modern-theme-shell .mainbody .users-report-page,
+.modern-theme-shell .mainbody .admin-dashboard-shell,
+.modern-theme-shell .mainbody .auth-integration-page,
+.modern-theme-shell .mainbody .email-templates-container,
+.modern-theme-shell .mainbody .macai-page,
+.modern-theme-shell .mainbody .macai-docs-page,
+.modern-theme-shell .mainbody .manual-craft-page,
+.modern-theme-shell .mainbody .craft-docs-page {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-top: clamp(1rem, 1.75vw, 1.5rem);
+  box-sizing: border-box !important;
+}
+
+/* Modern Accordion System for Integrations */
+.integration-accordion {
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.integration-accordion .accordion-item {
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 18px !important;
+  background: var(--modern-card) !important;
+  box-shadow: none !important;
+  margin-bottom: 0.85rem;
+  transition: background-color var(--motion-fast) var(--motion-standard);
+}
+
+.integration-accordion .accordion-button {
+  min-height: 68px;
+  padding: 1rem 1.25rem;
+  border: 0 !important;
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui);
+  font-weight: 650;
+  box-shadow: none !important;
+  border-radius: 18px !important;
+}
+
+.integration-accordion .accordion-button:not(.collapsed) {
+  background: var(--modern-raised) !important;
+  color: var(--modern-text) !important;
+  border: 0 !important;
+  border-bottom: 0 !important;
+  border-radius: 18px 18px 0 0 !important;
+}
+
+[data-theme="dark"] .integration-accordion .accordion-button::after {
+  filter: invert(1) grayscale(1);
+}
+
+.integration-accordion .accordion-body {
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  border: 0 !important;
+  border-top: 0 !important;
+  border-radius: 0 0 18px 18px !important;
+  background: var(--modern-card);
+}
+
+.integration-icon-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--modern-raised);
+  border: 1px solid var(--modern-border);
+  color: var(--theme-color);
+  flex-shrink: 0;
+}
+
+/* Unified Modern Export Dropdown across Report Views */
+.modern-export-btn,
+.users-report-export-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  min-height: 2.375rem !important;
+  padding: 0.45rem 0.95rem !important;
+  border: 1px solid var(--modern-border) !important;
+  border-radius: 12px !important;
+  background: var(--modern-raised) !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui) !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: all var(--motion-fast) var(--motion-standard) !important;
+}
+
+.modern-export-btn:hover,
+.modern-export-btn:focus,
+.modern-export-btn[aria-expanded="true"],
+.users-report-export-button:hover,
+.users-report-export-button:focus,
+.users-report-export-button[aria-expanded="true"] {
+  border-color: var(--modern-border-strong) !important;
+  background: var(--modern-border) !important;
+  color: var(--modern-text) !important;
+  box-shadow: none !important;
+}
+
+.modern-export-menu {
+  min-width: 180px !important;
+  padding: 0.375rem !important;
+  border: 1px solid var(--modern-border) !important;
+  border-radius: 14px !important;
+  background: var(--modern-card) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.2) !important;
+}
+
+.modern-export-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.625rem !important;
+  padding: 0.55rem 0.75rem !important;
+  border-radius: 8px !important;
+  color: var(--modern-text) !important;
+  font-family: var(--modern-font-ui) !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  background: transparent !important;
+  text-decoration: none !important;
+  transition: background-color var(--motion-fast) var(--motion-standard), color var(--motion-fast) var(--motion-standard) !important;
+}
+
+.modern-export-item:hover,
+.modern-export-item:focus {
+  background: var(--modern-raised) !important;
+  color: var(--modern-text) !important;
 }
 
 .modern-theme-shell .pendingtable {
@@ -2212,8 +2789,9 @@ body:not(.recaptcha-auth-page) .grecaptcha-badge {
 .dashboard-cards-wrapper {
   width: 100%;
   max-width: 100%;
-  margin: 14px 0 0;
-  padding: 0;
+  margin: clamp(0.75rem, 1.5vw, 1.25rem) 0 0.5rem;
+  padding-inline: clamp(1rem, 2vw, 1.5rem) !important;
+  box-sizing: border-box !important;
 }
 
 .dashboard-cards-section {
@@ -2419,14 +2997,54 @@ body:not(.recaptcha-auth-page) .grecaptcha-badge {
 /* ==========================================================================
    Folder Module Breadcrumbs & Button Reset (guard for preflight: false)
    ========================================================================== */
-.folder-route button.border-0.bg-transparent,
-.folder-document-route button.border-0.bg-transparent,
-.folder-subfolder-route button.border-0.bg-transparent {
+.breadcrumb-nav-link,
+a.breadcrumb-nav-link,
+button.breadcrumb-nav-link {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.breadcrumb-nav-link,
+a.breadcrumb-nav-link,
+button.breadcrumb-nav-link {
+  cursor: pointer !important;
+  color: var(--modern-muted) !important;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1rem;
+  text-decoration: none !important;
+  transition: color 150ms ease;
+}
+
+.breadcrumb-nav-link:hover,
+a.breadcrumb-nav-link:hover,
+button.breadcrumb-nav-link:hover {
+  color: var(--theme-color) !important;
+  text-decoration: none !important;
   background: transparent !important;
   border: 0 !important;
   outline: none !important;
   box-shadow: none !important;
-  -webkit-appearance: none;
-  appearance: none;
+}
+
+.breadcrumb-nav-link:focus,
+.breadcrumb-nav-link:focus-visible,
+a.breadcrumb-nav-link:focus,
+button.breadcrumb-nav-link:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
 }
 

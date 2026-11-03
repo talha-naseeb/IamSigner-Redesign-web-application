@@ -7,6 +7,7 @@ import { useUser } from "@/Context/UserContext";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import integrationService from "@/services/integrationService";
+import { Loader2, Sparkles, FileText, ArrowRight, Bot } from "lucide-react";
 
 function OpenAIComponent() {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -57,7 +58,19 @@ function OpenAIComponent() {
     ],
   };
 
-  const formats = ["header", "bold", "italic", "underline", "strike", "blockquote", "list", "bullet", "indent", "link", "image"];
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+  ];
 
   const handleCancel = () => {
     setFormData({
@@ -77,7 +90,7 @@ function OpenAIComponent() {
     setShowDownloadButton(false);
   };
 
-  //update the data
+  // update the data
   const handleUpdate = async () => {
     try {
       setIsLoading(true);
@@ -102,7 +115,7 @@ function OpenAIComponent() {
     }
   };
 
-  //handle Show data in fields
+  // handle Show data in fields
   useEffect(() => {
     if (location.state && location.state.row) {
       const row = location.state.row;
@@ -127,16 +140,17 @@ function OpenAIComponent() {
     }
   }, [location.state]);
 
-  //textEditor cancel
+  // textEditor cancel
   const handleEditorCancel = () => {
     setEditorContent("");
   };
 
   const handleDocumentTypeChange = (documentType) => {
     setFormData({ ...formData, DocumentType: documentType });
+    setFieldErrors((prev) => ({ ...prev, DocumentType: false }));
   };
 
-  //generate Text call
+  // generate Text call
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (!validateFields()) return;
@@ -164,7 +178,7 @@ function OpenAIComponent() {
     }
   };
 
-  //save and downlaod call
+  // save and download call
   const handleSave = async () => {
     if (!validateFields()) return;
     if (!editorContent.trim()) {
@@ -184,9 +198,13 @@ function OpenAIComponent() {
       });
 
       if (response.data.statusCode === "1") {
-        setFieldErrors("");
+        setFieldErrors({});
         setShowDownloadButton(true);
-        setFormData((prevFormData) => ({ ...prevFormData, AITextID: response.data.response.aiTextID, generatedDocumentPath: response.data.response.generatedDocumentPath })); // Save the aiTextID and generatedDocumentPath in the form data
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          AITextID: response.data.response.aiTextID,
+          generatedDocumentPath: response.data.response.generatedDocumentPath,
+        }));
         toast.success(t("macAi.generatedDocSave"));
       }
     } catch (error) {
@@ -240,14 +258,12 @@ function OpenAIComponent() {
     toast.success(t("macAi.downloadSuccess"));
   };
 
-  //download function
   async function downloadURL(url) {
     try {
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`${"Error"} ${response.status}`);
       }
-
       const blob = await response.blob();
       return blob;
     } catch (error) {
@@ -263,260 +279,303 @@ function OpenAIComponent() {
     return parts[parts.length - 1];
   }
 
-  const renderDocIcon = (type) => {
-    const commonProps = { size: 20, color: "currentColor" };
-    switch (type) {
-      case "CV":
-        return <Icons.CV {...commonProps} />;
-      case "Message":
-        return <Icons.Message {...commonProps} />;
-      case "Contract":
-        return <Icons.Contract {...commonProps} />;
-      case "Cover letter":
-        return <Icons.CoverLetter {...commonProps} />;
-      case "Agreement":
-        return <Icons.Agreement {...commonProps} />;
-      case "Email":
-        return <Icons.Mail {...commonProps} />;
-      case "Other":
-        return <Icons.OtherDoc {...commonProps} />;
-      default:
-        return null;
-    }
-  };
+  const docTypes = [
+    { key: "CV", icon: Icons.CV, label: t("macAi.CV") },
+    { key: "Message", icon: Icons.Message, label: t("macAi.Message") },
+    { key: "Contract", icon: Icons.Contract, label: t("macAi.Contract") },
+    { key: "Cover letter", icon: Icons.CoverLetter, label: t("macAi.CoverLetter") },
+    { key: "Agreement", icon: Icons.Agreement, label: t("macAi.Agreement") },
+    { key: "Email", icon: Icons.Mail, label: t("macAi.Email") },
+    { key: "Other", icon: Icons.OtherDoc, label: t("macAi.Other") },
+  ];
+
+  if (!userAccess.macAI || userAccess.remainingDays <= 0) {
+    return null;
+  }
 
   return (
-    <>
-      {userAccess.macAI === true && userAccess.remainingDays > 0 ? (
-        <>
-          {userAccess.macAI === true ? (
-            <>
-              <div className='container my-3'>
-                {isOPenAILoading && (
-                  <div className='loader-overlay'>
-                    <div className='OpenAiloader'></div>
-                  </div>
+    <div className='macai-page w-full px-4 sm:px-6 pt-3 pb-8'>
+      {/* Modern AI Header Hero */}
+      <div className='mb-4 p-5 sm:p-6 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
+        <div className='flex items-start gap-3.5'>
+          <div className='flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--modern-violet-soft)] text-[var(--modern-violet)]'>
+            <Bot size={24} />
+          </div>
+          <div>
+            <div className='inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--modern-violet-soft)] text-[var(--modern-violet)] mb-1'>
+              <Sparkles size={12} />
+              <span>Mac AI</span>
+            </div>
+            <h1 className='text-lg sm:text-xl font-bold tracking-tight text-[var(--modern-text)] m-0'>
+              {t("macAi.generatingYourDoc")}
+            </h1>
+            <p className='text-xs sm:text-sm text-[var(--modern-muted)] m-0 mt-0.5'>
+              {t("macAi.seeHistory")}
+            </p>
+          </div>
+        </div>
+
+        <Link
+          to='/mac-ai-docs'
+          className='inline-flex items-center justify-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border)] text-[var(--modern-text)] hover:bg-[var(--modern-border)] hover:text-[var(--modern-text)] transition-colors no-underline'
+        >
+          <FileText size={16} />
+          <span>{t("macAi.gotoList")}</span>
+          <ArrowRight size={14} className='rtl:rotate-180' />
+        </Link>
+      </div>
+
+      {/* Main Generator Form Card */}
+      <div className='p-5 sm:p-6 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] mb-4'>
+        <Form onSubmit={handleFormSubmit}>
+          {/* Document Type Selector */}
+          <div className='mb-4'>
+            <label className='block text-xs font-semibold text-[var(--modern-text)] uppercase tracking-wider mb-2.5'>
+              {t("macAi.docType")}
+              <span className='text-[var(--modern-danger,#ef4444)] ml-1'>*</span>
+            </label>
+            <div className='flex flex-wrap gap-2'>
+              {docTypes.map(({ key, icon: IconComponent, label }) => {
+                const isSelected = formData.DocumentType === key;
+                return (
+                  <button
+                    key={key}
+                    type='button'
+                    onClick={() => handleDocumentTypeChange(key)}
+                    disabled={isUpdating}
+                    className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer border ${
+                      isSelected
+                        ? "bg-[var(--theme-color)] text-white border-[var(--theme-color)] shadow-sm"
+                        : "bg-[var(--modern-raised)] border-[var(--modern-border)] text-[var(--modern-text)] hover:bg-[var(--modern-border)]"
+                    } ${isUpdating ? "opacity-60 cursor-not-allowed" : ""}`}
+                  >
+                    {IconComponent && <IconComponent size={16} />}
+                    <span>{label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {fieldErrors.DocumentType && (
+              <p className='text-xs text-[var(--modern-danger,#ef4444)] mt-1.5 mb-0'>
+                {t("macAi.selectDocType")}
+              </p>
+            )}
+          </div>
+
+          {/* Form Fields Grid */}
+          <Row className='g-3'>
+            {formData.DocumentType === "Other" && (
+              <Col xs={12} md={4}>
+                <Form.Group controlId='Custom'>
+                  <Form.Label className='text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                    {t("macAi.OtherType")}
+                    <span className='text-[var(--modern-danger,#ef4444)] ml-1'>*</span>
+                  </Form.Label>
+                  <Form.Control
+                    type='text'
+                    className='rounded-xl border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] text-sm px-3.5 py-2'
+                    value={formData.CustomDocumentType}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        CustomDocumentType: e.target.value,
+                      }))
+                    }
+                    placeholder={t("macAi.otherTypePlaceholder")}
+                    disabled={isUpdating}
+                  />
+                  {fieldErrors.CustomDocumentType && (
+                    <p className='text-xs text-[var(--modern-danger,#ef4444)] mt-1 mb-0'>
+                      {t("macAi.specifyDocType")}
+                    </p>
+                  )}
+                </Form.Group>
+              </Col>
+            )}
+
+            <Col xs={12} md={formData.DocumentType === "Other" ? 4 : 6}>
+              <Form.Group controlId='name'>
+                <Form.Label className='text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("macAi.Name")}
+                  <span className='text-[var(--modern-danger,#ef4444)] ml-1'>*</span>
+                </Form.Label>
+                <Form.Control
+                  type='text'
+                  className='rounded-xl border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] text-sm px-3.5 py-2'
+                  value={formData.Name}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, Name: e.target.value }))
+                  }
+                  placeholder={t("macAi.namePlaceholder")}
+                  disabled={isUpdating}
+                />
+                {fieldErrors.Name && (
+                  <p className='text-xs text-[var(--modern-danger,#ef4444)] mt-1 mb-0'>
+                    {t("macAi.nameRequired")}
+                  </p>
                 )}
+              </Form.Group>
+            </Col>
 
-                <Row className='my-3 gap-4 justify-content-center'>
-                  <Col md={3}>
-                    <div style={{ position: "relative", display: "inline-block" }}>
-                      <Icons.MacAiBackground />
+            <Col xs={12} md={formData.DocumentType === "Other" ? 4 : 6}>
+              <Form.Group controlId='extraDetail'>
+                <Form.Label className='text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("macAi.ExtraDetail")}
+                </Form.Label>
+                <Form.Control
+                  type='text'
+                  className='rounded-xl border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] text-sm px-3.5 py-2'
+                  value={formData.ExtraDetails}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      ExtraDetails: e.target.value,
+                    }))
+                  }
+                  placeholder={t("macAi.extraDetailPlaceholder")}
+                />
+                {fieldErrors.ExtraDetails && (
+                  <p className='text-xs text-[var(--modern-danger,#ef4444)] mt-1 mb-0'>
+                    {t("macAi.provideExtraDetails")}
+                  </p>
+                )}
+              </Form.Group>
+            </Col>
+          </Row>
 
-                      <div className='absolute left-[55%] rtl:left-[45%] top-[60%] -translate-x-1/2 -translate-y-1/2 w-[347px] h-[75px] font-semibold text-[15px]'>
-                        <div style={{ color: "var(--text-primary)" }}>
-                          <label>{t("macAi.generatingYourDoc")}</label>
-                          <label>{t("macAi.seeHistory")}</label>{" "}
-                          <Link to='/mac-ai-docs'>
-                            <label className='text-[var(--theme-color)] font-semibold hover:underline cursor-pointer'>{t("macAi.gotoList")}</label>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </Col>
-                  <Col md={3}>
-                    <div className='mt-4'>
-                      <Icons.Robot />
-                    </div>
-                  </Col>
-                </Row>
-
-                <div className='userProfile-form theme-aware-form'>
-                  <Form onSubmit={handleFormSubmit}>
-                    <Row>
-                      <label className='doc-type-label'>
-                        {t("macAi.docType")}
-                        <span className='required mx-1'>*</span>
-                      </label>
-                      <Col className='mb-2'>
-                        <div className='doc-type-buttons mt-2'>
-                          <Button
-                            className={`selectedButton ${formData.DocumentType === "CV" ? "active" : ""}`}
-                            variant='none'
-                            onClick={() => handleDocumentTypeChange("CV")}
-                            disabled={isUpdating}
-                          >
-                            {renderDocIcon("CV")} {t("macAi.CV")}
-                          </Button>
-
-                          <Button
-                            className={`selectedButton ${formData.DocumentType === "Message" ? "active" : ""}`}
-                            variant='none'
-                            onClick={() => handleDocumentTypeChange("Message")}
-                            disabled={isUpdating}
-                          >
-                            {renderDocIcon("Message")} {t("macAi.Message")}
-                          </Button>
-                          <Button
-                            className={`selectedButton ${formData.DocumentType === "Contract" ? "active" : ""}`}
-                            variant='none'
-                            onClick={() => handleDocumentTypeChange("Contract")}
-                            disabled={isUpdating}
-                          >
-                            {renderDocIcon("Contract")} {t("macAi.Contract")}
-                          </Button>
-
-                          <Button
-                            className={`selectedButton ${formData.DocumentType === "Cover letter" ? "active" : ""}`}
-                            variant='none'
-                            onClick={() => handleDocumentTypeChange("Cover letter")}
-                            disabled={isUpdating}
-                          >
-                            {renderDocIcon("Cover letter")} {t("macAi.CoverLetter")}
-                          </Button>
-
-                          <Button
-                            className={`selectedButton ${formData.DocumentType === "Agreement" ? "active" : ""}`}
-                            variant='none'
-                            onClick={() => handleDocumentTypeChange("Agreement")}
-                            disabled={isUpdating}
-                          >
-                            {renderDocIcon("Agreement")} {t("macAi.Agreement")}
-                          </Button>
-
-                          <Button
-                            className={`selectedButton ${formData.DocumentType === "Email" ? "active" : ""}`}
-                            variant='none'
-                            onClick={() => handleDocumentTypeChange("Email")}
-                            disabled={isUpdating}
-                          >
-                            {renderDocIcon("Email")} {t("macAi.Email")}
-                          </Button>
-
-                          <Button
-                            className={`selectedButton ${formData.DocumentType === "Other" ? "active" : ""}`}
-                            variant='none'
-                            onClick={() => handleDocumentTypeChange("Other")}
-                            disabled={isUpdating}
-                          >
-                            {renderDocIcon("Other")} {t("macAi.Other")}
-                          </Button>
-                        </div>
-                        {fieldErrors.DocumentType && <div className='text-danger'>{t("macAi.selectDocType")}</div>}
-                      </Col>
-                    </Row>
-
-                    <Row className='mt-2'>
-                      {formData.DocumentType === "Other" && (
-                        <Col>
-                          <Form.Group className='mt-2' controlId='Custom'>
-                            <Form.Label>
-                              {t("macAi.OtherType")}
-                              <span className='required mx-1'>*</span>
-                            </Form.Label>
-                            <Form.Control
-                              className='theme-aware-field'
-                              type='text'
-                              value={formData.CustomDocumentType}
-                              onChange={(e) => setFormData((prevFormData) => ({ ...prevFormData, CustomDocumentType: e.target.value }))}
-                              placeholder={t("macAi.otherTypePlaceholder")}
-                              disabled={isUpdating}
-                            />
-                          </Form.Group>
-                          {fieldErrors.CustomDocumentType && <div className='text-danger'>{t("macAi.specifyDocType")}</div>}
-                        </Col>
-                      )}
-                      <Col>
-                        <Form.Group className='mt-2' controlId='name'>
-                          <Form.Label>
-                            {t("macAi.Name")}
-                            <span className='required mx-1'>*</span>
-                          </Form.Label>
-                          <Form.Control
-                            className='theme-aware-field'
-                            type='text'
-                            value={formData.Name}
-                            onChange={(e) => setFormData((prevFormData) => ({ ...prevFormData, Name: e.target.value }))}
-                            placeholder={t("macAi.namePlaceholder")}
-                            disabled={isUpdating}
-                          />
-                        </Form.Group>
-                        {fieldErrors.Name && <div className='text-danger'>{t("macAi.nameRequired")}</div>}
-                      </Col>
-                      <Col>
-                        <Form.Group className='mt-2' controlId='extraDetail'>
-                          <Form.Label>{t("macAi.ExtraDetail")}</Form.Label>
-                          <Form.Control
-                            className='theme-aware-field'
-                            type='text'
-                            value={formData.ExtraDetails}
-                            onChange={(e) => setFormData((prevFormData) => ({ ...prevFormData, ExtraDetails: e.target.value }))}
-                            placeholder={t("macAi.extraDetailPlaceholder")}
-                          />
-                        </Form.Group>
-                        {fieldErrors.ExtraDetails && <div className='text-danger'>{t("macAi.provideExtraDetails")}</div>}
-                      </Col>
-                    </Row>
-
-                    {(formData.DocumentType || formData.Name || formData.ExtraDetails || formData.CustomDocumentType) && (
-                      <div className='d-flex gap-3 mt-3'>
-                        <Button variant='none' className='ImageDoneBtn' type='submit'>
-                          {t("macAi.GenerateAItext")}
-                        </Button>
-                        <Button variant='none' className='ImageCancelBtn' onClick={handleCancel}>
-                          {t("macAi.Cancel")}
-                        </Button>
-                      </div>
-                    )}
-                  </Form>
-                </div>
-
-                <div className='userProfile-form theme-aware-form mt-3'>
-                  <ReactQuill ref={editorRef} value={editorContent} onChange={setEditorContent} modules={modules} formats={formats} placeholder={t("macAi.enterText")} />
-                </div>
-
-                {isUpdating ? (
-                  <div className='d-flex gap-3 mt-3'>
-                    <Button variant='none' className='ImageDoneBtn' onClick={handleUpdate}>
-                      {t("macAi.update")}
-                    </Button>
-                    <Button variant='none' className='ImageCancelBtn' onClick={handleUpdateCancel}>
-                      {t("macAi.Cancel")}
-                    </Button>
-                  </div>
+          {(formData.DocumentType ||
+            formData.Name ||
+            formData.ExtraDetails ||
+            formData.CustomDocumentType) && (
+            <div className='flex items-center gap-3 mt-4 pt-3 border-t border-[var(--modern-border)]'>
+              <Button
+                variant='none'
+                type='submit'
+                disabled={isOPenAILoading}
+                className='inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-50 transition-opacity'
+              >
+                {isOPenAILoading ? (
+                  <>
+                    <Loader2 size={16} className='animate-spin' />
+                    <span>{t("common.loading") || "Generating..."}</span>
+                  </>
                 ) : (
                   <>
-                    <div className='d-flex  gap-3 mt-3'>
-                      {showDownloadButton ? (
-                        <>
-                          <Button variant='none' className='ImageDoneBtn' onClick={handleUpdateText}>
-                            {t("macAi.Updatetext")}
-                          </Button>
-                          <Button variant='none' className='ImageCancelBtn' onClick={handleUpdateCancel}>
-                            {t("macAi.Cancel")}
-                          </Button>
-                          <Button variant='none' className='ImageCancelBtn' onClick={handleDownload}>
-                            {t("macAi.docDownload")}
-                            <Icons.Download className='mx-2' size={22} />
-                          </Button>
-                        </>
-                      ) : (
-                        <>
-                          {!isUpdating && (formData.DocumentType || formData.Name || formData.ExtraDetails || formData.CustomDocumentType) && (
-                            <>
-                              <Button className='ImageDoneBtn' onClick={handleSave}>
-                                {t("macAi.save")}
-                              </Button>
-                              <Button className='ImageCancelBtn' onClick={handleEditorCancel}>
-                                {t("macAi.clearText")}
-                              </Button>
-                            </>
-                          )}
-                        </>
-                      )}
-                    </div>
+                    <Sparkles size={16} />
+                    <span>{t("macAi.GenerateAItext")}</span>
                   </>
                 )}
-              </div>
-            </>
-          ) : (
-            <></>
+              </Button>
+              <Button
+                variant='none'
+                type='button'
+                onClick={handleCancel}
+                className='px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] hover:bg-[var(--modern-border)] transition-colors'
+              >
+                {t("macAi.Cancel")}
+              </Button>
+            </div>
           )}
-        </>
-      ) : (
-        <>{null}</>
-      )}
-    </>
+        </Form>
+      </div>
+
+      {/* React Quill Editor Card */}
+      <div className='p-4 sm:p-5 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] mb-4'>
+        <div className='mb-3 flex items-center justify-between'>
+          <label className='text-xs font-semibold text-[var(--modern-muted)] uppercase tracking-wider'>
+            {t("macAi.enterText") || "Generated Content Editor"}
+          </label>
+        </div>
+        <div className='rounded-xl overflow-hidden border border-[var(--modern-border)]'>
+          <ReactQuill
+            ref={editorRef}
+            value={editorContent}
+            onChange={setEditorContent}
+            modules={modules}
+            formats={formats}
+            placeholder={t("macAi.enterText")}
+            className='mac-ai-quill-editor'
+          />
+        </div>
+      </div>
+
+      {/* Editor Actions Bottom Bar */}
+      <div className='flex flex-wrap items-center gap-3'>
+        {isUpdating ? (
+          <>
+            <Button
+              variant='none'
+              disabled={isLoading}
+              className='inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-50 transition-opacity'
+              onClick={handleUpdate}
+            >
+              {isLoading && <Loader2 size={16} className='animate-spin' />}
+              <span>{t("macAi.update")}</span>
+            </Button>
+            <Button
+              variant='none'
+              className='px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] hover:bg-[var(--modern-border)] transition-colors'
+              onClick={handleUpdateCancel}
+            >
+              {t("macAi.Cancel")}
+            </Button>
+          </>
+        ) : showDownloadButton ? (
+          <>
+            <Button
+              variant='none'
+              disabled={isLoading}
+              className='inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-50 transition-opacity'
+              onClick={handleUpdateText}
+            >
+              {isLoading && <Loader2 size={16} className='animate-spin' />}
+              <span>{t("macAi.Updatetext")}</span>
+            </Button>
+            <Button
+              variant='none'
+              className='px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] hover:bg-[var(--modern-border)] transition-colors'
+              onClick={handleUpdateCancel}
+            >
+              {t("macAi.Cancel")}
+            </Button>
+            <Button
+              variant='none'
+              disabled={isLoading}
+              className='inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border-strong)] text-[var(--modern-text)] hover:bg-[var(--modern-border)] transition-colors'
+              onClick={handleDownload}
+            >
+              <Icons.Download size={18} />
+              <span>{t("macAi.docDownload")}</span>
+            </Button>
+          </>
+        ) : (
+          !isUpdating &&
+          (formData.DocumentType ||
+            formData.Name ||
+            formData.ExtraDetails ||
+            formData.CustomDocumentType) && (
+            <>
+              <Button
+                variant='none'
+                disabled={isLoading}
+                className='inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl bg-[var(--theme-color)] text-white hover:opacity-90 disabled:opacity-50 transition-opacity'
+                onClick={handleSave}
+              >
+                {isLoading && <Loader2 size={16} className='animate-spin' />}
+                <span>{t("macAi.save")}</span>
+              </Button>
+              <Button
+                variant='none'
+                className='px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] hover:bg-[var(--modern-border)] transition-colors'
+                onClick={handleEditorCancel}
+              >
+                {t("macAi.clearText")}
+              </Button>
+            </>
+          )
+        )}
+      </div>
+    </div>
   );
 }
 

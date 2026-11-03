@@ -1,6 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Stack, Pagination } from "@/Components/UI/dataPrimitives";
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableEmptyState,
+  TableHead,
+  TableRow,
+  Stack,
+  Pagination,
+} from "@/Components/UI/dataPrimitives";
 import { Icons } from "@/assets/Icons";
 import { toast } from "react-toastify";
 import { Button, Modal, Dropdown } from "@/Components/UI/shadcnCompat";
@@ -8,9 +19,10 @@ import { useNavigate } from "react-router-dom";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { useUser } from "@/Context/UserContext";
 import UserLisence from "@/Components/UserLisence/UserLisence";
-
+import { formatTableDate } from "@/Components/DashboardStatuses/DocumentStatusTable";
 import integrationService from "@/services/integrationService";
 import uploadFlowService from "@/services/uploadFlowService";
+import { Bot, ArrowLeft, Plus, Eye, Download, Edit3, PenTool, FileText, X } from "lucide-react";
 
 function ListOfDocuments({ registerSignID }) {
   const navigate = useNavigate();
@@ -42,7 +54,7 @@ function ListOfDocuments({ registerSignID }) {
         setTextData(responseData || []);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -53,30 +65,13 @@ function ListOfDocuments({ registerSignID }) {
   }, [AIGeneratedPDFID]);
 
   const columns = [
-    { label: t("tablesLabel.name"), key: "name" },
-    { label: t("tablesLabel.docType"), key: "documentType" },
-    { label: t("tablesLabel.otherType"), key: "customDocumentType" },
-    { label: t("tablesLabel.date"), key: "createdOn" },
-    { label: t("tablesLabel.modifiedOn"), key: "modifiedOn" },
-    { label: t("tablesLabel.details"), key: "extraDetails" },
-    { label: "", key: "actions" },
+    { label: t("tablesLabel.name"), key: "name", width: "26%" },
+    { label: t("tablesLabel.docType"), key: "documentType", width: "16%" },
+    { label: t("tablesLabel.otherType"), key: "customDocumentType", width: "14%" },
+    { label: t("tablesLabel.date"), key: "createdOn", width: "16%" },
+    { label: t("tablesLabel.modifiedOn"), key: "modifiedOn", width: "16%" },
+    { label: "", key: "actions", width: "6%", align: "right" },
   ];
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-
-    const formattedMinutes = (minutes < 10 ? "0" : "") + minutes;
-
-    return `${day}/${month}/${year} - ${hours}:${formattedMinutes} ${ampm}`;
-  };
 
   const handleCellClick = (event) => {
     const cell = event.target;
@@ -129,7 +124,7 @@ function ListOfDocuments({ registerSignID }) {
     }
   }
 
-  const handleUploadClick = async (generatedDocumentPath, name, documentType) => {
+  const handleUploadClick = async (generatedDocumentPath, name) => {
     const docDetails = `${name}.pdf`;
 
     setIsLoading(true);
@@ -191,132 +186,217 @@ function ListOfDocuments({ registerSignID }) {
     return parts[parts.length - 1];
   }
 
-  return (
-    <div className='container mt-3'>
+  if (!userAccess?.macAI || userAccess?.remainingDays <= 0) {
+    return <UserLisence />;
+  }
 
-      <Modal show={pdfModal} onHide={closePdfModal} size='xl'>
-        <Modal.Header closeButton>
-          <Modal.Title>{t("macAi.viewFile")}</Modal.Title>
+  return (
+    <div className='macai-docs-page w-full px-4 sm:px-6 pt-3 pb-8'>
+      {/* Modern Card Shell */}
+      <div className='p-5 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] pendingtable'>
+        {/* Table Header Toolbar */}
+        <div className='flex flex-wrap items-center justify-between gap-3 mb-4 p-1'>
+          <div className='flex items-center gap-3'>
+            <button
+              type='button'
+              onClick={goBack}
+              aria-label={t("common.back") || "Back"}
+              className='inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] hover:bg-[var(--modern-border)] cursor-pointer transition-colors'
+            >
+              <ArrowLeft size={18} className='rtl:rotate-180' />
+            </button>
+            <div className='flex items-center gap-2.5'>
+              <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--modern-violet-soft)] text-[var(--modern-violet)]'>
+                <Bot size={20} />
+              </div>
+              <div>
+                <h1 className='text-lg font-bold tracking-tight text-[var(--modern-text)] m-0'>
+                  {t("macAi.listMac")}
+                </h1>
+                <span className='text-xs text-[var(--modern-muted)]'>
+                  {textData.length} {t("tablesLabel.document")}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <Button
+            variant='none'
+            onClick={() => navigate("/mac-ai")}
+            className='inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-[var(--theme-color)] text-white hover:opacity-90 transition-opacity'
+          >
+            <Plus size={16} />
+            <span>{t("macAi.GenerateAItext") || "Create AI Document"}</span>
+          </Button>
+        </div>
+
+        {/* Table Container */}
+        <TableContainer
+          component={Paper}
+          className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
+          style={{
+            maxWidth: "100%",
+            overflowX: "auto",
+            minHeight: "440px",
+            height: "calc(100vh - 300px)",
+            maxHeight: "calc(100vh - 300px)",
+          }}
+        >
+          <Table stickyHeader style={{ border: "none" }}>
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.key}
+                    style={{ width: column.width, textAlign: column.align || "left" }}
+                    className='TableHeaderCell font-semibold text-xs text-[var(--modern-muted)] uppercase tracking-wider'
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {textData.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className='table-empty-state-cell py-12'>
+                    <TableEmptyState
+                      icon={<Icons.BulkDocuments size={48} />}
+                      title={t("dashboardCardStatuses.notDocsFound")}
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                textData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => (
+                    <TableRow key={row.aiTextID || index} hover className='transition-colors'>
+                      <TableCell
+                        className='TableCell truncate-cell font-medium text-[var(--modern-text)]'
+                        title={row.name}
+                        onClick={handleCellClick}
+                      >
+                        <div className='flex items-center gap-2.5'>
+                          <FileText size={16} className='text-[var(--modern-muted)] shrink-0' />
+                          <span className='truncate'>{row.name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className='TableCell text-sm text-[var(--modern-text)]'>
+                        <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--modern-raised)] border border-[var(--modern-border)]'>
+                          {row.documentType || "—"}
+                        </span>
+                      </TableCell>
+                      <TableCell className='TableCell text-sm text-[var(--modern-muted)]'>
+                        {row.customDocumentType || "—"}
+                      </TableCell>
+                      <TableCell className='TableCell text-xs text-[var(--modern-muted)]'>
+                        {row.createdOnFormatted ? formatTableDate(row.createdOnFormatted) : "—"}
+                      </TableCell>
+                      <TableCell className='TableCell text-xs text-[var(--modern-muted)]'>
+                        {row.modifiedOnFormatted ? formatTableDate(row.modifiedOnFormatted) : "—"}
+                      </TableCell>
+                      <TableCell className='TableCell p-0 text-right' align='right'>
+                        <Dropdown>
+                          <Dropdown.Toggle as={CustomToggle} />
+                          <Dropdown.Menu align='end'>
+                            <Dropdown.Item
+                              className='d-flex gap-2 align-items-center'
+                              onClick={() =>
+                                handleFileDownload(row.generatedDocumentPath, row.name)
+                              }
+                            >
+                              <Download size={16} />
+                              <span>{t("dashboardCardStatuses.download")}</span>
+                            </Dropdown.Item>
+
+                            <Dropdown.Item
+                              className='d-flex gap-2 align-items-center'
+                              onClick={() => handleView(row.generatedDocumentPath)}
+                            >
+                              <Eye size={16} />
+                              <span>{t("dashboardCardStatuses.view")}</span>
+                            </Dropdown.Item>
+
+                            <Dropdown.Item
+                              className='d-flex gap-2 align-items-center'
+                              onClick={() => handleEditClick(row)}
+                            >
+                              <Edit3 size={16} />
+                              <span>{t("dashboardCardStatuses.edit")}</span>
+                            </Dropdown.Item>
+
+                            <Dropdown.Item
+                              className='d-flex gap-2 align-items-center'
+                              onClick={() =>
+                                handleUploadClick(row.generatedDocumentPath, row.name)
+                              }
+                            >
+                              <PenTool size={16} />
+                              <span>{t("dashboardCardStatuses.SignDoc")}</span>
+                            </Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </TableCell>
+                    </TableRow>
+                  ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* Pagination Bar */}
+        <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 pt-3 border-t border-[var(--modern-border)] text-xs text-[var(--modern-muted)]'>
+          <div>
+            {textData.length ? page * rowsPerPage + 1 : 0} -{" "}
+            {Math.min((page + 1) * rowsPerPage, textData.length)}{" "}
+            {t("tablesLabel.documentsof")} {textData.length} {t("tablesLabel.document")}
+          </div>
+          <Stack spacing={2}>
+            <Pagination
+              count={Math.max(1, Math.ceil(textData.length / rowsPerPage))}
+              variant='outlined'
+              shape='rounded'
+              page={Math.min(
+                page + 1,
+                Math.max(1, Math.ceil(textData.length / rowsPerPage))
+              )}
+              onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
+            />
+          </Stack>
+        </div>
+      </div>
+
+      {/* PDF View Modal */}
+      <Modal show={pdfModal} onHide={closePdfModal} size='xl' centered>
+        <Modal.Header className='border-b border-[var(--modern-border)] bg-[var(--modern-card)] px-5 py-4 flex items-center justify-between'>
+          <div className='flex items-center gap-2'>
+            <FileText size={18} className='text-[var(--theme-color)]' />
+            <Modal.Title className='text-base font-semibold text-[var(--modern-text)] m-0'>
+              {t("macAi.viewFile")}
+            </Modal.Title>
+          </div>
+          <button
+            type='button'
+            onClick={closePdfModal}
+            className='inline-flex h-8 w-8 items-center justify-center rounded-lg border-0 bg-transparent text-[var(--modern-muted)] hover:bg-[var(--modern-raised)] hover:text-[var(--modern-text)] cursor-pointer'
+          >
+            <X size={18} />
+          </button>
         </Modal.Header>
-        <Modal.Body>
-          <embed src={pdfUrl} type='application/pdf' width='100%' height='500px' />
+        <Modal.Body className='p-0 bg-[var(--modern-card)]'>
+          <embed src={pdfUrl} type='application/pdf' width='100%' height='560px' />
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant='secondary' onClick={closePdfModal}>
+        <Modal.Footer className='border-t border-[var(--modern-border)] bg-[var(--modern-card)] px-5 py-3.5 flex items-center justify-end'>
+          <Button
+            variant='none'
+            className='px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] hover:bg-[var(--modern-border)] transition-colors'
+            onClick={closePdfModal}
+          >
             {t("macAi.close")}
           </Button>
         </Modal.Footer>
       </Modal>
-
-      {userAccess.macAI === true && userAccess.remainingDays > 0 ? (
-        <>
-          {userAccess.macAI === true ? (
-            <div className='userProfile-form container mb-2'>
-              <div className='d-flex align-items-center gap-2 mb-4'>
-                <Icons.Back className={document.documentElement.dir === "rtl" ? "rtl-icon" : ""} onClick={goBack} style={{ cursor: "pointer" }} />
-                <label style={{ fontSize: "20px", fontWeight: "600" }}>{t("macAi.listMac")}</label>
-              </div>
-
-              <TableContainer
-                component={Paper}
-                className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
-                style={{
-                  maxWidth: "100%",
-                  overflowX: "auto",
-                  minHeight: "440px",
-                  height: "calc(100vh - 280px)",
-                  maxHeight: "calc(100vh - 280px)",
-                }}
-              >
-                <Table stickyHeader style={{ border: "none" }}>
-                  <TableHead>
-                    <TableRow>
-                      {columns.map((column) => (
-                        <TableCell key={column.label} className='TableHeaderCell'>
-                          {column.label}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-
-                  <TableBody>
-                    {textData.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={columns.length} className='table-empty-state-cell'>
-                          <TableEmptyState
-                            icon={<Icons.BulkDocuments size={50} />}
-                            title={t("dashboardCardStatuses.notDocsFound")}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    )}
-
-                    {textData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                      <TableRow key={index}>
-                        <TableCell className='TableCell'>{row.name}</TableCell>
-                        <TableCell className='TableCell'>{row.documentType}</TableCell>
-                        <TableCell className='TableCell'>{row.customDocumentType}</TableCell>
-                        <TableCell className='TableCell'>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
-                        <TableCell className='TableCell'>{row.modifiedOnFormatted ? formatDate(row.modifiedOnFormatted) : ""}</TableCell>
-                        <TableCell className='TableCell truncate-cell' onClick={(e) => handleCellClick(e)}>
-                          {row.extraDetails}
-                        </TableCell>
-
-                        <TableCell className='py-0'>
-                          <Dropdown>
-                            <Dropdown.Toggle as={CustomToggle} />
-
-                            <Dropdown.Menu>
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileDownload(row.generatedDocumentPath, row.name)}>
-                                <Icons.Download size={22} />
-                                {t("dashboardCardStatuses.download")}
-                              </Dropdown.Item>
-
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleView(row.generatedDocumentPath)}>
-                                <Icons.View size={20} />
-                                {t("dashboardCardStatuses.view")}
-                              </Dropdown.Item>
-
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleEditClick(row)}>
-                                <Icons.EditSquare size={22} />
-                                {t("dashboardCardStatuses.edit")}
-                              </Dropdown.Item>
-
-                              <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleUploadClick(row.generatedDocumentPath, row.name, row.documentType)}>
-                                <Icons.SelfSign size={22} />
-                                {t("dashboardCardStatuses.SignDoc")}
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-
-              <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 text-xs text-[var(--modern-muted)]'>
-                <div>
-                  {textData.length ? page * rowsPerPage + 1 : 0} - {Math.min((page + 1) * rowsPerPage, textData.length)} {t("tablesLabel.documentsof")} {textData.length} {t("tablesLabel.document")}
-                </div>
-                <Stack spacing={2}>
-                  <Pagination
-                    count={Math.max(1, Math.ceil(textData.length / rowsPerPage))}
-                    variant='outlined'
-                    shape='rounded'
-                    page={Math.min(page + 1, Math.max(1, Math.ceil(textData.length / rowsPerPage)))}
-                    onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
-                  />
-                </Stack>
-              </div>
-            </div>
-          ) : (
-            <></>
-          )}
-        </>
-      ) : (
-        <UserLisence />
-      )}
     </div>
   );
 }

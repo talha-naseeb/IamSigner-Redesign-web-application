@@ -1,6 +1,7 @@
 import React, { createContext, forwardRef, useContext, useEffect, useId, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import * as DialogPrimitive from "./dialogPrimitive";
-import { ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Check, ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const modernSurface = "border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] text-[var(--modern-text,#0f172a)]";
@@ -93,8 +94,262 @@ const FormControl = forwardRef(function ShadcnFormControl({ as, size, className,
     className: cn("form-control", size && `form-control-${size}`, plaintext ? "border-0 bg-transparent p-0" : modernControl, size === "sm" && "min-h-8 px-2.5 text-sm", size === "lg" && "min-h-11 px-4 text-lg", isInvalid && "border-[var(--modern-danger,#ef4444)]", isValid && "border-[var(--modern-success,#16a34a)]", "w-full px-3 py-2", className),
   }, children ?? props.children);
 });
-const FormSelect = forwardRef(function ShadcnFormSelect({ as, size, className, ...props }, ref) {
-  return element(as, "select", { ...props, ref, className: cn("form-select", modernControl, "w-full px-3 py-2", size === "sm" && "min-h-8 text-sm", className) }, props.children);
+const extractSelectOptions = (children) => {
+  const result = [];
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child)) return;
+    if (child.type === React.Fragment) {
+      result.push(...extractSelectOptions(child.props.children));
+      return;
+    }
+    if (child.type === "option" || child.props?.value !== undefined) {
+      const val = child.props.value !== undefined ? String(child.props.value) : String(child.props.children ?? "");
+      result.push({
+        key: child.key ?? val,
+        value: val,
+        label: child.props.children,
+        disabled: Boolean(child.props.disabled),
+        className: child.props.className,
+      });
+    }
+  });
+  return result;
+};
+
+const FormSelect = forwardRef(function ShadcnFormSelect(
+  { as, size, className, value, defaultValue, onChange, onBlur, name, id, disabled, required, children, style, ...props },
+  ref
+) {
+  const context = useContext(FormContext);
+  const selectId = id || context.controlId;
+  const options = useMemo(() => extractSelectOptions(children), [children]);
+  const isControlled = value !== undefined;
+  const [internalValue, setInternalValue] = useState(() =>
+    defaultValue !== undefined ? String(defaultValue) : options[0]?.value ?? ""
+  );
+  const [open, setOpen] = useState(false);
+  const [menuCoords, setMenuCoords] = useState(null);
+  const containerRef = React.useRef(null);
+  const triggerRef = React.useRef(null);
+  const menuRef = React.useRef(null);
+  const nativeSelectRef = React.useRef(null);
+
+  const setNativeRef = (node) => {
+    nativeSelectRef.current = node;
+    if (typeof ref === "function") ref(node);
+    else if (ref) ref.current = node;
+  };
+
+  useEffect(() => {
+    const node = nativeSelectRef.current;
+    if (!node || isControlled) return;
+    if (node.value !== undefined && node.value !== internalValue) {
+      setInternalValue(String(node.value));
+    }
+    const descriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value");
+    if (!descriptor) return;
+    Object.defineProperty(node, "value", {
+      configurable: true,
+      get() {
+        return descriptor.get.call(this);
+      },
+      set(nextVal) {
+        descriptor.set.call(this, nextVal);
+        setInternalValue(String(nextVal ?? ""));
+      },
+    });
+    return () => {
+      delete node.value;
+    };
+  }, [isControlled]);
+
+  const updateMenuPosition = React.useCallback(() => {
+    if (!triggerRef.current || typeof window === "undefined") return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const openUp = spaceBelow < 220 && spaceAbove > spaceBelow;
+    setMenuCoords({
+      left: rect.left,
+      width: Math.max(rect.width, 130),
+      openUp,
+      top: rect.bottom + 6,
+      bottom: window.innerHeight - rect.top + 6,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    updateMenuPosition();
+    const handlePointerDown = (event) => {
+      if (
+        !containerRef.current?.contains(event.target) &&
+        !menuRef.current?.contains(event.target)
+      ) {
+        setOpen(false);
+      }
+    };
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown, true);
+    window.addEventListener("resize", updateMenuPosition);
+    window.addEventListener("scroll", updateMenuPosition, true);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown, true);
+      window.removeEventListener("resize", updateMenuPosition);
+      window.removeEventListener("scroll", updateMenuPosition, true);
+    };
+  }, [open, updateMenuPosition]);
+
+  const currentValue = isControlled ? String(value ?? "") : String(internalValue ?? "");
+  const selectedOption =
+    options.find((opt) => String(opt.value) === currentValue) ||
+    options.find((opt) => opt.value === "") ||
+    options[0] || { value: "", label: "" };
+  const isPlaceholder = selectedOption.value === "" && options[0]?.value === "";
+  const isInlineWidth =
+    typeof className === "string" &&
+    ((/\bw-\S+/.test(className) && !/\bw-full\b/.test(className)) ||
+      className.includes("email-filter-select"));
+
+  const handleSelectOption = (opt) => {
+    if (opt.disabled || disabled) return;
+    const nextValue = String(opt.value);
+    if (!isControlled) {
+      setInternalValue(nextValue);
+    }
+    if (nativeSelectRef.current) {
+      const descriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value");
+      descriptor?.set?.call(nativeSelectRef.current, nextValue);
+    }
+    const targetObj = {
+      name,
+      id: selectId,
+      value: opt.value,
+      type: "select-one",
+    };
+    onChange?.({
+      target: targetObj,
+      currentTarget: targetObj,
+      type: "change",
+      preventDefault: () => {},
+      stopPropagation: () => {},
+    });
+    setOpen(false);
+    triggerRef.current?.focus();
+  };
+
+  return (
+    <div ref={containerRef} className={cn("relative", isInlineWidth ? "inline-flex shrink-0" : "w-full")}>
+      <select
+        {...props}
+        ref={setNativeRef}
+        name={name}
+        id={selectId ? `${selectId}-native` : undefined}
+        value={currentValue}
+        disabled={disabled}
+        required={required}
+        tabIndex={-1}
+        aria-hidden="true"
+        onChange={(e) => {
+          if (!isControlled) setInternalValue(e.target.value);
+          onChange?.(e);
+        }}
+        className="sr-only pointer-events-none absolute inset-0 h-0 w-0 opacity-0"
+      >
+        {children}
+      </select>
+      <button
+        type="button"
+        ref={triggerRef}
+        id={selectId}
+        disabled={disabled}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => {
+          if (!disabled) {
+            updateMenuPosition();
+            setOpen((prev) => !prev);
+          }
+        }}
+        onBlur={onBlur}
+        style={{ backgroundImage: "none", ...style }}
+        className={cn(
+          "form-select",
+          modernControl,
+          "flex w-full items-center justify-between gap-2 px-3.5 py-2 text-left text-sm transition-colors cursor-pointer",
+          size === "sm" && "min-h-8 px-2.5 py-1.5 text-xs",
+          open && "border-[var(--modern-primary,#6366f1)]",
+          className
+        )}
+      >
+        <span
+          className={cn(
+            "truncate",
+            isPlaceholder ? "text-[var(--modern-muted,#64748b)]" : "text-[var(--modern-text,#0f172a)]"
+          )}
+        >
+          {selectedOption?.label ?? ""}
+        </span>
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 shrink-0 text-[var(--modern-muted,#64748b)] transition-transform duration-150",
+            open && "rotate-180 text-[var(--modern-primary,#6366f1)]"
+          )}
+        />
+      </button>
+      {open &&
+        menuCoords &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            ref={menuRef}
+            role="listbox"
+            data-shadcn-select-menu="true"
+            style={{
+              position: "fixed",
+              left: menuCoords.left,
+              width: menuCoords.width,
+              ...(menuCoords.openUp ? { bottom: menuCoords.bottom } : { top: menuCoords.top }),
+              zIndex: 1200,
+            }}
+            className="dropdown-menu flex max-h-56 flex-col overflow-y-auto rounded-xl border border-solid border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] p-1.5 text-[var(--modern-text,#0f172a)]"
+          >
+            {options.map((opt, idx) => {
+              const isSelected = String(opt.value) === currentValue;
+              return (
+                <button
+                  key={opt.key ?? idx}
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  disabled={opt.disabled}
+                  onClick={() => handleSelectOption(opt)}
+                  className={cn(
+                    "flex w-full items-center justify-between gap-2 rounded-lg border-0 px-3 py-2 text-left text-sm transition-colors cursor-pointer",
+                    isSelected
+                      ? "bg-[var(--modern-violet-soft,rgba(99,102,241,0.12))] font-semibold text-[var(--modern-violet,#6366f1)]"
+                      : "bg-transparent text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)]",
+                    opt.disabled && "pointer-events-none opacity-45 cursor-not-allowed"
+                  )}
+                >
+                  <span className="truncate">{opt.label}</span>
+                  {isSelected && <Check className="h-4 w-4 shrink-0 text-[var(--modern-violet,#6366f1)]" />}
+                </button>
+              );
+            })}
+          </div>,
+          document.body
+        )}
+    </div>
+  );
 });
 const CheckContext = createContext({ id: undefined, type: "checkbox" });
 const FormCheck = ({ type = "checkbox", id, label, className, children, inline, reverse, ...props }) => {
@@ -141,11 +396,11 @@ const Modal = ({ show = false, onHide, children, className, dialogClassName, con
           aria-label={hasTitle ? props["aria-label"] : props["aria-label"] || "Dialog"}
           onEscapeKeyDown={(event) => { if (!keyboard || backdrop === "static") event.preventDefault(); }}
           onPointerDownOutside={(event) => { if (backdrop === "static" || backdrop === false) event.preventDefault(); }}
-          className={cn("fixed left-1/2 z-[1050] w-[calc(100%-2rem)] -translate-x-1/2 outline-none", centered ? "top-1/2 -translate-y-1/2" : "top-8", sizeClass, fullscreen && "left-0 top-0 h-dvh w-screen max-w-none translate-x-0 translate-y-0", className)}
+          className={cn("fixed left-1/2 z-[1050] w-[calc(100%-2rem)] -translate-x-1/2 outline-none", centered ? "top-1/2 -translate-y-1/2" : "top-8", sizeClass, dialogClassName, fullscreen && "left-0 top-0 h-dvh w-screen max-w-none translate-x-0 translate-y-0", className)}
           style={style}
         >
           <ModalContext.Provider value={{ close: onHide, titleId }}>
-            <div className={cn("modal-dialog w-full", fullscreen && "h-full", dialogClassName)}>
+            <div className={cn("modal-dialog mx-auto w-full", fullscreen && "h-full", dialogClassName)}>
               <div className={cn("modal-content", modernSurface, "max-h-[calc(100dvh-4rem)] overflow-y-auto rounded-xl", fullscreen && "h-full max-h-none rounded-none", contentClassName)}>{children}</div>
             </div>
           </ModalContext.Provider>
@@ -240,7 +495,7 @@ const DropdownMenu = ({ children, className, align, style, ...props }) => {
     if (event.key === "Escape") { event.preventDefault(); context.setOpen(false, event); context.toggleRef.current?.focus(); return; }
     if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); const index = items.indexOf(document.activeElement); const delta = event.key === "ArrowDown" ? 1 : -1; items[(index + delta + items.length) % items.length]?.focus(); }
   };
-  return <div {...props} ref={menuRef} role="menu" onKeyDown={handleKeyDown} style={style} className={cn("dropdown-menu absolute z-[1060] min-w-48 rounded-lg border border-solid border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] p-1 text-[var(--modern-text,#0f172a)]", position, className)}>{children}</div>;
+  return <div {...props} ref={menuRef} role="menu" onKeyDown={handleKeyDown} style={style} className={cn("dropdown-menu flex flex-col absolute z-[1060] min-w-48 rounded-lg border border-solid border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] p-1 text-[var(--modern-text,#0f172a)]", position, className)}>{children}</div>;
 };
 const DropdownItem = forwardRef(function ShadcnDropdownItem({ as, eventKey, active, disabled, href, onClick, className, children, ...props }, ref) {
   const context = useContext(DropdownContext);

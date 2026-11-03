@@ -1,22 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { Modal, Button, Form } from "@/Components/UI/shadcnCompat";
+import { Modal, Button, Form, Dropdown } from "@/Components/UI/shadcnCompat";
 import "./style.css";
-import { Dropdown as Dropdown } from "@/Components/UI/shadcnCompat";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination, Stack } from "@/Components/UI/dataPrimitives";
+import "@/Pages/Home/Home.css";
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableEmptyState,
+  TableHead,
+  TableRow,
+  Pagination,
+  Stack,
+  UserInitialsBadge,
+} from "@/Components/UI/dataPrimitives";
 import { useTranslation } from "react-i18next";
+import {
+  Download,
+  FileSpreadsheet,
+  FileText,
+  Users,
+  Search,
+  X,
+  AlertTriangle,
+  CheckCircle2,
+  UserCheck,
+  Loader2,
+} from "lucide-react";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 import CreateTeamForm from "./CreateTeamForm";
 import { Icons } from "@/assets/Icons";
 import { useUser } from "@/Context/UserContext";
-import { Offcanvas as Offcanvas } from "@/Components/UI/shadcnCompat";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import UserLisence from "@/Components/UserLisence/UserLisence";
-
 import UserSearchFilter from "./UserSearchFilter";
 import ViewTeamDetails from "./ViewTeamDetails";
 import PhoneInput from "react-phone-input-2";
-
 import userService from "@/services/userService";
 
 function CreateTeam() {
@@ -32,11 +55,18 @@ function CreateTeam() {
   const [showActiveModal, setShowActiveModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const { user, userAccess } = useUser();
+
+  // Advanced Drawer Search State
   const [fullName, setFullName] = useState("");
   const [emailID, setEmailID] = useState("");
   const [role, setRole] = useState("");
   const [isActive, setIsActive] = useState(undefined);
   const [department, setDepartment] = useState("");
+
+  // Instant Quick Search and Status Tab State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusTab, setStatusTab] = useState("all");
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [showViewDetailsModal, setShowViewDetailsModal] = useState(false);
@@ -62,24 +92,38 @@ function CreateTeam() {
     FullName: "",
     UserName: "",
     RoleID: "",
-    // DepartmentID: "",
     MobileNumber: "",
     EmailID: "",
   });
 
   const handleUpdate = (email) => {
-    const selectedUser = data.find((user) => user.emailID === email);
+    const selectedUser = data.find((u) => u.emailID === email);
+    if (!selectedUser) return;
+
+    const matchedRole = roles.find(
+      (r) =>
+        (selectedUser.roleID != null && String(r.id ?? r.roleID) === String(selectedUser.roleID)) ||
+        (selectedUser.roleNameEn && r.roleNameEn?.toLowerCase() === selectedUser.roleNameEn.toLowerCase())
+    );
+    const resolvedRoleID = selectedUser.roleID ?? matchedRole?.id ?? matchedRole?.roleID ?? "";
+
+    const matchedDept = departments.find(
+      (d) =>
+        (selectedUser.departmentID != null && String(d.departmentID) === String(selectedUser.departmentID)) ||
+        (selectedUser.department && d.title?.toLowerCase() === selectedUser.department.toLowerCase()) ||
+        (selectedUser.departmentTitle && d.title?.toLowerCase() === selectedUser.departmentTitle.toLowerCase())
+    );
+    const resolvedDepartmentID = selectedUser.departmentID ?? matchedDept?.departmentID ?? null;
 
     setUpdateUserData({
-      UserName: selectedUser.userName,
-      FullName: selectedUser.fullName,
-      EmailID: selectedUser.emailID,
-      MobileNumber: selectedUser.mobileNumber,
-      RoleID: selectedUser.roleID,
-      DepartmentID: selectedUser.departmentID || null,
+      UserName: selectedUser.userName || "",
+      FullName: selectedUser.fullName || "",
+      EmailID: selectedUser.emailID || "",
+      MobileNumber: selectedUser.mobileNumber || "",
+      RoleID: resolvedRoleID,
+      DepartmentID: resolvedDepartmentID,
     });
 
-    // Set phone number with country code for the update modal
     if (selectedUser.countryCode && selectedUser.mobileNumber) {
       setUpdatePhoneNumber(selectedUser.countryCode + selectedUser.mobileNumber);
     } else if (selectedUser.mobileNumber) {
@@ -107,59 +151,30 @@ function CreateTeam() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === "UserName") {
-      setUpdateUserData({
-        ...updateUserData,
-        UserName: value,
-        EmailID: value,
-      });
-    } else if (name === "RoleID") {
-      setUpdateUserData({
-        ...updateUserData,
-        RoleID: value,
-      });
-    } else {
-      setUpdateUserData({
-        ...updateUserData,
-        [name]: value,
-      });
-    }
-    // Clear error when the user starts typing
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: "",
-    }));
-  };
+    setUpdateUserData({
+      ...updateUserData,
+      [name]: value,
+    });
 
-  const handleUpdatePhoneChange = (phone) => {
-    setUpdatePhoneNumber(phone);
-    setUpdateUserData((prevData) => ({
-      ...prevData,
-      MobileNumber: phone,
-    }));
-
-    // Clear mobile number error when user starts typing
-    if (phone.length >= 10) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        MobileNumber: "",
-      }));
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: "",
+      });
     }
   };
 
-  // form validations
   const validateForm = () => {
     let formErrors = {};
     let isValid = true;
 
-    // Validate FullName
     if (!updateUserData.FullName) {
       formErrors.FullName = t("createTeam.fullNameRequired");
       isValid = false;
     }
 
-    // Validate Email
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
+    const emailPattern =
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
     if (!updateUserData.EmailID) {
       formErrors.EmailID = t("createTeam.emailRequired");
       isValid = false;
@@ -168,19 +183,11 @@ function CreateTeam() {
       isValid = false;
     }
 
-    // Validate RoleID
     if (!updateUserData.RoleID) {
       formErrors.RoleID = t("createTeam.roleRequired");
       isValid = false;
     }
 
-    // Validate DepartmentID
-    // if (!updateUserData.DepartmentID) {
-    //   formErrors.DepartmentID = t("createTeam.departmentRequired");
-    //   isValid = false;
-    // }
-
-    // Validate MobileNumber (optional but if provided, must be valid)
     if (updatePhoneNumber && updatePhoneNumber.length < 10) {
       formErrors.MobileNumber = t("createTeam.invalidMobile");
       isValid = false;
@@ -189,7 +196,6 @@ function CreateTeam() {
     return isValid;
   };
 
-  //update user api
   const updateUser = async () => {
     if (!validateForm()) {
       return;
@@ -199,10 +205,9 @@ function CreateTeam() {
     try {
       setIsLoading(true);
 
-      // Extract country code and mobile number from the combined phone input
       let mobileData = {};
       if (updatePhoneNumber) {
-        const countryCode = updatePhoneNumber.substring(0, updatePhoneNumber.length - 10); // Assuming 10 digits for mobile
+        const countryCode = updatePhoneNumber.substring(0, updatePhoneNumber.length - 10);
         const mobileNumber = updatePhoneNumber.substring(updatePhoneNumber.length - 10);
         mobileData = {
           MobileNumber: mobileNumber,
@@ -236,44 +241,50 @@ function CreateTeam() {
     }
   };
 
-  const openDeactivateModal = () => {
-    setShowDeactivateModal(true);
+  const openDeactivateModal = () => setShowDeactivateModal(true);
+  const closeDeactivateModal = () => setShowDeactivateModal(false);
+  const openActiveModal = () => setShowActiveModal(true);
+  const closeActiveModal = () => setShowActiveModal(false);
+
+  const sortTeamMembers = (teamMembers) => {
+    const roleOrder = {
+      "Super Admin": 1,
+      Admin: 2,
+      "App User": 3,
+      Viewer: 4,
+    };
+
+    return teamMembers.sort((a, b) => {
+      if (roleOrder[a.roleNameEn] !== roleOrder[b.roleNameEn]) {
+        return (roleOrder[a.roleNameEn] || 99) - (roleOrder[b.roleNameEn] || 99);
+      }
+      return a.isActive === b.isActive ? 0 : a.isActive ? -1 : 1;
+    });
   };
 
-  const closeDeactivateModal = () => {
-    setShowDeactivateModal(false);
-  };
-
-  const openActiveModal = () => {
-    setShowActiveModal(true);
-  };
-
-  const closeActiveModal = () => {
-    setShowActiveModal(false);
-  };
-
-  //Get Team APi
-  const fetchTeamMembers = async () => {
+  const fetchTeamMembers = useCallback(async () => {
     try {
       if (!user.AccountID) {
         return;
       }
       setIsLoading(true);
       const response = await userService.getAppUserTeam(user.AccountID);
-      setData(response.data.response || []);
-      const sortedResults = sortTeamMembers(response.data.response || []);
-      setSearchResults(sortedResults); // Apply sorted data
+      const rawData = response.data.response || [];
+      setData(rawData);
+      const sortedResults = sortTeamMembers([...rawData]);
+      setSearchResults(sortedResults);
     } catch (error) {
       console.log(error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user.AccountID]);
 
-  // In CreateTeam component's handleUserSearch function
   const handleUserSearch = async () => {
     try {
       setIsLoading(true);
+      setStatusTab("all");
+      setSearchQuery("");
       const response = await userService.getAppUserTeam(user.AccountID, {
         fullName,
         emailID,
@@ -283,6 +294,7 @@ function CreateTeam() {
       });
       const sortedResults = sortTeamMembers(response.data.response || []);
       setSearchResults(sortedResults);
+      setPage(0);
     } catch (error) {
       toast.error("Error fetching user data.");
     } finally {
@@ -296,16 +308,17 @@ function CreateTeam() {
     setRole("");
     setIsActive(undefined);
     setDepartment("");
+    setSearchQuery("");
+    setStatusTab("all");
+    setPage(0);
     fetchTeamMembers();
   };
-  //Roles Api
+
   const fetchRoles = async () => {
     try {
       const response = await userService.getUserRoles();
       if (response.data.successStatus) {
         setRoles(response.data.response);
-      } else {
-        console.error(t("createTeam.errRoles"));
       }
     } catch (error) {
       console.error(t("createTeam.errRoles"));
@@ -317,8 +330,6 @@ function CreateTeam() {
       const response = await userService.getActiveAccountDepartments(user.AccountID, isActive);
       if (response.data.statusCode === "1") {
         setDepartments(response.data.response || []);
-      } else {
-        toast.error(t("createTeam.errDepartments"));
       }
     } catch (error) {
       toast.error(t("createTeam.errDepartments"));
@@ -329,23 +340,22 @@ function CreateTeam() {
     fetchTeamMembers();
     fetchDepartments();
     fetchRoles();
-  }, [user.AccountID, userAccess.remainingDays]);
+  }, [user.AccountID, userAccess.remainingDays, fetchTeamMembers]);
 
-  const handleDeactivate = (email, isActive) => {
+  const handleDeactivate = (email, activeStatus) => {
     setSelectedEmail(email);
     setSelectedAppUserId(user.AccountID);
-    setSelectedIsActive(!isActive);
+    setSelectedIsActive(!activeStatus);
     openDeactivateModal();
   };
 
-  const handleActiveAgain = (email, isActive) => {
+  const handleActiveAgain = (email, activeStatus) => {
     setSelectedEmail(email);
     setSelectedAppUserId(user.AccountID);
-    setSelectedIsActive(!isActive);
+    setSelectedIsActive(!activeStatus);
     openActiveModal();
   };
 
-  //User Deactivate
   const userDeactivate = async () => {
     const requestBody = {
       AccountID: selectedAppUserId,
@@ -355,54 +365,74 @@ function CreateTeam() {
     setIsLoading(true);
     try {
       const response = await userService.updateAppUserStatus(requestBody);
-      if (response.data.statusCode === "12") {
-        toast.info("User license is not valid or subscription has expired.");
-      } else if (response.data.response === false) {
-        toast.success(t("createTeam.userDeactivateSuccess"));
-      } else if (response.data.response === true) {
-        toast.success("User Activated successfully");
-      } else if (response.data.statusCode === "3") {
-        toast.info("User license is not valid or subscription has expired.");
+      if (response.data.statusCode === "1") {
+        if (!selectedIsActive) {
+          toast.success(t("createTeam.userDeactivateSuccess"));
+        } else {
+          toast.success("User Activated Successfully!");
+        }
+        fetchTeamMembers();
+      } else {
+        toast.error("Failed to update status!");
       }
     } catch (error) {
       toast.error(t("createTeam.errDeactivate"));
     } finally {
       setIsLoading(false);
-      fetchTeamMembers();
-      closeActiveModal();
       closeDeactivateModal();
+      closeActiveModal();
     }
   };
 
-  const columns = [
-    { label: t("tablesLabel.name"), key: "fullName" },
-    { label: t("tablesLabel.email"), key: "emailID" },
-    { label: t("tablesLabel.role"), key: "roleNameEn" },
-    { label: t("departmentList.createdon"), key: "createdon" },
-    { label: t("createTeam.department"), key: "title" },
-    { label: t("tablesLabel.status"), key: "isActive" },
-    { label: "", key: "actions" },
+  // Status counts for quick status filter tabs
+  const statusCounts = useMemo(() => {
+    const counts = { all: searchResults.length, active: 0, inactive: 0 };
+    searchResults.forEach((m) => {
+      if (m.isActive) counts.active += 1;
+      else counts.inactive += 1;
+    });
+    return counts;
+  }, [searchResults]);
+
+  // Combined client-side filtering (status tabs + instant search query)
+  const visibleTeamMembers = useMemo(() => {
+    let list = searchResults;
+
+    if (statusTab === "active") {
+      list = list.filter((m) => Boolean(m.isActive));
+    } else if (statusTab === "inactive") {
+      list = list.filter((m) => !m.isActive);
+    }
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      list = list.filter(
+        (m) =>
+          (m.fullName && m.fullName.toLowerCase().includes(q)) ||
+          (m.emailID && m.emailID.toLowerCase().includes(q)) ||
+          (m.roleNameEn && m.roleNameEn.toLowerCase().includes(q)) ||
+          (m.department && m.department.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [searchResults, statusTab, searchQuery]);
+
+  const statusTabs = [
+    { id: "all", label: t("departmentList.all", "All") },
+    { id: "active", label: t("emailTemplates.active", "Active") },
+    { id: "inactive", label: t("emailTemplates.inactive", "Inactive") },
   ];
 
-  // handle the order of role first will come the admin , app user and viewer
-
-  const sortTeamMembers = (teamMembers) => {
-    // Define the order for roles
-    const roleOrder = {
-      "Super Admin": 1,
-      Admin: 2,
-      "App User": 3,
-      Viewer: 4,
-    };
-
-    return teamMembers.sort((a, b) => {
-      // First, sort by roleNameEn (Admin > App User > Viewer)
-      if (roleOrder[a.roleNameEn] !== roleOrder[b.roleNameEn]) {
-        return roleOrder[a.roleNameEn] - roleOrder[b.roleNameEn];
-      }
-      return a.isActive === b.isActive ? 0 : a.isActive ? -1 : 1;
-    });
-  };
+  const columns = [
+    { label: t("tablesLabel.name", "Name"), key: "fullName" },
+    { label: t("tablesLabel.email", "Email"), key: "emailID" },
+    { label: t("tablesLabel.role", "Role"), key: "roleNameEn" },
+    { label: t("departmentList.createdon", "Created On"), key: "createdon" },
+    { label: t("createTeam.department", "Department"), key: "title" },
+    { label: t("tablesLabel.status", "Status"), key: "isActive" },
+    { label: "", key: "actions" },
+  ];
 
   const handleViewDetails = (row) => {
     setViewDetailsAppUserID(row.appUserID);
@@ -410,7 +440,9 @@ function CreateTeam() {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return "—";
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
     const day = date.getDate();
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
@@ -421,323 +453,625 @@ function CreateTeam() {
     hours = hours % 12 || 12;
 
     const formattedMinutes = (minutes < 10 ? "0" : "") + minutes;
-
     return `${day}/${month}/${year} - ${hours}:${formattedMinutes} ${ampm}`;
   };
 
+  const exportToExcel = () => {
+    const listToExport = visibleTeamMembers;
+    const worksheetData = listToExport.map((row) => ({
+      Name: row.fullName || "",
+      Email: row.emailID || "",
+      Role: row.roleNameEn || "",
+      CreatedOn: row.createdOnFormatted ? formatDate(row.createdOnFormatted) : "",
+      Department: row.department || "",
+      "Country Code": row.countryCode || "",
+      "Mobile Number": row.mobileNumber || "",
+      Status: row.isActive ? "Active" : "Inactive",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Team Members");
+
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, "TeamMembers.xlsx");
+  };
+
+  const exportToWord = () => {
+    const header =
+      "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+      "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+      "xmlns='http://www.w3.org/TR/REC-html40'>" +
+      "<head><meta charset='utf-8'><title>Team Members Report</title></head><body>";
+    const footer = "</body></html>";
+
+    let htmlTable =
+      '<table border="1" style="border-collapse: collapse; width: 100%;">' +
+      "<tr><th>Name</th><th>Email</th><th>Role</th><th>Created On</th><th>Department</th><th>Country Code</th><th>Mobile Number</th><th>Status</th></tr>";
+
+    visibleTeamMembers.forEach((row) => {
+      htmlTable += `<tr>
+        <td>${row.fullName || ""}</td>
+        <td>${row.emailID || ""}</td>
+        <td>${row.roleNameEn || ""}</td>
+        <td>${row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</td>
+        <td>${row.department || ""}</td>
+        <td>${row.countryCode || ""}</td>
+        <td>${row.mobileNumber || ""}</td>
+        <td>${row.isActive ? "Active" : "Inactive"}</td>
+      </tr>`;
+    });
+
+    htmlTable += "</table>";
+
+    const source = header + htmlTable + footer;
+    const blob = new Blob(["\ufeff", source], {
+      type: "application/msword",
+    });
+    saveAs(blob, "TeamMembers.doc");
+  };
+
+  const hasAdvancedFilters = Boolean(fullName || emailID || role || isActive !== undefined || department);
+  const hasVisibleFilters = Boolean(hasAdvancedFilters || statusTab !== "all" || searchQuery);
+
   return (
-    <div className='team-members-page container my-3'>
-
+    <div className='w-full max-w-none m-0 py-6 px-4 sm:px-6 bg-[var(--modern-bg)] text-[var(--modern-text)] font-sans team-members-page'>
       {user.AccountType === "B" && user.RoleID === 2 && userAccess.remainingDays <= 0 ? (
-        <>
-          <UserLisence />
-        </>
-      ) : (
-        <>
-          {user.AccountType === "B" && (user.RoleID === 1 || user.RoleID === 4) && userAccess.remainingDays >= 0 ? (
-            <div className='d-flex flex-column'>
-              {userAccess.teams === true ? (
-                <>
-                  <div className='createTemplate'>
-                    <CreateTeamForm fetchTeam={fetchTeamMembers} />
+        <UserLisence />
+      ) : user.AccountType === "B" && (user.RoleID === 1 || user.RoleID === 4) && userAccess.remainingDays >= 0 ? (
+        userAccess.teams === true ? (
+          <div className='w-full max-w-[1560px] mx-auto p-5 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)]'>
+            {/* Unified Hero Toolbar */}
+            <div className='flex flex-wrap items-center justify-between gap-4 mb-4'>
+              <div className='flex items-center gap-3'>
+                <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--modern-violet-soft)] text-[var(--modern-violet)]'>
+                  <Users size={20} />
+                </div>
+                <div>
+                  <div className='flex items-center gap-2'>
+                    <h1 className='text-xl sm:text-2xl font-bold tracking-tight text-[var(--modern-text)] m-0'>
+                      {t("createTeam.MyTeam", "Team Members")}
+                    </h1>
+                    <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--modern-raised)] border border-[var(--modern-border)] text-[var(--modern-muted)]'>
+                      {visibleTeamMembers.length}{" "}
+                      {visibleTeamMembers.length === 1
+                        ? t("createTeam.teamMember", "member")
+                        : t("createTeam.teamMembersCount", "members")}
+                    </span>
                   </div>
+                  <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5'>
+                    {t("createTeam.manageTeamSubtitle", "Manage company members, roles, and access permissions")}
+                  </p>
+                </div>
+              </div>
 
-                  <div className='py-3 p-3 pendingtable'>
-                    <Grid>
-                      <Grid item xs={12}>
-                        <div>
-                          <div className='team-members-toolbar'>
-                            <h4 className='team-members-heading'>{t("createTeam.MyTeam")}</h4>
+              <div className='flex items-center gap-2.5 flex-wrap ml-auto'>
+                {/* Instant Quick Search */}
+                <div className='recentdocs-search-box'>
+                  <Search className='search-icon' size={15} aria-hidden='true' />
+                  <input
+                    type='text'
+                    placeholder={t("createTeam.searchPlaceholder", "Search by name, email, role, department...")}
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setPage(0);
+                    }}
+                    className='recentdocs-search-input'
+                    aria-label='Search team members'
+                  />
+                  {searchQuery && (
+                    <button
+                      type='button'
+                      className='search-clear-btn'
+                      onClick={() => {
+                        setSearchQuery("");
+                        setPage(0);
+                      }}
+                      aria-label='Clear search'
+                    >
+                      <X size={13} />
+                    </button>
+                  )}
+                </div>
 
-                            <div className='search-filters-container'>
-                              <UserSearchFilter
-                                fullName={fullName}
-                                emailID={emailID}
-                                role={role}
-                                isActive={isActive}
-                                department={department}
-                                setFullName={setFullName}
-                                setEmailID={setEmailID}
-                                setRole={setRole}
-                                setIsActive={setIsActive}
-                                setDepartment={setDepartment}
-                                handleSearch={handleUserSearch}
-                                clearSearch={clearUserSearch}
-                                userRoles={roles} //pass roles
-                                departments={departments} //pass departments
-                              />
-                            </div>
-                          </div>
+                {/* Modern Export Dropdown */}
+                <Dropdown className='modern-export-dropdown'>
+                  <Dropdown.Toggle
+                    variant='none'
+                    size='sm'
+                    className='modern-export-btn'
+                  >
+                    <Download size={14} className='shrink-0' />
+                    <span>{t("createTeam.Export", "Export")}</span>
+                  </Dropdown.Toggle>
 
-                          <TableContainer
-                            component={Paper}
-                            className='custom-table-scrollbar team-members-table'
-                            style={{
-                              maxWidth: "100%",
-                              overflowX: "auto",
-                              minHeight: "440px",
-                              height: "calc(100vh - 280px)",
-                              maxHeight: "calc(100vh - 280px)",
-                            }}
-                          >
-                            <Table stickyHeader className='team-members-table-content'>
-                              <TableHead className=''>
-                                <TableRow>
-                                  {columns.map((column) => (
-                                    <TableCell key={column.label} className='TableHeaderCell'>
-                                      {column.label}
-                                    </TableCell>
-                                  ))}
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {searchResults.length === 0 && (
-                                  <TableRow>
-                                    <td colSpan='6' className='team-empty-state p-5 text-center'>
-                                      <div className='report-empty-content'>
-                                        <Icons.Users size={50} />
-                                        {t("tablesLabel.notTeamFound")}
-                                      </div>
-                                    </td>
-                                  </TableRow>
-                                )}
+                  <Dropdown.Menu align='end' className='modern-export-menu'>
+                    <Dropdown.Item onClick={exportToExcel} className='modern-export-item'>
+                      <FileSpreadsheet size={16} className='text-emerald-500 shrink-0' />
+                      <span>{t("createTeam.exportExcel", "Export to Excel")}</span>
+                    </Dropdown.Item>
 
-                                {searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                                  <TableRow key={index}>
-                                    <TableCell className='TableCell'>{row.fullName}</TableCell>
-                                    <TableCell className='TableCell'>{row.emailID}</TableCell>
-                                    <TableCell className='TableCell'>{row.roleNameEn}</TableCell>
-                                    <TableCell className='TableCell'>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
-                                    <TableCell className='TableCell'>{row.department}</TableCell>
+                    <Dropdown.Item onClick={exportToWord} className='modern-export-item'>
+                      <FileText size={16} className='text-blue-500 shrink-0' />
+                      <span>{t("createTeam.exportWord", "Export to Word")}</span>
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
 
-                                    <TableCell className='TableCell'>
-                                    <label className={`team-status-pill ${row.isActive ? "is-active" : "is-inactive"}`}>
-                                        {row.isActive ? "Active" : "Inactive"}
-                                      </label>
-                                    </TableCell>
-                                    <TableCell className='py-0'>
-                                      <Dropdown>
-                                        <Dropdown.Toggle as={CustomToggle} />
-                                        <Dropdown.Menu>
-                                          {row.isActive ? (
-                                            <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleDeactivate(row.emailID, row.isActive)}>
-                                              <Icons.InactiveAction size={20} />
-                                              {t("createTeam.deactivateUser")}
-                                            </Dropdown.Item>
-                                          ) : (
-                                            <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleActiveAgain(row.emailID, row.isActive)}>
-                                              <Icons.Active size={20} color='var(--modern-success, #16a34a)' />
-                                              {t("createTeam.activateUser")}
-                                            </Dropdown.Item>
-                                          )}
-                                          <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleUpdate(row.emailID)}>
-                                            <Icons.EditProfile size={22} />
-                                            {t("createTeam.updateUser")}
-                                          </Dropdown.Item>
+                {/* Filter Drawer */}
+                <div className='search-filters-container'>
+                  <UserSearchFilter
+                    fullName={fullName}
+                    emailID={emailID}
+                    role={role}
+                    isActive={isActive}
+                    department={department}
+                    setFullName={setFullName}
+                    setEmailID={setEmailID}
+                    setRole={setRole}
+                    setIsActive={setIsActive}
+                    setDepartment={setDepartment}
+                    handleSearch={handleUserSearch}
+                    clearSearch={clearUserSearch}
+                    userRoles={roles}
+                    departments={departments}
+                  />
+                </div>
 
-                                          <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewDetails(row)}>
-                                            <Icons.ViewDetails size={23} />
-                                            {t("createTeam.viewDetails")}
-                                          </Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown>
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
-                          </TableContainer>
-                          {/* Pagination */}
-                          <div className='team-members-pagination'>
-                            <div className='showHideNoDocs'>
-                              {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.existing")} {data.length} {t("tablesLabel.existingUser")}
-                            </div>
-                            <Stack spacing={2}>
-                              <Pagination
-                                count={Math.ceil(data.length / rowsPerPage)}
-                                variant='outlined'
-                                shape='rounded'
-                                page={page + 1}
-                                onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
-                              />
-                            </Stack>
-                          </div>
-                        </div>
-                      </Grid>
-                    </Grid>
-                  </div>
-                </>
-              ) : (
-                <></>
+                {/* Add New Team Member Action */}
+                <CreateTeamForm fetchTeam={fetchTeamMembers} />
+              </div>
+            </div>
+
+            {/* Quick Status Filter Tabs */}
+            <div className='recentdocs-filters-row mb-4'>
+              <div className='home-documents-status-filters' role='group' aria-label={t("tablesLabel.status")}>
+                {statusTabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    type='button'
+                    className={`home-status-filter${statusTab === tab.id ? " is-active" : ""}`}
+                    aria-pressed={statusTab === tab.id}
+                    onClick={() => {
+                      setStatusTab(tab.id);
+                      setPage(0);
+                    }}
+                  >
+                    <span>{tab.label}</span>
+                    <span className='home-status-filter-count'>{statusCounts[tab.id] ?? 0}</span>
+                  </button>
+                ))}
+              </div>
+
+              {hasVisibleFilters && (
+                <button type='button' className='recentdocs-reset-filters-btn' onClick={clearUserSearch}>
+                  <X size={13} />
+                  <span>{t("searchFilter.reset", "Reset Filters")}</span>
+                </button>
               )}
             </div>
-          ) : (
-            <></>
-          )}
-        </>
-      )}
-      {/* Update user  */}
-      <Offcanvas show={showUpdateModal} className='team-form-panel' onHide={handleCloseUpdateModal} placement={document.documentElement.dir === "rtl" ? "start" : "end"} scroll={true}>
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>{t("createTeam.updateUser")}</Offcanvas.Title>
-        </Offcanvas.Header>
-        <hr className='team-form-divider' />
-        <Offcanvas.Body>
-          <Form>
-            <Form.Group controlId='updateEmailID'>
-              <Form.Label>{t("createTeam.email")}</Form.Label>
-              <Form.Control type='email' {...register("EmailID", { required: true })} name='EmailID' value={updateUserData.EmailID} onChange={handleInputChange} disabled />
-            </Form.Group>
-            <Form.Group className='mt-2' controlId='updateUserName'>
-              <Form.Label>
-                {t("createTeam.fullName")}
-                <span className='text-danger mx-1'>*</span>
-              </Form.Label>
-              <Form.Control
-                type='text'
-                placeholder={t("createTeam.enterfullName")}
-                {...register("FullName", { required: true })}
-                name='FullName'
-                value={updateUserData.FullName}
-                onChange={handleInputChange}
-              />
-              {errors.FullName && <div className='text-danger'>{errors.FullName}</div>}
-            </Form.Group>
 
-            <Form.Group className='mt-2' controlId='updateRoleID'>
-              <Form.Label>
-                {t("createTeam.role")}
-                <span className='text-danger mx-1'>*</span>
-              </Form.Label>
-              <Form.Select as='select' {...register("RoleID", { required: true })} value={updateUserData.RoleID} onChange={handleInputChange}>
-                <option value=''>{t("createTeam.choose")}</option>
-                {roles.map((role) => (
-                  <option key={role.id} value={role.id}>
-                    {role.roleNameEn}
-                  </option>
-                ))}
-              </Form.Select>
-              {errors.RoleID && <div className='text-danger'>{errors.RoleID}</div>}
-            </Form.Group>
+            {/* Modern Table Container */}
+            <TableContainer
+              component={Paper}
+              className='custom-table-scrollbar rounded-xl border border-[var(--modern-border)]'
+              style={{
+                maxWidth: "100%",
+                overflowX: "auto",
+                minHeight: "440px",
+                height: "calc(100vh - 300px)",
+                maxHeight: "calc(100vh - 300px)",
+              }}
+            >
+              <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
+                <TableHead>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableCell key={column.key || column.label} className='TableHeaderCell'>
+                        {column.label}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {visibleTeamMembers.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className='table-empty-state-cell'>
+                        <TableEmptyState
+                          icon={<Users size={42} className='text-[var(--modern-muted)]' />}
+                          title={
+                            hasVisibleFilters
+                              ? t("searchFilter.noSearchResults", "No matching team members found")
+                              : t("tablesLabel.notTeamFound", "No team members found")
+                          }
+                          description={
+                            hasVisibleFilters
+                              ? t("searchFilter.tryClearing", "Try clearing your search terms or filters to see more results.")
+                              : t("createTeam.enterfullName", "Add your team members to collaborate on documents.")
+                          }
+                          actionButton={
+                            hasVisibleFilters ? (
+                              <button
+                                type='button'
+                                className='px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-[var(--modern-raised)] border border-[var(--modern-border)] text-[var(--modern-text)] hover:bg-[var(--modern-hover)] transition-colors'
+                                onClick={clearUserSearch}
+                              >
+                                {t("searchFilter.clearAll", "Clear all filters")}
+                              </button>
+                            ) : null
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    visibleTeamMembers
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row, index) => (
+                        <TableRow key={row.appUserID || index} className='hover:bg-[var(--modern-raised)] transition-colors'>
+                          {/* Name with Avatar */}
+                          <TableCell className='TableCell'>
+                            <UserInitialsBadge name={row.fullName} />
+                          </TableCell>
 
-            <Form.Group className='mt-2' controlId='DepartmentID'>
-              <Form.Label>
-                {t("createTeam.department")}
-                <span className='text-muted mx-1'>({t("createTeam.optional")})</span>
-              </Form.Label>
-              <Form.Select as='select' {...register("DepartmentID")} value={updateUserData.DepartmentID} onChange={handleInputChange}>
-                <option value=''>{t("createTeam.choose")}</option>
-                {departments.map((dept) => (
-                  <option key={dept.departmentID} value={dept.departmentID}>
-                    {dept.title}
-                  </option>
-                ))}
-              </Form.Select>
-              {/* {errors.DepartmentID && <div className='text-danger'>{errors.DepartmentID}</div>} */}
-            </Form.Group>
+                          {/* Email */}
+                          <TableCell className='TableCell text-xs text-[var(--modern-muted)]'>{row.emailID}</TableCell>
 
-            <Form.Group className='mt-2' controlId='updateMobileNumber'>
-              <Form.Label>
-                {t("createTeam.mobileNumber")}
-                <span className='text-muted mx-1'>({t("createTeam.optional")})</span>
-              </Form.Label>
-              <PhoneInput
-                excludeCountries={["il"]}
-                country={"sa"}
-                value={updatePhoneNumber}
-                onChange={handleUpdatePhoneChange}
-                containerClass='team-phone-control'
-                inputClass='team-phone-input'
-                buttonClass='team-phone-country'
-              />
-              {errors.MobileNumber && <div className='text-danger'>{errors.MobileNumber}</div>}
-            </Form.Group>
+                          {/* Role */}
+                          <TableCell className='TableCell'>
+                            <span className='inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-[var(--modern-raised)] border border-[var(--modern-border)] text-[var(--modern-text)]'>
+                              {row.roleNameEn}
+                            </span>
+                          </TableCell>
 
-            <div className='team-form-actions'>
-              <Button variant='none' className='modalCancelButton ' onClick={handleCloseUpdateModal}>
-                {t("createTeam.cancel")}
-              </Button>
-              <Button variant='none' onClick={updateUser} className='applyBtn '>
+                          {/* Created On */}
+                          <TableCell className='TableCell text-xs text-[var(--modern-muted)]'>
+                            {row.createdOnFormatted ? formatDate(row.createdOnFormatted) : "—"}
+                          </TableCell>
+
+                          {/* Department */}
+                          <TableCell className='TableCell text-xs text-[var(--modern-muted)]'>{row.department || "—"}</TableCell>
+
+                          {/* Status */}
+                          <TableCell className='TableCell'>
+                            <span
+                              className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold'
+                              style={{
+                                color: row.isActive ? "var(--modern-success, #16a34a)" : "var(--modern-muted)",
+                                backgroundColor: row.isActive
+                                  ? "color-mix(in srgb, var(--modern-success, #16a34a) 12%, var(--modern-card))"
+                                  : "var(--modern-raised)",
+                                border: `1px solid ${
+                                  row.isActive
+                                    ? "color-mix(in srgb, var(--modern-success, #16a34a) 30%, transparent)"
+                                    : "var(--modern-border)"
+                                }`,
+                              }}
+                            >
+                              <span
+                                className='w-1.5 h-1.5 rounded-full'
+                                style={{
+                                  backgroundColor: row.isActive ? "var(--modern-success, #16a34a)" : "var(--modern-muted)",
+                                }}
+                              />
+                              {row.isActive ? t("emailTemplates.active", "Active") : t("emailTemplates.inactive", "Inactive")}
+                            </span>
+                          </TableCell>
+
+                          {/* Actions */}
+                          <TableCell className='py-0 text-right'>
+                            <Dropdown>
+                              <Dropdown.Toggle as={CustomToggle} />
+                              <Dropdown.Menu align='end' className='rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-1.5 shadow-none'>
+                                {row.isActive ? (
+                                  <Dropdown.Item
+                                    className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-rose-500 hover:bg-rose-500/10 transition-colors'
+                                    onClick={() => handleDeactivate(row.emailID, row.isActive)}
+                                  >
+                                    <Icons.InactiveAction size={16} />
+                                    <span>{t("createTeam.deactivateUser")}</span>
+                                  </Dropdown.Item>
+                                ) : (
+                                  <Dropdown.Item
+                                    className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-emerald-500 hover:bg-emerald-500/10 transition-colors'
+                                    onClick={() => handleActiveAgain(row.emailID, row.isActive)}
+                                  >
+                                    <Icons.Active size={16} color='var(--modern-success, #16a34a)' />
+                                    <span>{t("createTeam.activateUser")}</span>
+                                  </Dropdown.Item>
+                                )}
+                                <Dropdown.Item
+                                  className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                  onClick={() => handleUpdate(row.emailID)}
+                                >
+                                  <Icons.EditProfile size={16} />
+                                  <span>{t("createTeam.updateUser")}</span>
+                                </Dropdown.Item>
+
+                                <Dropdown.Item
+                                  className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                                  onClick={() => handleViewDetails(row)}
+                                >
+                                  <Icons.ViewDetails size={16} />
+                                  <span>{t("createTeam.viewDetails")}</span>
+                                </Dropdown.Item>
+                              </Dropdown.Menu>
+                            </Dropdown>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            {/* Pagination */}
+            <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4'>
+              <div className='text-xs text-[var(--modern-muted)]'>
+                {visibleTeamMembers.length ? page * rowsPerPage + 1 : 0} -{" "}
+                {Math.min((page + 1) * rowsPerPage, visibleTeamMembers.length)} {t("tablesLabel.existing")}{" "}
+                {visibleTeamMembers.length} {t("tablesLabel.existingUser")}
+              </div>
+              <Stack spacing={2}>
+                <Pagination
+                  count={Math.max(1, Math.ceil(visibleTeamMembers.length / rowsPerPage))}
+                  variant='outlined'
+                  shape='rounded'
+                  page={Math.min(page + 1, Math.max(1, Math.ceil(visibleTeamMembers.length / rowsPerPage)))}
+                  onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
+                />
+              </Stack>
+            </div>
+          </div>
+        ) : null
+      ) : null}
+
+      {/* Modern Update User Modal */}
+      <Modal
+        show={showUpdateModal}
+        onHide={handleCloseUpdateModal}
+        centered
+        dialogClassName='max-w-xl'
+        contentClassName='overflow-visible'
+        backdrop='static'
+      >
+        <Modal.Header closeButton className='border-b border-[var(--modern-border)] px-6 py-4 bg-[var(--modern-card)] rounded-t-xl'>
+          <div className='flex items-center gap-3'>
+            <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--modern-violet-soft)] text-[var(--modern-violet)]'>
+              <UserCheck size={20} />
+            </div>
+            <div>
+              <Modal.Title className='text-base sm:text-lg font-bold text-[var(--modern-text)] m-0'>
                 {t("createTeam.updateUser")}
-              </Button>
+              </Modal.Title>
+              <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5 truncate max-w-sm'>
+                {updateUserData.EmailID}
+              </p>
+            </div>
+          </div>
+        </Modal.Header>
+
+        <Modal.Body className='p-6 bg-[var(--modern-card)] text-[var(--modern-text)]'>
+          <Form className='space-y-4'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              <div>
+                <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("createTeam.email")}
+                </label>
+                <Form.Control
+                  type='email'
+                  value={updateUserData.EmailID}
+                  disabled
+                  className='w-full px-3.5 py-2 text-sm rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border-strong)] text-[var(--modern-muted)] cursor-not-allowed'
+                />
+              </div>
+
+              <div>
+                <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("createTeam.fullName")} <span className='text-rose-500'>*</span>
+                </label>
+                <Form.Control
+                  type='text'
+                  name='FullName'
+                  value={updateUserData.FullName}
+                  onChange={handleInputChange}
+                  placeholder={t("createTeam.enterfullName")}
+                  className='w-full px-3.5 py-2 text-sm rounded-xl bg-[var(--modern-bg)] border border-[var(--modern-border-strong)] text-[var(--modern-text)] placeholder:text-[var(--modern-muted)] focus:border-[var(--theme-color)] focus:outline-none transition-colors'
+                />
+                {errors.FullName && <div className='text-xs text-rose-500 mt-1'>{errors.FullName}</div>}
+              </div>
+            </div>
+
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              <div>
+                <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("createTeam.role")} <span className='text-rose-500'>*</span>
+                </label>
+                <Form.Select
+                  as='select'
+                  name='RoleID'
+                  value={updateUserData.RoleID ?? ""}
+                  onChange={handleInputChange}
+                  className='w-full px-3.5 py-2 text-sm rounded-xl bg-[var(--modern-bg)] border border-[var(--modern-border-strong)] text-[var(--modern-text)] focus:border-[var(--theme-color)] focus:outline-none transition-colors'
+                >
+                  <option value=''>{t("createTeam.selectRoleadmin")}</option>
+                  {roles.map((r) => {
+                    const roleValue = r.id ?? r.roleID;
+                    return (
+                      <option key={roleValue} value={roleValue}>
+                        {r.roleNameEn}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+                {errors.RoleID && <div className='text-xs text-rose-500 mt-1'>{errors.RoleID}</div>}
+              </div>
+
+              <div>
+                <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("createTeam.department")}
+                </label>
+                <Form.Select
+                  as='select'
+                  name='DepartmentID'
+                  value={updateUserData.DepartmentID || ""}
+                  onChange={handleInputChange}
+                  className='w-full px-3.5 py-2 text-sm rounded-xl bg-[var(--modern-bg)] border border-[var(--modern-border-strong)] text-[var(--modern-text)] focus:border-[var(--theme-color)] focus:outline-none transition-colors'
+                >
+                  <option value=''>{t("createTeam.choose")}</option>
+                  {departments.map((d) => (
+                    <option key={d.departmentID} value={d.departmentID}>
+                      {d.title}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
+            </div>
+
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              <div>
+                <label className='block text-xs font-semibold text-[var(--modern-text)] mb-1.5'>
+                  {t("createTeam.mobileNumber")}
+                </label>
+                <PhoneInput
+                  excludeCountries={["il"]}
+                  country={"sa"}
+                  value={updatePhoneNumber}
+                  onChange={(phone) => setUpdatePhoneNumber(phone)}
+                  containerClass={`phone-input-container create-team-phone-input ${errors.MobileNumber ? "is-invalid" : ""}`}
+                />
+                {errors.MobileNumber && <div className='text-xs text-rose-500 mt-1'>{errors.MobileNumber}</div>}
+              </div>
             </div>
           </Form>
-        </Offcanvas.Body>
-      </Offcanvas>
-
-      {/* deactivate User */}
-      <Modal show={showDeactivateModal} className='team-confirm-dialog team-confirm-dialog--deactivate' backdrop='static' keyboard={false} onHide={closeDeactivateModal} dialogClassName='custom-modal-width'>
-        <Modal.Header closeButton>
-          <div className='header-content'>
-            <div className='header-icon'>
-              <Icons.InactiveAction size={25} />
-            </div>
-            <div className='header-text'>
-              <Modal.Title>{t("AuthIntegration.Confirmation")}</Modal.Title>
-            </div>
-          </div>
-        </Modal.Header>
-        <Modal.Body className='px-4 py-3'>
-          <div>
-            <p className='team-confirm-copy'>
-              {t("createTeam.confirmDeactivate")}
-            </p>
-            <div className='team-confirm-email'>
-              <div className='team-confirm-email-label'>
-                {t("createTeam.email")}
-              </div>
-              <div className='team-confirm-email-value'>
-                {selectedEmail}
-              </div>
-            </div>
-          </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant='none' onClick={closeDeactivateModal} className='modalCancelButton'>
+
+        <Modal.Footer className='border-t border-[var(--modern-border)] px-6 py-3.5 bg-[var(--modern-card)] rounded-b-xl flex justify-end gap-3'>
+          <Button
+            variant='outline'
+            className='px-4 py-2 text-xs font-semibold rounded-xl border border-[var(--modern-border)] text-[var(--modern-text)] hover:bg-[var(--modern-raised)]'
+            onClick={handleCloseUpdateModal}
+          >
             {t("createTeam.cancel")}
           </Button>
-          <Button variant='none' onClick={userDeactivate} className='applyBtn'>
-            {t("createTeam.confirm")}
+          <Button
+            variant='primary'
+            className='px-4 py-2 text-xs font-semibold rounded-xl bg-[var(--modern-violet)] hover:bg-[var(--modern-violet-hover)] text-white flex items-center gap-2'
+            onClick={updateUser}
+            disabled={isLoading}
+          >
+            {isLoading && <Loader2 size={14} className='animate-spin' />}
+            <span>{t("createTeam.updateUser")}</span>
           </Button>
         </Modal.Footer>
       </Modal>
 
-      {/* activate user */}
-      <Modal show={showActiveModal} className='team-confirm-dialog team-confirm-dialog--activate' backdrop='static' keyboard={false} onHide={closeActiveModal} dialogClassName='custom-modal-width'>
-        <Modal.Header closeButton>
-          <div className='header-content'>
-            <div className='header-icon'>
-              <Icons.Active size={25} color='var(--modern-success, #16a34a)' />
+      {/* Modern Deactivate User Confirmation Dialog */}
+      <Modal
+        show={showDeactivateModal}
+        centered
+        backdrop='static'
+        keyboard={false}
+        onHide={closeDeactivateModal}
+        dialogClassName='max-w-md'
+      >
+        <Modal.Header closeButton className='border-b border-[var(--modern-border)] px-6 py-4 bg-[var(--modern-card)]'>
+          <div className='flex items-center gap-3'>
+            <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-500/10 text-rose-500'>
+              <AlertTriangle size={20} />
             </div>
-            <div className='header-text'>
-              <Modal.Title>{t("AuthIntegration.Confirmation")}</Modal.Title>
+            <div>
+              <Modal.Title className='text-base sm:text-lg font-bold text-[var(--modern-text)] m-0'>
+                {t("AuthIntegration.Confirmation", "Confirmation")}
+              </Modal.Title>
+              <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5 truncate max-w-[220px]'>
+                {selectedEmail}
+              </p>
             </div>
           </div>
         </Modal.Header>
-        <Modal.Body className='px-4 py-3'>
-          <div>
-            <p>{t("createTeam.confirmActivate")}</p>
-            <div className='team-confirm-email'>
-              <div className='team-confirm-email-label'>
-                {t("createTeam.email")}
-              </div>
-              <div className='team-confirm-email-value'>
-                {selectedEmail}
-              </div>
-            </div>
+        <Modal.Body className='p-6 bg-[var(--modern-card)] text-[var(--modern-text)]'>
+          <p className='text-sm mb-3'>{t("createTeam.confirmDeactivate")}</p>
+          <div className='p-3 rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border)] text-xs'>
+            <span className='text-[var(--modern-muted)]'>{t("createTeam.email")}: </span>
+            <span className='font-semibold text-[var(--modern-text)]'>{selectedEmail}</span>
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant='none' onClick={closeActiveModal} className='modalCancelButton'>
+        <Modal.Footer className='border-t border-[var(--modern-border)] px-6 py-3.5 bg-[var(--modern-card)] flex justify-end gap-3'>
+          <Button
+            variant='outline'
+            className='px-4 py-2 text-xs font-semibold rounded-xl border border-[var(--modern-border)] text-[var(--modern-text)] hover:bg-[var(--modern-raised)]'
+            onClick={closeDeactivateModal}
+          >
             {t("createTeam.cancel")}
           </Button>
-          <Button variant='none' onClick={userDeactivate} className='applyBtn'>
-            {t("createTeam.confirm")}
+          <Button
+            variant='primary'
+            className='px-4 py-2 text-xs font-semibold rounded-xl bg-rose-600 hover:bg-rose-700 text-white'
+            onClick={userDeactivate}
+            disabled={isLoading}
+          >
+            {isLoading ? t("dashboardCardStatuses.loading", "Updating...") : t("createTeam.confirm")}
           </Button>
         </Modal.Footer>
       </Modal>
 
-      <ViewTeamDetails show={showViewDetailsModal} onHide={() => setShowViewDetailsModal(false)} appUserID={viewDetailsAppUserID} />
+      {/* Modern Activate User Confirmation Dialog */}
+      <Modal
+        show={showActiveModal}
+        centered
+        backdrop='static'
+        keyboard={false}
+        onHide={closeActiveModal}
+        dialogClassName='max-w-md'
+      >
+        <Modal.Header closeButton className='border-b border-[var(--modern-border)] px-6 py-4 bg-[var(--modern-card)]'>
+          <div className='flex items-center gap-3'>
+            <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500'>
+              <CheckCircle2 size={20} />
+            </div>
+            <div>
+              <Modal.Title className='text-base sm:text-lg font-bold text-[var(--modern-text)] m-0'>
+                {t("AuthIntegration.Confirmation", "Confirmation")}
+              </Modal.Title>
+              <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5 truncate max-w-[220px]'>
+                {selectedEmail}
+              </p>
+            </div>
+          </div>
+        </Modal.Header>
+        <Modal.Body className='p-6 bg-[var(--modern-card)] text-[var(--modern-text)]'>
+          <p className='text-sm mb-3'>{t("createTeam.confirmActivate")}</p>
+          <div className='p-3 rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border)] text-xs'>
+            <span className='text-[var(--modern-muted)]'>{t("createTeam.email")}: </span>
+            <span className='font-semibold text-[var(--modern-text)]'>{selectedEmail}</span>
+          </div>
+        </Modal.Body>
+        <Modal.Footer className='border-t border-[var(--modern-border)] px-6 py-3.5 bg-[var(--modern-card)] flex justify-end gap-3'>
+          <Button
+            variant='outline'
+            className='px-4 py-2 text-xs font-semibold rounded-xl border border-[var(--modern-border)] text-[var(--modern-text)] hover:bg-[var(--modern-raised)]'
+            onClick={closeActiveModal}
+          >
+            {t("createTeam.cancel")}
+          </Button>
+          <Button
+            variant='primary'
+            className='px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white'
+            onClick={userDeactivate}
+            disabled={isLoading}
+          >
+            {isLoading ? t("dashboardCardStatuses.loading", "Updating...") : t("createTeam.confirm")}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <ViewTeamDetails
+        show={showViewDetailsModal}
+        onHide={() => setShowViewDetailsModal(false)}
+        appUserID={viewDetailsAppUserID}
+      />
     </div>
   );
 }

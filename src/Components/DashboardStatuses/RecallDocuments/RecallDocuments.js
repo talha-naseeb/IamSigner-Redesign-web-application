@@ -244,7 +244,7 @@ const RecallDocs = () => {
                 ) : (
                   <Dropdown>
                     <Dropdown.Toggle as={CustomToggle} />
-                    <Dropdown.Menu>
+                    <Dropdown.Menu align='end'>
                       <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileDownload(row)}>
                         <Icons.Download size={20} />
                         {t("dashboardCardStatuses.download")}

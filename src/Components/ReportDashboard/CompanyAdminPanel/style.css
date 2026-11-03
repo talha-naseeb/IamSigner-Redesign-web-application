@@ -3,19 +3,17 @@
   max-width: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
   box-sizing: border-box;
   color: var(--modern-text);
 }
 
 .admin-dashboard-shell {
-  padding: 1.25rem 1rem;
+  padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   background: transparent;
-  border-radius: 0;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -739,40 +737,59 @@
 
 /* User report surfaces */
 .users-report-page {
-  max-width: 1480px;
+  width: 100%;
+  max-width: 100%;
   color: var(--modern-text);
   font-family: var(--modern-font-ui);
 }
 
+.users-report-accordion {
+  border: 0 !important;
+  background: transparent !important;
+}
+
 .users-report-accordion .accordion-item {
   overflow: hidden;
-  border: 1px solid var(--modern-border);
-  border-radius: 1rem;
-  background: var(--modern-card);
+  border: 0 !important;
+  border-radius: 1rem !important;
+  background: var(--modern-card) !important;
+  box-shadow: none !important;
 }
 
 .users-report-accordion .accordion-header {
-  background: var(--modern-card);
+  border: 0 !important;
+  background: var(--modern-card) !important;
 }
 
 .users-report-accordion .accordion-button {
   min-height: 4rem;
   padding: 1rem 1.25rem;
-  border: 0;
-  border-radius: 0;
-  background: var(--modern-card);
-  color: var(--modern-text);
+  border: 0 !important;
+  border-radius: 1rem !important;
+  background: var(--modern-card) !important;
+  color: var(--modern-text) !important;
   text-align: start;
+  box-shadow: none !important;
+}
+
+.users-report-accordion .accordion-button:not(.collapsed) {
+  border: 0 !important;
+  border-bottom: 0 !important;
+  border-radius: 1rem 1rem 0 0 !important;
+  background: var(--modern-raised) !important;
+  color: var(--modern-text) !important;
 }
 
 .users-report-accordion .accordion-button:hover,
 .users-report-accordion .accordion-button[aria-expanded="true"] {
-  background: var(--modern-raised);
+  background: var(--modern-raised) !important;
 }
 
+.users-report-accordion .accordion-button:focus,
 .users-report-accordion .accordion-button:focus-visible {
   outline: 3px solid var(--modern-focus);
   outline-offset: -3px;
+  box-shadow: none !important;
 }
 
 .users-report-title {
@@ -786,8 +803,10 @@
 
 .users-report-accordion-body {
   padding: 1.25rem;
-  border-top: 1px solid var(--modern-border);
-  background: var(--modern-card);
+  border: 0 !important;
+  border-top: 0 !important;
+  border-radius: 0 0 1rem 1rem !important;
+  background: var(--modern-card) !important;
 }
 
 .users-report-toolbar {

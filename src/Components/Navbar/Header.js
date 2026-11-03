@@ -182,8 +182,8 @@ function Header() {
           onChange={handleThemeChange}
           checked={theme === "dark"}
           aria-label={t(theme === "dark" ? "header.switchToLightMode" : "header.switchToDarkMode")}
-          onColor={palette === "management" ? "#FE5800" : "#8b6cff"}
-          offColor={palette === "management" ? "#FFAD7D" : "#d9d1ff"}
+          onColor={palette === "management" ? "#FE5800" : palette === "concept-3" ? "#4d8dff" : "#8b6cff"}
+          offColor={palette === "management" ? "#FFAD7D" : palette === "concept-3" ? "#a5d3ff" : "#d9d1ff"}
           checkedIcon={
             <div className='d-flex justify-content-center align-items-center h-100'>
               <Icons.Moon size={13} color='#f1c40f' />
@@ -270,6 +270,17 @@ function Header() {
               <span className='palette-swatch palette-swatch--concept-2' aria-hidden='true' />
               <span>{t("header.conceptTwoPalette", "Concept 2")}</span>
               {palette === "concept-2" && <span className='palette-choice-check' aria-hidden='true'>✓</span>}
+            </Dropdown.Item>
+            <Dropdown.Item
+              as='button'
+              type='button'
+              className='palette-menu-item'
+              aria-pressed={palette === "concept-3"}
+              onClick={() => setPalette("concept-3")}
+            >
+              <span className='palette-swatch palette-swatch--concept-3' aria-hidden='true' />
+              <span>{t("header.conceptThreePalette", "Concept 3")}</span>
+              {palette === "concept-3" && <span className='palette-choice-check' aria-hidden='true'>✓</span>}
             </Dropdown.Item>
             <Dropdown.Item
               as='button'

@@ -4,6 +4,7 @@ import userService from "@/services/userService";
 import documentService from "@/services/documentService";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
+import { Loader2, Mail, Phone, UserCheck, User } from "lucide-react";
 
 const ViewTeamDetails = ({ show, onHide, appUserID }) => {
   const { t } = useTranslation();
@@ -35,49 +36,88 @@ const ViewTeamDetails = ({ show, onHide, appUserID }) => {
     };
 
     fetchUserData();
-  }, [appUserID]);
+  }, [appUserID, t]);
+
+  const statItems = documentStats
+    ? [
+        { label: t("viewDetails.pending"), value: documentStats.pendingCount || 0, color: "var(--pending-status, #f59e0b)" },
+        { label: t("viewDetails.completed"), value: documentStats.completedCount || 0, color: "var(--completed-status, #10b981)" },
+        { label: t("viewDetails.draft"), value: documentStats.draftCount || 0, color: "var(--draft-status, #6366f1)" },
+        { label: t("viewDetails.declined"), value: documentStats.declineCount || 0, color: "var(--decline-status, #ef4444)" },
+        { label: t("viewDetails.shared"), value: documentStats.sharedCount || 0, color: "var(--share-status, #0ea5e9)" },
+        { label: t("viewDetails.inactive"), value: documentStats.inActiveCount || 0, color: "var(--inactive-status, #64748b)" },
+        { label: t("viewDetails.recalled"), value: documentStats.recalledCount || 0, color: "var(--recall-status, #f97316)" },
+        { label: t("viewDetails.bulk"), value: documentStats.bulkCount || 0, color: "var(--theme-color, #6366f1)" },
+      ]
+    : [];
 
   return (
     <Modal show={show} className='team-details-dialog' onHide={onHide} backdrop='static' keyboard={false} size='lg' centered>
-      <Modal.Header closeButton>
-        <Modal.Title className='d-flex align-items-center gap-2'>
-          <div className='viewerProfile'>{userData?.appUser?.fullName?.charAt(0)?.toUpperCase() || "U"}</div>
-          <div>
-            <div className='team-details-name'>{userData?.appUser?.fullName || t("viewDetails.userDetails")}</div>
-            <div className='team-details-email'>{userData?.appUser?.emailID}</div>
+      <Modal.Header closeButton className='border-b border-[var(--modern-border)] px-5 py-4 bg-[var(--modern-card)]'>
+        <div className='flex items-center gap-3 min-w-0'>
+          <div className='w-11 h-11 rounded-xl bg-[var(--modern-primary-bg)] text-[var(--theme-color)] border border-[color-mix(in_srgb,var(--theme-color)_25%,transparent)] font-bold text-base flex items-center justify-center shrink-0'>
+            {userData?.appUser?.fullName?.charAt(0)?.toUpperCase() || "U"}
           </div>
-        </Modal.Title>
+          <div className='min-w-0'>
+            <Modal.Title className='text-base font-bold text-[var(--modern-text)] truncate m-0'>
+              {userData?.appUser?.fullName || t("viewDetails.userDetails")}
+            </Modal.Title>
+            {userData?.appUser?.emailID && (
+              <div className='text-xs text-[var(--modern-muted)] truncate mt-0.5'>
+                {userData?.appUser?.emailID}
+              </div>
+            )}
+          </div>
+        </div>
       </Modal.Header>
 
-      <Modal.Body className='p-4 custom-table-scrollbar'>
-        {!isLoading &&
+      <Modal.Body className='p-5 custom-table-scrollbar bg-[var(--modern-card)] text-[var(--modern-text)]'>
+        {isLoading ? (
+          <div className='py-12 flex flex-col items-center justify-center gap-2 text-[var(--modern-muted)]'>
+            <Loader2 size={24} className='animate-spin text-[var(--theme-color)]' />
+          </div>
+        ) : (
           userData && (
-            <div>
+            <div className='space-y-6'>
               {/* Basic Information */}
-              <div className='mb-4'>
-                <div className='row mb-3'>
-                  <div className='col-md-6 mb-3 mb-md-0 team-details-field'>
-                    <label className='form-label text-muted small'>{t("viewDetails.name")}</label>
-                    <div className='viewDetails'>{userData.appUser.fullName}</div>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+                <div className='p-3.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)]'>
+                  <div className='flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--modern-muted)] mb-1'>
+                    <User size={13} />
+                    <span>{t("viewDetails.name")}</span>
                   </div>
-
-                  <div className='col-md-6 team-details-field'>
-                    <label className='form-label  text-muted small'>{t("viewDetails.emailAccount")}</label>
-                    <div className='viewDetails'>{userData.appUser.emailID}</div>
+                  <div className='text-sm font-semibold text-[var(--modern-text)] truncate'>
+                    {userData.appUser.fullName || "—"}
                   </div>
                 </div>
 
-                <div className='row'>
-                  <div className='col-md-6 mb-3 mb-md-0 team-details-field'>
-                    <label className='form-label text-muted small'>{t("viewDetails.mobileNumber")}</label>
-                    <div className='viewDetails'>
-                      {userData.appUser.countryCode || ""} {userData.appUser.mobileNumber || t("viewDetails.addNumber")}
-                    </div>
+                <div className='p-3.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)]'>
+                  <div className='flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--modern-muted)] mb-1'>
+                    <Mail size={13} />
+                    <span>{t("viewDetails.emailAccount")}</span>
                   </div>
+                  <div className='text-sm font-semibold text-[var(--modern-text)] truncate'>
+                    {userData.appUser.emailID || "—"}
+                  </div>
+                </div>
 
-                  <div className='col-md-6 team-details-field'>
-                    <label className='form-label text-muted small'>{t("viewDetails.emailDelegateTo")}</label>
-                    <div className='viewDetails'>{userData.delegation?.delegatedToEmail || t("viewDetails.noDelegation")}</div>
+                <div className='p-3.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)]'>
+                  <div className='flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--modern-muted)] mb-1'>
+                    <Phone size={13} />
+                    <span>{t("viewDetails.mobileNumber")}</span>
+                  </div>
+                  <div className='text-sm font-semibold text-[var(--modern-text)] truncate'>
+                    {userData.appUser.countryCode || ""} {userData.appUser.mobileNumber || t("viewDetails.addNumber")}
+                  </div>
+                </div>
+
+                <div className='p-3.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)]'>
+                  <div className='flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--modern-muted)] mb-1'>
+                    <UserCheck size={13} />
+                    <span>{t("viewDetails.emailDelegateTo")}</span>
+                  </div>
+                  <div className='text-sm font-semibold text-[var(--modern-text)] truncate'>
+                    {userData.delegation?.delegatedToEmail || t("viewDetails.noDelegation")}
                   </div>
                 </div>
               </div>
@@ -85,72 +125,43 @@ const ViewTeamDetails = ({ show, onHide, appUserID }) => {
               {/* Document Status */}
               {documentStats && (
                 <div>
-                  <h6 className='team-details-section-title'>
+                  <h6 className='text-xs font-bold uppercase tracking-wider text-[var(--modern-muted)] mb-3'>
                     {t("viewDetails.documentStatus")}
                   </h6>
 
-                  <div className='row g-3'>
-                    <div className='col-lg-4 col-6'>
-                      <div className='viewDetailsCard'>
-                        <div className='team-stat-number team-stat-number--pending'>{documentStats.pendingCount || 0}</div>
-                        <div className='team-stat-label'>{t("viewDetails.pending")}</div>
+                  <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
+                    {statItems.map((stat, idx) => (
+                      <div
+                        key={idx}
+                        className='p-3.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] flex flex-col justify-between gap-1'
+                      >
+                        <div
+                          className='text-xl font-bold leading-tight'
+                          style={{ color: stat.color }}
+                        >
+                          {stat.value}
+                        </div>
+                        <div className='text-xs font-medium text-[var(--modern-muted)]'>
+                          {stat.label}
+                        </div>
                       </div>
-                    </div>
-
-                    <div className='col-lg-4 col-6'>
-                      <div className='viewDetailsCard'>
-                        <div className='team-stat-number team-stat-number--completed'>{documentStats.completedCount || 0}</div>
-                        <div className='team-stat-label'>{t("viewDetails.completed")}</div>
-                      </div>
-                    </div>
-
-                    <div className='col-lg-4 col-6'>
-                      <div className='viewDetailsCard'>
-                        <div className='team-stat-number team-stat-number--draft'>{documentStats.draftCount || 0}</div>
-                        <div className='team-stat-label'>{t("viewDetails.draft")}</div>
-                      </div>
-                    </div>
-
-                    <div className='col-lg-4 col-6'>
-                      <div className='viewDetailsCard'>
-                        <div className='team-stat-number team-stat-number--declined'>{documentStats.declineCount || 0}</div>
-                        <div className='team-stat-label'>{t("viewDetails.declined")}</div>
-                      </div>
-                    </div>
-
-                    <div className='col-lg-4 col-6'>
-                      <div className='viewDetailsCard'>
-                        <div className='team-stat-number team-stat-number--shared'>{documentStats.sharedCount || 0}</div>
-                        <div className='team-stat-label'>{t("viewDetails.shared")}</div>
-                      </div>
-                    </div>
-
-                    <div className='col-lg-4 col-6'>
-                      <div className='viewDetailsCard'>
-                        <div className='team-stat-number team-stat-number--inactive'>{documentStats.inActiveCount || 0}</div>
-                        <div className='team-stat-label'>{t("viewDetails.inactive")}</div>
-                      </div>
-                    </div>
-
-                    <div className='col-lg-4 col-6'>
-                      <div className='viewDetailsCard'>
-                        <div className='team-stat-number team-stat-number--recalled'>{documentStats.recalledCount || 0}</div>
-                        <div className='team-stat-label'>{t("viewDetails.recalled")}</div>
-                      </div>
-                    </div>
-
-                    <div className='col-lg-4 col-6'>
-                      <div className='viewDetailsCard'>
-                        <div className='team-stat-number team-stat-number--bulk'>{documentStats.bulkCount || 0}</div>
-                        <div className='team-stat-label'>{t("viewDetails.bulk")}</div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               )}
             </div>
-          )}
+          )
+        )}
       </Modal.Body>
+      <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]'>
+        <button
+          type='button'
+          onClick={onHide}
+          className='px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors'
+        >
+          {t("viewModal.close") || t("common.close") || "Close"}
+        </button>
+      </Modal.Footer>
     </Modal>
   );
 };

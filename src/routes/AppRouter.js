@@ -64,7 +64,6 @@ import SelfSignatureFlow from "@/Components/SelfSignature/SelfUpload/SelfSignatu
 import UploadDoc from "@/Components/Upload Flow/UploadDoc/UploadDoc";
 import UploadBulk from "@/Components/BulkSend/UploadBulk/UploadBulk";
 import UserDocReport from "@/Components/ReportDashboard/UserDocReport/UserDocReport";
-import AppUserReport from "@/Components/ReportDashboard/AppUserReport/AppUserReport";
 
 // Custom 404 handler based on token presence
 const Custom404Handler = () => {
@@ -180,7 +179,6 @@ const AppRouter = ({ onLogin }) => {
           >
             <Route path={PATHS.teamMembers} element={<CreateTeam />} />
             <Route path={PATHS.departmentDetails} element={<DepartmentList />} />
-            <Route path={PATHS.userReport} element={<AppUserReport />} />
             <Route path={PATHS.documentReport} element={<UserDocReport />} />
             <Route path={PATHS.companyProfile} element={<CompanyProfile />} />
           </Route>

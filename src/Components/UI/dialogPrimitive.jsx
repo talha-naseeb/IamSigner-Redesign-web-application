@@ -182,7 +182,13 @@ const Content = forwardRef(function DialogContent(
 
     const handlePointerDown = (event) => {
       const node = contentRef.current;
-      if (!node || node.contains(event.target)) return;
+      if (
+        !node ||
+        node.contains(event.target) ||
+        event.target?.closest?.('[data-shadcn-select-menu="true"]')
+      ) {
+        return;
+      }
       onPointerDownOutside?.(event);
       if (!event.defaultPrevented) {
         ctx.setOpen(false);

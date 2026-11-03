@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import AuditTrailModal from "@/Pages/AuditTrail/AuditTrailModal";
 import DownloadModal from "@/Components/CommonModals/DownloadModal/DownloadModal";
 import { Icons } from "@/assets/Icons";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import AddDocToSubFolder from "./AddDocToSubFolder";
 import ShareModal from "@/Components/CommonModals/ShareModal/ShareModal";
@@ -216,7 +216,7 @@ const ViewSubFolderDocuments = () => {
   };
 
   return (
-    <div className='folder-route folder-document-route container mx-auto mt-4 px-3 sm:px-6 text-foreground [font-family:var(--modern-font-ui)]'>
+    <div className='folder-route folder-document-route w-full max-w-none mt-4 px-3 sm:px-6 text-foreground [font-family:var(--modern-font-ui)]'>
       <div className='rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-5 md:p-6 text-foreground'>
         {/* Top Header & Breadcrumb Toolbar */}
         <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[var(--modern-border)]'>
@@ -238,13 +238,12 @@ const ViewSubFolderDocuments = () => {
             </div>
             <div className='min-w-0'>
               <div className='flex items-center gap-2 flex-wrap'>
-                <button
-                  type='button'
-                  onClick={() => navigate("/folders")}
-                  className='border-0 bg-transparent p-0 text-xs font-medium text-[var(--modern-muted)] hover:text-[var(--theme-color)] transition-colors cursor-pointer outline-none shadow-none focus:outline-none focus:ring-0 appearance-none inline-flex items-center'
+                <Link
+                  to="/folders"
+                  className='breadcrumb-nav-link text-xs font-medium text-[var(--modern-muted)] hover:text-[var(--theme-color)] transition-colors inline-flex items-center no-underline hover:no-underline'
                 >
                   {t("home.Folder") || "Folders"}
-                </button>
+                </Link>
                 <span className='text-xs text-[var(--modern-muted)]'>/</span>
                 <h1 className='text-base md:text-lg font-bold text-[var(--modern-text)] tracking-tight truncate m-0'>
                   {folderName}
@@ -257,14 +256,14 @@ const ViewSubFolderDocuments = () => {
           </div>
 
           <div className='flex items-center gap-2.5 flex-wrap self-end sm:self-center'>
-            <Button
-              variant='none'
-              className='inline-flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-xl bg-[var(--theme-color)] text-white border-0 hover:bg-[var(--theme-color)] hover:opacity-90 active:scale-[0.98] transition-all shadow-none outline-none'
+            <button
+              type='button'
+              className='inline-flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-xl bg-[var(--theme-color)] text-white border-0 hover:bg-[var(--theme-color)] hover:opacity-90 active:scale-[0.98] transition-all shadow-none outline-none cursor-pointer focus:outline-none focus:ring-0'
               onClick={handleAddDocumentClick}
             >
               <Icons.Upload size={16} aria-hidden='true' />
               <span>{t("Folder.add")}</span>
-            </Button>
+            </button>
           </div>
         </div>
 
@@ -279,7 +278,7 @@ const ViewSubFolderDocuments = () => {
             maxHeight: "calc(100vh - 280px)",
           }}
         >
-          <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
+          <Table stickyHeader style={{ border: "none", minWidth: "750px" }}>
             <TableHead className='customTableHead'>
               <TableRow>
                 {columns.map((column) => (
@@ -333,37 +332,54 @@ const ViewSubFolderDocuments = () => {
                     <TableCell onClick={(e) => handleCellClick(e)} className='TableCell truncate-cell'>
                       <UserInitialsBadge name={row.createdByName} />
                     </TableCell>
-                    <TableCell className='TableCell py-0 text-right'>
-                      <Dropdown>
-                        <Dropdown.Toggle as={CustomToggle} />
+                    <TableCell className='py-0 text-right' style={{ width: "4%", minWidth: "48px" }}>
+                      <div className='flex items-center justify-end'>
+                        <Dropdown>
+                          <Dropdown.Toggle as={CustomToggle} />
 
-                        <Dropdown.Menu>
-                          <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleFileDownload(row)}>
-                            <Icons.Download size={18} />
-                            <span>{t("dashboardCardStatuses.download")}</span>
-                          </Dropdown.Item>
-                          <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleShareModalShow(row)}>
-                            <Icons.Share size={18} />
-                            <span>{t("dashboardCardStatuses.share")}</span>
-                          </Dropdown.Item>
-                          <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleView(row)}>
-                            <Icons.View size={18} />
-                            <span>{t("dashboardCardStatuses.view")}</span>
-                          </Dropdown.Item>
-                          <Dropdown.Item>
-                            <SignOrder masterDocID={row.masterDocID} />
-                          </Dropdown.Item>
-                          <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleViewAuditTrail(row.signedDocKey)}>
-                            <Icons.AuditTrail size={18} />
-                            <span>{t("dashboardCardStatuses.viewAuditTrail")}</span>
-                          </Dropdown.Item>
-
-                          <Dropdown.Item className='d-flex gap-2 align-items-center' onClick={() => handleDeleteModal(row.masterDocID)}>
-                            <Icons.DeleteAction size={18} />
-                            <span>{t("Folder.deletefile")}</span>
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
+                          <Dropdown.Menu align='end' className='rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-1.5 shadow-none'>
+                            <Dropdown.Item
+                              className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                              onClick={() => handleFileDownload(row)}
+                            >
+                              <Icons.Download size={16} />
+                              <span>{t("dashboardCardStatuses.download")}</span>
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                              onClick={() => handleShareModalShow(row)}
+                            >
+                              <Icons.Share size={16} />
+                              <span>{t("dashboardCardStatuses.share")}</span>
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                              onClick={() => handleView(row)}
+                            >
+                              <Icons.View size={16} />
+                              <span>{t("dashboardCardStatuses.view")}</span>
+                            </Dropdown.Item>
+                            <Dropdown.Item>
+                              <SignOrder masterDocID={row.masterDocID} />
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors'
+                              onClick={() => handleViewAuditTrail(row.signedDocKey)}
+                            >
+                              <Icons.AuditTrail size={16} />
+                              <span>{t("dashboardCardStatuses.viewAuditTrail")}</span>
+                            </Dropdown.Item>
+                            <Dropdown.Divider className='my-1 border-t border-[var(--modern-border)]' />
+                            <Dropdown.Item
+                              className='flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-rose-500 hover:bg-rose-500/10 transition-colors'
+                              onClick={() => handleDeleteModal(row.masterDocID)}
+                            >
+                              <Icons.DeleteAction size={16} />
+                              <span>{t("Folder.deletefile")}</span>
+                            </Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
