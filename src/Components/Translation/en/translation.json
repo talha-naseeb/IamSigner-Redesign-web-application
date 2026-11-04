@@ -63,6 +63,8 @@
     "OnlyView": "You can Only View this Account!",
     "Expire": "User license has been Expire",
     "hasExpired": "has been Expired ! ReNew it",
+    "licenseStatus": "Subscription Notice",
+    "expiredDescription": "Your current package has reached its expiration date. Please renew or upgrade your plan to continue using this feature.",
     "welcomeAdminPanel": "Welcome to Admin Panel",
     "ManageData": "Manage you Users Data for",
     "IamSigner": "IamSigner",
@@ -644,11 +646,13 @@
     "loginFailed": "Login failed! Try again.",
     "oneDriveError": "Access Denied! File must be public if you want to use.",
     "teamMembers": "Team Members",
-    "externalUsers": "External Users",
+    "externalUsers": "External Members",
+    "externalMembers": "External Members",
     "SelectRecipient": "Select recipient",
     "searchUser": "Search recipient",
     "noTeam": "No Team Members Found",
-    "noAdhookUsers": "No External Users Found",
+    "noAdhookUsers": "No External Members Found",
+    "noExternalMembers": "No External Members Found",
     "existingUser": "Existing Users",
     "FolderSelectedSuccess": "Folder Selected Successfully!",
     "SearchFolders": "Search Folders",
@@ -883,7 +887,20 @@
     "additionalEmailHint": "Add extra email addresses to receive copies of notifications.",
     "verificationHint": "Require two-factor verification before allowing signature.",
     "saveChanges": "Save Changes",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "dragOrSelect": "Drag and drop, or select files",
+    "readyForPreview": "Ready for preview",
+    "livePreview": "Live preview",
+    "dragOrTapFieldsHint": "Drag fields onto the document, or tap one to drop it on the page",
+    "selectDocument": "Active Document",
+    "tipPlaceFields": "Drag with the mouse, or tap a field to add it to the current page. Drag placed fields to move them.",
+    "fieldsPlaced": "fields placed",
+    "editingFieldsMode": "Editing fields",
+    "recipients": "recipients",
+    "completeRecipientDetails": "Complete recipient details",
+    "dragToReorder": "Drag to reorder",
+    "loadingPreview": "Loading document preview…",
+    "googledrive": "Google Documents"
   },
   "templateUploadFlow": {
     "tempApplied": "Template applied successfully",
@@ -929,7 +946,12 @@
     "Reset": "Reset",
     "Apply": "Apply",
     "templateInfo": "Template Information",
-    "templateScope": "Template Scope"
+    "templateScope": "Template Scope",
+    "chooseTemplateFileSub": "Choose the file to use for this template",
+    "whoNeedsToSign": "Who needs to sign this template?",
+    "templatePreview": "Template Document Preview",
+    "noDocUploadedYet": "No template document selected yet",
+    "uploadToPreviewHint": "Upload a PDF or Word document in the left panel to preview its pages live here across every step."
   },
   "templateConfirmationModal": {
     "proceed": "Delete Template",
@@ -2007,6 +2029,7 @@
     "sharing": "Sharing..."
   },
   "common": {
+    "search": "Search...",
     "close": "Close",
     "retry": "Retry",
     "back": "Back",

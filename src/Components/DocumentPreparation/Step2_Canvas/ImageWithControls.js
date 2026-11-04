@@ -1,10 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button } from "@/Components/UI/shadcnCompat";
 import ResizableButtons from "./ResizableButtons";
 import Draggable from "react-draggable";
 import { X, Pen } from "lucide-react";
+import { Icons } from "@/assets/Icons";
 import ControlsFotmatting from "./ControlsFotmatting";
 import SmartGuides from "@/Components/SignaturePlacement/SmartGuides";
+
+const renderFieldIcon = (label) => {
+  switch (label) {
+    case "Signature":
+      return <Icons.ContractFilled size={16} className='shrink-0' />;
+    case "Initial":
+      return <Icons.Initials size={16} className='shrink-0' />;
+    case "Name":
+      return <Icons.UserFilled size={15} className='shrink-0' />;
+    case "Company":
+      return <Icons.Building size={15} className='shrink-0' />;
+    case "Email":
+      return <Icons.EmailFilled size={15} className='shrink-0' />;
+    case "Date Signed":
+      return <Icons.DateFilled size={15} className='shrink-0' />;
+    case "Stamp":
+      return <Icons.Stamp size={16} className='shrink-0' />;
+    case "QR Code":
+      return <Icons.QRCode size={16} className='shrink-0' />;
+    case "Image":
+      return <Icons.ImageAdd size={16} className='shrink-0' />;
+    default:
+      return <Icons.ContractFilled size={15} className='shrink-0' />;
+  }
+};
 
 const ImageWithControls = ({
   signatoryColors,
@@ -25,6 +51,7 @@ const ImageWithControls = ({
   onPlacedControlDrop,
   onPlacedControlResize,
   onPlacedControlResizeEnd,
+  isDropOver,
 }) => {
   return (
     <div
@@ -37,7 +64,9 @@ const ImageWithControls = ({
     >
       <div
         ref={drop(dropRef)}
-        className='doc-image'
+        className={`doc-image transition-all ${
+          isDropOver ? "ring-4 ring-[var(--modern-primary,#4d8dff)] ring-offset-2 rounded-lg" : ""
+        }`}
         style={{
           position: "relative",
           height: "auto",
@@ -92,6 +121,7 @@ export const ButtonsOnImage = ({
   onPlacedControlResize,
   onPlacedControlResizeEnd,
 }) => {
+  const nodeRef = useRef(null);
   const [resizing, setResizing] = useState(false);
   const [editingStates, setEditingStates] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
@@ -157,6 +187,7 @@ export const ButtonsOnImage = ({
 
   return (
     <Draggable
+      nodeRef={nodeRef}
       key={`${button.controlLocationID}-${button.position.x}-${button.position.y}`}
       bounds='parent'
       cancel='.react-resizable-handle, input, textarea, button'
@@ -184,87 +215,68 @@ export const ButtonsOnImage = ({
       }}
     >
       <div
-      className='draggable-button-container'
-      style={{
-        position: "absolute",
-        left: 0,
-        top: 0,
-        touchAction: "none",
-        pointerEvents: isAPICallInProgress ? "none" : "auto",
-      }}
-    >
+        ref={nodeRef}
+        className='draggable-button-container group/drag relative'
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          touchAction: "none",
+          pointerEvents: isAPICallInProgress ? "none" : "auto",
+        }}
+      >
       {button.label === "Radio" && (
         <ResizableButtons {...resizeProps}>
-          <div
-            style={{
-              width: button.width + "px",
-              height: button.height + "px",
-              padding: "10px ",
-              cursor: "grab",
-            }}
-          >
-            <div className='d-flex justify-content-start align-items-center gap-2'>
-              <input
-                type='radio'
-                id={`radio${button.controlLocationID}`}
-                name={categoryMap[button.controlLocationID] || `radioGroup${button.controlLocationID}`}
-                style={{ width: "15px", height: "15px" }}
-              />
-
-              <label htmlFor={`radio${button.controlLocationID}`}>{button.customPlaceHolder}</label>
-            </div>
+          <div className='flex items-center gap-2 px-2.5 h-full w-full select-none' style={{ cursor: "grab" }}>
+            <input
+              type='radio'
+              id={`radio${button.controlLocationID}`}
+              name={categoryMap[button.controlLocationID] || `radioGroup${button.controlLocationID}`}
+              className='h-3.5 w-3.5 shrink-0'
+            />
+            <label
+              htmlFor={`radio${button.controlLocationID}`}
+              className='m-0 truncate text-[13px] font-semibold leading-none cursor-grab'
+              style={{ color: "inherit" }}
+            >
+              {button.customPlaceHolder}
+            </label>
           </div>
         </ResizableButtons>
       )}
 
       {button.label === "Checkbox" && (
         <ResizableButtons {...resizeProps}>
-          <div
-            style={{
-              width: button.width + "px",
-              height: button.height + "px",
-              padding: "10px ",
-              cursor: "grab",
-            }}
-          >
-            <div className='d-flex justify-content-start align-items-center gap-2'>
-              <input
-                type='checkbox'
-                id={`checkbox${button.controlLocationID}`}
-                name={`checkbox${button.controlLocationID}`}
-                value={``}
-                checked={checkboxValue}
-                onChange={handleCheckboxChange}
-                style={{ width: "15px", height: "15px" }}
-              />
-
-              <label htmlFor={`checkbox${button.controlLocationID}`}>{button.customPlaceHolder}</label>
-            </div>
+          <div className='flex items-center gap-2 px-2.5 h-full w-full select-none' style={{ cursor: "grab" }}>
+            <input
+              type='checkbox'
+              id={`checkbox${button.controlLocationID}`}
+              name={`checkbox${button.controlLocationID}`}
+              value={``}
+              checked={checkboxValue}
+              onChange={handleCheckboxChange}
+              className='h-3.5 w-3.5 shrink-0'
+            />
+            <label
+              htmlFor={`checkbox${button.controlLocationID}`}
+              className='m-0 truncate text-[13px] font-semibold leading-none cursor-grab'
+              style={{ color: "inherit" }}
+            >
+              {button.customPlaceHolder}
+            </label>
           </div>
         </ResizableButtons>
       )}
 
       {button.label === "Date" && (
         <ResizableButtons {...resizeProps}>
-          <div
-            style={{
-              width: button.width + "px",
-              height: button.height + "px",
-              padding: "10px ",
-              cursor: "grab",
-            }}
-          >
+          <div className='flex h-full w-full items-center px-2.5 select-none'>
             <input
               type='date'
               value={selectedDate || button.textEditor}
               onChange={handleDateChange}
-              style={{
-                width: "100%",
-                height: "100%",
-                border: "none",
-                cursor: "grab",
-                background: "transparent",
-              }}
+              className='h-full w-full border-none bg-transparent text-[13px] font-semibold cursor-grab focus:outline-none'
+              style={{ color: "inherit" }}
               onBlur={() => {
                 updateControlsLocation(
                   button.controlLocationID,
@@ -295,10 +307,8 @@ export const ButtonsOnImage = ({
               type='number'
               value={textInput}
               onChange={(event) => setTextInput(event.target.value)}
-              style={{
-                width: button.width + "px",
-                height: button.height + "px",
-              }}
+              className='h-full w-full border-none bg-transparent px-2.5 text-[13px] font-semibold focus:outline-none'
+              style={{ color: "inherit" }}
               onBlur={() => {
                 setEditingStates((prevState) => ({
                   ...prevState,
@@ -325,12 +335,8 @@ export const ButtonsOnImage = ({
             />
           ) : (
             <div
-              style={{
-                width: button.textEditor ? "100%" : "",
-                height: button.textEditor ? "100%" : "",
-                display: "flex",
-                flexWrap: "wrap",
-              }}
+              className='flex h-full w-full items-center px-2.5 text-[13px] font-semibold leading-none select-none truncate'
+              style={{ color: "inherit" }}
             >
               {button.textEditor !== "" ? button.textEditor : button.customPlaceHolder}
             </div>
@@ -342,12 +348,8 @@ export const ButtonsOnImage = ({
         <ResizableButtons {...resizeProps} onClick={() => handleText(button.controlLocationID, button.textEditor)}>
           {editingStates[button.controlLocationID] ? (
             <textarea
-              style={{
-                width: button.width + "px",
-                height: button.height + "px",
-                overflow: "auto",
-                resize: "none",
-              }}
+              className='h-full w-full resize-none border-none bg-transparent px-2.5 text-[13px] font-semibold focus:outline-none'
+              style={{ color: "inherit" }}
               value={textInput}
               onChange={handleInputChange}
               onBlur={() => {
@@ -377,12 +379,8 @@ export const ButtonsOnImage = ({
             />
           ) : (
             <div
-              style={{
-                width: button.textEditor ? "100%" : "",
-                height: button.textEditor ? "100%" : "",
-                display: "flex",
-                flexWrap: "wrap",
-              }}
+              className='flex h-full w-full items-center px-2.5 text-[13px] font-semibold leading-none select-none truncate'
+              style={{ color: "inherit" }}
             >
               {button.textEditor !== "" ? button.textEditor : button.customPlaceHolder}
             </div>
@@ -417,18 +415,37 @@ export const ButtonsOnImage = ({
               />
             </div>
           ) : (
-            <div>{button.customPlaceHolder ?? button.label}</div>
+            <div className='flex h-full w-full items-center justify-center gap-1.5 px-2 select-none pointer-events-none'>
+              {renderFieldIcon(button.label)}
+              <span className='truncate text-[13px] font-semibold leading-none'>{button.customPlaceHolder ?? button.label}</span>
+            </div>
           )}
         </ResizableButtons>
       )}
 
-      <Button className='remove-button' onClick={() => handleButtonRemove(index, button.controlLocationID)}>
-        <X size={9} />
-      </Button>
+      <button
+        type='button'
+        aria-label='Remove field'
+        onClick={(e) => {
+          e.stopPropagation();
+          handleButtonRemove(index, button.controlLocationID);
+        }}
+        className='absolute -top-2.5 -right-2.5 z-30 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--modern-border-strong,#cbd5e1)] bg-[var(--modern-card,#ffffff)] text-[var(--modern-muted,#64748b)] opacity-0 group-hover/drag:opacity-100 hover:border-transparent hover:bg-[var(--modern-danger,#ef4444)] hover:text-white transition-opacity shadow-xs cursor-pointer'
+      >
+        <X size={10} />
+      </button>
 
-      <Button className='draggableEdit-button' onClick={toggleOffcanvas}>
+      <button
+        type='button'
+        aria-label='Edit field settings'
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleOffcanvas();
+        }}
+        className='absolute -top-2.5 -left-2.5 z-30 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--modern-border-strong,#cbd5e1)] bg-[var(--modern-card,#ffffff)] text-[var(--modern-muted,#64748b)] opacity-0 group-hover/drag:opacity-100 hover:border-transparent hover:bg-[var(--modern-primary,#4d8dff)] hover:text-white transition-opacity shadow-xs cursor-pointer'
+      >
         <Pen size={9} />
-      </Button>
+      </button>
 
       {showOffcanvas && (
         <ControlsFotmatting

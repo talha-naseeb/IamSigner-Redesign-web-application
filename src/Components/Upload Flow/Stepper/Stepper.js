@@ -5,13 +5,15 @@ import { STEPPER_FLOWS } from "@/Components/DocumentPreparation/Stepper/stepperC
 /**
  * Stepper - Upload Flow wrapper around unified DocumentStepper (ENG-01)
  */
-const Stepper = ({ activeStep, t, completedSteps }) => {
+const Stepper = ({ activeStep, t, completedSteps, variant, onStepClick, flowType }) => {
   return (
     <DocumentStepper
       activeStep={activeStep}
       t={t}
       completedSteps={completedSteps}
-      flowType={STEPPER_FLOWS.UPLOAD}
+      flowType={flowType}
+      variant={variant}
+      onStepClick={onStepClick}
     />
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Home.css";
 import { Button, Modal } from "@/Components/UI/shadcnCompat";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import ExpireImage from "@/assets/images/ExpireImage.png";
 import { Shield, UploadCloud, Edit3, FileText, Layers } from "lucide-react";
 import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
+import { clearWorkflowStorage } from "@/utils/workflowStorage";
 
 const Home = () => {
   const [viewModal, setViewModal] = useState(false);
@@ -16,25 +17,12 @@ const Home = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    clearWorkflowStorage();
+  }, []);
+
   const closeViewModal = () => {
     setViewModal(false);
-  };
-
-  const clearSessionStorage = () => {
-    // Non-destructive workflow state cleanup to prevent cross-tab state pollution
-    const workflowKeys = [
-      "registerSignID",
-      "signatoriesID",
-      "activeStep",
-      "completedSteps",
-      "templateID",
-      "documentName",
-      "savedSignature",
-    ];
-    workflowKeys.forEach((key) => {
-      localStorage.removeItem(key);
-      sessionStorage.removeItem(key);
-    });
   };
 
   const isRestrictedUser =
@@ -42,7 +30,7 @@ const Home = () => {
     (userAccess?.remainingDays !== undefined && userAccess.remainingDays <= 0);
 
   const handleStartUpload = () => {
-    clearSessionStorage();
+    clearWorkflowStorage();
     if (isRestrictedUser) {
       setViewModal(true);
     } else {
@@ -51,7 +39,7 @@ const Home = () => {
   };
 
   const handleSelfSign = () => {
-    clearSessionStorage();
+    clearWorkflowStorage();
     if (isRestrictedUser) {
       setViewModal(true);
     } else {
@@ -60,11 +48,12 @@ const Home = () => {
   };
 
   const handleTemplates = () => {
+    clearWorkflowStorage();
     navigate("/templates-page");
   };
 
   const handleBulkUpload = () => {
-    clearSessionStorage();
+    clearWorkflowStorage();
     if (isRestrictedUser) {
       setViewModal(true);
     } else {

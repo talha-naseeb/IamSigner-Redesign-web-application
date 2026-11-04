@@ -28,7 +28,7 @@ const DeleteConfirmationModal = ({
       className={className}
       showClose={!isLoading}
       footer={
-        <div className="flex w-full justify-end items-center gap-3 pt-2">
+        <div className="flex w-full justify-between items-center gap-3 pt-2">
           <button
             type="button"
             className="px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--modern-border-strong)] text-[var(--modern-text)] bg-[var(--modern-raised)] hover:bg-[var(--modern-border)] transition-colors disabled:opacity-50"

@@ -8,6 +8,7 @@ import "./sidebarStyle.css";
 import { Icons } from "@/assets/Icons";
 import { toast } from "react-toastify";
 import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
+import { clearWorkflowStorage } from "@/utils/workflowStorage";
 
 import { MenuItem, DropdownMenu, SidebarAccountStorage } from "./components";
 import { useMenuConfig } from "./hooks/useMenuConfig";
@@ -99,6 +100,7 @@ const Sidebar = ({ children }) => {
   }, [isMobile, isMobileOpen, closeMobileSidebar]);
 
   const clearStorage = () => {
+    clearWorkflowStorage();
     const currentTheme = localStorage.getItem("theme");
     const currentPalette = localStorage.getItem(PALETTE_STORAGE_KEY);
     const collapsedPreference = localStorage.getItem(
@@ -117,10 +119,7 @@ const Sidebar = ({ children }) => {
         collapsedPreference
       );
     }
-    sessionStorage.removeItem("signatoriesID");
-    sessionStorage.removeItem("parsedData");
-    sessionStorage.removeItem("fileName");
-    sessionStorage.removeItem("base64CSV");
+    clearWorkflowStorage();
   };
 
   const handleUploadClick = (event) => {
@@ -175,7 +174,10 @@ const Sidebar = ({ children }) => {
                   aria-hidden={!isMobile && isCollapsed}
                   tabIndex={!isMobile && isCollapsed ? -1 : undefined}
                   title="IAmSigner"
-                  onClick={closeMobileSidebar}
+                  onClick={() => {
+                    clearStorage();
+                    closeMobileSidebar();
+                  }}
                 >
                   <Icons.StepperLogo
                     className="sidebar-brand-wordmark"
@@ -230,6 +232,7 @@ const Sidebar = ({ children }) => {
                     triggerLabel={t("Sidebar.DocumentStatus")}
                     isOpen={isOpen}
                     className="menuLinks doc-status-section"
+                    onItemClick={clearStorage}
                     onNavigate={closeMobileSidebar}
                     onExpandSidebar={() => setIsCollapsed(false)}
                   />

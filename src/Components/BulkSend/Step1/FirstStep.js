@@ -316,7 +316,11 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
   };
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: ".pdf, .doc, .docx",
+    accept: {
+      "application/pdf": [".pdf"],
+      "application/msword": [".doc"],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+    },
     onDrop: handleFileUpload,
     multiple: true,
   });

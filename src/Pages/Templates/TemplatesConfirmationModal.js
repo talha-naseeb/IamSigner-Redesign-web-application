@@ -1,7 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { AppModal } from "@/Components/Common/AppModal";
-import { AlertCircle } from "lucide-react";
+import { Button } from "@/Components/UI/shadcnCompat";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 const TemplatesConfirmationModal = ({
   show,
@@ -17,6 +18,7 @@ const TemplatesConfirmationModal = ({
   cancelText,
   className = "",
   isLoading = false,
+  confirmVariant = "danger",
 }) => {
   const { t } = useTranslation();
 
@@ -33,23 +35,19 @@ const TemplatesConfirmationModal = ({
       className={className}
       showClose={!isLoading}
       footer={
-        <div className="flex w-full justify-between items-center gap-2 pt-2">
-          <button
-            type="button"
-            className="modalCancelButton btn btn-secondary px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-            onClick={handleClose}
-            disabled={isLoading}
-          >
+        <div className="flex w-full justify-end items-center gap-3 pt-2">
+          <Button variant="outline" onClick={handleClose} disabled={isLoading}>
             {resolvedCancelText}
-          </button>
-          <button
-            type="button"
-            className="applyBtn btn btn-danger px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 min-w-[90px] transition-colors"
+          </Button>
+          <Button
+            variant={confirmVariant}
+            className="inline-flex items-center justify-center gap-2 min-w-[90px]"
             onClick={handleConfirm}
             disabled={isLoading}
           >
+            {isLoading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
             {resolvedConfirmText}
-          </button>
+          </Button>
         </div>
       }
     >

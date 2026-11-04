@@ -1,6 +1,10 @@
-import React, { useState } from "react";
-import { useDrag } from "react-dnd";
+import React, { useMemo, useState } from "react";
+import { useDrag, DragPreviewImage } from "react-dnd";
 import { Icons } from "@/assets/Icons";
+import {
+  getNewControlDimensions,
+  createControlDragPreview,
+} from "@/Components/SignaturePlacement/SmartGuides";
 
 /**
  * Unified DraggableButton component for field placement palette.
@@ -17,11 +21,12 @@ export const DraggableButton = ({
   index,
   signatureType = {},
   onButtonClick,
+  variant = "pill",
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const iconMapping = {
-    FaFileSignature: Icons.SignatureFilled,
+    FaFileSignature: Icons.ContractFilled,
     PiTextTFill: Icons.Initials,
     BiSolidUserRectangle: Icons.UserFilled,
     GrOrganization: Icons.Building,
@@ -55,47 +60,112 @@ export const DraggableButton = ({
   const isViewOnlySignatory =
     currentSignatoryType === "View Only" && (isSignatureButton || isStampButton || isInitialsButton);
 
-  const [, ref] = useDrag({
+  const [{ isDragging }, dragRef, previewRef] = useDrag({
     type: "BUTTON",
-    item: {
-      label,
-      data,
-      icon,
-      selectedSignatoryID,
-      controlID,
-      MasterDocPagesId,
-      index,
+    item: () => {
+      const dimensions = getNewControlDimensions({ label });
+      return {
+        label,
+        data,
+        icon,
+        selectedSignatoryID,
+        controlID,
+        MasterDocPagesId,
+        index,
+        width: dimensions.width,
+        height: dimensions.height,
+      };
     },
     canDrag: !isViewOnlySignatory,
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
   });
 
-  const originalColor = (selectedSignatoryID && signatoryColors[selectedSignatoryID]) || "orange";
+  const originalColor = (selectedSignatoryID && signatoryColors[selectedSignatoryID]) || "#4d8dff";
   const hoverColor = colorMapping[originalColor] || originalColor;
   const backgroundColor = isViewOnlySignatory
-    ? "var(--bg-secondary, #f8fafc)"
+    ? "var(--modern-raised, #f8fafc)"
     : isHovered
     ? hoverColor
     : originalColor;
   const cursor = isViewOnlySignatory ? "not-allowed" : "pointer";
+  const IconComponent = iconMapping[icon] || Icons.ContractFilled;
+
+  // Transparent drag preview matching exact control dimensions and signatory color
+  const previewSvg = useMemo(
+    () => createControlDragPreview({ label, color: originalColor }),
+    [label, originalColor]
+  );
+
+  if (variant === "tile") {
+    return (
+      <>
+        {!isViewOnlySignatory && <DragPreviewImage connect={previewRef} src={previewSvg} />}
+        <div
+          ref={dragRef}
+          role='button'
+          tabIndex={isViewOnlySignatory ? -1 : 0}
+          aria-disabled={isViewOnlySignatory}
+          className={`flex h-[72px] flex-col items-center justify-center gap-1.5 rounded-[14px] border px-2 text-center text-xs font-semibold select-none transition-all ${
+            isDragging ? "opacity-40 scale-95" : ""
+          } ${
+            isViewOnlySignatory
+              ? "cursor-not-allowed border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-muted)] opacity-50"
+              : "cursor-pointer border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-text)] hover:border-[var(--modern-primary)] hover:bg-[var(--modern-raised)]"
+          }`}
+          style={{
+            touchAction: "none",
+            borderColor: !isViewOnlySignatory && isHovered ? originalColor : undefined,
+          }}
+          draggable={!isViewOnlySignatory}
+          onClick={() => {
+            if (!isViewOnlySignatory && onButtonClick) {
+              onButtonClick(label, icon, controlID, index, true);
+            }
+          }}
+          onKeyDown={(e) => {
+            if (!isViewOnlySignatory && (e.key === "Enter" || e.key === " ") && onButtonClick) {
+              e.preventDefault();
+              onButtonClick(label, icon, controlID, index, true);
+            }
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <span
+            className='inline-flex items-center justify-center'
+            style={{ color: isViewOnlySignatory ? "var(--modern-muted, #64748b)" : originalColor }}
+          >
+            <IconComponent size={20} />
+          </span>
+          <span className='w-full truncate leading-tight'>{label}</span>
+        </div>
+      </>
+    );
+  }
 
   return (
-    <div
-      ref={ref}
-      className={`tooltip-container draggable-button ${isViewOnlySignatory ? "view-only" : ""}`}
-      style={{
-        cursor,
-        touchAction: "none",
-        border: `1px solid ${backgroundColor}`,
-        borderRadius: "20px",
-        padding: "5px 10px",
-      }}
-      draggable
-      onClick={() => onButtonClick && onButtonClick(label, icon, controlID, index, true)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {label}
-    </div>
+    <>
+      {!isViewOnlySignatory && <DragPreviewImage connect={previewRef} src={previewSvg} />}
+      <div
+        ref={dragRef}
+        className={`tooltip-container draggable-button ${isViewOnlySignatory ? "view-only" : ""}`}
+        style={{
+          cursor,
+          touchAction: "none",
+          border: `1px solid ${backgroundColor}`,
+          borderRadius: "20px",
+          padding: "5px 10px",
+        }}
+        draggable={!isViewOnlySignatory}
+        onClick={() => onButtonClick && onButtonClick(label, icon, controlID, index, true)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {label}
+      </div>
+    </>
   );
 };
 

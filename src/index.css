@@ -642,6 +642,15 @@ a,
   transition: var(--theme-transition);
 }
 
+/* Scrollbar utility */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Scrollbars - Global */
 ::-webkit-scrollbar {
   width: 4px;

@@ -110,6 +110,16 @@ export const getInitials = (value) => {
   return base.slice(0, 2).toUpperCase();
 };
 
+export const getCleanTemplateNameFromFile = (fileName, existingName) => {
+  if (existingName && typeof existingName === "string" && existingName.trim()) {
+    return existingName.trim();
+  }
+  if (!fileName || typeof fileName !== "string") return "Template";
+  const withoutExt = fileName.replace(/\.[^/.]+$/, "");
+  const cleaned = withoutExt.replace(/[_-]+/g, " ").trim();
+  return cleaned || "Template";
+};
+
 export const UserInitialsBadge = ({ name, className, avatarOnly = false }) => {
   const text = typeof name === "string" ? name.trim() : "";
   if (!text || text === "—") {
@@ -124,5 +134,8 @@ export const UserInitialsBadge = ({ name, className, avatarOnly = false }) => {
     </span>
   );
 };
+
+export { createControlDragPreview } from "@/Components/SignaturePlacement/SmartGuides";
+
 
 

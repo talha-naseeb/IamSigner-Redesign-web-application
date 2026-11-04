@@ -7,6 +7,7 @@ import templateService from "@/services/templateService";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import UploadSourceCard from "./UploadSourceCard";
+import { getCleanTemplateNameFromFile } from "@/Components/UI/dataPrimitives";
 
 function DropboxPicker({
   uploadedFiles = [],
@@ -23,6 +24,7 @@ function DropboxPicker({
   TemplateID,
   templateScope,
   templateName,
+  setTemplateName,
   isTemplate = false,
 }) {
   const { t } = useTranslation();
@@ -77,8 +79,14 @@ function DropboxPicker({
 
     try {
       if (isTemplateFlow) {
+        const effectiveTemplateName = getCleanTemplateNameFromFile(fileName, templateName);
+
+        if (setTemplateName && (!templateName || !templateName.trim())) {
+          setTemplateName(effectiveTemplateName);
+        }
+
         const body = {
-          TemplateName: templateName,
+          TemplateName: effectiveTemplateName,
           TemplateID: TemplateID,
           Scope: templateScope === "Individual" ? "I" : "B",
           PrimaryDocs: [

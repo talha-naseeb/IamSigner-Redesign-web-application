@@ -76,6 +76,7 @@ const ImageWithDropZone = ({
 
   useEffect(() => {
     const createButtonOnClick = async () => {
+      const dimensions = getNewControlDimensions({ label: buttonLabel });
       const controlsLocationBody = {
         ControlID: controlID,
         ControlIdentifier: "",
@@ -90,11 +91,11 @@ const ImageWithDropZone = ({
         TemplateID: TemplateID,
         MasterDocPagesID: masterDocPagesId,
         TemplateSignatoryID: selectedSignatoryID,
-        width: buttonLabel === "QR Code" || buttonLabel === "Stamp" || buttonLabel === "Image" ? "100px" : "110px",
-        Height: buttonLabel === "QR Code" || buttonLabel === "Stamp" || buttonLabel === "Image" ? "100px" : "40px",
+        Width: `${dimensions.width}px`,
+        Height: `${dimensions.height}px`,
         IsNumber: buttonLabel === "Number" ? true : false,
         IsDate: buttonLabel === "Date" ? true : false,
-        FontSize: "16px",
+        FontSize: "13px",
         FontColor: "black",
         FontStyle: "Jost",
         PageMaxWidth: `${imgWidth}px`,
@@ -138,8 +139,9 @@ const ImageWithDropZone = ({
         const positionX = parseFloat(button.controlLocationX);
         const positionY = parseFloat(button.controlLocationY);
         const existingButton = existingButtons.find((item) => item.controlLocationID === button.templateControlLocationID);
-        const width = toFiniteNumber(button.width, existingButton?.width);
-        const height = toFiniteNumber(button.height, existingButton?.height);
+        const fallbackDims = getNewControlDimensions({ label: button.controlName });
+        const width = toFiniteNumber(button.width, toFiniteNumber(existingButton?.width, fallbackDims.width));
+        const height = toFiniteNumber(button.height, toFiniteNumber(existingButton?.height, fallbackDims.height));
 
         const item = {
           label: button.controlName,
@@ -263,9 +265,13 @@ const ImageWithDropZone = ({
   const handlePlacedControlResize = (button, size) => setAlignmentGuides(snapToControls(button.position, size.width, size.height, button.controlLocationID).guides);
   const clearAlignmentGuides = () => setAlignmentGuides(emptyAlignmentGuides());
 
-  const [, drop] = useDrop({
+  const [{ isOver, canDrop }, drop] = useDrop({
     accept: "BUTTON",
     canDrop: () => !isAPICallInProgress,
+    collect: (monitor) => ({
+      isOver: monitor.isOver({ shallow: true }),
+      canDrop: monitor.canDrop(),
+    }),
     hover: (item, monitor) => {
       if (!item || isAPICallInProgress) return;
       const button = item.button;
@@ -328,6 +334,8 @@ const ImageWithDropZone = ({
               ...(prevMap[selectedImage] || []),
               {
                 ...item,
+                width: buttonWidth,
+                height: buttonHeight,
                 position: { x, y },
               },
             ],
@@ -351,7 +359,7 @@ const ImageWithDropZone = ({
             Height: `${buttonHeight}px`,
             IsNumber: item.label === "Number" ? true : false,
             IsDate: item.label === "Date" ? true : false,
-            FontSize: "16px",
+            FontSize: "13px",
             FontColor: "black",
             FontStyle: "Jost",
             PageMaxWidth: `${imgWidth}px`,
@@ -507,6 +515,7 @@ const ImageWithDropZone = ({
         onPlacedControlDrop={handlePlacedControlDrop}
         onPlacedControlResize={handlePlacedControlResize}
         onPlacedControlResizeEnd={clearAlignmentGuides}
+        isDropOver={isOver && canDrop}
       />
 
       <DeleteConfirmationModal

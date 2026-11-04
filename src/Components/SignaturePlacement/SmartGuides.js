@@ -8,15 +8,40 @@ export const emptyAlignmentGuides = () => ({
   horizontalSnapped: false,
 });
 
-export const getControlDimensions = (control) => ({
-  width: Number(control?.width) || 110,
-  height: Number(control?.height) || 40,
-});
-
 export const getNewControlDimensions = (control) =>
-  ["QR Code", "Stamp", "Image"].includes(control?.label)
+  ["QR Code", "Stamp", "Image"].includes(control?.label || control?.data)
     ? { width: 100, height: 100 }
     : { width: 110, height: 40 };
+
+export const getControlDimensions = (control) => {
+  const fallback = getNewControlDimensions(control);
+  const w = parseFloat(control?.width);
+  const h = parseFloat(control?.height);
+  return {
+    width: Number.isFinite(w) && w > 0 ? w : fallback.width,
+    height: Number.isFinite(h) && h > 0 ? h : fallback.height,
+  };
+};
+
+/**
+ * Creates a transparent SVG data URI preview for drag operations.
+ * Matches exact placed control dimensions (110x40 standard, 100x100 square) and signatory color.
+ */
+export const createControlDragPreview = ({ label, color = "#4d8dff" } = {}) => {
+  const { width, height } = getNewControlDimensions({ label });
+  const strokeColor = color && String(color).startsWith("#") ? color : "#4d8dff";
+  const escapedLabel = String(label || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    <rect x="1.5" y="1.5" width="${width - 3}" height="${height - 3}" rx="8" ry="8" fill="rgba(12,154,215,0.04)" stroke="${strokeColor}" stroke-width="2" stroke-dasharray="4 3" />
+    <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="${strokeColor}">${escapedLabel}</text>
+  </svg>`;
+
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+};
 
 export const snapToControls = ({
   position,

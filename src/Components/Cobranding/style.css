@@ -41,39 +41,29 @@
 
 .cobranding-accordion .accordion-item {
   overflow: hidden;
-  border: 1px solid var(--modern-border) !important;
+  border: 0 !important;
   border-radius: 18px !important;
   background: var(--modern-card) !important;
   box-shadow: none !important;
   margin-bottom: 0.85rem;
-  transition: border-color var(--motion-fast) var(--motion-standard);
 }
 
 .cobranding-accordion .accordion-item:focus-within {
-  border-color: var(--modern-border-strong) !important;
+  border-color: transparent !important;
 }
 
 .cobranding-accordion .accordion-button {
   min-height: 68px;
   padding: 1rem 1.25rem;
-  background: var(--modern-card) !important;
-  color: var(--modern-text) !important;
   font-family: var(--modern-font-ui);
   font-weight: 650;
   box-shadow: none !important;
-  border-radius: 0 !important;
+  border: 0 !important;
+  border-radius: 18px !important;
 }
 
-.cobranding-accordion .accordion-button:focus {
-  outline: 2px solid var(--modern-focus) !important;
-  outline-offset: -2px;
-}
 
-.cobranding-accordion .accordion-button:not(.collapsed) {
-  background: var(--modern-raised) !important;
-  color: var(--modern-text) !important;
-  border-bottom: 1px solid var(--modern-border);
-}
+
 
 [data-theme="dark"] .cobranding-accordion .accordion-button::after {
   filter: invert(1) grayscale(1);
@@ -81,7 +71,8 @@
 
 .cobranding-accordion .accordion-body {
   padding: clamp(1rem, 2.5vw, 1.5rem);
-  border-top: 1px solid var(--modern-border);
+  border: 0 !important;
+  border-top: 0 !important;
   background: var(--modern-card);
 }
 

@@ -1,4 +1,8 @@
-// Centralized route path constants
+const isTemplateRoute =
+      location?.pathname?.includes("/create-templates") ||
+      location?.pathname?.includes("/edit-templates") ||
+      location?.pathname?.includes("/createTemplates") ||
+      location?.pathname?.includes("/editTemplates");// Centralized route path constants
 const PATHS = {
   // Auth
   login: "/",

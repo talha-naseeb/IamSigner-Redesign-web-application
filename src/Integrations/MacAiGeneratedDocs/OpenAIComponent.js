@@ -4,6 +4,7 @@ import ReactQuill from "react-quill-new";
 import { toast } from "react-toastify";
 import { Icons } from "@/assets/Icons";
 import { useUser } from "@/Context/UserContext";
+import UserLisence from "@/Components/UserLisence/UserLisence";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import integrationService from "@/services/integrationService";
@@ -14,7 +15,7 @@ function OpenAIComponent() {
   const [isLoading, setIsLoading] = useState(false);
   const [isOPenAILoading, setisOPenAILoading] = useState(false);
   const [showDownloadButton, setShowDownloadButton] = useState(false);
-  const { userAccess } = useUser();
+  const { userAccess, loading } = useUser();
   const { t } = useTranslation();
 
   const [fieldErrors, setFieldErrors] = useState({
@@ -289,8 +290,21 @@ function OpenAIComponent() {
     { key: "Other", icon: Icons.OtherDoc, label: t("macAi.Other") },
   ];
 
-  if (!userAccess.macAI || userAccess.remainingDays <= 0) {
-    return null;
+  // 1. While user profile / access is loading on reload, show smooth loading spinner
+  if (loading || !userAccess) {
+    return (
+      <div className='w-full min-h-[calc(100vh-140px)] flex items-center justify-center p-8 bg-[var(--modern-bg)]'>
+        <div className='flex flex-col items-center gap-3 text-[var(--modern-muted)]'>
+          <Loader2 size={32} className='animate-spin text-[var(--theme-color,#4d8dff)]' />
+          <span className='text-sm font-medium'>{t("common.loading", "Loading...")}</span>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Only check license expiry after userAccess has definitively loaded
+  if (!userAccess.macAI || Number(userAccess.remainingDays) <= 0) {
+    return <UserLisence />;
   }
 
   return (

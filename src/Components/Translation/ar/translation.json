@@ -64,6 +64,8 @@
     "OnlyView": "يمكنك فقط عرض هذا الحساب!",
     "Expire": "تم انتهاء ترخيص المستخدم",
     "hasExpired": "انتهت الصلاحية! قم بتجديدها",
+    "licenseStatus": "إشعار الاشتراك",
+    "expiredDescription": "لقد انتهت صلاحية باقتك الحالية. يرجى تجديد أو ترقية خطتك لمواصلة استخدام هذه الميزة.",
     "welcomeAdminPanel": "مرحبًا بك في لوحة الإدارة",
     "ManageData": "إدارة بيانات المستخدمين لـ",
     "IamSigner": "أنا الموقّع",
@@ -654,11 +656,13 @@
     "loginFailed": "فشل تسجيل الدخول! حاول ثانية.",
     "oneDriveError": "تم الرفض! يجب أن يكون الملف عامًا إذا كنت تريد استخدامه.",
     "teamMembers": "أعضاء الفريق",
-    "externalUsers": "المستخدمون الخارجيون",
+    "externalUsers": "الأعضاء الخارجيون",
+    "externalMembers": "الأعضاء الخارجيون",
     "SelectRecipient": "اختر المستلم",
     "searchUser": "ابحث عن مستلم",
     "noTeam": "لم يتم العثور على أعضاء الفريق",
-    "noAdhookUsers": "لم يتم العثور على مستخدمين خارجيين",
+    "noAdhookUsers": "لم يتم العثور على أعضاء خارجيين",
+    "noExternalMembers": "لم يتم العثور على أعضاء خارجيين",
     "existingUser": "المستخدمون الحاليون",
     "FolderSelectedSuccess": "تم اختيار المجلد بنجاح!",
     "SearchFolders": "ابحث في المجلدات",
@@ -893,7 +897,20 @@
     "additionalEmailHint": "أضف عناوين بريد إلكتروني إضافية لتلقي نسخ من الإشعارات.",
     "verificationHint": "طلب التحقق بخطوتين قبل السماح بالتوقيع.",
     "saveChanges": "حفظ التغييرات",
-    "saving": "جارٍ الحفظ..."
+    "saving": "جارٍ الحفظ...",
+    "dragOrSelect": "اسحب وأفلت، أو اختر ملفات",
+    "readyForPreview": "جاهز للمعاينة",
+    "livePreview": "معاينة مباشرة",
+    "dragOrTapFieldsHint": "اسحب الحقول إلى المستند أو اضغط حقلًا لإضافته",
+    "selectDocument": "المستند الحالي",
+    "tipPlaceFields": "اسحب بالفأرة أو اضغط الحقل لإضافته للصفحة الحالية. اسحب الحقول لتحريكها.",
+    "fieldsPlaced": "حقول موضوعة",
+    "editingFieldsMode": "وضع تحرير الحقول",
+    "recipients": "مستلمين",
+    "completeRecipientDetails": "يرجى إكمال بيانات المستلمين",
+    "dragToReorder": "اسحب لإعادة الترتيب",
+    "loadingPreview": "جارٍ تحميل معاينة المستند…",
+    "googledrive": "مستندات Google Drive"
   },
   "templateUploadFlow": {
     "tempApplied": "تم تطبيق القالب بنجاح",
@@ -939,7 +956,12 @@
     "Reset": "إعادة تعيين",
     "Apply": "تطبيق",
     "templateInfo": "معلومات القالب",
-    "templateScope": "نطاق القالب"
+    "templateScope": "نطاق القالب",
+    "chooseTemplateFileSub": "اختر الملف لاستخدامه في هذا النموذج",
+    "whoNeedsToSign": "من سيوقّع على هذا النموذج؟",
+    "templatePreview": "معاينة مستند النموذج",
+    "noDocUploadedYet": "لم يتم اختيار مستند للنموذج بعد",
+    "uploadToPreviewHint": "ارفع ملف PDF أو مستند Word في اللوحة الجانبية لمعاينة صفحاته مباشرة هنا عبر جميع الخطوات."
   },
   "templateConfirmationModal": {
     "proceed": "حذف القالب",
@@ -2016,6 +2038,7 @@
     "sharing": "جارٍ المشاركة..."
   },
   "common": {
+    "search": "بحث...",
     "close": "إغلاق",
     "retry": "إعادة المحاولة",
     "back": "رجوع",

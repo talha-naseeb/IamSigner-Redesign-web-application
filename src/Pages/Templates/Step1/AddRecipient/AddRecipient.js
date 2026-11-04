@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Button, Col, Form, Row, Dropdown, Offcanvas, Tab, Tabs } from "@/Components/UI/shadcnCompat";
+import { Button, Form, Offcanvas } from "@/Components/UI/shadcnCompat";
 import uploadFlowService from "@/services/uploadFlowService";
 import templateService from "@/services/templateService";
 import { toast } from "react-toastify";
@@ -10,8 +10,10 @@ import { Icons } from "@/assets/Icons";
 import PhoneInput from "react-phone-input-2";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import userService from "@/services/userService";
+import { UserInitialsBadge } from "@/Components/UI/dataPrimitives";
+import { ChevronDown, ChevronUp, Search, X, Users, Check } from "lucide-react";
 
-const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
+const AddRecipient = ({ setActiveStep, setCompletedSteps, onPreviewSync }) => {
   const [recipientForms, setRecipientForms] = useState([
     {
       name: "",
@@ -23,7 +25,7 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
       company: "",
       signOrder: 1,
       signatureType: "",
-      signColor: "#ffe987",
+      signColor: "#4d8dff",
       signPage: "FirstPage",
       signPosition: "TopLeft",
       isExpiring: true,
@@ -45,13 +47,22 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
   const [countryCodes, setCountryCodes] = useState([]);
   const [isContinueDisabled, setIsContinueDisabled] = useState(false);
   const [teamMemberNames, setTeamMemberNames] = useState([]);
+  const [enableSignOrder, setEnableSignOrder] = useState(true);
 
   const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const [recipientTab, setRecipientTab] = useState("team");
   const [adhockNames, setAdhockNames] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const storedTemplateID = sessionStorage.getItem("templateID") || localStorage.getItem("templateID");
+  const storedTemplateID =
+    sessionStorage.getItem("templateID") || localStorage.getItem("templateID");
+
+  useEffect(() => {
+    if (typeof onPreviewSync === "function") {
+      onPreviewSync({ recipients: recipientForms });
+    }
+  }, [recipientForms, onPreviewSync]);
 
   // Fetching country codes for the dropdown
   useEffect(() => {
@@ -62,7 +73,7 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
           setCountryCodes(response.data.response);
         }
       })
-      .catch(errors);
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -70,17 +81,19 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
       .getLookups("signatureType")
       .then((response) => {
         if (response.data.successStatus) {
-          const signatureTypeOptions = response.data.response.map((item) => item.name);
+          const signatureTypeOptions = response.data.response.map(
+            (item) => item.name
+          );
           setSignatureTypes(signatureTypeOptions);
           setRecipientForms((prevRecipientForms) =>
             prevRecipientForms.map((form) => ({
               ...form,
-              signatureType: signatureTypeOptions[0],
+              signatureType: form.signatureType || signatureTypeOptions[0],
             }))
           );
         }
       })
-      .catch(errors);
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -88,11 +101,13 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
       .getLookups("NotificationType")
       .then((response) => {
         if (response.data.successStatus) {
-          const notificationTypeOptions = response.data.response.map((item) => item.name);
+          const notificationTypeOptions = response.data.response.map(
+            (item) => item.name
+          );
           setNotificationTypes(notificationTypeOptions);
         }
       })
-      .catch(errors);
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -105,12 +120,15 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
           setRecipientForms((prevRecipientForms) =>
             prevRecipientForms.map((form, index) => ({
               ...form,
-              signColor: formColors[index % formColors.length],
+              signColor:
+                form.signColor && form.signColor !== "#4d8dff"
+                  ? form.signColor
+                  : formColors[index % formColors.length] || "#4d8dff",
             }))
           );
         }
       })
-      .catch(errors);
+      .catch(() => {});
   }, []);
 
   const fetchData = async () => {
@@ -124,8 +142,10 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
 
         if (Array.isArray(templateSignatory) && templateSignatory.length > 0) {
           const mappedForms = templateSignatory.map((signatory) => {
-            // Combine country code and mobile for phoneNumber field
-            const phoneNumber = signatory.countryCode && signatory.mobile ? signatory.countryCode + signatory.mobile : "";
+            const phoneNumber =
+              signatory.countryCode && signatory.mobile
+                ? signatory.countryCode + signatory.mobile
+                : "";
 
             return {
               name: signatory.name || "",
@@ -152,7 +172,6 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
       }
     } catch (error) {
       setIsLoading(false);
-      console.log(error);
     }
   };
 
@@ -160,7 +179,7 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
     fetchData();
   }, []);
 
-  //Get Team APi
+  // Get Team & Adhoc API
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
@@ -174,7 +193,7 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
           email: member.emailID.trim(),
         }));
 
-        setTeamMemberNames(teamMembers); // Store team members as objects
+        setTeamMemberNames(teamMembers);
       } catch (error) {
         console.error("Error fetching team members:", error);
       }
@@ -184,12 +203,12 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
       try {
         const response = await uploadFlowService.getAdhockUsers();
 
-        const adhockUsers = response.data.response.map((user) => ({
-          name: user.name.trim(),
-          email: user.emailID.trim(),
+        const adhockUsers = response.data.response.map((u) => ({
+          name: u.name.trim(),
+          email: u.emailID.trim(),
         }));
 
-        setAdhockNames(adhockUsers); // Store adhock users as objects
+        setAdhockNames(adhockUsers);
       } catch (error) {
         console.error("Error fetching adhock users:", error);
       }
@@ -223,7 +242,10 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
         }
       }
 
-      if (form.notificationType === "SMS" || form.notificationType === "WhatsApp") {
+      if (
+        form.notificationType === "SMS" ||
+        form.notificationType === "WhatsApp"
+      ) {
         if (!form.phoneNumber || form.phoneNumber.length < 10) {
           formErrors.phone = t("logScreens.mobileRequired");
           hasErrors = true;
@@ -250,7 +272,6 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
 
     newRecipientForms[index][field] = value;
 
-    // Logic to handle the setting of email and mobile fields based on NotificationType
     if (field === "notificationType") {
       if (value === "Email") {
         newRecipientForms[index].phone = "";
@@ -261,7 +282,6 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
       }
     }
 
-    // Clear the error for the specific field being updated
     if (newErrors[index]) {
       delete newErrors[index][field];
       if (Object.keys(newErrors[index]).length === 0) {
@@ -277,14 +297,12 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
     const newRecipientForms = [...recipientForms];
     newRecipientForms[index].phoneNumber = phone;
 
-    // Extract country code and mobile number from the combined phone input
     if (phone && phone.length >= 10) {
       const countryCode = phone.substring(0, phone.length - 10);
       const mobileNumber = phone.substring(phone.length - 10);
       newRecipientForms[index].countryCode = countryCode;
       newRecipientForms[index].phone = mobileNumber;
 
-      // Clear phone error
       const newErrors = [...errors];
       if (newErrors[index]) {
         delete newErrors[index].phone;
@@ -305,7 +323,6 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
         return color;
       }
     }
-    // If all colors are used, fallback to first color or default
     return signatoryColor[0] || "#ffe987";
   };
 
@@ -348,18 +365,15 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
       }
     }
 
-    // Remove the form and recalculate sign orders
     setRecipientForms((prevForms) => {
       const updatedForms = prevForms.filter((_, idx) => idx !== index);
-
-      // Recalculate sign orders
       return updatedForms.map((form, idx) => ({
         ...form,
         signOrder: idx + 1,
       }));
     });
 
-    setShowConfirmModal(false); // Close confirmation modal
+    setShowConfirmModal(false);
   };
 
   const handleShowConfirmModal = (templateSignatoryID, index) => {
@@ -379,13 +393,36 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
     const [removed] = reorderedForms.splice(result.source.index, 1);
     reorderedForms.splice(result.destination.index, 0, removed);
 
-    // Update signOrder based on the new order
     const updatedForms = reorderedForms.map((form, index) => ({
       ...form,
       signOrder: index + 1,
     }));
 
     setRecipientForms(updatedForms);
+  };
+
+  const handleMoveRecipient = (index, direction) => {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= recipientForms.length) return;
+
+    const reorderedForms = Array.from(recipientForms);
+    const [removed] = reorderedForms.splice(index, 1);
+    reorderedForms.splice(targetIndex, 0, removed);
+
+    const updatedForms = reorderedForms.map((form, idx) => ({
+      ...form,
+      signOrder: idx + 1,
+    }));
+
+    setRecipientForms(updatedForms);
+  };
+
+  const splitMobileNumber = (mobileNumber = "") => {
+    const [CountryCode, Mobile] = String(mobileNumber).split("-");
+    return {
+      CountryCode,
+      Mobile,
+    };
   };
 
   const handleAddYourself = () => {
@@ -408,14 +445,6 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
         signOrder: recipientForms.length + 1,
       },
     ]);
-  };
-
-  const splitMobileNumber = (mobileNumber) => {
-    const [CountryCode, Mobile] = mobileNumber.split("-");
-    return {
-      CountryCode,
-      Mobile,
-    };
   };
 
   const handleBack = async () => {
@@ -442,10 +471,16 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
         Name: form.name,
         NotificationType: form.notificationType,
         Email: form.notificationType === "Email" ? form.email : "",
-        CountryCode: form.notificationType === "SMS" || form.notificationType === "WhatsApp" ? form.countryCode : "",
-        Mobile: form.notificationType === "SMS" || form.notificationType === "WhatsApp" ? form.phone : "",
+        CountryCode:
+          form.notificationType === "SMS" || form.notificationType === "WhatsApp"
+            ? form.countryCode
+            : "",
+        Mobile:
+          form.notificationType === "SMS" || form.notificationType === "WhatsApp"
+            ? form.phone
+            : "",
         Company: form.company,
-        SignOrder: form.signOrder, // Ensure this is correct
+        SignOrder: form.signOrder,
         SignatureType: form.signatureType,
         SignatureColor: form.signColor,
         SignPage: form.signPage,
@@ -455,7 +490,9 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
         IsExpiring: form.isExpiring,
       }));
 
-      const response = await templateService.createBulkTemplateSignatories(requestBody);
+      const response = await templateService.createBulkTemplateSignatories(
+        requestBody
+      );
 
       if (response.data.successStatus) {
         setActiveStep(3);
@@ -470,10 +507,18 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
       setIsContinueDisabled(false);
     }
   };
-  // Filter the team and adhock user lists based on the search query
-  const filteredTeamMembers = teamMemberNames.filter((member) => member.name.toLowerCase().includes(searchQuery.toLowerCase()) || member.email.toLowerCase().includes(searchQuery.toLowerCase()));
 
-  const filteredAdhockUsers = adhockNames.filter((user) => user.name.toLowerCase().includes(searchQuery.toLowerCase()) || user.email.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredTeamMembers = teamMemberNames.filter(
+    (member) =>
+      member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredAdhockUsers = adhockNames.filter(
+    (u) =>
+      u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleRecipientSelection = (name, email) => {
     if (selectedIndex === null) return;
@@ -485,206 +530,420 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
       email,
     };
     setRecipientForms(updatedForms);
-    setShowOffcanvas(false); // Close the Offcanvas
+
+    if (errors[selectedIndex]) {
+      const newErrors = [...errors];
+      newErrors[selectedIndex] = null;
+      setErrors(newErrors);
+    }
+    setShowOffcanvas(false);
   };
+
+  const isStepValid =
+    recipientForms.length > 0 &&
+    recipientForms.every((f) => {
+      if (!f.name || !f.name.trim()) return false;
+      if (f.notificationType === "Email") return Boolean(f.email && f.email.trim());
+      return Boolean(f.phoneNumber && f.phoneNumber.length >= 10);
+    });
+
+  const resolvedNotificationTypes =
+    notificationTypes.length > 0
+      ? notificationTypes
+      : ["Email", "SMS", "WhatsApp"];
+  const resolvedSignatureTypes =
+    signatureTypes.length > 0 ? signatureTypes : ["Needs To Sign", "View Only"];
+
   return (
-    <div className='signatories-forms'>
-      <div className='signatory-form-container'>
-        <Form>
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId='forms'>
-              {(provided) => (
-                <Form ref={provided.innerRef} {...provided.droppableProps}>
-                  {recipientForms &&
-                    recipientForms.map((form, index) => (
-                      <Draggable key={index} draggableId={index.toString()} index={index}>
+    <div className='signatories-forms flex min-h-0 flex-1 flex-col'>
+      {/* Studio Panel Header (.phead) */}
+      <div className='px-5 pt-5 pb-1.5'>
+        <small className='block font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--modern-primary,#4d8dff)]'>
+          {t("uploadDocFlow.step", "STEP")} 2 {t("uploadDocFlow.of", "OF")} 3
+        </small>
+        <h1 className='mt-0.5 text-[22px] font-bold tracking-tight text-[var(--modern-text)]'>
+          {t("Stepper.AddSigners", "Add Signers")}
+        </h1>
+        <p className='mt-1 text-[13px] text-[var(--modern-muted)]'>
+          {t("templateUploadFlow.whoNeedsToSign", "Who needs to sign this template?")}
+        </p>
+      </div>
+
+      {/* Studio Scrollable Body (.pbody) */}
+      <div className='signatory-form-container min-h-0 flex-1 overflow-y-auto px-5 pt-3 pb-5'>
+        {/* Signing Order Switch Row (.opt) */}
+        <div className='mb-3 flex items-center justify-between gap-3 border-b border-[var(--modern-border)] pb-3'>
+          <div className='min-w-0'>
+            <span className='block text-sm font-semibold text-[var(--modern-text)]'>
+              {t("uploadDocFlow.setSigningOrder", "Set signing order")}
+            </span>
+            <small className='block text-xs text-[var(--modern-muted)]'>
+              {t(
+                "uploadDocFlow.signingOrderHint",
+                "Signers receive the document one after another"
+              )}
+            </small>
+          </div>
+          <button
+            type='button'
+            role='switch'
+            aria-checked={enableSignOrder}
+            aria-label={t("uploadDocFlow.setSigningOrder", "Set signing order")}
+            onClick={() => setEnableSignOrder((prev) => !prev)}
+            className={`relative h-6 w-11 shrink-0 rounded-full border transition-colors ${
+              enableSignOrder
+                ? "border-[var(--modern-primary,#4d8dff)] bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_22%,transparent)]"
+                : "border-[var(--modern-border-strong,#cbd5e1)] bg-[var(--modern-raised,#f1f5f9)]"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 h-4 w-4 rounded-full transition-all ${
+                enableSignOrder
+                  ? "left-[22px] rtl:left-auto rtl:right-[22px] bg-[var(--modern-primary,#4d8dff)]"
+                  : "left-0.5 rtl:left-auto rtl:right-0.5 bg-[var(--modern-muted,#64748b)]"
+              }`}
+            />
+          </button>
+        </div>
+
+        {/* Signer Cards List */}
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId='forms'>
+            {(provided) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className='space-y-3'
+              >
+                {recipientForms &&
+                  recipientForms.map((form, index) => {
+                    const accentColor = form.signColor || "#4d8dff";
+                    return (
+                      <Draggable
+                        key={index}
+                        draggableId={index.toString()}
+                        index={index}
+                      >
                         {(provided) => (
-                          <div ref={provided.innerRef} {...provided.draggableProps}>
-                            <Row className='d-flex justify-content-start align-items-start'>
-                              <Col className='mt-3'>
-                                <div className='signatory-form' style={{ border: `1px solid ${form.signColor}` }}>
-                                  <Row>
-                                    <Col md={11} className='signatory-form-col action-buttons d-flex justify-content-end align-items-center flex-wrap'></Col>
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className='signatory-form relative rounded-[18px] border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] p-3.5 pl-4 rtl:pl-3.5 rtl:pr-4'
+                            style={{
+                              ...provided.draggableProps.style,
+                            }}
+                          >
+                            {/* Left Color Accent Bar */}
+                            <span
+                              aria-hidden='true'
+                              className='absolute left-0 rtl:left-auto rtl:right-0 top-4 bottom-4 w-[3.5px] rounded-full'
+                              style={{ backgroundColor: accentColor }}
+                            />
 
-                                    <div className='signatory-form-col action-buttons d-flex align-items-center justify-content-between flex-wrap'>
-                                      <Col md={4} className='d-flex gap-2 align-items-center signatory-form-col'>
-                                        <div {...provided.dragHandleProps} className='drag-icon'>
-                                          <Icons.DragHandle size={18} />
-                                        </div>
-                                        <div className='fw-bold'>
-                                          {t("uploadDocFlow.signatory")} {index + 1}
-                                        </div>
-                                      </Col>
-                                      <Col md={2} className='signatory-form-col'></Col>
-                                      <Col md={6} className='signatory-form-col action-buttons d-flex justify-content-end align-items-center flex-wrap gap-1'>
-                                        <Button
-                                          variant='outline'
-                                          size='sm'
-                                          className='inline-flex items-center gap-1.5'
-                                          onClick={() => {
-                                            setSelectedIndex(index);
-                                            setShowOffcanvas(true);
-                                          }}
-                                        >
-                                          <Icons.UserSearch className='mx-1' size={16} />
-                                          {t("uploadDocFlow.existingUser")}
-                                        </Button>
-                                        <div>
-                                          <Form.Group controlId={`formSignatureMethod${index}`}>
-                                            <Dropdown onSelect={(e) => handleFormChange(index, "signatureType", e)}>
-                                              <Dropdown.Toggle className=' d-flex align-items-center gap-2' variant='' id={`signatureType${index}`}>
-                                                {form.signatureType === "Needs To Sign" && <Icons.SignatureType />}
-                                                {form.signatureType === "View Only" && <Icons.Eye />}
-                                                {form.signatureType}
-                                              </Dropdown.Toggle>
-                                              <Dropdown.Menu style={{ left: "auto", right: 0, minWidth: "unset", padding: "0px" }}>
-                                                {signatureTypes.map((signature, sigIndex) => (
-                                                  <Dropdown.Item key={sigIndex} eventKey={signature} className='d-flex align-items-center gap-2'>
-                                                    {signature === "Needs To Sign" && <Icons.SignatureType />}
-                                                    {signature === "View Only" && <Icons.Eye />}
-                                                    {signature}
-                                                  </Dropdown.Item>
-                                                ))}
-                                              </Dropdown.Menu>
-                                            </Dropdown>
-                                          </Form.Group>
-                                        </div>
-                                        <Button variant='none' className='p-0' onClick={() => handleShowConfirmModal(form.templateSignatoryID, index)}>
-                                          <Icons.DeleteSignatory />
-                                        </Button>
-                                      </Col>
-                                    </div>
-
-                                    <Col md={5}>
-                                      <Form.Group controlId={`formSignatoryName${index}`}>
-                                        <Form.Label>
-                                          {t("uploadDocFlow.name")} <span className='required'>*</span>
-                                        </Form.Label>
-                                        <Form.Control
-                                          list='teamNames'
-                                          type='text'
-                                          value={form.name}
-                                          onChange={(e) => handleFormChange(index, "name", e.target.value)}
-                                          placeholder={t("uploadDocFlow.enterName")}
-                                        />
-                                        {errors[index]?.name && <div className='error-message'>{errors[index].name}</div>}
-                                      </Form.Group>
-                                    </Col>
-
-                                    <Col md={2}>
-                                      <Form.Group controlId={`formNotificationMethod${index}`}>
-                                        <Form.Label>{t("uploadDocFlow.notificationType")}</Form.Label>
-                                        <Dropdown onSelect={(e) => handleFormChange(index, "notificationType", e)}>
-                                          <Dropdown.Toggle variant='' id={`notificationType${index}`}>
-                                            {form.notificationType}
-                                          </Dropdown.Toggle>
-                                          <Dropdown.Menu>
-                                            {notificationTypes.map((notification, notIndex) => (
-                                              <Dropdown.Item key={notIndex} eventKey={notification}>
-                                                {notification}
-                                              </Dropdown.Item>
-                                            ))}
-                                          </Dropdown.Menu>
-                                        </Dropdown>
-                                      </Form.Group>
-                                    </Col>
-
-                                    {form.notificationType === "Email" && (
-                                      <Col md={5}>
-                                        <Form.Group controlId={`formEmailAddress${index}`}>
-                                          <Form.Label>
-                                            {t("uploadDocFlow.emailAddress")} <span className='required'>*</span>
-                                          </Form.Label>
-                                          <Form.Control
-                                            list='teamEmails'
-                                            type='email'
-                                            value={form.email}
-                                            onChange={(e) => handleFormChange(index, "email", e.target.value)}
-                                            placeholder={t("uploadDocFlow.enterEmail")}
-                                          />
-                                          {errors[index]?.email && <div className='error-message'>{errors[index].email}</div>}
-                                        </Form.Group>
-                                      </Col>
-                                    )}
-
-                                    {(form.notificationType === "SMS" || form.notificationType === "WhatsApp") && (
-                                      <Col md={5}>
-                                        <Form.Group controlId={`formPhone${index}`}>
-                                          <Form.Label>
-                                            {t("logScreens.mobileNumber")}
-                                            <span className='required'>*</span>
-                                          </Form.Label>
-                                          <PhoneInput
-                                            excludeCountries={["il"]}
-                                            country={"sa"}
-                                            value={form.phoneNumber || ""}
-                                            onChange={(phone) => handlePhoneChange(index, phone)}
-                                            inputStyle={{
-                                              width: "100%",
-                                              height: "38px",
-                                              fontSize: "14px",
-                                              border: "1px solid #ced4da",
-                                              borderRadius: "0.375rem",
-                                            }}
-                                            containerStyle={{
-                                              width: "100%",
-                                            }}
-                                            buttonStyle={{
-                                              border: "1px solid #ced4da",
-                                              borderRight: "none",
-                                              borderRadius: "0.375rem 0 0 0.375rem",
-                                            }}
-                                          />
-                                          {form.phoneNumber && form.phoneNumber.length < 10 && <div className='error-message'>{t("logScreens.ValidmobileNumber")}</div>}
-                                          {errors[index]?.phone && <div className='error-message'>{errors[index].phone}</div>}
-                                        </Form.Group>
-                                      </Col>
-                                    )}
-                                  </Row>
+                            {/* Card Header (.hd) */}
+                            <div className='mb-3 flex items-center justify-between gap-2'>
+                              <div className='flex min-w-0 items-center gap-2'>
+                                <div
+                                  {...provided.dragHandleProps}
+                                  className='drag-icon inline-flex cursor-grab items-center justify-center text-[var(--modern-muted)] hover:text-[var(--modern-text)]'
+                                  title={t("uploadDocFlow.dragToReorder", "Drag to reorder")}
+                                >
+                                  <Icons.DragHandle size={16} />
                                 </div>
-                              </Col>
-                            </Row>
+
+                                {enableSignOrder && (
+                                  <span
+                                    className='inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-mono text-[11px] font-semibold text-white'
+                                    style={{ backgroundColor: accentColor }}
+                                  >
+                                    {index + 1}
+                                  </span>
+                                )}
+
+                                <h3 className='m-0 truncate text-sm font-semibold text-[var(--modern-text)]'>
+                                  {t("uploadDocFlow.signatory")} {index + 1}
+                                </h3>
+                              </div>
+
+                              <div className='flex shrink-0 items-center gap-1'>
+                                {enableSignOrder && recipientForms.length > 1 && (
+                                  <>
+                                    <button
+                                      type='button'
+                                      disabled={index === 0}
+                                      onClick={() => handleMoveRecipient(index, -1)}
+                                      aria-label='Move up'
+                                      className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border)] bg-transparent text-[var(--modern-muted)] transition-colors hover:bg-[var(--modern-raised)] hover:text-[var(--modern-text)] disabled:opacity-35'
+                                    >
+                                      <ChevronUp size={15} />
+                                    </button>
+                                    <button
+                                      type='button'
+                                      disabled={index === recipientForms.length - 1}
+                                      onClick={() => handleMoveRecipient(index, 1)}
+                                      aria-label='Move down'
+                                      className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border)] bg-transparent text-[var(--modern-muted)] transition-colors hover:bg-[var(--modern-raised)] hover:text-[var(--modern-text)] disabled:opacity-35'
+                                    >
+                                      <ChevronDown size={15} />
+                                    </button>
+                                  </>
+                                )}
+
+                                <button
+                                  type='button'
+                                  title={t("uploadDocFlow.existingUser", "Existing Users")}
+                                  aria-label={t("uploadDocFlow.existingUser", "Existing Users")}
+                                  onClick={() => {
+                                    setSelectedIndex(index);
+                                    setSearchQuery("");
+                                    setShowOffcanvas(true);
+                                  }}
+                                  className='inline-flex h-8 items-center gap-1.5 rounded-lg border border-[var(--modern-border-strong,#cbd5e1)] bg-[var(--modern-raised,#f8fafc)] px-2.5 text-xs font-semibold text-[var(--modern-primary,#4d8dff)] transition-colors hover:border-[var(--modern-primary,#4d8dff)] hover:bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_10%,transparent)]'
+                                >
+                                  <Icons.UserSearch size={14} />
+                                  <span>
+                                    {t("uploadDocFlow.existingUser", "Existing Users")}
+                                  </span>
+                                </button>
+
+                                <button
+                                  type='button'
+                                  aria-label={t("uploadDocFlow.delete", "Remove")}
+                                  onClick={() =>
+                                    handleShowConfirmModal(
+                                      form.templateSignatoryID,
+                                      index
+                                    )
+                                  }
+                                  className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-transparent text-[var(--modern-muted,#64748b)] transition-colors hover:border-[var(--modern-danger,#ef4444)] hover:text-[var(--modern-danger,#ef4444)]'
+                                >
+                                  <Icons.DeleteAction size={15} />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Form Fields */}
+                            <div className='space-y-3'>
+                              <div>
+                                <Form.Group controlId={`formSignatoryName${index}`}>
+                                  <Form.Label className='mb-1 block text-xs font-medium text-[var(--modern-muted,#64748b)]'>
+                                    {t("uploadDocFlow.name")}{" "}
+                                    <span className='text-[var(--modern-danger,#ef4444)]'>*</span>
+                                  </Form.Label>
+                                  <Form.Control
+                                    list='teamNames'
+                                    type='text'
+                                    value={form.name}
+                                    onChange={(e) =>
+                                      handleFormChange(index, "name", e.target.value)
+                                    }
+                                    placeholder={t("uploadDocFlow.enterName")}
+                                    className='!h-[40px] !rounded-xl'
+                                  />
+                                  {errors[index]?.name && (
+                                    <div className='mt-1 text-xs text-[var(--modern-danger,#ef4444)]'>
+                                      {errors[index].name}
+                                    </div>
+                                  )}
+                                </Form.Group>
+                              </div>
+
+                              {form.notificationType === "Email" && (
+                                <div>
+                                  <Form.Group controlId={`formEmailAddress${index}`}>
+                                    <Form.Label className='mb-1 block text-xs font-medium text-[var(--modern-muted,#64748b)]'>
+                                      {t("uploadDocFlow.emailAddress")}{" "}
+                                      <span className='text-[var(--modern-danger,#ef4444)]'>*</span>
+                                    </Form.Label>
+                                    <Form.Control
+                                      list='teamEmails'
+                                      type='email'
+                                      value={form.email}
+                                      onChange={(e) =>
+                                        handleFormChange(index, "email", e.target.value)
+                                      }
+                                      placeholder={t("uploadDocFlow.enterEmail")}
+                                      className='!h-[40px] !rounded-xl'
+                                    />
+                                    {errors[index]?.email && (
+                                      <div className='mt-1 text-xs text-[var(--modern-danger,#ef4444)]'>
+                                        {errors[index].email}
+                                      </div>
+                                    )}
+                                  </Form.Group>
+                                </div>
+                              )}
+
+                              {(form.notificationType === "SMS" ||
+                                form.notificationType === "WhatsApp") && (
+                                <div>
+                                  <Form.Group controlId={`formPhone${index}`}>
+                                    <Form.Label className='mb-1 block text-xs font-medium text-[var(--modern-muted,#64748b)]'>
+                                      {t("logScreens.mobileNumber")}{" "}
+                                      <span className='text-[var(--modern-danger,#ef4444)]'>*</span>
+                                    </Form.Label>
+                                    <div className='phone-input-container'>
+                                      <PhoneInput
+                                        excludeCountries={["il"]}
+                                        country={"sa"}
+                                        value={form.phoneNumber || ""}
+                                        onChange={(phone) =>
+                                          handlePhoneChange(index, phone)
+                                        }
+                                        inputClass='form-control'
+                                        containerClass='w-full'
+                                      />
+                                    </div>
+                                    {form.phoneNumber &&
+                                      form.phoneNumber.length < 10 && (
+                                        <div className='mt-1 text-xs text-[var(--modern-danger,#ef4444)]'>
+                                          {t("logScreens.ValidmobileNumber")}
+                                        </div>
+                                      )}
+                                    {errors[index]?.phone && (
+                                      <div className='mt-1 text-xs text-[var(--modern-danger,#ef4444)]'>
+                                        {errors[index].phone}
+                                      </div>
+                                    )}
+                                  </Form.Group>
+                                </div>
+                              )}
+
+                              {/* 2-Column Notification Type + Role */}
+                              <div className='grid grid-cols-1 gap-2.5 sm:grid-cols-2'>
+                                <div>
+                                  <Form.Group controlId={`formNotificationMethod${index}`}>
+                                    <Form.Label className='mb-1 block text-xs font-medium text-[var(--modern-muted,#64748b)]'>
+                                      {t("uploadDocFlow.notificationType")}
+                                    </Form.Label>
+                                    <Form.Select
+                                      value={form.notificationType || "Email"}
+                                      onChange={(e) =>
+                                        handleFormChange(
+                                          index,
+                                          "notificationType",
+                                          e.target.value
+                                        )
+                                      }
+                                    >
+                                      {resolvedNotificationTypes.map((notif, nIdx) => (
+                                        <option key={nIdx} value={notif}>
+                                          {notif}
+                                        </option>
+                                      ))}
+                                    </Form.Select>
+                                  </Form.Group>
+                                </div>
+
+                                <div>
+                                  <Form.Group controlId={`formSignatureMethod${index}`}>
+                                    <Form.Label className='mb-1 block text-xs font-medium text-[var(--modern-muted,#64748b)]'>
+                                      {t("uploadDocFlow.role", "Role")}
+                                    </Form.Label>
+                                    <Form.Select
+                                      value={
+                                        form.signatureType ||
+                                        resolvedSignatureTypes[0] ||
+                                        "Needs To Sign"
+                                      }
+                                      onChange={(e) =>
+                                        handleFormChange(
+                                          index,
+                                          "signatureType",
+                                          e.target.value
+                                        )
+                                      }
+                                    >
+                                      {resolvedSignatureTypes.map((sig, sIdx) => (
+                                        <option key={sIdx} value={sig}>
+                                          {sig}
+                                        </option>
+                                      ))}
+                                    </Form.Select>
+                                  </Form.Group>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         )}
                       </Draggable>
-                    ))}
-                  {provided.placeholder}
-                </Form>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </Form>
+                    );
+                  })}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+
+        {/* Add Recipient / Add Yourself Ghost Buttons (.ghost) */}
+        <div className='mt-3.5 grid grid-cols-1 gap-2.5 sm:grid-cols-2'>
+          <button
+            type='button'
+            onClick={handleAddRecipient}
+            className='flex h-[42px] w-full items-center justify-center gap-2 rounded-xl border-[1.5px] border-dashed border-[var(--modern-border-strong,#cbd5e1)] bg-transparent text-xs font-semibold text-[var(--modern-primary,#4d8dff)] transition-colors hover:border-[var(--modern-primary,#4d8dff)] hover:bg-[var(--modern-raised,#f8fafc)]'
+          >
+            <Icons.AddCircle size={17} />
+            <span>{t("uploadDocFlow.addRecipient")}</span>
+          </button>
+
+          <button
+            type='button'
+            onClick={handleAddYourself}
+            className='flex h-[42px] w-full items-center justify-center gap-2 rounded-xl border-[1.5px] border-dashed border-[var(--modern-border-strong,#cbd5e1)] bg-transparent text-xs font-semibold text-[var(--modern-primary,#4d8dff)] transition-colors hover:border-[var(--modern-primary,#4d8dff)] hover:bg-[var(--modern-raised,#f8fafc)]'
+          >
+            <Icons.AddCircle size={17} />
+            <span>{t("uploadDocFlow.addYourself")}</span>
+          </button>
+        </div>
       </div>
 
-      <Row>
-        <Col md={11}>
-          <div className='flex flex-wrap items-center gap-3 my-4'>
-            <Button variant='outline' className='inline-flex items-center gap-2' onClick={handleAddRecipient}>
-              <Icons.AddCircle size={20} />
-              <span>{t("uploadDocFlow.addRecipient")}</span>
-            </Button>
-
-            <Button variant='outline' className='inline-flex items-center gap-2' onClick={handleAddYourself}>
-              <Icons.AddCircle size={20} />
-              <span>{t("uploadDocFlow.addYourself")}</span>
-            </Button>
-          </div>
-        </Col>
-      </Row>
-
-      <div className='fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-3 border-t border-[var(--modern-border)] bg-[var(--modern-card)]'>
-        <Button variant='outline' id='hide_part_one' onClick={handleBack} disabled={isLoading}>
+      {/* Studio Sticky Footer (.pfoot) */}
+      <div className='mt-auto flex items-center justify-between gap-2.5 border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f8fafc)]/80 px-5 py-3.5'>
+        <Button
+          variant='outline'
+          id='hide_part_one'
+          className='!h-[42px] !rounded-full !px-4 font-semibold shrink-0'
+          onClick={handleBack}
+          disabled={isLoading}
+        >
           {t("uploadDocFlow.back")}
         </Button>
 
-        <Button variant='primary' id='hide_part_one' onClick={handleContinue} disabled={isContinueDisabled || isLoading}>
+        <div className='flex min-w-0 flex-1 items-center gap-2 text-xs text-[var(--modern-muted,#64748b)]'>
+          <span
+            className={`h-2 w-2 shrink-0 rounded-full ${
+              isStepValid
+                ? "bg-[var(--modern-success,#10b981)]"
+                : "bg-[var(--modern-warning,#f59e0b)]"
+            }`}
+          />
+          <span className='truncate'>
+            {isStepValid
+              ? `${recipientForms.length} ${t("uploadDocFlow.recipients", "recipients")}`
+              : t(
+                  "uploadDocFlow.completeRecipientDetails",
+                  "Complete recipient details"
+                )}
+          </span>
+        </div>
+
+        <Button
+          variant='primary'
+          id='hide_part_one'
+          className='!h-[42px] !rounded-full !px-5 font-semibold inline-flex items-center gap-2 shrink-0'
+          onClick={handleContinue}
+          disabled={isContinueDisabled || isLoading}
+        >
           {isLoading ? (
             <span className='flex items-center gap-2'>
-              <span className='inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' />
+              <span className='inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
               {t("uploadDocFlow.Continue")}
             </span>
           ) : (
-            t("uploadDocFlow.Continue")
+            <>
+              <span>{t("uploadDocFlow.Continue")}</span>
+              <Icons.ArrowRightLong size={15} className='rtl:rotate-180' />
+            </>
           )}
         </Button>
       </div>
@@ -708,61 +967,208 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps }) => {
         show={showOffcanvas}
         onHide={() => {
           setShowOffcanvas(false);
+          setSearchQuery("");
         }}
         placement={document.documentElement.dir === "rtl" ? "start" : "end"}
+        className='border-l border-[var(--modern-border)] bg-[var(--modern-card)] rtl:border-l-0 rtl:border-r'
       >
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>{t("uploadDocFlow.SelectRecipient")}</Offcanvas.Title>
+        <Offcanvas.Header closeButton className='border-b border-[var(--modern-border)] px-5 py-4'>
+          <div>
+            <Offcanvas.Title className='text-base font-bold text-[var(--modern-text)]'>
+              {t("uploadDocFlow.SelectRecipient", "Select Recipient")}
+            </Offcanvas.Title>
+            <p className='mt-0.5 text-xs text-[var(--modern-muted)]'>
+              {selectedIndex !== null
+                ? `${t("uploadDocFlow.assigningTo", "Assigning to")} ${t(
+                    "uploadDocFlow.signatory",
+                    "Signatory"
+                  )} ${selectedIndex + 1}`
+                : t(
+                    "uploadDocFlow.selectRecipientSubtitle",
+                    "Choose from your team members or external contacts"
+                  )}
+            </p>
+          </div>
         </Offcanvas.Header>
-        <hr />
-        <Offcanvas.Body>
-          {/* Search Input */}
-          <div className='mb-3'>
-            <input type='text' className='form-control' placeholder={t("uploadDocFlow.searchUser")} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+
+        <Offcanvas.Body className='flex flex-col gap-4 p-5'>
+          {/* Search Box */}
+          <div className='relative'>
+            <Search
+              size={16}
+              className='pointer-events-none absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 text-[var(--modern-muted)]'
+            />
+            <input
+              type='text'
+              placeholder={t(
+                "uploadDocFlow.searchUser",
+                "Search recipient by name or email..."
+              )}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className='h-10 w-full rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] pl-9 pr-9 rtl:pl-9 rtl:pr-9 text-xs text-[var(--modern-text)] placeholder-[var(--modern-muted)] transition-colors focus:border-[var(--modern-primary)] focus:bg-[var(--modern-card)] focus:outline-none'
+            />
+            {searchQuery && (
+              <button
+                type='button'
+                onClick={() => setSearchQuery("")}
+                aria-label='Clear search'
+                className='absolute right-2.5 rtl:right-auto rtl:left-2.5 top-1/2 -translate-y-1/2 text-[var(--modern-muted)] hover:text-[var(--modern-text)]'
+              >
+                <X size={15} />
+              </button>
+            )}
           </div>
 
-          {/* Tabs */}
-          <Tabs defaultActiveKey='team' id='recipient-tabs'>
-            {/* Team Tab */}
-            <Tab eventKey='team' title={t("uploadDocFlow.teamMembers")}>
-              <div style={{ padding: "10px" }}>
-                <ul style={{ listStyle: "none", padding: "0" }}>
-                  {filteredTeamMembers.length > 0 ? (
-                    filteredTeamMembers.map((member, idx) => (
-                      <li key={idx} style={{ marginBottom: "10px" }}>
-                        <button className='Addrecepient' onClick={() => handleRecipientSelection(member.name, member.email)}>
-                          <span style={{ fontSize: "0.9rem", color: "var(--text-primary)" }}>{member.name}</span>
-                          <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>{member.email}</span>
-                        </button>
-                      </li>
-                    ))
-                  ) : (
-                    <p>{t("uploadDocFlow.noTeam")}</p>
-                  )}
-                </ul>
-              </div>
-            </Tab>
+          {/* Segmented Pill Tabs */}
+          <div
+            role='tablist'
+            aria-label={t("uploadDocFlow.recipientCategories", "Recipient Categories")}
+            className='inline-flex w-full items-center rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] p-1'
+          >
+            <button
+              type='button'
+              role='tab'
+              aria-selected={recipientTab === "team"}
+              onClick={() => setRecipientTab("team")}
+              className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-1.5 text-xs font-semibold transition-all ${
+                recipientTab === "team"
+                  ? "bg-[var(--modern-card)] text-[var(--modern-primary)] shadow-xs"
+                  : "text-[var(--modern-muted)] hover:text-[var(--modern-text)]"
+              }`}
+            >
+              <span>{t("uploadDocFlow.teamMembers", "Team Members")}</span>
+              <span
+                className={`rounded-full px-1.5 py-0.2 text-[10px] font-mono ${
+                  recipientTab === "team"
+                    ? "bg-[color-mix(in_srgb,var(--modern-primary)_15%,transparent)] text-[var(--modern-primary)]"
+                    : "bg-[var(--modern-border)] text-[var(--modern-muted)]"
+                }`}
+              >
+                {filteredTeamMembers.length}
+              </span>
+            </button>
 
-            {/* Adhock Users Tab */}
-            <Tab eventKey='adhock' title={t("uploadDocFlow.externalUsers")}>
-              <div style={{ padding: "10px" }}>
-                <ul style={{ listStyle: "none", padding: "0" }}>
-                  {filteredAdhockUsers.length > 0 ? (
-                    filteredAdhockUsers.map((user, idx) => (
-                      <li key={idx} style={{ marginBottom: "10px" }}>
-                        <button className='Addrecepient' onClick={() => handleRecipientSelection(user.name, user.email)}>
-                          <span style={{ fontSize: "0.9rem", color: "var(--text-primary)" }}>{user.name}</span>
-                          <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>{user.email}</span>
-                        </button>
-                      </li>
-                    ))
-                  ) : (
-                    <p>{t("uploadDocFlow.noAdhookUsers")}</p>
-                  )}
+            <button
+              type='button'
+              role='tab'
+              aria-selected={recipientTab === "adhock"}
+              onClick={() => setRecipientTab("adhock")}
+              className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-1.5 text-xs font-semibold transition-all ${
+                recipientTab === "adhock"
+                  ? "bg-[var(--modern-card)] text-[var(--modern-primary)] shadow-xs"
+                  : "text-[var(--modern-muted)] hover:text-[var(--modern-text)]"
+              }`}
+            >
+              <span>{t("uploadDocFlow.externalMembers", "External Members")}</span>
+              <span
+                className={`rounded-full px-1.5 py-0.2 text-[10px] font-mono ${
+                  recipientTab === "adhock"
+                    ? "bg-[color-mix(in_srgb,var(--modern-primary)_15%,transparent)] text-[var(--modern-primary)]"
+                    : "bg-[var(--modern-border)] text-[var(--modern-muted)]"
+                }`}
+              >
+                {filteredAdhockUsers.length}
+              </span>
+            </button>
+          </div>
+
+          {/* Members List */}
+          <div className='flex-1 overflow-y-auto pr-0.5'>
+            {recipientTab === "team" ? (
+              filteredTeamMembers.length > 0 ? (
+                <ul className='m-0 list-none space-y-2 p-0'>
+                  {filteredTeamMembers.map((member, idx) => (
+                    <li key={`team-${idx}`}>
+                      <button
+                        type='button'
+                        onClick={() => handleRecipientSelection(member.name, member.email)}
+                        className='group flex w-full items-center justify-between gap-3 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-3 text-start transition-all hover:border-[var(--modern-primary)] hover:bg-[var(--modern-raised)]'
+                      >
+                        <div className='flex min-w-0 items-center gap-3'>
+                          <UserInitialsBadge name={member.name} avatarOnly />
+                          <div className='min-w-0'>
+                            <span className='block truncate text-xs font-semibold text-[var(--modern-text)] group-hover:text-[var(--modern-primary)]'>
+                              {member.name}
+                            </span>
+                            <span className='block truncate text-[11px] text-[var(--modern-muted)]'>
+                              {member.email}
+                            </span>
+                          </div>
+                        </div>
+
+                        <span className='shrink-0 rounded-lg border border-[var(--modern-border)] bg-[var(--modern-raised)] px-2.5 py-1 text-[11px] font-semibold text-[var(--modern-muted)] transition-colors group-hover:border-[var(--modern-primary)] group-hover:bg-[var(--modern-primary)] group-hover:text-white'>
+                          {t("uploadDocFlow.select", "Select")}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
                 </ul>
+              ) : (
+                <div className='flex flex-col items-center justify-center py-10 text-center'>
+                  <div className='flex h-12 w-12 items-center justify-center rounded-full bg-[var(--modern-raised)] text-[var(--modern-muted)] mb-2.5'>
+                    <Users size={22} />
+                  </div>
+                  <p className='text-xs font-semibold text-[var(--modern-text)]'>
+                    {t("uploadDocFlow.noTeam", "No Team Members Found")}
+                  </p>
+                  <p className='mt-1 max-w-[240px] text-[11px] text-[var(--modern-muted)]'>
+                    {searchQuery
+                      ? `${t("uploadDocFlow.noMatchesFor", "No matches found for")} "${searchQuery}"`
+                      : t(
+                          "uploadDocFlow.noTeamMembersSaved",
+                          "No team members are configured in your account."
+                        )}
+                  </p>
+                </div>
+              )
+            ) : filteredAdhockUsers.length > 0 ? (
+              <ul className='m-0 list-none space-y-2 p-0'>
+                {filteredAdhockUsers.map((u, idx) => (
+                  <li key={`adhock-${idx}`}>
+                    <button
+                      type='button'
+                      onClick={() => handleRecipientSelection(u.name, u.email)}
+                      className='group flex w-full items-center justify-between gap-3 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-3 text-start transition-all hover:border-[var(--modern-primary)] hover:bg-[var(--modern-raised)]'
+                    >
+                      <div className='flex min-w-0 items-center gap-3'>
+                        <UserInitialsBadge name={u.name} avatarOnly />
+                        <div className='min-w-0'>
+                          <span className='block truncate text-xs font-semibold text-[var(--modern-text)] group-hover:text-[var(--modern-primary)]'>
+                            {u.name}
+                          </span>
+                          <span className='block truncate text-[11px] text-[var(--modern-muted)]'>
+                            {u.email}
+                          </span>
+                        </div>
+                      </div>
+
+                      <span className='shrink-0 rounded-lg border border-[var(--modern-border)] bg-[var(--modern-raised)] px-2.5 py-1 text-[11px] font-semibold text-[var(--modern-muted)] transition-colors group-hover:border-[var(--modern-primary)] group-hover:bg-[var(--modern-primary)] group-hover:text-white'>
+                        {t("uploadDocFlow.select", "Select")}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className='flex flex-col items-center justify-center py-10 text-center'>
+                <div className='flex h-12 w-12 items-center justify-center rounded-full bg-[var(--modern-raised)] text-[var(--modern-muted)] mb-2.5'>
+                  <Users size={22} />
+                </div>
+                <p className='text-xs font-semibold text-[var(--modern-text)]'>
+                  {t("uploadDocFlow.noExternalMembers", "No External Members Found")}
+                </p>
+                <p className='mt-1 max-w-[240px] text-[11px] text-[var(--modern-muted)]'>
+                  {searchQuery
+                    ? `${t("uploadDocFlow.noMatchesFor", "No matches found for")} "${searchQuery}"`
+                    : t(
+                        "uploadDocFlow.noExternalMembersSaved",
+                        "No external members found in previous recipient history."
+                      )}
+                </p>
               </div>
-            </Tab>
-          </Tabs>
+            )}
+          </div>
         </Offcanvas.Body>
       </Offcanvas>
     </div>

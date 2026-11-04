@@ -49,7 +49,7 @@ function ManualDosList({ registerSignID }) {
   const isSerial = true;
   const description = "";
   const referenceNumber = "";
-  const { user, userAccess } = useUser();
+  const { user, userAccess, loading } = useUser();
 
   const goBack = () => navigate(-1);
 
@@ -207,7 +207,20 @@ function ManualDosList({ registerSignID }) {
     return parts[parts.length - 1];
   }
 
-  if (!userAccess?.macAI || userAccess?.remainingDays <= 0) {
+  // 1. While user profile / access is loading on reload, show smooth loading spinner
+  if (loading || !userAccess) {
+    return (
+      <div className='w-full min-h-[calc(100vh-140px)] flex items-center justify-center p-8 bg-[var(--modern-bg)]'>
+        <div className='flex flex-col items-center gap-3 text-[var(--modern-muted)]'>
+          <Loader2 size={32} className='animate-spin text-[var(--theme-color,#4d8dff)]' />
+          <span className='text-sm font-medium'>{t("common.loading", "Loading...")}</span>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Only check license expiry after userAccess has definitively loaded
+  if (!userAccess?.macAI || Number(userAccess?.remainingDays) <= 0) {
     return <UserLisence />;
   }
 

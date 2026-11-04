@@ -45,7 +45,7 @@ const EditTemplateNameOffcanvas = ({ originalTemplateName, show, onHide, templat
       title={t("editTemplateNameModal.editTemplateName")}
       showClose={!isLoading}
       footer={
-        <div className="flex items-center justify-between w-full pt-4 border-t border-[var(--modern-border,#e2e8f0)]">
+        <div className="flex items-center justify-end gap-3 w-full pt-4 border-t border-[var(--modern-border,#e2e8f0)]">
           <Button variant="outline" onClick={onHide} disabled={isLoading}>
             {t("editTemplateNameModal.cancel")}
           </Button>

@@ -1,3 +1,4 @@
+import "./polyfills";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "react-phone-input-2/lib/style.css";

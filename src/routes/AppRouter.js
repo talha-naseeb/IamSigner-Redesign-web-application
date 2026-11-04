@@ -111,10 +111,14 @@ const AppRouter = ({ onLogin }) => {
           <Route path={PATHS.emailTemplates} element={<EmailTemplates />} />
           <Route path={PATHS.createEmailTemplate} element={<CreateEmailTemplate />} />
           <Route path={PATHS.authIntegration} element={<CreateWebhook />} />
-          <Route path={PATHS.manuallyGenerateDocs} element={<ManuallyGenerateComponent />} />
-          <Route path={PATHS.macAiDocs} element={<ListOfDocuments />} />
-          <Route path={PATHS.manualGeneratedDocuments} element={<ManualDosList />} />
           {isDmsEnabled && <Route path={PATHS.dms} element={<DMS />} />}
+
+          {/* Mac AI & Craft Documents - Requires macAI entitlement & Role != 3 */}
+          <Route element={<RoleGuard allowedRoleIds={[1, 2, 4]} requiredPermission='macAI' />}>
+            <Route path={PATHS.manuallyGenerateDocs} element={<ManuallyGenerateComponent />} />
+            <Route path={PATHS.macAiDocs} element={<ListOfDocuments />} />
+            <Route path={PATHS.manualGeneratedDocuments} element={<ManualDosList />} />
+          </Route>
 
           {/* Write Actions - Require Active Subscription & Role != 3 */}
           <Route element={<RoleGuard allowedRoleIds={[1, 2, 4]} requireActiveSubscription={true} />}>

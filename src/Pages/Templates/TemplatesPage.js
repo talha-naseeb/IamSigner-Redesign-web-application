@@ -3,8 +3,9 @@ import uploadFlowService from "@/services/uploadFlowService";
 import templateService from "@/services/templateService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-import { Button, Col, Dropdown, Modal } from "@/Components/UI/shadcnCompat";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Stack, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
+import { Button, Dropdown } from "@/Components/UI/shadcnCompat";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableEmptyState, TableHead, TableRow, Stack, Pagination, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
+import { AppModal } from "@/Components/Common/AppModal";
 import { Icons } from "@/assets/Icons";
 import TemplatesSearchFilter from "./TemplatesSearchFilter";
 import EditTemplateNameModal from "./EditTemplateNameModal";
@@ -13,6 +14,7 @@ import TemplatesConfirmationModal from "./TemplatesConfirmationModal";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import CustomToggle from "@/Components/CommonModals/CustomDots/CustomToggle";
 import { useUser } from "@/Context/UserContext";
+import { clearWorkflowStorage } from "@/utils/workflowStorage";
 
 const TemplatesPage = () => {
   const { t } = useTranslation();
@@ -103,6 +105,7 @@ const TemplatesPage = () => {
   };
 
   useEffect(() => {
+    clearWorkflowStorage();
     fetchTemplatesData();
   }, []);
 
@@ -323,8 +326,7 @@ const TemplatesPage = () => {
   };
 
   const handleCreateTemplate = () => {
-    sessionStorage.removeItem("templateID");
-    localStorage.removeItem("templateID");
+    clearWorkflowStorage();
     navigate("/create-templates");
   };
 
@@ -334,17 +336,18 @@ const TemplatesPage = () => {
         <></>
       ) : (
         <>
-          <Grid className='container mt-3'>
-            <Grid item xs={12}>
-              <div className='py-4 px-4 rounded-xl border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] pendingtable'>
+          <div className='w-full px-4 py-4'>
+            <div>
+              <div className='py-4 px-4 rounded-2xl border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] pendingtable'>
                 <div className='flex flex-wrap justify-between items-center gap-3 p-1 mb-4'>
-                  <div className='flex items-center gap-2.5'>
-                    <label className='font-semibold text-lg text-[var(--modern-text,#0f172a)] m-0'>{t("templateUploadFlow.myTemplate")}</label>
-                    {searchResults.length > 0 && (
-                      <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--modern-raised,#f1f5f9)] text-[var(--modern-muted,#64748b)] border border-[var(--modern-border,#e2e8f0)]'>
-                        {searchResults.length}
-                      </span>
-                    )}
+                  <div className='flex items-center gap-3'>
+                    <span className='inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] text-[var(--modern-primary,#4d8dff)]'>
+                      <Icons.Templates size={20} aria-hidden='true' />
+                    </span>
+                    <h1 className='font-semibold text-lg text-[var(--modern-text,#0f172a)] m-0'>{t("templateUploadFlow.myTemplate")}</h1>
+                    <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--modern-raised,#f1f5f9)] text-[var(--modern-muted,#64748b)] border border-[var(--modern-border,#e2e8f0)]'>
+                      {searchResults.length}
+                    </span>
                   </div>
 
                   <div className='flex items-center gap-2.5'>
@@ -434,8 +437,15 @@ const TemplatesPage = () => {
                             </span>
                           </TableCell>
                           <TableCell className='TableCell' style={{ width: "10%" }}>
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${row.isActive ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800" : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700"}`}>
-                              {row.isActive ? "Active" : "InActive"}
+                            <span
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                                row.isActive
+                                  ? "border-[color-mix(in_srgb,var(--modern-success,#10b981)_35%,transparent)] bg-[color-mix(in_srgb,var(--modern-success,#10b981)_12%,transparent)] text-[var(--modern-success,#10b981)]"
+                                  : "border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] text-[var(--modern-muted,#64748b)]"
+                              }`}
+                            >
+                              <span className='h-1.5 w-1.5 rounded-full bg-current' aria-hidden='true' />
+                              {row.isActive ? t("templateUploadFlow.active", "Active") : t("templateUploadFlow.inactive", "Inactive")}
                             </span>
                           </TableCell>
                           <TableCell className='TableCell p-0' align='right' style={{ width: "6%" }}>
@@ -495,7 +505,7 @@ const TemplatesPage = () => {
                   </Stack>
                 </div>
               </div>
-            </Grid>
+            </div>
 
             {/* Template Delete Modal (Enhanced)   */}
             <DeleteConfirmationModal
@@ -534,109 +544,42 @@ const TemplatesPage = () => {
             <EditTemplateNameModal originalTemplateName={originalTemplateName} templateID={selectedTemplateID} show={showModal} onHide={() => setShowModal(false)} onSave={handleSaveTemplateName} />
 
             {/* Template ID Modal */}
-            <Modal show={showTemplateIDModal} centered onHide={handleCloseTemplateIDModal} dialogClassName='custom-modal-width'>
-              <Modal.Body style={{ padding: "24px" }}>
-                <div style={{ marginBottom: "16px" }}>
-                  <label
-                    style={{
-                      display: "block",
-                      fontSize: "14px",
-                      fontWeight: "500",
-                      color: "#6c757d",
-                      marginBottom: "8px",
-                    }}
-                  >
-                    {t("templateUploadFlow.templateid")}
-                  </label>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "12px",
-                      padding: "12px 16px",
-                      backgroundColor: "var(--bg-secondary)",
-                      border: "2px solid var(--border-color)",
-                      borderRadius: "8px",
-                      transition: "all 0.3s ease",
-                    }}
-                  >
-                    <input
-                      ref={templateIDRef}
-                      type='text'
-                      value={selectedTemplateID}
-                      readOnly
-                      style={{
-                        flex: 1,
-                        border: "none",
-                        background: "transparent",
-                        fontSize: "16px",
-                        fontFamily: "monospace",
-                        color: "#495057",
-                        fontWeight: "500",
-                        outline: "none",
-                      }}
-                    />
-                    <button
-                      onClick={handleCopyTemplateID}
-                      disabled={isCopied}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        padding: "8px 16px",
-                        backgroundColor: isCopied ? "#28a745" : "var(--theme-color)",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "6px",
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        cursor: isCopied ? "default" : "pointer",
-                        transition: "all 0.3s ease",
-                        boxShadow: isCopied ? "0 2px 4px rgba(40, 167, 69, 0.2)" : "0 2px 4px rgba(12, 154, 215, 0.2)",
-                        opacity: isCopied ? 0.9 : 1,
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isCopied) {
-                          e.target.style.backgroundColor = "var(--theme-active)";
-                          e.target.style.transform = "translateY(-1px)";
-                          e.target.style.boxShadow = "0 4px 8px rgba(12, 154, 215, 0.3)";
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isCopied) {
-                          e.target.style.backgroundColor = "var(--theme-color)";
-                          e.target.style.transform = "translateY(0)";
-                          e.target.style.boxShadow = "0 2px 4px rgba(12, 154, 215, 0.2)";
-                        }
-                      }}
-                    >
-                      {isCopied ? (
-                        <>
-                          <Icons.Check style={{ fontSize: "14px" }} />
-                          {t("templateUploadFlow.copied")}
-                        </>
-                      ) : (
-                        <>
-                          <Icons.Copy style={{ fontSize: "14px" }} />
-                          {t("templateUploadFlow.copy")}
-                        </>
-                      )}
-                    </button>
-                  </div>
-                  <p
-                    style={{
-                      fontSize: "12px",
-                      color: "#6c757d",
-                      marginTop: "8px",
-                      marginBottom: "0",
-                      fontStyle: "italic",
-                    }}
-                  >
-                    {t("templateUploadFlow.copyTemplateID")}
-                  </p>
+            <AppModal
+              open={showTemplateIDModal}
+              onClose={handleCloseTemplateIDModal}
+              title={t("templateUploadFlow.templateid")}
+              size='md'
+              footer={
+                <div className='flex w-full justify-end gap-3'>
+                  <Button variant='outline' onClick={handleCloseTemplateIDModal}>
+                    {t("templateConfirmationModal.cancel")}
+                  </Button>
                 </div>
-              </Modal.Body>
-            </Modal>
+              }
+            >
+              <div className='space-y-2'>
+                <div className='flex items-center gap-3 rounded-xl border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] px-3 py-2.5'>
+                  <input
+                    ref={templateIDRef}
+                    type='text'
+                    value={selectedTemplateID || ""}
+                    readOnly
+                    aria-label={t("templateUploadFlow.templateid")}
+                    className='min-w-0 flex-1 border-0 bg-transparent font-mono text-sm font-medium text-[var(--modern-text,#0f172a)] outline-none'
+                  />
+                  <Button
+                    variant={isCopied ? "outline" : "primary"}
+                    onClick={handleCopyTemplateID}
+                    disabled={isCopied}
+                    className='inline-flex shrink-0 items-center gap-1.5'
+                  >
+                    {isCopied ? <Icons.Check size={14} /> : <Icons.Copy size={14} />}
+                    {isCopied ? t("templateUploadFlow.copied") : t("templateUploadFlow.copy")}
+                  </Button>
+                </div>
+                <p className='m-0 text-xs text-[var(--modern-muted,#64748b)]'>{t("templateUploadFlow.copyTemplateID")}</p>
+              </div>
+            </AppModal>
 
             {/* Template Activate Modal (Enhanced) */}
             <TemplatesConfirmationModal
@@ -652,29 +595,42 @@ const TemplatesPage = () => {
               itemIcon={<Icons.CopyTemplate size={25} color='#19d157' />}
               confirmText={t("templateUploadFlow.yesActive")}
               cancelText={t("templateConfirmationModal.cancel")}
+              confirmVariant='primary'
+              isLoading={isLoading}
             />
 
             {/* view template */}
-            <Modal show={showViewModal} onHide={handleCloseModal}>
-              <Modal.Header closeButton>
-                <Modal.Title style={{ color: "var(--text-primary)" }}>{docName}</Modal.Title>
-              </Modal.Header>
-              <Modal.Body className='d-flex'>
-                <Col>
-                  {isLoading ? (
-                    <div className='loader d-flex justify-content-center  align-items-center'>Loading...</div>
-                  ) : (
-                    Object.values(documentPages).map((page, index) => (
-                      <div key={index} style={{ position: "relative" }}>
-                        <img src={page.pagesPath} alt={page.pagesName} style={{ width: "100%", height: "auto" }} />
-                        <div className='page-name-footer'>{page.pagesName}</div>
+            <AppModal
+              open={showViewModal}
+              onClose={handleCloseModal}
+              title={docName}
+              size='xl'
+              footer={
+                <div className='flex w-full justify-end gap-3'>
+                  <Button variant='outline' onClick={handleCloseModal}>
+                    {t("templateConfirmationModal.cancel")}
+                  </Button>
+                </div>
+              }
+            >
+              <div className='max-h-[72vh] space-y-4 overflow-y-auto p-1'>
+                {isLoading ? (
+                  <div className='flex min-h-24 items-center justify-center text-sm text-[var(--modern-muted,#64748b)]' role='status'>
+                    Loading...
+                  </div>
+                ) : (
+                  Object.values(documentPages).map((page, index) => (
+                    <div key={index} className='overflow-hidden rounded-xl border border-[var(--modern-border,#e2e8f0)] bg-white'>
+                      <img src={page.pagesPath} alt={page.pagesName} className='block h-auto w-full' />
+                      <div className='border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] px-3 py-2 text-center text-xs font-semibold text-[var(--modern-text,#0f172a)]'>
+                        {page.pagesName}
                       </div>
-                    ))
-                  )}
-                </Col>
-              </Modal.Body>
-            </Modal>
-          </Grid>
+                    </div>
+                  ))
+                )}
+              </div>
+            </AppModal>
+          </div>
         </>
       )}
     </>

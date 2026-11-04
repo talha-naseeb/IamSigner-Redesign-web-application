@@ -19,11 +19,90 @@ const UploadedDocumentsTable = ({
   onRemoveTemplate,
   renderTemplateBadge,
   t,
+  compactStudio = false,
+  selectedMasterDocID = null,
+  onSelectFile,
 }) => {
   const translate = (key, fallback) => (typeof t === "function" ? t(key) || fallback : fallback);
 
   if (!uploadedFiles || uploadedFiles.length === 0) {
     return null;
+  }
+
+  if (compactStudio) {
+    return (
+      <div className='mt-3 space-y-2' id='upload_file_bx' data-testid='uploaded-documents-list'>
+        {uploadedFiles.map((fileName, index) => {
+          const masterDocId = masterDocIDs[index];
+          const hasTemplate = isTemplateApplied && isTemplateApplied[index];
+          const isSelected = selectedMasterDocID && masterDocId && String(selectedMasterDocID) === String(masterDocId);
+
+          return (
+            <div
+              key={masterDocId || index}
+              onClick={() => {
+                if (typeof onSelectFile === "function" && masterDocId) {
+                  onSelectFile(masterDocId, fileName);
+                }
+              }}
+              className={`flex items-center gap-3 rounded-2xl border px-3 py-2.5 transition-colors ${
+                onSelectFile ? "cursor-pointer" : ""
+              } ${
+                isSelected
+                  ? "border-[var(--modern-primary,#4d8dff)] bg-[var(--modern-raised,#f8fafc)]"
+                  : "border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] hover:border-[var(--modern-border-strong,#cbd5e1)]"
+              }`}
+            >
+              <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_15%,transparent)] text-[var(--modern-primary,#4d8dff)]'>
+                <Icons.PDFs size={20} />
+              </div>
+
+              <div className='min-w-0 flex-1'>
+                <div className='flex items-center gap-1.5'>
+                  <span className='truncate text-[13.5px] font-semibold text-[var(--modern-text,#0f172a)]'>
+                    {fileName}
+                  </span>
+                  {hasTemplate &&
+                    (renderTemplateBadge ? (
+                      renderTemplateBadge(index)
+                    ) : (
+                      <Icons.Templates size={16} title='Template applied' />
+                    ))}
+                </div>
+                <span className='block text-xs text-[var(--modern-muted,#64748b)]'>
+                  {translate("uploadDocFlow.readyForPreview", "Ready for preview")}
+                </span>
+              </div>
+
+              <div className='flex shrink-0 items-center gap-1.5' onClick={(e) => e.stopPropagation()}>
+                {onViewFile && (
+                  <button
+                    type='button'
+                    onClick={() => onViewFile(masterDocId, fileName)}
+                    title={translate("uploadDocFlow.view", "View")}
+                    aria-label={translate("uploadDocFlow.view", "View")}
+                    className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-transparent text-[var(--modern-muted,#64748b)] transition-colors hover:border-[var(--modern-primary,#4d8dff)] hover:text-[var(--modern-text,#0f172a)]'
+                  >
+                    <Icons.View size={16} />
+                  </button>
+                )}
+                {onDeleteFile && (
+                  <button
+                    type='button'
+                    onClick={() => onDeleteFile(masterDocId, index)}
+                    title={translate("uploadDocFlow.delete", "Delete")}
+                    aria-label={translate("uploadDocFlow.delete", "Delete")}
+                    className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-transparent text-[var(--modern-muted,#64748b)] transition-colors hover:border-[var(--modern-danger,#ef4444)] hover:text-[var(--modern-danger,#ef4444)]'
+                  >
+                    <Icons.DeleteAction size={16} />
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
   }
 
   return (

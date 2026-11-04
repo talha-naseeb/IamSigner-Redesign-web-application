@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import UploadSourceCard from "./UploadSourceCard";
+import { getCleanTemplateNameFromFile } from "@/Components/UI/dataPrimitives";
 
 function GoogleDrivePicker({
   uploadedFiles = [],
@@ -23,6 +24,7 @@ function GoogleDrivePicker({
   TemplateID,
   templateScope,
   templateName,
+  setTemplateName,
   isTemplate = false,
 }) {
   const { t } = useTranslation();
@@ -91,8 +93,14 @@ function GoogleDrivePicker({
 
     try {
       if (isTemplateFlow) {
+        const effectiveTemplateName = getCleanTemplateNameFromFile(fileName, templateName);
+
+        if (setTemplateName && (!templateName || !templateName.trim())) {
+          setTemplateName(effectiveTemplateName);
+        }
+
         const body = {
-          TemplateName: templateName,
+          TemplateName: effectiveTemplateName,
           TemplateID: TemplateID,
           Scope: templateScope === "Individual" ? "I" : "B",
           PrimaryDocs: [
@@ -166,7 +174,7 @@ function GoogleDrivePicker({
       <UploadSourceCard onClick={handleOpenPicker} role='button' tabIndex={0}>
         <Icons.GoogleDrive alt='Google Drive Image' />
         <Form.Group controlId='file-input-add-gdrive' className='space-y-0'>
-          <Form.Label className='m-0 cursor-pointer whitespace-nowrap text-sm font-medium'>{t("uploadDocFlow.googledrive")}</Form.Label>
+          <Form.Label className='m-0 cursor-pointer whitespace-nowrap text-sm font-medium'>{t("uploadDocFlow.googleDrive")}</Form.Label>
           <Form.Control
             className='!sr-only'
             type='file'

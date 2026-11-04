@@ -22,12 +22,13 @@ import UserLisence from "@/Components/UserLisence/UserLisence";
 import { formatTableDate } from "@/Components/DashboardStatuses/DocumentStatusTable";
 import integrationService from "@/services/integrationService";
 import uploadFlowService from "@/services/uploadFlowService";
-import { Bot, ArrowLeft, Plus, Eye, Download, Edit3, PenTool, FileText, X } from "lucide-react";
+import { Bot, ArrowLeft, Plus, Eye, Download, Edit3, PenTool, FileText, X, Search, Loader2 } from "lucide-react";
 
 function ListOfDocuments({ registerSignID }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [textData, setTextData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [pdfModal, setPdfModal] = useState(false);
   const [pdfUrl, setPdfUrl] = useState("");
   const rowsPerPage = 30;
@@ -36,7 +37,7 @@ function ListOfDocuments({ registerSignID }) {
   const isSerial = true;
   const description = "";
   const referenceNumber = "";
-  const { user, userAccess } = useUser();
+  const { user, userAccess, loading } = useUser();
 
   const goBack = () => navigate(-1);
 
@@ -186,7 +187,31 @@ function ListOfDocuments({ registerSignID }) {
     return parts[parts.length - 1];
   }
 
-  if (!userAccess?.macAI || userAccess?.remainingDays <= 0) {
+  const filteredData = React.useMemo(() => {
+    if (!searchQuery.trim()) return textData;
+    const q = searchQuery.toLowerCase();
+    return textData.filter((item) => {
+      const name = (item.name || "").toLowerCase();
+      const docType = (item.documentType || "").toLowerCase();
+      const customType = (item.customDocumentType || "").toLowerCase();
+      return name.includes(q) || docType.includes(q) || customType.includes(q);
+    });
+  }, [textData, searchQuery]);
+
+  // 1. While user profile / access is loading on reload, show smooth loading spinner
+  if (loading || !userAccess) {
+    return (
+      <div className='w-full min-h-[calc(100vh-140px)] flex items-center justify-center p-8 bg-[var(--modern-bg)]'>
+        <div className='flex flex-col items-center gap-3 text-[var(--modern-muted)]'>
+          <Loader2 size={32} className='animate-spin text-[var(--theme-color,#4d8dff)]' />
+          <span className='text-sm font-medium'>{t("common.loading", "Loading...")}</span>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Only check license expiry after userAccess has definitively loaded
+  if (!userAccess?.macAI || Number(userAccess?.remainingDays) <= 0) {
     return <UserLisence />;
   }
 
@@ -214,20 +239,49 @@ function ListOfDocuments({ registerSignID }) {
                   {t("macAi.listMac")}
                 </h1>
                 <span className='text-xs text-[var(--modern-muted)]'>
-                  {textData.length} {t("tablesLabel.document")}
+                  {filteredData.length} {t("tablesLabel.document")}
                 </span>
               </div>
             </div>
           </div>
 
-          <Button
-            variant='none'
-            onClick={() => navigate("/mac-ai")}
-            className='inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-[var(--theme-color)] text-white hover:opacity-90 transition-opacity'
-          >
-            <Plus size={16} />
-            <span>{t("macAi.GenerateAItext") || "Create AI Document"}</span>
-          </Button>
+          <div className='flex items-center gap-2.5'>
+            {/* Search filter */}
+            <div className='relative'>
+              <Search
+                size={16}
+                className='absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 text-[var(--modern-muted)] pointer-events-none'
+              />
+              <input
+                type='text'
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setPage(0);
+                }}
+                placeholder={t("common.search", "Search...")}
+                className='h-9 w-48 sm:w-64 pl-9 pr-8 rtl:pl-8 rtl:pr-9 text-xs rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] placeholder:text-[var(--modern-muted)] focus:outline-none focus:border-[var(--theme-color)] transition-colors'
+              />
+              {searchQuery && (
+                <button
+                  type='button'
+                  onClick={() => setSearchQuery("")}
+                  className='absolute right-2.5 rtl:right-auto rtl:left-2.5 top-1/2 -translate-y-1/2 text-[var(--modern-muted)] hover:text-[var(--modern-text)] cursor-pointer'
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            <Button
+              variant='none'
+              onClick={() => navigate("/mac-ai")}
+              className='inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-[var(--theme-color)] text-white hover:opacity-90 transition-opacity'
+            >
+              <Plus size={16} />
+              <span>{t("macAi.GenerateAItext") || "Create AI Document"}</span>
+            </Button>
+          </div>
         </div>
 
         {/* Table Container */}
@@ -258,7 +312,7 @@ function ListOfDocuments({ registerSignID }) {
             </TableHead>
 
             <TableBody>
-              {textData.length === 0 ? (
+              {filteredData.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={columns.length} className='table-empty-state-cell py-12'>
                     <TableEmptyState
@@ -268,7 +322,7 @@ function ListOfDocuments({ registerSignID }) {
                   </TableCell>
                 </TableRow>
               ) : (
-                textData
+                filteredData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow key={row.aiTextID || index} hover className='transition-colors'>
@@ -348,18 +402,18 @@ function ListOfDocuments({ registerSignID }) {
         {/* Pagination Bar */}
         <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 pt-3 border-t border-[var(--modern-border)] text-xs text-[var(--modern-muted)]'>
           <div>
-            {textData.length ? page * rowsPerPage + 1 : 0} -{" "}
-            {Math.min((page + 1) * rowsPerPage, textData.length)}{" "}
-            {t("tablesLabel.documentsof")} {textData.length} {t("tablesLabel.document")}
+            {filteredData.length ? page * rowsPerPage + 1 : 0} -{" "}
+            {Math.min((page + 1) * rowsPerPage, filteredData.length)}{" "}
+            {t("tablesLabel.documentsof")} {filteredData.length} {t("tablesLabel.document")}
           </div>
           <Stack spacing={2}>
             <Pagination
-              count={Math.max(1, Math.ceil(textData.length / rowsPerPage))}
+              count={Math.max(1, Math.ceil(filteredData.length / rowsPerPage))}
               variant='outlined'
               shape='rounded'
               page={Math.min(
                 page + 1,
-                Math.max(1, Math.ceil(textData.length / rowsPerPage))
+                Math.max(1, Math.ceil(filteredData.length / rowsPerPage))
               )}
               onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
             />

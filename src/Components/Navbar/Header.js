@@ -13,6 +13,7 @@ import { useTheme } from "@/Context/ThemeContext";
 import { PALETTE_STORAGE_KEY } from "@/Context/themeUtils";
 import { SIDEBAR_COLLAPSED_STORAGE_KEY, useSidebarNavigation } from "./SidebarNavigationContext";
 import { tokenManager } from "@/services/tokenManager";
+import { clearWorkflowStorage } from "@/utils/workflowStorage";
 
 function Header() {
   const [isLoading, setIsLoading] = useState(false);
@@ -211,7 +212,7 @@ function Header() {
         <span>{t("header.notification")}</span>
       </Nav.Link> */}
 
-      <Nav.Link as={Link} to='/home' className='icon-wrapper'>
+      <Nav.Link as={Link} to='/home' className='icon-wrapper' onClick={clearWorkflowStorage}>
         <Icons.Home size={22} />
         <span>{t("header.home")}</span>
       </Nav.Link>

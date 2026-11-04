@@ -71,7 +71,7 @@ const DropdownMenu = ({
                 item={item}
                 isOpen={isOpen}
                 className="menuLinks sidebar-sub-link"
-                onClick={item.isSubscriptionOnly ? (event) => onItemClick?.(event, item) : undefined}
+                onClick={(event) => onItemClick?.(event, item)}
                 onNavigate={onNavigate}
               />
             ))}

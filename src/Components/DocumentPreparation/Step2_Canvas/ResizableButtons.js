@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ResizableBox } from "react-resizable";
+import { getNewControlDimensions } from "@/Components/SignaturePlacement/SmartGuides";
 import "react-resizable/css/styles.css";
 
 const ResizableButtons = ({ children, button, onUpdateControlsLocation, signatoryColors, setResizing, selectedImage, onResizeGuides, onResizeGuideEnd, ...props }) => {
@@ -33,21 +34,25 @@ const ResizableButtons = ({ children, button, onUpdateControlsLocation, signator
 
   // Conditionally set width and height for specific button types
   const getButtonDimensions = () => {
-    const widthValue = Number(button?.width) > 0 ? Number(button.width) : 100;
-    const heightValue = Number(button?.height) > 0 ? Number(button.height) : 100;
+    const fallback = getNewControlDimensions(button);
+    const w = parseFloat(button?.width);
+    const h = parseFloat(button?.height);
 
-    if (["Stamp", "QR Code", "Image"].includes(button.label)) {
-      return { width: widthValue, height: heightValue };
-    } else {
-      return { width: button.width, height: button.height };
-    }
+    return {
+      width: Number.isFinite(w) && w > 0 ? w : fallback.width,
+      height: Number.isFinite(h) && h > 0 ? h : fallback.height,
+    };
   };
 
   const { width, height } = getButtonDimensions();
+  const isSquare = ["Stamp", "QR Code", "Image"].includes(button?.label);
+  const signatoryColor =
+    (button?.selectedSignatoryID && signatoryColors?.[button.selectedSignatoryID]) ||
+    "#4d8dff";
 
   return (
     <ResizableBox
-      className='field-button'
+      className='field-button group/field relative flex items-center justify-center select-none'
       width={width}
       height={height}
       onResizeStart={() => setResizing(true)}
@@ -73,20 +78,30 @@ const ResizableButtons = ({ children, button, onUpdateControlsLocation, signator
         );
       }}
       draggableOpts={{}}
-      minConstraints={[110, 40]}
-      maxConstraints={[200, 200]}
+      minConstraints={[isSquare ? 60 : 80, isSquare ? 60 : 30]}
+      maxConstraints={[320, 320]}
       style={{
-        border: `2px dotted ${signatoryColors?.[button?.selectedSignatoryID] || "#e84600"}`,
+        border: `2px dashed ${signatoryColor}`,
+        borderRadius: "8px",
         cursor: "grab",
         position: button.label === "Text" ? "relative" : "",
         fontFamily: button.fontStyle || "",
-        color: button.fontColor || "black",
-        fontSize: button.fontSize || "",
+        color: signatoryColor,
+        fontSize: button.fontSize && parseInt(button.fontSize) !== 16 ? button.fontSize : "13px",
+        fontWeight: "600",
         backgroundColor: "rgb(12 154 215 / 4%)",
+        boxSizing: "border-box",
+        overflow: "visible",
       }}
       title={button.email + "    " + button.name}
       {...props}
     >
+      {button?.isRequired && (
+        <span
+          className='pointer-events-none absolute -top-1 -left-1 z-10 h-2.5 w-2.5 rounded-full border border-white bg-[var(--modern-danger,#ef4444)] shadow-xs'
+          title='Required'
+        />
+      )}
       {children}
     </ResizableBox>
   );

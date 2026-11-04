@@ -76,6 +76,7 @@ const ImageWithDropZone = ({
 
   useEffect(() => {
     const createButtonOnClick = async () => {
+      const dimensions = getNewControlDimensions({ label: buttonLabel });
       const controlsLocationBody = {
         ControlID: controlID,
         ControlIdentifier: "",
@@ -98,9 +99,9 @@ const ImageWithDropZone = ({
         RegisterSignID: RegisterSignID,
         MasterDocPagesID: masterDocPagesId,
         SignatoriesID: selectedSignatoryID,
-        Width: buttonLabel === "QR Code" || buttonLabel === "Stamp" || buttonLabel === "Image" ? "100px" : "110px",
-        Height: buttonLabel === "QR Code" || buttonLabel === "Stamp" || buttonLabel === "Image" ? "100px" : "40px",
-        FontSize: "16px",
+        Width: `${dimensions.width}px`,
+        Height: `${dimensions.height}px`,
+        FontSize: "13px",
         FontColor: "black",
         FontStyle: "Jost",
         PageMaxWidth: `${imgWidth - 108}px`,
@@ -340,6 +341,8 @@ const ImageWithDropZone = ({
               ...(prevMap[selectedImage] || []),
               {
                 ...item,
+                width: buttonWidth,
+                height: buttonHeight,
                 position: { x, y },
               },
             ],
@@ -369,7 +372,7 @@ const ImageWithDropZone = ({
             IsCheckBox: item.label === "Checkbox" ? true : false,
             IsDigitalSignature: false,
             CustomPlaceHolder: getPlaceholder(item.label),
-            FontSize: "16px",
+            FontSize: "13px",
             FontColor: "black",
             FontStyle: "Jost",
             PageMaxWidth: `${imgWidth - 108}px`,
