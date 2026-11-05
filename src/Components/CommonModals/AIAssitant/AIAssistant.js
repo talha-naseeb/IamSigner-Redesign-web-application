@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import { Sparkles } from "lucide-react";
 
-const AIAssistant = () => {
+const AIAssistant = ({ className = "", style = {} }) => {
   const [show, setShow] = useState(false);
   const [textareaValue, setTextareaValue] = useState("");
   const { t } = useTranslation("");
@@ -36,12 +36,17 @@ const AIAssistant = () => {
     },
   ];
 
+  const isStatic = className.includes("static") || className.includes("relative");
+  const positionClass = isStatic ? "" : "fixed";
+  const defaultPlacement = isStatic ? "" : "bottom-6 right-6 rtl:right-auto rtl:left-6";
+
   return (
     <>
       <button
         type='button'
         aria-label={t("AIAssistant.AIAssistant", "AI Assistant")}
-        className='group fixed bottom-6 right-6 rtl:right-auto rtl:left-6 z-40 inline-flex h-11 items-center rounded-full bg-gradient-to-br from-[var(--modern-primary,#4d8dff)] to-[#5b5bf0] text-white shadow-lg shadow-[var(--modern-primary,#4d8dff)]/25 border border-white/20 transition-all duration-300 ease-out cursor-pointer hover:shadow-xl hover:scale-105 active:scale-95 p-0 overflow-hidden'
+        className={`group z-40 inline-flex h-11 items-center rounded-full bg-gradient-to-br from-[var(--modern-primary,#4d8dff)] to-[#5b5bf0] text-white shadow-lg shadow-[var(--modern-primary,#4d8dff)]/25 border border-white/20 transition-all duration-300 ease-out cursor-pointer hover:shadow-xl hover:scale-105 active:scale-95 p-0 overflow-hidden ${positionClass} ${className || defaultPlacement}`}
+        style={style}
         onClick={handleShow}
       >
         <span className='flex h-11 w-11 shrink-0 items-center justify-center'>

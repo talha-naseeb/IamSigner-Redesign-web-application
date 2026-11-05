@@ -229,7 +229,7 @@
   },
   "tempReferNum": {
     "referenceNumberOptional": "Reference Number (Optional)",
-    "uploadDescription": "When using our electronic signature system, it's essential to maintain proper documentation and organization. To achieve this, consider adding a reference number or identifier to each document. A reference number helps streamline your document management process, making it easier to locate, track, and retrieve specific documents in the future."
+    "uploadDescription": "Add an optional reference ID to help track and identify this document."
   },
   "dashboardCardStatuses": {
     "notSignatoryLeft": "There are no any signatories to update.",
@@ -637,7 +637,7 @@
     "NoNotifications": "No notifications.",
     "errorDownloadingFile": "Error downloading file. Please try again.",
     "revertedText": "Once it's sent, it can't be undone, so make sure you're certain before sending.",
-    "docSend": "Document will sent to signatories to sign",
+    "docSend": "Document will be sent to signatories to sign",
     "deleteControl": "Delete Control",
     "deleteTemplates": "Delete Page",
     "UploadsupportedDocument": "Upload supporting Document",
@@ -752,7 +752,7 @@
     "sureToDelete": "Are you sure, you want to delete this signatory?",
     "IAMSigner": "I'm the only signer",
     "referenceNumberOptional": "Reference Number (Optional)",
-    "uploadDescription": "When using our electronic signature system, it's essential to maintain proper documentation and organization. To achieve this, consider adding a reference number or identifier to each document. A reference number helps streamline your document management process, making it easier to locate, track, and retrieve specific documents in the future.",
+    "uploadDescription": "Add an optional reference ID to help track and identify this document.",
     "descriptionupload": "Description",
     "descriptionPlaceholder": "Add description...",
     "errorfetchingfields": "Error fetching standard fields",
@@ -760,6 +760,7 @@
     "errDelete": "Error deleting page.",
     "errPages": "Error in reordering pages",
     "placeSignatoryatleast": "Place at least one signature or Stamp",
+    "placeSignatoryControl": "Aleast one control for this signatory",
     "errInProcessing": "Error in proceeding to the next step",
     "errorPreviousStep": "Error in going to previous step",
     "signatory": "Signatory",
@@ -849,6 +850,12 @@
     "sureDelete": "Are you sure you want to delete the file?",
     "DragCsv": "Drag-drop, or upload CSV",
     "DownloadCSV": "Download a sample for import signers file.",
+    "importSigners": "Import Signers",
+    "uploadCSVDesc": "Upload a CSV file containing your recipients (Name and Email columns) for bulk document generation.",
+    "downloadSample": "Download Sample CSV",
+    "csvRequirement": "Supports .csv files with Name and Email headers (UTF-8 encoded)",
+    "signatoriesPreview": "Recipients Preview",
+    "uploadCsvToContinue": "Upload CSV to continue",
     "ReminderSettings": "Security settings",
     "remindBeforeExpiry": "Send reminder to signer 1 day before signature request expires",
     "autoReminder": "Auto reminder in days.",
@@ -1762,6 +1769,8 @@
     "qrDetail2Placeholder": "e.g. Number: XXXXXXX",
     "qrDetail3Placeholder": "e.g. Email: abc@gmail.com",
     "qrDetail4Placeholder": "Enter anything...",
+    "signerColor": "Signer Color",
+    "signerColorDefault": "Signer Color (Default)",
     "itemAlreadyPresent": "Item is already present. Select another."
   },
   "DMS": {

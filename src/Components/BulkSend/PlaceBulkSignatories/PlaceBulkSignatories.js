@@ -9,7 +9,7 @@ import uploadFlowService from "@/services/uploadFlowService";
 import { toast } from "react-toastify";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 
-function PlaceBulkSignatories({ setActiveStep, setCompletedSteps }) {
+function PlaceBulkSignatories({ setActiveStep, setCompletedSteps, onPreviewSync }) {
   const [isLoading, setIsLoading] = useState(false);
   const [fileName, setFileName] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -181,54 +181,123 @@ function PlaceBulkSignatories({ setActiveStep, setCompletedSteps }) {
 
   useEffect(() => {
     setIsFileValid(data.length > 0 && data.every((row) => row.emailStatus === "Valid"));
-  }, [data]);
+    if (typeof onPreviewSync === "function") {
+      const recipientChips = data.map((row, idx) => ({
+        name: row.name || `Signer ${idx + 1}`,
+        email: row.email || "",
+        signColor: "#4d8dff",
+        signatureType: "Needs To Sign",
+      }));
+      onPreviewSync({ recipients: recipientChips });
+    }
+  }, [data, onPreviewSync]);
 
   return (
-    <div className='container max-w-5xl mx-auto px-4 mt-4'>
+    <div className='flex flex-col h-full min-h-[480px] bg-[var(--modern-card,#ffffff)]'>
+      {/* Studio Panel Header */}
+      <div className='px-5 pt-5 pb-3.5 shrink-0 border-b border-[var(--modern-border,#e2e8f0)]'>
+        <small className='block font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--modern-primary,#4d8dff)]'>
+          {t("uploadDocFlow.step", "STEP")} 2 {t("uploadDocFlow.of", "OF")} 4
+        </small>
+        <h1 className='mt-0.5 text-[22px] font-bold tracking-tight text-[var(--modern-text)]'>
+          {t("uploadDocFlow.importSigners", "Import Signers")}
+        </h1>
+        <p className='mt-1 text-[13px] text-[var(--modern-muted)] leading-relaxed'>
+          {t(
+            "uploadDocFlow.uploadCSVDesc",
+            "Upload a CSV file containing your recipients (Name and Email columns) for bulk document generation."
+          )}
+        </p>
 
-      <div
-        className='flex items-center justify-center gap-2 p-3.5 rounded-md cursor-pointer bg-[var(--modern-primary,#6366f1)] text-white font-semibold hover:opacity-90 transition-opacity'
-        onClick={downloadSampleCSV}
-      >
-        <Icons.DownloadAction size={22} />
-        <label className='m-0 cursor-pointer'>{t("uploadDocFlow.DownloadCSV")}</label>
+        {/* Sample CSV Download Pill Button */}
+        <button
+          type='button'
+          onClick={downloadSampleCSV}
+          className='mt-3 w-full inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl border border-[var(--modern-border-strong,#cbd5e1)] bg-[var(--modern-raised,#f8fafc)] hover:bg-[var(--modern-card,#ffffff)] text-[var(--modern-primary,#4d8dff)] text-xs font-semibold transition-colors cursor-pointer'
+        >
+          <Icons.DownloadAction size={15} />
+          <span>{t("uploadDocFlow.downloadSample", "Download Sample CSV")}</span>
+        </button>
       </div>
 
-      {!fileName && (
-        <div
-          {...getRootProps()}
-          className='border-2 border-dashed border-[var(--modern-border-strong)] rounded-lg p-10 bg-[var(--modern-card)] flex flex-col items-center justify-center gap-2 text-center mt-4 transition-colors hover:border-[var(--modern-primary)] cursor-pointer'
-        >
-          <input {...getInputProps()} />
-          <Icons.UploadCSV size={45} color='var(--modern-primary,#6366f1)' />
-          <p className='text-base text-[var(--modern-text)] m-0'>
-            {t("uploadDocFlow.DragCsv")}{" "}
-            <span className='text-[var(--modern-primary,#6366f1)] underline mx-1 font-medium'>{t("uploadDocFlow.here")}</span>
-          </p>
-        </div>
-      )}
+      {/* Studio Scrollable Body */}
+      <div className='min-h-0 flex-1 overflow-y-auto px-5 py-4 space-y-4'>
+        {/* CSV Dropzone */}
+        {!fileName && (
+          <div
+            {...getRootProps()}
+            className='border-2 border-dashed border-[var(--modern-border-strong,#cbd5e1)] hover:border-[var(--modern-primary,#4d8dff)] rounded-2xl p-6 bg-[var(--modern-raised)]/40 hover:bg-[var(--modern-raised)] flex flex-col items-center justify-center text-center transition-colors cursor-pointer'
+          >
+            <input {...getInputProps()} />
+            <div className='w-12 h-12 rounded-xl bg-[var(--modern-primary)]/10 text-[var(--modern-primary)] flex items-center justify-center mb-3'>
+              <Icons.UploadCSV size={24} />
+            </div>
+            <p className='text-sm font-semibold text-[var(--modern-text)] m-0'>
+              {t("uploadDocFlow.DragCsv", "Drag-drop, or upload CSV")}{" "}
+              <span className='text-[var(--modern-primary)] underline cursor-pointer'>{t("uploadDocFlow.here", "here")}</span>
+            </p>
+            <p className='text-xs text-[var(--modern-muted)] mt-1.5 max-w-[260px]'>
+              {t("uploadDocFlow.csvRequirement", "Supports .csv files with Name and Email headers (UTF-8 encoded)")}
+            </p>
+          </div>
+        )}
 
-      {fileName && (
-        <div className='flex items-center justify-between p-3.5 rounded-md border border-[var(--modern-border)] bg-[var(--modern-raised)] mt-4'>
-          <label className='flex items-center gap-2 text-sm font-medium text-[var(--modern-text)] m-0'>
-            <Icons.UploadCSV size={24} />
-            {fileName}
-          </label>
-          <Icons.DeleteAction size={22} className='cursor-pointer text-[var(--modern-danger,#ef4444)] hover:opacity-80' onClick={handleDelete} />
-        </div>
-      )}
+        {/* Uploaded File Pill Card */}
+        {fileName && (
+          <div className='flex items-center justify-between p-3.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)]/70'>
+            <div className='flex items-center gap-3 min-w-0'>
+              <div className='w-9 h-9 rounded-lg bg-[var(--modern-primary)]/15 text-[var(--modern-primary)] flex items-center justify-center shrink-0'>
+                <Icons.UploadCSV size={20} />
+              </div>
+              <div className='min-w-0'>
+                <div className='text-xs font-semibold text-[var(--modern-text)] truncate max-w-[190px]'>{fileName}</div>
+                <div className='text-[11px] text-[var(--modern-muted)] mt-0.5 flex items-center gap-1.5 flex-wrap'>
+                  <span>{data.length} {t("tablesLabel.signatories", "Signatories")}</span>
+                  <span>·</span>
+                  {isFileValid ? (
+                    <span className='text-[var(--modern-success,#16a34a)] font-medium'>
+                      ✓ {t("uploadDocFlow.allValid", "All valid")}
+                    </span>
+                  ) : (
+                    <span className='text-[var(--modern-danger,#ef4444)] font-medium'>
+                      ⚠ {t("uploadDocFlow.containsInvalid", "Invalid emails")}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+            <button
+              type='button'
+              onClick={handleDelete}
+              className='p-1.5 rounded-lg text-[var(--modern-muted)] hover:text-[var(--modern-danger,#ef4444)] hover:bg-[var(--modern-card)] transition-colors cursor-pointer border-0 bg-transparent'
+              aria-label='Delete CSV file'
+              title={t("uploadDocFlow.delete", "Delete")}
+            >
+              <Icons.DeleteAction size={18} />
+            </button>
+          </div>
+        )}
 
-      {fileName && (
-        <Grid className='my-4'>
-          <div className='mb-20 p-4 rounded-lg border border-[var(--modern-border)] bg-[var(--modern-card)]'>
-            <TableContainer component={Paper} className='border border-[var(--modern-border)] rounded-md bg-[var(--modern-card)] shadow-none'>
-              <Table stickyHeader style={{ border: "none", minWidth: "800px" }}>
+        {/* CSV Preview Table */}
+        {fileName && data.length > 0 && (
+          <div className='rounded-xl border border-[var(--modern-border)] overflow-hidden bg-[var(--modern-card)]'>
+            <div className='px-3.5 py-2.5 bg-[var(--modern-raised)] border-b border-[var(--modern-border)] flex items-center justify-between'>
+              <span className='text-xs font-semibold text-[var(--modern-text)]'>
+                {t("uploadDocFlow.signatoriesPreview", "Recipients Preview")}
+              </span>
+              <span className='text-[11px] text-[var(--modern-muted)] font-mono'>
+                {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} / {data.length}
+              </span>
+            </div>
+
+            <div className='overflow-x-auto'>
+              <Table className='w-full text-xs'>
                 <TableHead>
-                  <TableRow>
+                  <TableRow className='bg-[var(--modern-raised)]/60'>
                     {columns.map((column) => (
                       <TableCell
                         key={column.label}
-                        className='bg-[var(--modern-raised)] text-[var(--modern-text)] border-b border-[var(--modern-border)] font-semibold'
+                        className='text-[var(--modern-text)] border-b border-[var(--modern-border)] font-semibold py-2 px-3 text-xs'
                       >
                         {column.label}
                       </TableCell>
@@ -237,15 +306,15 @@ function PlaceBulkSignatories({ setActiveStep, setCompletedSteps }) {
                 </TableHead>
                 <TableBody>
                   {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                    <TableRow key={index} className='hover:bg-[var(--modern-raised)]/50 transition-colors'>
-                      <TableCell className='text-[var(--modern-text)] border-b border-[var(--modern-border)]'>{row.name}</TableCell>
-                      <TableCell className='text-[var(--modern-text)] border-b border-[var(--modern-border)]'>{row.email}</TableCell>
-                      <TableCell className='border-b border-[var(--modern-border)]'>
+                    <TableRow key={index} className='hover:bg-[var(--modern-raised)]/50 transition-colors border-b border-[var(--modern-border)]'>
+                      <TableCell className='text-[var(--modern-text)] py-2 px-3 font-medium text-xs truncate max-w-[100px]'>{row.name || "—"}</TableCell>
+                      <TableCell className='text-[var(--modern-muted)] py-2 px-3 font-mono text-[11px] truncate max-w-[130px]'>{row.email || "—"}</TableCell>
+                      <TableCell className='py-2 px-3'>
                         <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                             row.emailStatus === "Valid"
                               ? "bg-[var(--modern-success,#16a34a)]/15 text-[var(--modern-success,#16a34a)] border border-[var(--modern-success,#16a34a)]/30"
-                              : "bg-[var(--modern-muted,#64748b)]/15 text-[var(--modern-muted,#64748b)] border border-[var(--modern-muted,#64748b)]/30"
+                              : "bg-[var(--modern-danger,#ef4444)]/15 text-[var(--modern-danger,#ef4444)] border border-[var(--modern-danger,#ef4444)]/30"
                           }`}
                         >
                           {row.emailStatus}
@@ -255,18 +324,28 @@ function PlaceBulkSignatories({ setActiveStep, setCompletedSteps }) {
                   ))}
                 </TableBody>
               </Table>
-            </TableContainer>
-            <div className='flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 text-sm text-[var(--modern-muted)]'>
-              <div>
-                {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.signatoriesof")} {data.length} {t("tablesLabel.signatories")}
+            </div>
+
+            <div className='p-3 border-t border-[var(--modern-border)] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[var(--modern-muted)]'>
+              <div className='text-[11px]'>
+                {page * rowsPerPage + 1} - {Math.min((page + 1) * rowsPerPage, data.length)} {t("tablesLabel.signatoriesof", "of")} {data.length}
               </div>
-              <Stack spacing={2}>
-                <Pagination count={Math.ceil(data.length / rowsPerPage)} variant='outlined' shape='rounded' page={page + 1} onChange={(event, newPage) => handleChangePage(event, newPage - 1)} />
-              </Stack>
+              {Math.ceil(data.length / rowsPerPage) > 1 && (
+                <Stack spacing={2}>
+                  <Pagination
+                    count={Math.ceil(data.length / rowsPerPage)}
+                    size='small'
+                    variant='outlined'
+                    shape='rounded'
+                    page={page + 1}
+                    onChange={(event, newPage) => handleChangePage(event, newPage - 1)}
+                  />
+                </Stack>
+              )}
             </div>
           </div>
-        </Grid>
-      )}
+        )}
+      </div>
 
       <DeleteConfirmationModal
         show={showModal}
@@ -283,19 +362,47 @@ function PlaceBulkSignatories({ setActiveStep, setCompletedSteps }) {
         itemIconSrc={Icons.Upload}
       />
 
-      <div className='fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-3 border-t border-[var(--modern-border)] bg-[var(--modern-card)]'>
-        <Button variant='outline' id='hide_part_one' onClick={handleBack} disabled={isLoading}>
+      {/* Studio Sticky Footer */}
+      <div className='mt-auto flex items-center justify-between gap-2.5 border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f8fafc)]/80 px-5 py-3.5 shrink-0'>
+        <Button
+          variant='outline'
+          id='hide_part_one'
+          onClick={handleBack}
+          disabled={isLoading}
+          className='!h-[42px] !rounded-full !px-4 font-semibold shrink-0 hover:border-[var(--modern-primary)] hover:text-[var(--modern-primary)] hover:bg-[color-mix(in_srgb,var(--modern-primary)_8%,var(--modern-card))] transition-all'
+        >
           {t("uploadDocFlow.back")}
         </Button>
 
-        <Button variant='primary' onClick={handleContinue} id='hide_part_one' disabled={!isFileValid || isLoading}>
+        <div className='flex min-w-0 flex-1 items-center gap-2 text-xs text-[var(--modern-muted,#64748b)]'>
+          <span
+            className={`h-2 w-2 shrink-0 rounded-full ${
+              isFileValid
+                ? "bg-[var(--modern-success,#10b981)]"
+                : "bg-[var(--modern-warning,#f59e0b)]"
+            }`}
+          />
+          <span className='truncate'>
+            {data.length > 0
+              ? `${data.length} ${t("tablesLabel.signatories", "signatories")}`
+              : t("uploadDocFlow.uploadCsvToContinue", "Upload CSV to continue")}
+          </span>
+        </div>
+
+        <Button
+          variant='primary'
+          onClick={handleContinue}
+          id='hide_part_one'
+          disabled={!isFileValid || isLoading}
+          className='!h-[42px] !rounded-full !px-6 font-semibold shrink-0 inline-flex items-center gap-2'
+        >
           {isLoading ? (
             <span className='flex items-center gap-2'>
-              <span className='inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' />
-              {t("uploadDocFlow.Continue")}
+              <span className='inline-block h-3.5 w-3.5 border-2 border-current border-t-transparent rounded-full animate-spin' />
+              <span>{t("uploadDocFlow.Continue")}</span>
             </span>
           ) : (
-            t("uploadDocFlow.Continue")
+            <span>{t("uploadDocFlow.Continue")}</span>
           )}
         </Button>
       </div>

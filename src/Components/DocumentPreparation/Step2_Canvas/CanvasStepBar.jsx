@@ -31,6 +31,7 @@ const CanvasStepBar = ({
         id='hide_part_one'
         onClick={onBack}
         disabled={isLoading}
+        className='hover:border-[var(--modern-primary)] hover:text-[var(--modern-primary)] hover:bg-[color-mix(in_srgb,var(--modern-primary)_8%,var(--modern-card))] transition-all'
       >
         {backLabel || translate("uploadDocFlow.back", "Back")}
       </Button>

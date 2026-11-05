@@ -25,7 +25,7 @@ const DocumentStepper = ({
   steps: customSteps,
   t: customT,
   className = "",
-  variant = "sidebar",
+  variant = "studio",
   onStepClick,
 }) => {
   const location = useLocation();
@@ -33,15 +33,24 @@ const DocumentStepper = ({
   const { t: hookT } = useTranslation();
   const t = customT || hookT;
 
-  // Auto-detect template flow if not explicitly defined and route matches template creation/editing
+  // Auto-detect flow if not explicitly defined
   let resolvedFlow = flowType;
   if (!resolvedFlow) {
-    const isTemplateRoute =
-      location?.pathname?.includes("/create-templates") ||
-      location?.pathname?.includes("/edit-templates") ||
-      location?.pathname?.includes("/createTemplates") ||
-      location?.pathname?.includes("/editTemplates");
-    resolvedFlow = isTemplateRoute ? STEPPER_FLOWS.TEMPLATES : STEPPER_FLOWS.UPLOAD;
+    const path = location?.pathname || "";
+    if (
+      path.includes("/create-templates") ||
+      path.includes("/edit-templates") ||
+      path.includes("/createTemplates") ||
+      path.includes("/editTemplates")
+    ) {
+      resolvedFlow = STEPPER_FLOWS.TEMPLATES;
+    } else if (path.includes("/upload-bulk")) {
+      resolvedFlow = STEPPER_FLOWS.BULK;
+    } else if (path.includes("/self-sign")) {
+      resolvedFlow = STEPPER_FLOWS.SELF_SIGN;
+    } else {
+      resolvedFlow = STEPPER_FLOWS.UPLOAD;
+    }
   }
 
   const steps = getStepsForFlow(resolvedFlow, customSteps);

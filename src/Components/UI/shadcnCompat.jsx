@@ -29,7 +29,7 @@ export const Button = forwardRef(function ShadcnButton(
     secondary: "border-0 bg-[var(--modern-raised,#f1f5f9)] text-[var(--modern-text,#0f172a)] hover:brightness-95",
     light: "border-0 bg-[var(--modern-raised,#f1f5f9)] text-[var(--modern-text,#0f172a)] hover:brightness-95",
     dark: "border-0 bg-[var(--modern-text,#0f172a)] text-[var(--modern-card,#fff)] hover:opacity-90",
-    outline: "border border-[var(--modern-border-strong,#cbd5e1)] bg-transparent text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)]",
+    outline: "border border-[var(--modern-border-strong,#cbd5e1)] bg-transparent text-[var(--modern-text,#0f172a)] hover:border-[var(--modern-primary,#4d8dff)] hover:text-[var(--modern-primary,#4d8dff)] hover:bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_8%,var(--modern-card,#ffffff))]",
     "outline-secondary": "border border-[var(--modern-border-strong,#cbd5e1)] bg-transparent text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)]",
     link: "border-0 bg-transparent text-[var(--modern-primary,#6366f1)] underline-offset-4 hover:underline",
     text: "border-0 bg-transparent text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)]",
@@ -454,13 +454,13 @@ Offcanvas.Header.displayName = "OffcanvasHeader";
 export { Offcanvas };
 
 const DropdownContext = createContext(null);
-const DropdownRoot = ({ children, show, defaultShow = false, onToggle, onSelect, drop = "down", className, autoClose = true, ...props }) => {
+const DropdownRoot = ({ children, show, defaultShow = false, onToggle, onSelect, drop = "down", align, className, autoClose = true, ...props }) => {
   const [localShow, setLocalShow] = useState(defaultShow);
   const toggleRef = React.useRef(null);
   const controlled = show !== undefined;
   const open = controlled ? show : localShow;
   const setOpen = (next, event) => { if (!controlled) setLocalShow(next); onToggle?.(next, event); };
-  const context = useMemo(() => ({ open, setOpen, onSelect, autoClose, drop, toggleRef }), [open, onSelect, autoClose, drop]);
+  const context = useMemo(() => ({ open, setOpen, onSelect, autoClose, drop, align, toggleRef }), [open, onSelect, autoClose, drop, align]);
   return <DropdownContext.Provider value={context}><div {...props} className={cn("dropdown relative inline-flex", className)}>{children}</div></DropdownContext.Provider>;
 };
 const DropdownToggle = forwardRef(function ShadcnDropdownToggle({ as, children, className, onClick, variant, id, ...props }, ref) {
@@ -485,7 +485,7 @@ const DropdownMenu = ({ children, className, align, style, ...props }) => {
   const toggleWantsEnd = context?.toggleRef?.current?.dataset?.dropdownAlign === "end";
   const classWantsEnd = typeof className === "string" && className.includes("dropdown-menu-end");
   const classWantsStart = typeof className === "string" && className.includes("dropdown-menu-start");
-  const resolvedAlign = align || (classWantsEnd ? "end" : classWantsStart ? "start" : toggleWantsEnd ? "end" : "start");
+  const resolvedAlign = align || context?.align || (classWantsEnd ? "end" : classWantsStart ? "start" : toggleWantsEnd ? "end" : "start");
   const horizontalClass = resolvedAlign === "end" ? (isRtl ? "left-0" : "right-0") : (isRtl ? "right-0" : "left-0");
   const position = context.drop === "end" ? "left-full top-0 ml-1" : context.drop === "start" ? "right-full top-0 mr-1" : context.drop === "up" ? `bottom-full mb-1 ${horizontalClass}` : `top-full mt-1 ${horizontalClass}`;
   const handleKeyDown = (event) => {

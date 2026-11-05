@@ -24,10 +24,18 @@ import { canUserStartDmsSign } from "@/Components/DMS/utils/dmsSignBridge";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import { useUser } from "@/Context/UserContext";
 import { uploadSourceCardClassName } from "@/Components/Common/CloudPickers/UploadSourceCard";
+import { ChevronDown } from "lucide-react";
 
 const isDmsEnabled = process.env.REACT_APP_ENABLE_DOCUMENT_MANAGER === "true";
 
-const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
+const FirstStep = ({
+  setActiveStep,
+  setCompletedSteps,
+  onPreviewSync,
+  selectedMasterDocID: externalSelectedDocID,
+  onSelectPreviewDoc,
+  compactStudio = false,
+}) => {
   const { t } = useTranslation();
 
   const [selectedFileUrl, setSelectedFileUrl] = useState("");
@@ -48,6 +56,7 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [deletingMasterDocID, setDeletingMasterDocID] = useState(null);
   const [deletingIndex, setDeletingIndex] = useState(null);
+  const [isInfoOpen, setIsInfoOpen] = useState(true);
   const navigate = useNavigate();
   const [templatesModalShow, setTemplatesModalShow] = useState(false);
   const [allTemplates, setAllTemplates] = useState([]);
@@ -74,6 +83,15 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
   const handleDropboxFileSelected = (fileUrl) => {
     setSelectedFileUrl(fileUrl);
   };
+
+  useEffect(() => {
+    if (typeof onPreviewSync === "function") {
+      onPreviewSync({
+        uploadedFiles,
+        masterDocIDs,
+      });
+    }
+  }, [uploadedFiles, masterDocIDs, onPreviewSync]);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -493,10 +511,331 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
     noKeyboard: isDmsPickerOpen,
   });
 
+  if (compactStudio) {
+    return (
+      <div className='flex min-h-0 flex-1 flex-col'>
+        {/* Studio Panel Header (.phead) */}
+        <div className='px-5 pt-5 pb-1.5'>
+          <small className='block font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--modern-primary,#4d8dff)]'>
+            {t("uploadDocFlow.step", "STEP")} 1 {t("uploadDocFlow.of", "OF")} 4
+          </small>
+          <h1 className='mt-0.5 text-[22px] font-bold tracking-tight text-[var(--modern-text)]'>
+            {t("Stepper.uploadDocument", "Upload Document")}
+          </h1>
+          <p className='mt-1 text-[13px] text-[var(--modern-muted)]'>
+            {t("uploadDocFlow.chooseFileSub", "Choose the file to upload and send")}
+          </p>
+        </div>
+
+        {/* Studio Scrollable Body (.pbody) */}
+        <div className='min-h-0 flex-1 overflow-y-auto px-5 pt-3.5 pb-5'>
+          <DocumentSourceCards
+            getRootProps={getRootProps}
+            getInputProps={getInputProps}
+            user={user}
+            userAccess={userAccess}
+            isDmsEnabled={isDmsEnabled}
+            canStartDms={canUserStartDmsSign(user, userAccess)}
+            onOpenDmsPicker={() => setIsDmsPickerOpen(true)}
+            isDmsUploading={isDmsUploading}
+            dropboxProps={{
+              onFileSelected: handleDropboxFileSelected,
+              uploadedFiles,
+              setUploadedFiles,
+              masterDocIDs,
+              setMasterDocIDs,
+              fileToggleStates,
+              setFileToggleStates,
+              registerSignID,
+              setRegisterSignID,
+              email: user.email,
+            }}
+            googleDriveProps={{
+              uploadedFiles,
+              setUploadedFiles,
+              masterDocIDs,
+              setMasterDocIDs,
+              fileToggleStates,
+              setFileToggleStates,
+              registerSignID,
+              setRegisterSignID,
+              email: user.email,
+            }}
+            oneDriveProps={{
+              uploadedFiles,
+              setUploadedFiles,
+              masterDocIDs,
+              setMasterDocIDs,
+              fileToggleStates,
+              setFileToggleStates,
+              registerSignID,
+              setRegisterSignID,
+              email: user.email,
+            }}
+            uploadErrorMessage={uploadErrorMessage}
+            t={t}
+            compactStudio={true}
+          />
+
+          <UploadedDocumentsTable
+            uploadedFiles={uploadedFiles}
+            isTemplateApplied={isTemplateApplied}
+            masterDocIDs={masterDocIDs}
+            onViewFile={handleFileview}
+            onDeleteFile={handleShowConfirmModal}
+            onApplyTemplate={(id, idx) => handleGetTemplate(id, totalPages[idx], idx, true)}
+            onRemoveTemplate={(id, idx) => handleRemoveTemplate(id, appliedTemplates[id], idx)}
+            t={t}
+            compactStudio={true}
+            selectedMasterDocID={externalSelectedDocID || selectedMasterDocID}
+            onSelectFile={onSelectPreviewDoc}
+          />
+
+          {/* Collapsible Document Information */}
+          {fetchedData && (
+            <div className='mt-3.5 overflow-hidden rounded-2xl border-0 bg-transparent'>
+              <button
+                type='button'
+                aria-expanded={isInfoOpen}
+                onClick={() => setIsInfoOpen((prev) => !prev)}
+                className='flex w-full items-center gap-2.5 border-0 bg-transparent px-1 py-2.5 text-start text-sm font-semibold text-[var(--modern-text)] transition-colors hover:text-[var(--modern-primary)] outline-none focus:outline-none focus:ring-0 shadow-none cursor-pointer'
+                style={{ border: "none", outline: "none", background: "transparent", boxShadow: "none" }}
+              >
+                <span className='text-[var(--modern-primary)]'>
+                  <Icons.CraftDocument size={16} />
+                </span>
+                <span className='flex-1 text-xs font-semibold'>{t("uploadDocFlow.docInfo", "Document Information")}</span>
+                <span className='text-[10px] text-[var(--modern-muted)] font-normal mr-1 rtl:mr-0 rtl:ml-1'>
+                  {t("common.optional", "Optional")}
+                </span>
+                <ChevronDown
+                  size={15}
+                  className={`text-[var(--modern-muted)] transition-transform duration-200 ${
+                    isInfoOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {isInfoOpen && (
+                <div className='space-y-3.5 px-1 pt-2 pb-2'>
+                  <ReferenceNumber fetchedData={fetchedData} setFetchedData={setFetchedData} setReferenceNumber={setReferenceNumber} />
+                  <Description fetchedData={fetchedData} setFetchedData={setFetchedData} setDescription={setDescription} />
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Studio Sticky Footer (.pfoot) */}
+        <div className='mt-auto flex items-center justify-between gap-3 border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f8fafc)]/80 px-5 py-3.5'>
+          <div className='flex min-w-0 flex-1 items-center gap-2 text-xs text-[var(--modern-muted,#64748b)]'>
+            <span
+              className={`h-2 w-2 shrink-0 rounded-full ${
+                uploadedFiles.length > 0
+                  ? "bg-[var(--modern-success,#10b981)]"
+                  : "bg-[var(--modern-warning,#f59e0b)]"
+              }`}
+            />
+            <span className='truncate'>
+              {uploadedFiles.length > 0
+                ? t("uploadDocFlow.documentReady", "Document ready")
+                : t("uploadDocFlow.uploadAtleastOneFile", "Add a document to continue")}
+            </span>
+          </div>
+
+          <Button
+            variant='primary'
+            className='!h-[42px] !rounded-full !px-5 font-semibold inline-flex items-center gap-2 shrink-0'
+            onClick={handleContinue}
+            disabled={uploadedFiles.length === 0 || isLoading}
+          >
+            {isLoading && (
+              <span aria-hidden='true' className='h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent' />
+            )}
+            <span>{t("uploadDocFlow.Continue")}</span>
+            <Icons.ArrowRightLong size={15} className='rtl:rotate-180' />
+          </Button>
+        </div>
+
+        {/* Modals */}
+        <Modal show={templatesAppliedModal} onHide={() => setTemplatesAppliedModal(false)} dialogClassName='custom-modal-width'>
+          <Modal.Header closeButton>
+            <Modal.Title>{t("uploadDocFlow.saveTemplate")}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body className='px-3 py-2'>{t("uploadDocFlow.matchingTemplates")}</Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant='none'
+              className='applyBtn'
+              onClick={() => {
+                setTemplatesAppliedModal(false);
+                setTemplatesModalShow(true);
+              }}
+            >
+              {t("uploadDocFlow.yesProceed")}
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        <DeleteConfirmationModal
+          show={showConfirmModal}
+          onHide={handleCloseConfirmModal}
+          title={t("templateConfirmationModal.Confirmation")}
+          subtitle={t("templateConfirmationModal.deleteDocument")}
+          warningText={t("confirmationModal.proceed")}
+          itemTitle={t("uploadDocFlow.docInfo")}
+          itemName={uploadedFiles[deletingIndex] || ""}
+          onConfirm={() => handleFileDelete(deletingMasterDocID, deletingIndex)}
+          confirmText={t("templateConfirmationModal.delete")}
+          cancelText={t("templateConfirmationModal.cancel")}
+          headerIcon={<Icons.DeleteAction size={25} />}
+          itemIcon={<Icons.PDFCheck size={25} />}
+        />
+
+        <Modal show={showModal} onHide={handleCloseModal} size="lg" centered dialogClassName="!max-w-4xl !w-[94vw] mx-auto">
+          <Modal.Header closeButton>
+            <Modal.Title>{docName}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body className='flex'>
+            <Col>
+              {isLoading ? (
+                <div className="flex min-h-24 items-center justify-center text-sm text-[var(--modern-muted,#64748b)]" role="status">Loading...</div>
+              ) : (
+                Object.values(documentPages).map((page, index) => (
+                  <div key={index} className="relative">
+                    <img src={page.pagesPath} alt={page.pagesName} className="h-auto w-full" />
+                    <div className="border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] px-3 py-2 text-center text-sm font-semibold text-[var(--modern-text,#0f172a)]">{page.pagesName}</div>
+                  </div>
+                ))
+              )}
+            </Col>
+          </Modal.Body>
+        </Modal>
+
+        <Modal show={templatesModalShow} onHide={() => setTemplatesModalShow(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title className='flex items-center gap-2'>
+              <Icons.ApplyTemplate size={25} />
+              {t("uploadDocFlow.chooseTemplate")}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className='p-3'>
+              <div className='flex flex-wrap gap-3'>
+                <Button variant={viewMode === "allTemplates" ? "primary" : "outline"} aria-pressed={viewMode === "allTemplates"} onClick={handleAllTemplates}>
+                  {t("uploadDocFlow.Applytemplate")}
+                </Button>
+                <Button variant={viewMode === "matchingTemplates" ? "primary" : "outline"} aria-pressed={viewMode === "matchingTemplates"} onClick={handleMatchingTemplates}>
+                  {t("uploadDocFlow.matchTemplates")}
+                </Button>
+              </div>
+            </div>
+            {viewMode === "allTemplates" && (
+              <TableContainer
+                component={Paper}
+                className='custom-table-scrollbar max-w-full overflow-x-auto max-h-[min(60vh,520px)] rounded-xl border border-[var(--modern-border)]'
+              >
+                <Table stickyHeader className='border-0'>
+                  <TableHead>
+                    <TableRow>
+                      {allTemplatesColumns.map((col) => (
+                        <TableCell key={col.label} className='bg-[var(--modern-raised,#f1f5f9)]'>
+                          {col.label}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {allTemplates.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={allTemplatesColumns.length} className='table-empty-state-cell'>
+                          <TableEmptyState
+                            icon={<Icons.BulkDocuments size={50} />}
+                            title={t("dashboardCardStatuses.notDocsFound")}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    {allTemplates.map((row, index) => (
+                      <TableRow key={index}>
+                        <TableCell className='TableCell'>{row.templateName}</TableCell>
+                        <TableCell className='TableCell'>
+                          <UserInitialsBadge name={row.createdBy} />
+                        </TableCell>
+                        <TableCell className='TableCell'>
+                          <Button variant='text' className='SignNowbtn' onClick={() => handleApplyTemplate(row.templateID)}>
+                            {t("uploadDocFlow.apply")}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+            {viewMode === "matchingTemplates" && (
+              <TableContainer
+                component={Paper}
+                className='custom-table-scrollbar max-w-full overflow-x-auto max-h-[min(60vh,520px)] rounded-xl border border-[var(--modern-border)]'
+              >
+                <Table stickyHeader className='border-0'>
+                  <TableHead>
+                    <TableRow>
+                      {matchingTemplatesColumns &&
+                        matchingTemplatesColumns.map((col) => (
+                          <TableCell key={col.label} className='bg-[var(--modern-raised,#f1f5f9)]'>
+                            {col.label}
+                          </TableCell>
+                        ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {matchingTemplates && matchingTemplates.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={matchingTemplatesColumns ? matchingTemplatesColumns.length : 3} className='table-empty-state-cell'>
+                          <TableEmptyState
+                            icon={<Icons.BulkDocuments size={50} />}
+                            title={t("dashboardCardStatuses.notDocsFound")}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    {matchingTemplates &&
+                      matchingTemplates.map((row, index) => (
+                        <TableRow key={index}>
+                          <TableCell className='TableCell'>{row.templateName}</TableCell>
+                          <TableCell className='TableCell'>
+                            <UserInitialsBadge name={row.createdBy} />
+                          </TableCell>
+                          <TableCell className='TableCell'>
+                            <Button variant='text' className='SignNowbtn' onClick={() => handleApplyTemplate(row.templateID)}>
+                              {t("uploadDocFlow.apply")}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </Modal.Body>
+        </Modal>
+
+        {isDmsEnabled && canUserStartDmsSign(user, userAccess) ? (
+          <DmsDocumentPickerModal
+            show={isDmsPickerOpen}
+            onHide={() => setIsDmsPickerOpen(false)}
+            onSelectDocument={handleDmsDocumentSelected}
+          />
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <>
-      <Container className='upload-container'>
-        <div className='mt-4'>
+      <div className='w-full bg-[var(--modern-card,#ffffff)] border border-[var(--modern-border,rgba(52,40,100,0.14))] rounded-2xl p-6 sm:p-8'>
+        <div className='flex flex-col gap-6'>
           <DocumentSourceCards
             getRootProps={getRootProps}
             getInputProps={getInputProps}
@@ -589,7 +928,7 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
             itemIcon={<Icons.PDFCheck size={25} />}
           />
 
-          <Modal show={showModal} onHide={handleCloseModal}>
+          <Modal show={showModal} onHide={handleCloseModal} size="lg" centered dialogClassName="!max-w-4xl !w-[94vw] mx-auto">
             <Modal.Header closeButton>
               <Modal.Title>{docName}</Modal.Title>
             </Modal.Header>
@@ -724,16 +1063,16 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
         </div>
 
         {fetchedData && (
-          <div className='p-0 mt-3 mb-5 pb-5'>
+          <div className='my-6 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-raised)] overflow-hidden'>
             <Accordion defaultActiveKey='0'>
-              <Accordion.Item eventKey='0'>
-                <Accordion.Header>
-                  <div className='flex items-center gap-2'>
-                    <Icons.CraftDocument size={25} />
-                    <span className="text-lg font-medium">{t("uploadDocFlow.docInfo")}</span>
+              <Accordion.Item eventKey='0' className='!border-0 !bg-transparent'>
+                <Accordion.Header className='!border-0'>
+                  <div className='flex items-center gap-2.5 py-1 text-[var(--modern-text)]'>
+                    <Icons.CraftDocument size={20} className='text-[var(--modern-primary)]' />
+                    <span className="text-base font-semibold">{t("uploadDocFlow.docInfo")}</span>
                   </div>
                 </Accordion.Header>
-                <Accordion.Body className='p-3'>
+                <Accordion.Body className='p-4 pt-1'>
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                       <ReferenceNumber fetchedData={fetchedData} setFetchedData={setFetchedData} setReferenceNumber={setReferenceNumber} />
@@ -748,10 +1087,14 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
           </div>
         )}
 
-        <div className="fixed bottom-0 left-0 z-[1040] flex w-full items-center justify-end border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] px-5 py-2.5">
-          <Button className='min-h-10 px-5 font-semibold' onClick={handleContinue} disabled={uploadedFiles.length === 0}>
+        <div className="mt-6 pt-4 border-t border-[var(--modern-border)] flex justify-end">
+          <Button
+            className='min-h-[44px] px-8 rounded-full font-semibold inline-flex items-center gap-2'
+            onClick={handleContinue}
+            disabled={uploadedFiles.length === 0 || isLoading}
+          >
             {isLoading && <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" />}
-            {t("uploadDocFlow.Continue")}
+            <span>{t("uploadDocFlow.Continue")}</span>
           </Button>
         </div>
 
@@ -786,7 +1129,7 @@ const FirstStep = ({ setActiveStep, setCompletedSteps }) => {
             />
           </Col>
         </div>
-      </Container>
+      </div>
 
       {isDmsEnabled && canUserStartDmsSign(user, userAccess) ? (
         <DmsDocumentPickerModal

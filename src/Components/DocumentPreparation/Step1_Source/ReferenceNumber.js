@@ -10,15 +10,20 @@ export const ReferenceNumber = ({ fetchedData, setFetchedData, setReferenceNumbe
   const inputId = useId();
 
   return (
-    <div className="mb-3 space-y-2">
-      <label htmlFor={inputId} className="block text-sm font-medium text-[var(--modern-text,#0f172a)]">
-        {t("uploadDocFlow.referenceNumberOptional")}
-      </label>
+    <div className="mb-3">
+      <div className="flex items-center justify-between mb-1.5">
+        <label htmlFor={inputId} className="text-xs font-semibold text-[var(--modern-text,#0f172a)]">
+          {t("uploadDocFlow.referenceNumber", "Reference Number")}
+        </label>
+        <span className="rounded-full bg-[var(--modern-raised,#f8fafc)] px-2 py-0.5 text-[10px] font-medium text-[var(--modern-muted,#64748b)] border border-[var(--modern-border,#e2e8f0)]">
+          {t("common.optional", "Optional")}
+        </span>
+      </div>
       <input
         id={inputId}
         type='text'
-        placeholder=''
-        className="h-10 w-full min-w-0 rounded-md border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] px-3 text-sm text-[var(--modern-text,#0f172a)] outline-none transition-colors placeholder:text-[var(--modern-muted,#64748b)] hover:border-[var(--modern-border-strong,#cbd5e1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--modern-primary,#6366f1)]"
+        placeholder={t("uploadDocFlow.referenceNumberPlaceholder", "e.g. REF-2026-001")}
+        className="h-9 w-full min-w-0 rounded-xl border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] px-3 text-xs text-[var(--modern-text,#0f172a)] outline-none transition-colors placeholder:text-[var(--modern-muted,#64748b)] hover:border-[var(--modern-border-strong,#cbd5e1)] focus:border-[var(--modern-primary,#4d8dff)]"
         value={fetchedData?.referenceNumber || ""}
         onChange={(e) => {
           if (setFetchedData && fetchedData) {
@@ -32,7 +37,6 @@ export const ReferenceNumber = ({ fetchedData, setFetchedData, setReferenceNumbe
           }
         }}
       />
-      <p className="text-sm text-[var(--modern-muted,#64748b)]">{t("uploadDocFlow.uploadDescription")}</p>
     </div>
   );
 };

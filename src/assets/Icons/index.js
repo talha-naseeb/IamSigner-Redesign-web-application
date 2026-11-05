@@ -139,6 +139,11 @@ const IamSignerFullLogo = ({ className = "", style, alt = "IAMSigner", ...props 
 );
 
 export const Icons = {
+  Documents: Files,
+  AddRecipient: PlusCircle,
+  PDF: FileText,
+  ProfileSignatory: User,
+  Loading: RefreshCcw,
   MacDrive: HardDriveDownload,
   Automation: Bot,
   Home: Home,

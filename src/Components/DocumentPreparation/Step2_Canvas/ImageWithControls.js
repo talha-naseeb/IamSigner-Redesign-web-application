@@ -1,8 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "@/Components/UI/shadcnCompat";
 import ResizableButtons from "./ResizableButtons";
 import Draggable from "react-draggable";
-import { X, Pen } from "lucide-react";
+import { X, Pen, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import { Icons } from "@/assets/Icons";
 import ControlsFotmatting from "./ControlsFotmatting";
 import SmartGuides from "@/Components/SignaturePlacement/SmartGuides";
@@ -53,50 +53,220 @@ const ImageWithControls = ({
   onPlacedControlResizeEnd,
   isDropOver,
 }) => {
+  const [zoomScale, setZoomScale] = useState(1);
+  const [isFitMode, setIsFitMode] = useState(false);
+  const [naturalDim, setNaturalDim] = useState({ width: 0, height: 0 });
+  const viewportDeskRef = useRef(null);
+  const userManualZoomRef = useRef(false);
+
+  const calculateFitScale = useCallback((nw) => {
+    if (!viewportDeskRef.current || !nw) return 1;
+    const padding = window.innerWidth < 768 ? 16 : 32;
+    const avail = viewportDeskRef.current.clientWidth - padding;
+    if (avail > 0 && nw > 0) {
+      return Math.min(1.0, Math.max(0.25, avail / nw));
+    }
+    return 1;
+  }, []);
+
+  const handleImageLoaded = (e) => {
+    const nw = e.target.naturalWidth || 800;
+    const nh = e.target.naturalHeight || 1100;
+    setNaturalDim({ width: nw, height: nh });
+
+    // Auto-fit document to screen/device size unless user has explicitly customized zoom
+    if (!userManualZoomRef.current) {
+      const fit = calculateFitScale(nw);
+      if (fit < 1.0 || window.innerWidth < 1024) {
+        setZoomScale(Number(fit.toFixed(2)));
+        setIsFitMode(true);
+      } else {
+        setZoomScale(1);
+        setIsFitMode(false);
+      }
+    }
+  };
+
+  // Dynamically auto-fit document when container or device/window resizes
+  useEffect(() => {
+    const el = viewportDeskRef.current;
+    if (!el || !naturalDim.width) return;
+
+    const handleResize = () => {
+      if (!userManualZoomRef.current || isFitMode) {
+        const newFit = calculateFitScale(naturalDim.width);
+        setZoomScale(Number(newFit.toFixed(2)));
+        setIsFitMode(true);
+      }
+    };
+
+    let resizeObserver;
+    if (typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(() => {
+        handleResize();
+      });
+      resizeObserver.observe(el);
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      if (resizeObserver) resizeObserver.disconnect();
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [naturalDim.width, calculateFitScale, isFitMode]);
+
+  const handleZoomIn = () => {
+    userManualZoomRef.current = true;
+    setIsFitMode(false);
+    setZoomScale((prev) => Math.min(2.0, Number((prev + 0.15).toFixed(2))));
+  };
+
+  const handleZoomOut = () => {
+    userManualZoomRef.current = true;
+    setIsFitMode(false);
+    setZoomScale((prev) => Math.max(0.25, Number((prev - 0.15).toFixed(2))));
+  };
+
+  const handleFitToggle = () => {
+    if (!naturalDim.width) return;
+    if (isFitMode) {
+      userManualZoomRef.current = true;
+      setZoomScale(1);
+      setIsFitMode(false);
+    } else {
+      userManualZoomRef.current = false;
+      const fit = calculateFitScale(naturalDim.width);
+      setZoomScale(Number(fit.toFixed(2)));
+      setIsFitMode(true);
+    }
+  };
+
   return (
-    <div
-      className='large-image'
-      style={{
-        position: "relative",
-        height: "auto",
-        pointerEvents: isAPICallInProgress ? "none" : "auto", // Disable pointer events during API call
-      }}
-    >
+    <div className='w-full flex flex-col items-center' ref={viewportDeskRef}>
+      {/* Zoom / Scaling Control Pill */}
+      <div className='sticky top-2 z-20 mb-3 flex items-center gap-1.5 rounded-full border border-[var(--modern-border-strong)] bg-[var(--modern-card)] px-2 py-1 backdrop-blur-md'>
+        <button
+          type='button'
+          onClick={handleZoomOut}
+          disabled={zoomScale <= 0.25}
+          title='Zoom out'
+          className='inline-flex h-7 w-7 items-center justify-center rounded-full border border-[var(--modern-border-strong)] bg-[var(--modern-raised)] text-[var(--modern-text)] hover:border-[var(--modern-primary)] hover:text-[var(--modern-primary)] disabled:opacity-30 disabled:border-[var(--modern-border)] cursor-pointer transition-colors'
+        >
+          <ZoomOut size={13} />
+        </button>
+
+        <button
+          type='button'
+          onClick={handleFitToggle}
+          title='Reset to 100%'
+          className={`min-w-[58px] px-2.5 py-1 rounded-full border text-[11px] font-mono font-semibold transition-all cursor-pointer ${
+            isFitMode
+              ? "border-[var(--modern-primary)] bg-[var(--modern-primary)]/15 text-[var(--modern-primary)]"
+              : "border-[var(--modern-border-strong)] bg-[var(--modern-raised)] text-[var(--modern-text)] hover:border-[var(--modern-primary)] hover:text-[var(--modern-primary)]"
+          }`}
+        >
+          {Math.round(zoomScale * 100)}%
+        </button>
+
+        <button
+          type='button'
+          onClick={handleZoomIn}
+          disabled={zoomScale >= 2.0}
+          title='Zoom in'
+          className='inline-flex h-7 w-7 items-center justify-center rounded-full border border-[var(--modern-border-strong)] bg-[var(--modern-raised)] text-[var(--modern-text)] hover:border-[var(--modern-primary)] hover:text-[var(--modern-primary)] disabled:opacity-30 disabled:border-[var(--modern-border)] cursor-pointer transition-colors'
+        >
+          <ZoomIn size={13} />
+        </button>
+
+        <div className='h-4 w-px bg-[var(--modern-border-strong)] mx-0.5' />
+
+        <button
+          type='button'
+          onClick={handleFitToggle}
+          title='Fit to screen'
+          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full border text-[11px] font-semibold transition-all cursor-pointer ${
+            isFitMode
+              ? "border-[var(--modern-primary)] bg-[var(--modern-primary)] text-white"
+              : "border-[var(--modern-border-strong)] bg-[var(--modern-raised)] text-[var(--modern-primary)] hover:bg-[var(--modern-card)]"
+          }`}
+        >
+          <Maximize2 size={12} />
+          <span>Fit</span>
+        </button>
+      </div>
+
+      {/* Scaled Document Canvas Desk */}
       <div
-        ref={drop(dropRef)}
-        className={`doc-image transition-all ${
-          isDropOver ? "ring-4 ring-[var(--modern-primary,#4d8dff)] ring-offset-2 rounded-lg" : ""
-        }`}
+        className='max-w-full overflow-auto flex justify-center pb-6'
         style={{
-          position: "relative",
-          height: "auto",
+          pointerEvents: isAPICallInProgress ? "none" : "auto",
         }}
       >
-        <img src={selectedImage} alt='' ref={imageContainerRef} />
-        <SmartGuides guides={alignmentGuides} />
+        <div
+          style={{
+            width: naturalDim.width ? `${naturalDim.width * zoomScale}px` : "auto",
+            height: naturalDim.height ? `${naturalDim.height * zoomScale}px` : "auto",
+            position: "relative",
+          }}
+          className='transition-all duration-150'
+        >
+          <div
+            style={{
+              transform: `scale(${zoomScale})`,
+              transformOrigin: "top left",
+              width: naturalDim.width || "auto",
+              height: naturalDim.height || "auto",
+              position: "absolute",
+              top: 0,
+              left: 0,
+            }}
+          >
+            <div
+              ref={drop(dropRef)}
+              className={`doc-image relative rounded-xl overflow-hidden border-2 border-[var(--modern-border-strong)] bg-white transition-all ${
+                isDropOver ? "ring-4 ring-[var(--modern-primary,#4d8dff)] ring-offset-2" : ""
+              }`}
+              style={{
+                position: "relative",
+                height: "auto",
+              }}
+            >
+              <img
+                src={selectedImage}
+                alt='Document Page'
+                ref={imageContainerRef}
+                onLoad={handleImageLoaded}
+                className='block select-none pointer-events-none'
+              />
+              <SmartGuides guides={alignmentGuides} />
 
-        {displayedButtons.map((button, index) => {
-          return (
-            <ButtonsOnImage
-              key={button.controlLocationID}
-              button={button}
-              index={index}
-              handleButtonRemove={handleButtonRemove}
-              signatoryColors={signatoryColors}
-              updateControlsLocation={updateControlsLocation}
-              selectedImage={selectedImage}
-              onUpdateQRDetails={onUpdateQRDetails}
-              buttons={buttons}
-              isAPICallInProgress={isAPICallInProgress} // Pass prop to ButtonsOnImage
-              fetchButtonPositions={fetchButtonPositions}
-              auth={auth}
-              onPlacedControlDrag={onPlacedControlDrag}
-              onPlacedControlDrop={onPlacedControlDrop}
-              onPlacedControlResize={onPlacedControlResize}
-              onPlacedControlResizeEnd={onPlacedControlResizeEnd}
-            />
-          );
-        })}
+              {displayedButtons.map((button, index) => {
+                return (
+                  <ButtonsOnImage
+                    key={button.controlLocationID}
+                    button={button}
+                    index={index}
+                    handleButtonRemove={handleButtonRemove}
+                    signatoryColors={signatoryColors}
+                    updateControlsLocation={updateControlsLocation}
+                    selectedImage={selectedImage}
+                    onUpdateQRDetails={onUpdateQRDetails}
+                    buttons={buttons}
+                    isAPICallInProgress={isAPICallInProgress}
+                    fetchButtonPositions={fetchButtonPositions}
+                    auth={auth}
+                    onPlacedControlDrag={onPlacedControlDrag}
+                    onPlacedControlDrop={onPlacedControlDrop}
+                    onPlacedControlResize={onPlacedControlResize}
+                    onPlacedControlResizeEnd={onPlacedControlResizeEnd}
+                    scale={zoomScale}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -120,6 +290,7 @@ export const ButtonsOnImage = ({
   onPlacedControlDrop,
   onPlacedControlResize,
   onPlacedControlResizeEnd,
+  scale = 1,
 }) => {
   const nodeRef = useRef(null);
   const [resizing, setResizing] = useState(false);
@@ -129,6 +300,24 @@ export const ButtonsOnImage = ({
   const [textInput, setTextInput] = useState();
   const [checkboxValue, setCheckboxValue] = useState(false);
   const [categoryMap, setCategoryMap] = useState({});
+
+  const signatoryColor =
+    (button?.selectedSignatoryID && signatoryColors?.[button.selectedSignatoryID]) ||
+    "#4d8dff";
+  const rawFontSize = button?.fontSize || button?.FontSize;
+  const fieldFontSize = rawFontSize
+    ? typeof rawFontSize === "number" || !String(rawFontSize).endsWith("px")
+      ? `${rawFontSize}px`
+      : rawFontSize
+    : "inherit";
+  const customColor = button?.fontColor || button?.FontColor;
+  const fieldFontColor = customColor && customColor !== "" ? customColor : signatoryColor;
+  const fieldFontStyle = button?.fontStyle || button?.FontStyle || "inherit";
+  const fieldTypographyStyle = {
+    color: fieldFontColor,
+    fontSize: fieldFontSize,
+    fontFamily: fieldFontStyle,
+  };
 
   const handleDateChange = (event) => {
     const date = event.target.value;
@@ -188,6 +377,7 @@ export const ButtonsOnImage = ({
   return (
     <Draggable
       nodeRef={nodeRef}
+      scale={scale || 1}
       key={`${button.controlLocationID}-${button.position.x}-${button.position.y}`}
       bounds='parent'
       cancel='.react-resizable-handle, input, textarea, button'
@@ -275,8 +465,8 @@ export const ButtonsOnImage = ({
               type='date'
               value={selectedDate || button.textEditor}
               onChange={handleDateChange}
-              className='h-full w-full border-none bg-transparent text-[13px] font-semibold cursor-grab focus:outline-none'
-              style={{ color: "inherit" }}
+              className='h-full w-full border-none bg-transparent font-semibold cursor-grab focus:outline-none'
+              style={fieldTypographyStyle}
               onBlur={() => {
                 updateControlsLocation(
                   button.controlLocationID,
@@ -307,8 +497,8 @@ export const ButtonsOnImage = ({
               type='number'
               value={textInput}
               onChange={(event) => setTextInput(event.target.value)}
-              className='h-full w-full border-none bg-transparent px-2.5 text-[13px] font-semibold focus:outline-none'
-              style={{ color: "inherit" }}
+              className='h-full w-full border-none bg-transparent px-2.5 font-semibold focus:outline-none'
+              style={fieldTypographyStyle}
               onBlur={() => {
                 setEditingStates((prevState) => ({
                   ...prevState,
@@ -335,8 +525,8 @@ export const ButtonsOnImage = ({
             />
           ) : (
             <div
-              className='flex h-full w-full items-center px-2.5 text-[13px] font-semibold leading-none select-none truncate'
-              style={{ color: "inherit" }}
+              className='flex h-full w-full items-center px-2.5 font-semibold leading-none select-none truncate'
+              style={fieldTypographyStyle}
             >
               {button.textEditor !== "" ? button.textEditor : button.customPlaceHolder}
             </div>
@@ -348,8 +538,8 @@ export const ButtonsOnImage = ({
         <ResizableButtons {...resizeProps} onClick={() => handleText(button.controlLocationID, button.textEditor)}>
           {editingStates[button.controlLocationID] ? (
             <textarea
-              className='h-full w-full resize-none border-none bg-transparent px-2.5 text-[13px] font-semibold focus:outline-none'
-              style={{ color: "inherit" }}
+              className='h-full w-full resize-none border-none bg-transparent px-2.5 font-semibold focus:outline-none'
+              style={fieldTypographyStyle}
               value={textInput}
               onChange={handleInputChange}
               onBlur={() => {
@@ -379,8 +569,8 @@ export const ButtonsOnImage = ({
             />
           ) : (
             <div
-              className='flex h-full w-full items-center px-2.5 text-[13px] font-semibold leading-none select-none truncate'
-              style={{ color: "inherit" }}
+              className='flex h-full w-full items-center px-2.5 font-semibold leading-none select-none truncate'
+              style={fieldTypographyStyle}
             >
               {button.textEditor !== "" ? button.textEditor : button.customPlaceHolder}
             </div>
@@ -415,9 +605,11 @@ export const ButtonsOnImage = ({
               />
             </div>
           ) : (
-            <div className='flex h-full w-full items-center justify-center gap-1.5 px-2 select-none pointer-events-none'>
+            <div className='flex h-full w-full items-center justify-center gap-1.5 px-2 select-none pointer-events-none' style={{ color: fieldFontColor }}>
               {renderFieldIcon(button.label)}
-              <span className='truncate text-[13px] font-semibold leading-none'>{button.customPlaceHolder ?? button.label}</span>
+              <span className='truncate font-semibold leading-none' style={fieldTypographyStyle}>
+                {button.customPlaceHolder ?? button.label}
+              </span>
             </div>
           )}
         </ResizableButtons>
@@ -430,7 +622,7 @@ export const ButtonsOnImage = ({
           e.stopPropagation();
           handleButtonRemove(index, button.controlLocationID);
         }}
-        className='absolute -top-2.5 -right-2.5 z-30 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--modern-border-strong,#cbd5e1)] bg-[var(--modern-card,#ffffff)] text-[var(--modern-muted,#64748b)] opacity-0 group-hover/drag:opacity-100 hover:border-transparent hover:bg-[var(--modern-danger,#ef4444)] hover:text-white transition-opacity shadow-xs cursor-pointer'
+        className='absolute -top-2.5 -right-2.5 z-30 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--modern-border-strong)] bg-[var(--modern-card)] text-[var(--modern-muted)] opacity-0 group-hover/drag:opacity-100 hover:border-transparent hover:bg-[var(--modern-danger,#ef4444)] hover:text-white transition-all cursor-pointer'
       >
         <X size={10} />
       </button>
@@ -442,7 +634,7 @@ export const ButtonsOnImage = ({
           e.stopPropagation();
           toggleOffcanvas();
         }}
-        className='absolute -top-2.5 -left-2.5 z-30 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--modern-border-strong,#cbd5e1)] bg-[var(--modern-card,#ffffff)] text-[var(--modern-muted,#64748b)] opacity-0 group-hover/drag:opacity-100 hover:border-transparent hover:bg-[var(--modern-primary,#4d8dff)] hover:text-white transition-opacity shadow-xs cursor-pointer'
+        className='absolute -top-2.5 -left-2.5 z-30 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--modern-border-strong)] bg-[var(--modern-card)] text-[var(--modern-muted)] opacity-0 group-hover/drag:opacity-100 hover:border-transparent hover:bg-[var(--modern-primary,#4d8dff)] hover:text-white transition-all cursor-pointer'
       >
         <Pen size={9} />
       </button>
@@ -456,6 +648,7 @@ export const ButtonsOnImage = ({
           selectedImage={selectedImage}
           onUpdateQRDetails={onUpdateQRDetails}
           buttons={buttons}
+          signatoryColor={signatoryColor}
           setCategoryMap={setCategoryMap}
           categoryMap={categoryMap}
           fetchButtonPositions={fetchButtonPositions}

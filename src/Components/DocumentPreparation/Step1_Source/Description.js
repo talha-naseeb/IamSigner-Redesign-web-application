@@ -10,16 +10,21 @@ export const Description = ({ fetchedData, setFetchedData, setDescription }) => 
   const descriptionId = useId();
 
   return (
-    <div className="py-3">
-      <label htmlFor={descriptionId} className="mb-2 block text-sm font-medium text-[var(--modern-text,#0f172a)]">
-        {t("uploadDocFlow.descriptionupload")}
-      </label>
+    <div className="py-1">
+      <div className="flex items-center justify-between mb-1.5">
+        <label htmlFor={descriptionId} className="text-xs font-semibold text-[var(--modern-text,#0f172a)]">
+          {t("uploadDocFlow.descriptionupload", "Description")}
+        </label>
+        <span className="rounded-full bg-[var(--modern-raised,#f8fafc)] px-2 py-0.5 text-[10px] font-medium text-[var(--modern-muted,#64748b)] border border-[var(--modern-border,#e2e8f0)]">
+          {t("common.optional", "Optional")}
+        </span>
+      </div>
       <textarea
         id={descriptionId}
-        rows={5}
-        placeholder={t("uploadDocFlow.descriptionPlaceholder")}
+        rows={2}
+        placeholder={t("uploadDocFlow.descriptionPlaceholder", "Optional document description or notes...")}
         value={fetchedData?.description || ""}
-        className="w-full min-w-0 resize-y rounded-md border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] px-3 py-2 text-sm text-[var(--modern-text,#0f172a)] outline-none transition-colors placeholder:text-[var(--modern-muted,#64748b)] hover:border-[var(--modern-border-strong,#cbd5e1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--modern-primary,#6366f1)]"
+        className="w-full min-w-0 resize-y rounded-xl border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] px-3 py-2 text-xs text-[var(--modern-text,#0f172a)] outline-none transition-colors placeholder:text-[var(--modern-muted,#64748b)] hover:border-[var(--modern-border-strong,#cbd5e1)] focus:border-[var(--modern-primary,#4d8dff)]"
         onChange={(e) => {
           if (setFetchedData && fetchedData) {
             setFetchedData({

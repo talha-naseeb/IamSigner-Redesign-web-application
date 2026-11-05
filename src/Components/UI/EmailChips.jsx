@@ -41,10 +41,39 @@ export const Chips = ({ value = [], onChange, onAdd, placeholder, separator = ",
       setDraft([...rejected, parts[parts.length - 1]].filter(Boolean).join(`${separator} `));
     } else setDraft(next);
   };
-  return <div className={cn("flex min-h-10 flex-wrap items-center gap-1.5 rounded-md border border-[var(--modern-border-strong,#cbd5e1)] bg-[var(--modern-raised,#f8fafc)] px-2 py-1.5 focus-within:outline focus-within:outline-2 focus-within:outline-[var(--modern-primary,#6366f1)]", className)}>
-    {chips.map((tag, index) => <span key={`${tag}-${index}`} className="inline-flex items-center gap-1 rounded-full bg-[var(--modern-primary-soft,#ede9fe)] px-2.5 py-1 text-xs text-[var(--modern-text,#0f172a)]"><span>{tag}</span><button type="button" disabled={disabled} aria-label={`Remove ${tag}`} onClick={() => remove(tag)} className="rounded-full text-[var(--modern-muted,#64748b)] hover:text-[var(--modern-danger,#ef4444)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--modern-primary,#6366f1)]"><X className="h-3 w-3" /></button></span>)}
-    <input {...props} id={id} disabled={disabled} value={draft} placeholder={placeholder} onChange={onChangeInput} onKeyDown={onKeyDown} onBlur={(event) => { props.onBlur?.(event); if (!event.defaultPrevented) add(draft, event); }} className="min-w-24 flex-1 border-0 bg-transparent px-1 py-1 text-sm text-[var(--modern-text,#0f172a)] outline-none placeholder:text-[var(--modern-muted,#64748b)] disabled:opacity-60" aria-label={props["aria-label"] || placeholder || "Add tag"} />
-  </div>;
+  return (
+    <div className={cn("flex min-h-[40px] flex-wrap items-center gap-1.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] px-2.5 py-1.5 focus-within:border-[var(--modern-primary,#4d8dff)] focus-within:ring-1 focus-within:ring-[var(--modern-primary,#4d8dff)]", className)}>
+      {chips.map((tag, index) => (
+        <span
+          key={`${tag}-${index}`}
+          className="inline-flex items-center gap-1.5 rounded-full border border-[var(--modern-primary,#4d8dff)]/25 bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_12%,transparent)] px-2.5 py-0.5 text-xs font-medium text-[var(--modern-text)]"
+        >
+          <span className="truncate max-w-[240px]">{tag}</span>
+          <button
+            type="button"
+            disabled={disabled}
+            aria-label={`Remove ${tag}`}
+            onClick={() => remove(tag)}
+            className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-0 bg-transparent p-0 text-[var(--modern-muted)] hover:bg-[var(--modern-danger,#ef4444)]/15 hover:text-[var(--modern-danger,#ef4444)] cursor-pointer transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--modern-primary,#4d8dff)]"
+          >
+            <X size={12} strokeWidth={2.5} />
+          </button>
+        </span>
+      ))}
+      <input
+        {...props}
+        id={id}
+        disabled={disabled}
+        value={draft}
+        placeholder={placeholder}
+        onChange={onChangeInput}
+        onKeyDown={onKeyDown}
+        onBlur={(event) => { props.onBlur?.(event); if (!event.defaultPrevented) add(draft, event); }}
+        className="min-w-24 flex-1 border-0 bg-transparent px-1 py-1 text-sm text-[var(--modern-text)] outline-none placeholder:text-[var(--modern-muted)] disabled:opacity-60"
+        aria-label={props["aria-label"] || placeholder || "Add tag"}
+      />
+    </div>
+  );
 };
 
 export default Chips;

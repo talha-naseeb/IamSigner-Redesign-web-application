@@ -18,37 +18,45 @@ const ResizableButtons = ({ children, button, onUpdateControlsLocation, signator
   }, [selectedImage]);
 
   const handleButtonResizeStop = (controlLocationID, controlIdentifier, text, x, y, width, height, font, size, color, placeholder, isRequired, signatureType, category) => {
-    const safeWidth = Number.isFinite(Number(width)) ? Number(width) : Number(button.width);
-    const safeHeight = Number.isFinite(Number(height)) ? Number(height) : Number(button.height);
+    const parsedWidth = Number.isFinite(Number(width)) ? Number(width) : Number(button.width);
+    const parsedHeight = Number.isFinite(Number(height)) ? Number(height) : Number(button.height);
+    const safeWidth = Math.max(80, parsedWidth);
+    const safeHeight = Math.max(30, parsedHeight);
     const LocationX = x + safeWidth;
     const LocationY = y + safeHeight;
     const maxLocationX = imgWidth;
     const maxLocationY = imgHeight;
 
     if (LocationX > maxLocationX || LocationY > maxLocationY) {
-      onUpdateControlsLocation(controlLocationID, controlIdentifier, text, x, y, button.height, button.width, font, size, color, placeholder, isRequired, signatureType, category);
+      onUpdateControlsLocation(controlLocationID, controlIdentifier, text, x, y, safeHeight, safeWidth, font, size, color, placeholder, isRequired, signatureType, category);
     } else {
       onUpdateControlsLocation(controlLocationID, controlIdentifier, text, x, y, safeHeight, safeWidth, font, size, color, placeholder, isRequired, signatureType, category);
     }
   };
 
-  // Conditionally set width and height for specific button types
+  // Conditionally set width and height for specific button types (minimum 80x30 enforced)
   const getButtonDimensions = () => {
     const fallback = getNewControlDimensions(button);
-    const w = parseFloat(button?.width);
-    const h = parseFloat(button?.height);
+    const w = parseFloat(button?.width || button?.Width);
+    const h = parseFloat(button?.height || button?.Height);
 
     return {
-      width: Number.isFinite(w) && w > 0 ? w : fallback.width,
-      height: Number.isFinite(h) && h > 0 ? h : fallback.height,
+      width: Math.max(80, Number.isFinite(w) && w > 0 ? w : Math.max(80, fallback.width)),
+      height: Math.max(30, Number.isFinite(h) && h > 0 ? h : Math.max(30, fallback.height)),
     };
   };
 
   const { width, height } = getButtonDimensions();
-  const isSquare = ["Stamp", "QR Code", "Image"].includes(button?.label);
   const signatoryColor =
     (button?.selectedSignatoryID && signatoryColors?.[button.selectedSignatoryID]) ||
     "#4d8dff";
+  const fieldFontColor = button?.fontColor || button?.FontColor || signatoryColor;
+  const rawFontSize = button?.fontSize || button?.FontSize;
+  const fieldFontSize = rawFontSize
+    ? typeof rawFontSize === "number" || !String(rawFontSize).endsWith("px")
+      ? `${rawFontSize}px`
+      : rawFontSize
+    : "13px";
 
   return (
     <ResizableBox
@@ -68,9 +76,9 @@ const ResizableButtons = ({ children, button, onUpdateControlsLocation, signator
           button.position.y,
           data.size.width,
           data.size.height,
-          button.fontStyle,
-          button.fontSize,
-          button.fontColor,
+          button.fontStyle || button.FontStyle,
+          button.fontSize || button.FontSize,
+          button.fontColor || button.FontColor,
           button.customPlaceHolder,
           button.isRequired,
           button.isDigitalSignature,
@@ -78,16 +86,16 @@ const ResizableButtons = ({ children, button, onUpdateControlsLocation, signator
         );
       }}
       draggableOpts={{}}
-      minConstraints={[isSquare ? 60 : 80, isSquare ? 60 : 30]}
+      minConstraints={[80, 30]}
       maxConstraints={[320, 320]}
       style={{
         border: `2px dashed ${signatoryColor}`,
         borderRadius: "8px",
         cursor: "grab",
         position: button.label === "Text" ? "relative" : "",
-        fontFamily: button.fontStyle || "",
-        color: signatoryColor,
-        fontSize: button.fontSize && parseInt(button.fontSize) !== 16 ? button.fontSize : "13px",
+        fontFamily: button.fontStyle || button.FontStyle || "",
+        color: fieldFontColor,
+        fontSize: fieldFontSize,
         fontWeight: "600",
         backgroundColor: "rgb(12 154 215 / 4%)",
         boxSizing: "border-box",

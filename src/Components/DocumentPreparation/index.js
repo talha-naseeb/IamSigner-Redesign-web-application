@@ -18,6 +18,10 @@ export { default as CanvasStepBar } from "./Step2_Canvas/CanvasStepBar";
 export { default as CCEmail } from "./Step3_Recipients/CCEmail";
 export { default as DispatchSummaryBar } from "./Step3_Recipients/DispatchSummaryBar";
 
+// Studio Split-Screen Stage
+export { default as StudioDocumentStage } from "./StudioStage/StudioDocumentStage";
+export { default as useStudioPreview } from "./StudioStage/useStudioPreview";
+
 // Stepper Wizard Navigation Engine (ENG-01)
 export { default as DocumentStepper } from "./Stepper/DocumentStepper";
 export {

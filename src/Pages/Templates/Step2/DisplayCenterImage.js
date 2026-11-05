@@ -96,7 +96,7 @@ const ImageWithDropZone = ({
         IsNumber: buttonLabel === "Number" ? true : false,
         IsDate: buttonLabel === "Date" ? true : false,
         FontSize: "13px",
-        FontColor: "black",
+        FontColor: "",
         FontStyle: "Jost",
         PageMaxWidth: `${imgWidth}px`,
         PageMaxHeight: `${imgHeight}px`,
@@ -140,8 +140,10 @@ const ImageWithDropZone = ({
         const positionY = parseFloat(button.controlLocationY);
         const existingButton = existingButtons.find((item) => item.controlLocationID === button.templateControlLocationID);
         const fallbackDims = getNewControlDimensions({ label: button.controlName });
-        const width = toFiniteNumber(button.width, toFiniteNumber(existingButton?.width, fallbackDims.width));
-        const height = toFiniteNumber(button.height, toFiniteNumber(existingButton?.height, fallbackDims.height));
+        const rawWidth = button.width || button.Width;
+        const rawHeight = button.height || button.Height;
+        const width = Math.max(80, toFiniteNumber(rawWidth, toFiniteNumber(existingButton?.width, Math.max(80, fallbackDims.width))));
+        const height = Math.max(30, toFiniteNumber(rawHeight, toFiniteNumber(existingButton?.height, Math.max(30, fallbackDims.height))));
 
         const item = {
           label: button.controlName,
@@ -160,9 +162,9 @@ const ImageWithDropZone = ({
           width: width,
           height: height,
           qrCodePath: button.qrCodePath,
-          fontSize: button.fontSize || "",
-          fontColor: button.fontColor || "",
-          fontStyle: button.fontStyle || "",
+          fontSize: button.fontSize || button.FontSize || "",
+          fontColor: button.fontColor || button.FontColor || "",
+          fontStyle: button.fontStyle || button.FontStyle || "",
           qrCodeDetails1: button.qrCodeDetails1,
           qrCodeDetails2: button.qrCodeDetails2,
           qrCodeDetails3: button.qrCodeDetails3,
@@ -360,7 +362,7 @@ const ImageWithDropZone = ({
             IsNumber: item.label === "Number" ? true : false,
             IsDate: item.label === "Date" ? true : false,
             FontSize: "13px",
-            FontColor: "black",
+            FontColor: "",
             FontStyle: "Jost",
             PageMaxWidth: `${imgWidth}px`,
             PageMaxHeight: `${imgHeight}px`,
@@ -386,14 +388,15 @@ const ImageWithDropZone = ({
   });
 
   const formatFontSize = (size) => {
-    return typeof size === "number" || !size.endsWith("px") ? `${size}px` : size;
+    if (!size) return "14px";
+    return typeof size === "number" || !String(size).endsWith("px") ? `${size}px` : size;
   };
 
   const updateControlsLocation = async (controlLocationID, controlIdentifier, text, x, y, Height, Width, fontStyle, fontSize, fontColor, placeholder) => {
     const existingButton = (displayedButtons || []).find((btn) => btn.controlLocationID === controlLocationID);
     const fallbackDimensions = getNewControlDimensions({ label: existingButton?.label });
-    const validWidth = toFiniteNumber(Width, toFiniteNumber(existingButton?.width, fallbackDimensions.width));
-    const validHeight = toFiniteNumber(Height, toFiniteNumber(existingButton?.height, fallbackDimensions.height));
+    const validWidth = Math.max(80, toFiniteNumber(Width, toFiniteNumber(existingButton?.width, Math.max(80, fallbackDimensions.width))));
+    const validHeight = Math.max(30, toFiniteNumber(Height, toFiniteNumber(existingButton?.height, Math.max(30, fallbackDimensions.height))));
     const updatedLocationData = {
       TemplateControlLocationID: controlLocationID,
       ControlIdentifier: controlIdentifier,

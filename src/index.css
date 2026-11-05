@@ -325,8 +325,8 @@
   --modern-card: #12102a;
   --modern-text: #e9e8f5;
   --modern-muted: #9a98b8;
-  --modern-border: rgba(190, 181, 255, 0.11);
-  --modern-border-strong: rgba(190, 181, 255, 0.18);
+  --modern-border: rgba(190, 181, 255, 0.16);
+  --modern-border-strong: rgba(190, 181, 255, 0.28);
   --modern-violet: #8b6cff;
   --modern-violet-hover: #a28aff;
   --modern-violet-soft: rgba(139, 108, 255, 0.14);
@@ -490,8 +490,8 @@
   --modern-card: #0d1f45;
   --modern-text: #eaf1ff;
   --modern-muted: #98a9cc;
-  --modern-border: rgba(255, 255, 255, 0.09);
-  --modern-border-strong: rgba(77, 141, 255, 0.35);
+  --modern-border: rgba(255, 255, 255, 0.14);
+  --modern-border-strong: rgba(77, 141, 255, 0.45);
   --modern-violet: #4d8dff;
   --modern-violet-hover: #3a7ced;
   --modern-violet-soft: rgba(77, 141, 255, 0.16);

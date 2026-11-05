@@ -577,57 +577,55 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
 
   return (
     <div className='w-full'>
-
       <div>
         <div className='w-full'>
           <Row className='px-0 mx-0'>
-            <Col md={10} className='p-0 bg-[var(--modern-bg)]'>
-              <Row
-                className='m-0 px-4 py-2 flex items-center'
+          <Col md={10} className='p-0 bg-[var(--modern-bg)]'>
+            <div
+              className='sticky top-0 z-20 px-4 py-3 flex items-center justify-between border-b border-[var(--modern-border)] bg-[var(--modern-card)]'
+            >
+              <div className='flex items-center gap-3'>
+                <Button
+                  onClick={scrollToNextControl}
+                  variant={completedControls ? "success" : "primary"}
+                  size='sm'
+                  className='inline-flex items-center gap-2 font-semibold rounded-full px-5 h-9'
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <span className='flex items-center gap-2'>
+                      <span className='inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' />
+                      {t("signOrderDaigram.loading")}
+                    </span>
+                  ) : completedControls ? (
+                    t("uploadDocFlow.finish")
+                  ) : currentControlIndex === 0 ? (
+                    t("signaturePage.Start")
+                  ) : (
+                    t("signaturePage.NextStep")
+                  )}
+                </Button>
+                <span className='text-xs text-[var(--modern-muted)] font-mono'>
+                  {sortedControls.filter((c) => {
+                    if (["Signature", "Initial", "Stamp", "Image"].includes(c.controlName)) {
+                      return uploadedSignature.some((item) => item.controlLocationID === c.controlLocationID);
+                    }
+                    return c.textEditor && c.textEditor.trim() !== "";
+                  }).length}{" "}
+                  / {sortedControls.length} {t("signaturePage.fieldsCompleted", "fields completed")}
+                </span>
+              </div>
+            </div>
+
+            <Row className='mx-0 p-0'>
+              <div
+                className='main-document scrollable-content px-0'
+                ref={mainDocumentRef}
                 style={{
-                  position: "fixed",
-                  top: "var(--editor-header-height, 67px)",
-                  width: "100%",
-                  zIndex: "20",
-                  background: "var(--modern-card)",
-                  borderBottom: "1px solid var(--modern-border)",
+                  position: "relative",
                 }}
               >
-                <div className='flex items-center gap-2'>
-                  <div>
-                    <Button
-                      onClick={scrollToNextControl}
-                      variant={completedControls ? "success" : "primary"}
-                      size='sm'
-                      className='inline-flex items-center gap-2 font-semibold'
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <span className='flex items-center gap-2'>
-                          <span className='inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' />
-                          {t("signOrderDaigram.loading")}
-                        </span>
-                      ) : completedControls ? (
-                        t("uploadDocFlow.finish")
-                      ) : currentControlIndex === 0 ? (
-                        t("signaturePage.Start")
-                      ) : (
-                        t("signaturePage.NextStep")
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </Row>
-
-              <Row className='mx-0 p-0' style={{ marginTop: "70px" }}>
-                <div
-                  className='main-document scrollable-content px-0'
-                  ref={mainDocumentRef}
-                  style={{
-                    position: "relative",
-                  }}
-                >
-                  <div className='large-image'>
+                <div className='large-image'>
                     <div
                       className='doc-image'
                       style={{
@@ -1074,10 +1072,9 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
 
             <Col
               md={2}
-              className='p-0 border-l border-[var(--modern-border)] rtl:border-r rtl:border-l-0 bg-[var(--modern-card)]'
-              style={{ position: "fixed", top: "var(--editor-header-height, 67px)", zIndex: "20" }}
+              className='p-0 border-l border-[var(--modern-border)] rtl:border-r rtl:border-l-0 bg-[var(--modern-card)] sticky top-0 h-fit max-h-[calc(100vh-140px)] overflow-y-auto'
             >
-              <div className='m-2 p-1.5 rounded-md border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] flex items-center'>
+              <div className='m-2 p-1.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] flex items-center'>
                 <DropdownButton
                   title={selectedFolder || ""}
                   onSelect={(eventKey) => {
@@ -1085,13 +1082,13 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
                     handleDocSelect(masterDocID, selectedFolderName, signedDocKey);
                   }}
                   id='doc-dropdown'
-                  className='border-0 w-full flex justify-between items-center text-[var(--modern-text)]'
+                  className='border-0 w-full flex justify-between items-center text-[var(--modern-text)] text-xs'
                   variant='none'
                 >
                   {formData &&
                     formData.primaryDocs.map((doc) => {
                       return (
-                        <Dropdown.Item key={doc.masterDocID} eventKey={`${doc.masterDocID},${doc.docName},${doc.signedDocKey}`} className='truncate text-[var(--modern-text)]'>
+                        <Dropdown.Item key={doc.masterDocID} eventKey={`${doc.masterDocID},${doc.docName},${doc.signedDocKey}`} className='truncate text-[var(--modern-text)] text-xs'>
                           {doc.docName}
                         </Dropdown.Item>
                       );
@@ -1118,14 +1115,14 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
 
           <SignatureModal {...SignatureModalProps} />
         </div>
-        <div className='fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-3 border-t border-[var(--modern-border)] bg-[var(--modern-card)]'>
-          <Button variant='outline' id='hide_part_one' onClick={handleBack} disabled={isLoading}>
+        <div className='sticky bottom-0 z-30 flex items-center justify-between px-6 py-3.5 border-t border-[var(--modern-border)] bg-[var(--modern-card)]'>
+          <Button variant='outline' id='hide_part_one' onClick={handleBack} disabled={isLoading} className='rounded-full px-5'>
             {t("uploadDocFlow.back")}
           </Button>
 
           <PageNavigations imagesData={imagesData} selectedImage={selectedImage} setSelectedImage={setSelectedImage} onImageSelect={handleImageSelect} />
 
-          <Button variant='primary' id='hide_part_one' onClick={handleCheckCompletedButton} disabled={isLoading}>
+          <Button variant='primary' id='hide_part_one' onClick={handleCheckCompletedButton} disabled={isLoading} className='rounded-full px-6 font-semibold'>
             {t("signaturePage.completed")}
           </Button>
         </div>

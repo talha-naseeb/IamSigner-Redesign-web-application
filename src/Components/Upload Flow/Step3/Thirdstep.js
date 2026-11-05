@@ -719,12 +719,40 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
   const currentDateExpiry = new Date().toISOString().split("T")[0];
 
   return (
-    <Container className='upload-container-thirdStep'>
-      <div className='upload_body' id='part_one'>
+    <div className='w-full max-w-5xl mx-auto space-y-6 pb-24'>
+      {/* Step Header */}
+      <div className='mb-2'>
+        <small className='block font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--modern-primary,#4d8dff)]'>
+          {t("uploadDocFlow.step", "STEP")} 4 {t("uploadDocFlow.of", "OF")} 4
+        </small>
+        <h1 className='mt-1 text-2xl font-bold tracking-tight text-[var(--modern-text)]'>
+          {t("uploadDocFlow.sendAndSign", "Send and Sign")}
+        </h1>
+        <p className='mt-1 text-sm text-[var(--modern-muted)]'>
+          {t("uploadDocFlow.reviewAndSendSubtitle", "Review settings, customize recipient message, and dispatch your document.")}
+        </p>
+      </div>
+
+      <div className='w-full flex flex-col gap-6' id='part_one'>
         <div>
-          {userAccess.supportDocs === true ? (
-            <>
-              <div className="mt-4">
+          {/* Supporting Documents (conditional) */}
+          {userAccess.supportDocs === true && (
+            <div className='mb-6 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-6'>
+              <div className='flex items-center gap-3 border-b border-[var(--modern-border)] pb-4 mb-4'>
+                <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--modern-primary)_15%,transparent)] text-[var(--modern-primary)]'>
+                  <Icons.UploadCloud size={20} />
+                </div>
+                <div>
+                  <h3 className='text-base font-bold text-[var(--modern-text)] m-0'>
+                    {t("uploadDocFlow.supportingDocuments", "Supporting Documents")}
+                  </h3>
+                  <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5'>
+                    {t("uploadDocFlow.supportingDocsSubtitle", "Attach supplemental documentation for signers to reference")}
+                  </p>
+                </div>
+              </div>
+
+              <div>
                 <UploadSourceCard {...getRootProps()}>
                   <input {...getInputProps()} className="sr-only" />
                   <Icons.UploadCloud size={32} className="text-[var(--modern-primary,#6366f1)]" />
@@ -739,295 +767,451 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
                     {errorMessage}
                   </p>
                 )}
-                <div className='mt-3 space-y-2' id='upload_file_bx '>
-                  {uploadedFiles.map((fileName, index, file) => (
-                    <div
-                      key={index}
-                      className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-md border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] px-3 py-2 text-[var(--modern-text,#0f172a)]"
-                    >
-                      <p className='m-0 flex min-w-0 items-center gap-2 break-words text-sm'>
-                        <Icons.PDFs size={22} />
-                        {fileName}
-                      </p>
-                      <Dropdown>
-                        <Dropdown.Toggle as={CustomToggle} />
-                        <Dropdown.Menu align='end'>
-                          <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(supportingDocIDs[index])}>
-                            <Icons.View size={18} />
-                            {t("uploadDocFlow.view")}
-                          </Dropdown.Item>
-                          <Dropdown.Item className='flex items-center gap-2' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
-                            <Icons.DeleteAction size={18} />
-                            {t("uploadDocFlow.delete")}
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </div>
-                  ))}
-                </div>
+                {uploadedFiles.length > 0 && (
+                  <div className='mt-3 space-y-2' id='upload_file_bx '>
+                    {uploadedFiles.map((fileName, index) => (
+                      <div
+                        key={index}
+                        className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] px-4 py-2.5 text-[var(--modern-text)]"
+                      >
+                        <p className='m-0 flex min-w-0 items-center gap-2 break-words text-sm font-medium'>
+                          <Icons.PDFs size={22} className='text-[var(--modern-primary)]' />
+                          {fileName}
+                        </p>
+                        <Dropdown>
+                          <Dropdown.Toggle as={CustomToggle} />
+                          <Dropdown.Menu align='end'>
+                            <Dropdown.Item className='flex items-center gap-2' onClick={() => handleFileview(supportingDocIDs[index])}>
+                              <Icons.View size={18} />
+                              {t("uploadDocFlow.view")}
+                            </Dropdown.Item>
+                            <Dropdown.Item className='flex items-center gap-2' onClick={() => DeleteFileModal(supportingDocIDs[index], index)}>
+                              <Icons.DeleteAction size={18} />
+                              {t("uploadDocFlow.delete")}
+                            </Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            </>
-          ) : (
-            <></>
+            </div>
           )}
 
           {/* Message to Recipients */}
+          <div className='my-6 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-6'>
+            <div className='flex items-center gap-3 border-b border-[var(--modern-border)] pb-4 mb-5'>
+              <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--modern-primary)_15%,transparent)] text-[var(--modern-primary)]'>
+                <Icons.customEmail size={20} />
+              </div>
+              <div>
+                <h3 className='text-base font-bold text-[var(--modern-text)] m-0'>
+                  {t("uploadDocFlow.MessageRecipients", "Message to Recipients")}
+                </h3>
+                <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5'>
+                  {t("uploadDocFlow.customMessageSubtitle", "Customize the subject and invitation message sent to signers")}
+                </p>
+              </div>
+            </div>
 
-          <Accordion defaultActiveKey='0'>
-            <Accordion.Item eventKey='0'>
-              <Accordion.Header className='m-0'>
-                <div className='d-flex align-items-center gap-2'>
-                  <Icons.customEmail size={30} />
-                  <label style={{ fontSize: "20px", fontWeight: "500" }}>{t("uploadDocFlow.MessageRecipients")}</label>
-                </div>
-              </Accordion.Header>
-              <Accordion.Body className='p-3'>
-                <Form onSubmit={sendCustomMessage}>
-                  <Form.Group className='mb-3' controlId='formSubject'>
-                    <Form.Label className='mb-2'>{t("Comments.Subject")}</Form.Label>
-                    <Form.Control type='text' placeholder={t("Comments.addSubject")} {...register("CustomSubject")} />
-                  </Form.Group>
-                  <Form.Group className='mb-3' controlId='formMessage'>
-                    <Form.Label className='mb-2'>{t("Comments.message")}</Form.Label>
-                    <Form.Control as='textarea' rows={5} placeholder={t("Comments.CustomMessage")} {...register("CustomEmailMessage")} />
-                  </Form.Group>
-                </Form>
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
-
-          {/* Comment Input */}
-          <div className='my-3 '>
-            <Accordion defaultActiveKey='0'>
-              <Accordion.Item eventKey='2'>
-                <Accordion.Header className='m-0'>
-                  <div className='d-flex align-items-center gap-2'>
-                    <Icons.customMessage size={30} />
-                    <label style={{ fontSize: "20px", fontWeight: "500" }}>{t("uploadDocFlow.sendCopy")}</label>
-                  </div>
-                </Accordion.Header>
-
-                <Accordion.Body className='p-3'>
-                  <div>
-                    {/* Email CC */}
-                    <CCEmail />
-                    {/* Comment */}
-                    <label className='mt-3 mb-2'>{t("uploadDocFlow.comment")}</label>
-                    <div className='d-flex align-items-center justify-content-between mb-3 gap-2'>
-                      <InputGroup>
-                        <Form.Control
-                          type='text'
-                          placeholder={t("Comments.addCommentHere")}
-                          value={newComment}
-                          onChange={handleNewCommentChange}
-                          onKeyDown={handleNewCommentKeyDown}
-                          className='comment-input py-2'
-                        />
-                      </InputGroup>
-                      <Button onClick={addComment} variant='primary' className='h-10 px-4'>
-                        <Icons.Send />
-                      </Button>
-                    </div>
-                    <ListGroup>
-                      {comments.map((comment, index) => (
-                        <ListGroup.Item key={index} className='border-none bg-[var(--modern-raised,#f1f5f9)] rounded-lg p-3 my-2 text-[var(--modern-text,#0f172a)]'>
-                          <Row>
-                            <Col md={6} className='pe-0 d-flex align-items-center gap-3'>
-                              {/* User Avatar - Initials Only */}
-                              <div
-                                style={{
-                                  width: "30px",
-                                  height: "30px",
-                                  borderRadius: "50%",
-                                  backgroundColor: getAvatarColor(user.fullName),
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  color: "white",
-                                  fontSize: "14px",
-                                  fontWeight: "700",
-                                  flexShrink: 0,
-                                  textTransform: "uppercase",
-                                  letterSpacing: "0.5px",
-                                }}
-                              >
-                                {getInitials(user.fullName)}
-                              </div>
-                              <div className='flex items-center font-bold mb-0 flex-wrap text-[var(--modern-text,#0f172a)]'>
-                                {user.fullName}
-                                <span className='ml-2.5 text-xs text-[var(--modern-muted,#64748b)]'>
-                                  {comment.date}
-                                  <span className='mx-2'></span>
-                                  {comment.time}
-                                </span>
-                                {comment.edited && <span className='edited-label mx-2 fw-normal'>updated</span>}
-                              </div>
-                            </Col>
-                            <Col md={6} className='d-flex justify-content-end gap-2'>
-                              {editingIndex !== index ? (
-                                <>
-                                  <Icons.PenEdit className='ThirdStepEdit' onClick={() => toggleEdit(index)} />
-                                  <Icons.DeleteAction className='ThirdStepEdit' onClick={() => handleShowConfirmModal(docCommentsIDs[index], index)} />
-                                </>
-                              ) : null}
-                            </Col>
-                            <Col className='my-3'>
-                              {editingIndex === index ? (
-                                // Editing mode
-                                <div className='d-flex align-items-center gap-3'>
-                                  <Form.Control
-                                    type='text'
-                                    value={editedText}
-                                    onChange={(e) => setEditedText(e.target.value)}
-                                    onKeyDown={(e) => {
-                                      e.stopPropagation();
-                                      if (e.key === "Enter" && !e.shiftKey) {
-                                        e.preventDefault();
-                                        if (editedText && editedText.trim() !== "" && editedText.trim() !== (comments[index]?.text || "").trim()) {
-                                          saveEditedComment(index);
-                                        }
-                                      } else if (e.key === "Escape") {
-                                        e.preventDefault();
-                                        cancelEdit();
-                                      }
-                                    }}
-                                  />
-                                  <div className='d-flex align-items-center gap-2'>
-                                    <Button
-                                      variant='none'
-                                      className='applyBtn'
-                                      onClick={() => saveEditedComment(index)}
-                                      disabled={!editedText || editedText.trim() === "" || editedText.trim() === (comments[index]?.text || "").trim()}
-                                    >
-                                      {t("uploadDocFlow.save")}
-                                    </Button>
-                                    <Button variant='outline-secondary' className='ImageCancelBtn' onClick={cancelEdit}>
-                                      {t("uploadDocFlow.cancel")}
-                                    </Button>
-                                  </div>
-                                </div>
-                              ) : (
-                                // Viewing mode
-                                <>
-                                  <div className='comment-body'>
-                                    <div className='text-sm mb-2.5 p-2 rounded-md border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] text-[var(--modern-text,#0f172a)]'>{comment.text}</div>
-                                  </div>
-                                </>
-                              )}
-                            </Col>
-                          </Row>
-                        </ListGroup.Item>
-                      ))}
-                    </ListGroup>
-                  </div>
-                </Accordion.Body>
-              </Accordion.Item>
-            </Accordion>
+            <Form onSubmit={sendCustomMessage} className='space-y-4'>
+              <div>
+                <label className='mb-1.5 block text-xs font-bold uppercase tracking-wider text-[var(--modern-muted)]'>
+                  {t("Comments.Subject", "Subject")}
+                </label>
+                <input
+                  type='text'
+                  className='w-full rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] px-3.5 py-2.5 text-sm text-[var(--modern-text)] placeholder:text-[var(--modern-muted)] focus:border-[var(--modern-primary)] focus:outline-none transition-colors'
+                  placeholder={t("Comments.addSubject", "Enter subject line...")}
+                  {...register("CustomSubject")}
+                />
+              </div>
+              <div>
+                <label className='mb-1.5 block text-xs font-bold uppercase tracking-wider text-[var(--modern-muted)]'>
+                  {t("Comments.message", "Message")}
+                </label>
+                <textarea
+                  rows={4}
+                  className='w-full rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] px-3.5 py-2.5 text-sm text-[var(--modern-text)] placeholder:text-[var(--modern-muted)] focus:border-[var(--modern-primary)] focus:outline-none transition-colors'
+                  placeholder={t("Comments.CustomMessage", "Enter message to recipients...")}
+                  {...register("CustomEmailMessage")}
+                />
+              </div>
+            </Form>
           </div>
 
-          {/*Advanced Settings  */}
+          {/* Send Copy (CC) & Comments */}
+          <div className='my-6 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-6'>
+            <div className='flex items-center gap-3 border-b border-[var(--modern-border)] pb-4 mb-5'>
+              <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--modern-primary)_15%,transparent)] text-[var(--modern-primary)]'>
+                <Icons.customMessage size={20} />
+              </div>
+              <div>
+                <h3 className='text-base font-bold text-[var(--modern-text)] m-0'>
+                  {t("uploadDocFlow.sendCopy", "Send a Copy (CC) & Comments")}
+                </h3>
+                <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5'>
+                  {t("uploadDocFlow.sendCopySubtitle", "Add CC recipients and attach notes to the signing transaction")}
+                </p>
+              </div>
+            </div>
 
-          <div className='ThirdpaginationDivs my-3 mb-24'>
-            <Accordion defaultActiveKey='0'>
-              <Accordion.Item eventKey='2'>
-                <Accordion.Header className='m-0'>
-                  <div className='d-flex align-items-center gap-2'>
-                    <Icons.advancedSettings size={30} />
-                    <label style={{ fontSize: "20px", fontWeight: "500" }}>{t("uploadDocFlow.AdvancedSettings")}</label>
+            <div className='space-y-5'>
+              {/* Email CC */}
+              <CCEmail />
+
+              {/* Comment Thread */}
+              <div className='border-t border-[var(--modern-border)] pt-4'>
+                <label className='mb-2 block text-xs font-bold uppercase tracking-wider text-[var(--modern-muted)]'>
+                  {t("Comments.comments", "Comments & Notes")}
+                </label>
+
+                <div className='flex items-center gap-2 mb-4'>
+                  <input
+                    type='text'
+                    placeholder={t("Comments.addCommentHere", "Add a comment...")}
+                    value={newComment}
+                    onChange={handleNewCommentChange}
+                    onKeyDown={handleNewCommentKeyDown}
+                    className='flex-1 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] px-3.5 py-2.5 text-sm text-[var(--modern-text)] placeholder:text-[var(--modern-muted)] focus:border-[var(--modern-primary)] focus:outline-none transition-colors'
+                  />
+                  <Button
+                    onClick={addComment}
+                    variant='primary'
+                    className='!h-10 px-4 rounded-xl shrink-0 font-semibold'
+                  >
+                    <Icons.Send size={16} />
+                  </Button>
+                </div>
+
+                {comments.length > 0 && (
+                  <div className='space-y-2.5'>
+                    {comments.map((comment, index) => (
+                      <div
+                        key={index}
+                        className='rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] p-3 text-[var(--modern-text)]'
+                      >
+                        <div className='flex items-center justify-between gap-2 mb-2'>
+                          <div className='flex items-center gap-2.5'>
+                            <div
+                              style={{
+                                width: "30px",
+                                height: "30px",
+                                borderRadius: "50%",
+                                backgroundColor: getAvatarColor(user.fullName),
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "white",
+                                fontSize: "11px",
+                                fontWeight: "700",
+                                flexShrink: 0,
+                                textTransform: "uppercase",
+                              }}
+                            >
+                              {getInitials(user.fullName)}
+                            </div>
+                            <div>
+                              <span className='block text-xs font-bold text-[var(--modern-text)] leading-tight'>
+                                {user.fullName}
+                              </span>
+                              <span className='text-[11px] text-[var(--modern-muted)]'>
+                                {comment.date} {comment.time}
+                                {comment.edited && (
+                                  <span className='text-[var(--modern-primary)] ms-1 font-semibold'>
+                                    (updated)
+                                  </span>
+                                )}
+                              </span>
+                            </div>
+                          </div>
+
+                          {editingIndex !== index && (
+                            <div className='flex items-center gap-1.5'>
+                              <button
+                                type='button'
+                                onClick={() => toggleEdit(index)}
+                                title={t("uploadDocFlow.edit", "Edit")}
+                                className='inline-flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-muted)] hover:text-[var(--modern-primary)] hover:border-[var(--modern-primary)] transition-colors cursor-pointer'
+                              >
+                                <Icons.PenEdit size={14} />
+                              </button>
+                              <button
+                                type='button'
+                                onClick={() => handleShowConfirmModal(docCommentsIDs[index], index)}
+                                title={t("uploadDocFlow.delete", "Delete")}
+                                className='inline-flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-muted)] hover:text-[var(--modern-danger,#ef4444)] hover:border-[var(--modern-danger,#ef4444)] transition-colors cursor-pointer'
+                              >
+                                <Icons.DeleteAction size={14} />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        {editingIndex === index ? (
+                          <div className='flex items-center gap-2 mt-2'>
+                            <input
+                              type='text'
+                              className='flex-1 rounded-lg border border-[var(--modern-border)] bg-[var(--modern-card)] px-3 py-1.5 text-xs text-[var(--modern-text)] focus:border-[var(--modern-primary)] focus:outline-none'
+                              value={editedText}
+                              onChange={(e) => setEditedText(e.target.value)}
+                              onKeyDown={(e) => {
+                                e.stopPropagation();
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                  e.preventDefault();
+                                  if (editedText && editedText.trim() !== "" && editedText.trim() !== (comments[index]?.text || "").trim()) {
+                                    saveEditedComment(index);
+                                  }
+                                } else if (e.key === "Escape") {
+                                  e.preventDefault();
+                                  cancelEdit();
+                                }
+                              }}
+                            />
+                            <Button
+                              variant='primary'
+                              size='sm'
+                              className='!h-8 px-3 rounded-lg text-xs font-semibold'
+                              onClick={() => saveEditedComment(index)}
+                              disabled={!editedText || editedText.trim() === "" || editedText.trim() === (comments[index]?.text || "").trim()}
+                            >
+                              {t("uploadDocFlow.save")}
+                            </Button>
+                            <Button
+                              variant='outline'
+                              size='sm'
+                              className='!h-8 px-3 rounded-lg text-xs font-semibold'
+                              onClick={cancelEdit}
+                            >
+                              {t("uploadDocFlow.cancel")}
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className='text-xs leading-relaxed rounded-lg border border-[var(--modern-border)] bg-[var(--modern-card)] p-2.5 text-[var(--modern-text)]'>
+                            {comment.text}
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                </Accordion.Header>
-                <Accordion.Body className='p-3'>
-                  <Form>
-                    <div className='mb-3'>
-                      <Icons.SignatureOutline size={23} />
-                      <label className='fw-bold mb-2 mx-2'>{t("uploadDocFlow.SigningSettings")}</label>
-                      <Form.Check type='checkbox' label={t("uploadDocFlow.allowReject")} {...register("IsAllowDeclined")} />
-                      <Form.Check type='checkbox' label={t("uploadDocFlow.CanAddComment")} {...register("CanAddComment")} />
-                      <Form.Check type='checkbox' label={t("uploadDocFlow.CanAddSupportingDocument")} {...register("CanAddSupportingDocument")} />
-                      <Form.Check type='checkbox' label={t("uploadDocFlow.allowDownload")} {...register("IsAllowDownload")} />
-                      <Form.Check type='checkbox' label={t("uploadDocFlow.allowTransfer")} {...register("IsAllowTransfer")} />
-                      <Form.Check type='checkbox' label={t("uploadDocFlow.CanDownloadAuditTrail")} {...register("CanDownloadAuditTrail")} />
-                    </div>
+                )}
+              </div>
+            </div>
+          </div>
 
-                    {/* Notification Settings */}
-                    <hr />
-                    <div className='mb-3'>
-                      <Icons.NotificationAdd size={23} />
-                      <label className='fw-bold mb-2 mx-2'>{t("uploadDocFlow.notificationSettings")}</label>
-                      <Form.Check
-                        type='checkbox'
-                        label={t("uploadDocFlow.OwnSignatureOnly")}
-                        checked={notificationSettings.OwnSignatureOnly}
-                        onChange={() => handleNotificationChange("OwnSignatureOnly")}
-                      />
-                      <Form.Check type='checkbox' label={t("uploadDocFlow.sendtoAll")} checked={notificationSettings.AllSignatories} onChange={() => handleNotificationChange("AllSignatories")} />
-                      <Form.Check type='checkbox' label={t("uploadDocFlow.initiatorsOnly")} checked={notificationSettings.InitiatorOnly} onChange={() => handleNotificationChange("InitiatorOnly")} />
-                      <Form.Check
-                        type='checkbox'
-                        label={t("uploadDocFlow.NoNotifications")}
-                        checked={notificationSettings.NoNotifications}
-                        onChange={() => handleNotificationChange("NoNotifications")}
-                      />
-                    </div>
+          {/* Advanced Settings */}
+          <div className='my-6 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-6'>
+            <div className='flex items-center gap-3 border-b border-[var(--modern-border)] pb-4 mb-5'>
+              <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--modern-primary)_15%,transparent)] text-[var(--modern-primary)]'>
+                <Icons.advancedSettings size={20} />
+              </div>
+              <div>
+                <h3 className='text-base font-bold text-[var(--modern-text)] m-0'>
+                  {t("uploadDocFlow.AdvancedSettings", "Advanced Settings")}
+                </h3>
+                <p className='text-xs text-[var(--modern-muted)] m-0 mt-0.5'>
+                  {t("uploadDocFlow.advancedSettingsSubtitle", "Configure signing permissions, notification rules, expiration, and archiving")}
+                </p>
+              </div>
+            </div>
 
-                    {/*Sending Settings */}
-                    <hr />
-                    <div className='mb-3'>
-                      <Icons.DocumentAttach size={23} />
-                      <label className='fw-bold mb-2 mx-2'>{t("uploadDocFlow.SendingSettings")}</label>
-                      <Form.Check type='checkbox' label={t("uploadDocFlow.attachCompletedDocuments")} {...register("IsAttachCompletedDoc")} />
-                      <Form.Check type='checkbox' label={t("uploadDocFlow.attachAuditTrial")} {...register("IsAttachAuditTrialDoc")} />
-                    </div>
-                    <hr />
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
+              {/* 1. Signing Settings */}
+              <div className='flex flex-col rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] p-4 space-y-3'>
+                <div className='flex items-center gap-2 border-b border-[var(--modern-border)] pb-2.5'>
+                  <span className='text-[var(--modern-primary)]'>
+                    <Icons.SignatureOutline size={18} />
+                  </span>
+                  <label className='font-bold text-xs uppercase tracking-wider text-[var(--modern-muted)] m-0'>
+                    {t("uploadDocFlow.SigningSettings")}
+                  </label>
+                </div>
+                <div className='space-y-2.5 text-xs text-[var(--modern-text)]'>
+                  <label className='flex items-center gap-2.5 cursor-pointer font-medium m-0'>
+                    <input type='checkbox' className='h-4 w-4 rounded border-[var(--modern-border)] text-[var(--modern-primary)] focus:ring-[var(--modern-primary)]' {...register("IsAllowDeclined")} />
+                    <span>{t("uploadDocFlow.allowReject")}</span>
+                  </label>
+                  <label className='flex items-center gap-2.5 cursor-pointer font-medium m-0'>
+                    <input type='checkbox' className='h-4 w-4 rounded border-[var(--modern-border)] text-[var(--modern-primary)] focus:ring-[var(--modern-primary)]' {...register("CanAddComment")} />
+                    <span>{t("uploadDocFlow.CanAddComment")}</span>
+                  </label>
+                  <label className='flex items-center gap-2.5 cursor-pointer font-medium m-0'>
+                    <input type='checkbox' className='h-4 w-4 rounded border-[var(--modern-border)] text-[var(--modern-primary)] focus:ring-[var(--modern-primary)]' {...register("CanAddSupportingDocument")} />
+                    <span>{t("uploadDocFlow.CanAddSupportingDocument")}</span>
+                  </label>
+                  <label className='flex items-center gap-2.5 cursor-pointer font-medium m-0'>
+                    <input type='checkbox' className='h-4 w-4 rounded border-[var(--modern-border)] text-[var(--modern-primary)] focus:ring-[var(--modern-primary)]' {...register("IsAllowDownload")} />
+                    <span>{t("uploadDocFlow.allowDownload")}</span>
+                  </label>
+                  <label className='flex items-center gap-2.5 cursor-pointer font-medium m-0'>
+                    <input type='checkbox' className='h-4 w-4 rounded border-[var(--modern-border)] text-[var(--modern-primary)] focus:ring-[var(--modern-primary)]' {...register("IsAllowTransfer")} />
+                    <span>{t("uploadDocFlow.allowTransfer")}</span>
+                  </label>
+                  <label className='flex items-center gap-2.5 cursor-pointer font-medium m-0'>
+                    <input type='checkbox' className='h-4 w-4 rounded border-[var(--modern-border)] text-[var(--modern-primary)] focus:ring-[var(--modern-primary)]' {...register("CanDownloadAuditTrail")} />
+                    <span>{t("uploadDocFlow.CanDownloadAuditTrail")}</span>
+                  </label>
+                </div>
+              </div>
 
-                    {/* Reminder Settings */}
-                    <div className='mb-3'>
-                      <Icons.LockPerson size={23} />
-                      <label className='fw-bold mb-2 mx-2'>{t("uploadDocFlow.ReminderSettings")}</label>
-                      <Form.Group className=' d-flex align-items-center gap-3 mb-2' controlId='formAutoReminderInDays'>
-                        <Form.Label>{t("uploadDocFlow.autoReminder")}</Form.Label>
-                        <Form.Control style={{ width: "15%" }} type='number' {...register("AutoReminderInDays")} className='form-control-sm' />
-                      </Form.Group>
-                    </div>
-                    <div className='d-flex align-items-center gap-3 mb-3'>
-                      <Form.Label className='m-0'>{t("uploadDocFlow.signatureExpires")}</Form.Label>
-                      <div style={{ width: "200px" }}>
-                        <DateRangePicker value={dateValue} onChange={handleDateChange} minDate={startOfToday()} range={false} containerClassName='delegation-date-picker' />
+              {/* 2. Notification Settings */}
+              <div className='flex flex-col rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] p-4 space-y-3'>
+                <div className='flex items-center gap-2 border-b border-[var(--modern-border)] pb-2.5'>
+                  <span className='text-[var(--modern-primary)]'>
+                    <Icons.NotificationAdd size={18} />
+                  </span>
+                  <label className='font-bold text-xs uppercase tracking-wider text-[var(--modern-muted)] m-0'>
+                    {t("uploadDocFlow.notificationSettings")}
+                  </label>
+                </div>
+                <div className='space-y-2.5 text-xs text-[var(--modern-text)]'>
+                  <label className='flex items-center gap-2.5 cursor-pointer font-medium m-0'>
+                    <input
+                      type='checkbox'
+                      className='h-4 w-4 rounded border-[var(--modern-border)] text-[var(--modern-primary)] focus:ring-[var(--modern-primary)]'
+                      checked={notificationSettings.OwnSignatureOnly}
+                      onChange={() => handleNotificationChange("OwnSignatureOnly")}
+                    />
+                    <span>{t("uploadDocFlow.OwnSignatureOnly")}</span>
+                  </label>
+                  <label className='flex items-center gap-2.5 cursor-pointer font-medium m-0'>
+                    <input
+                      type='checkbox'
+                      className='h-4 w-4 rounded border-[var(--modern-border)] text-[var(--modern-primary)] focus:ring-[var(--modern-primary)]'
+                      checked={notificationSettings.AllSignatories}
+                      onChange={() => handleNotificationChange("AllSignatories")}
+                    />
+                    <span>{t("uploadDocFlow.sendtoAll")}</span>
+                  </label>
+                  <label className='flex items-center gap-2.5 cursor-pointer font-medium m-0'>
+                    <input
+                      type='checkbox'
+                      className='h-4 w-4 rounded border-[var(--modern-border)] text-[var(--modern-primary)] focus:ring-[var(--modern-primary)]'
+                      checked={notificationSettings.InitiatorOnly}
+                      onChange={() => handleNotificationChange("InitiatorOnly")}
+                    />
+                    <span>{t("uploadDocFlow.initiatorsOnly")}</span>
+                  </label>
+                  <label className='flex items-center gap-2.5 cursor-pointer font-medium m-0'>
+                    <input
+                      type='checkbox'
+                      className='h-4 w-4 rounded border-[var(--modern-border)] text-[var(--modern-primary)] focus:ring-[var(--modern-primary)]'
+                      checked={notificationSettings.NoNotifications}
+                      onChange={() => handleNotificationChange("NoNotifications")}
+                    />
+                    <span>{t("uploadDocFlow.NoNotifications")}</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* 3. Sending & Reminders */}
+              <div className='flex flex-col rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] p-4 space-y-3'>
+                <div className='flex items-center gap-2 border-b border-[var(--modern-border)] pb-2.5'>
+                  <span className='text-[var(--modern-primary)]'>
+                    <Icons.DocumentAttach size={18} />
+                  </span>
+                  <label className='font-bold text-xs uppercase tracking-wider text-[var(--modern-muted)] m-0'>
+                    {t("uploadDocFlow.SendingSettings")} & {t("uploadDocFlow.ReminderSettings")}
+                  </label>
+                </div>
+                <div className='space-y-3 text-xs text-[var(--modern-text)]'>
+                  <label className='flex items-center gap-2.5 cursor-pointer font-medium m-0'>
+                    <input type='checkbox' className='h-4 w-4 rounded border-[var(--modern-border)] text-[var(--modern-primary)] focus:ring-[var(--modern-primary)]' {...register("IsAttachCompletedDoc")} />
+                    <span>{t("uploadDocFlow.attachCompletedDocuments")}</span>
+                  </label>
+                  <label className='flex items-center gap-2.5 cursor-pointer font-medium m-0'>
+                    <input type='checkbox' className='h-4 w-4 rounded border-[var(--modern-border)] text-[var(--modern-primary)] focus:ring-[var(--modern-primary)]' {...register("IsAttachAuditTrialDoc")} />
+                    <span>{t("uploadDocFlow.attachAuditTrial")}</span>
+                  </label>
+                  <div className='border-t border-[var(--modern-border)] pt-2.5 space-y-2.5'>
+                    <div className='flex items-center justify-between gap-3'>
+                      <label className='text-xs font-medium text-[var(--modern-text)] m-0'>
+                        {t("uploadDocFlow.autoReminder")}
+                      </label>
+                      <div className='flex items-center gap-1.5'>
+                        <input
+                          type='number'
+                          className='h-8 w-20 rounded-lg border border-[var(--modern-border)] bg-[var(--modern-card)] px-2 text-xs text-[var(--modern-text)] focus:border-[var(--modern-primary)] focus:outline-none'
+                          {...register("AutoReminderInDays")}
+                        />
+                        <span className='text-xs text-[var(--modern-muted)]'>days</span>
                       </div>
                     </div>
-                    {expiryDate && <Form.Check type='checkbox' className='mb-2' label={t("uploadDocFlow.remindBeforeExpiry")} {...register("SetReminderBefore1Day")} />}
-                    <hr />
-                    <Icons.FolderOpen size={23} />
-                    <label className='fw-bold mx-2 mb-2'>{t("uploadDocFlow.archivingDocuments")}</label>
-                    {/* Display the selected folder name */}
-                    {selectedFolderName ? (
-                      <p>
-                        {t("uploadDocFlow.documentGoesTo")}{" "}
-                        <strong>
-                          {selectedFolderName} {t("uploadDocFlow.Sfolders")}{" "}
-                        </strong>
-                        {t("uploadDocFlow.afterSigning")}
-                      </p>
-                    ) : (
-                      <p>{t("uploadDocFlow.noFolderSelected")}</p>
+                    <div className='flex flex-wrap items-center justify-between gap-2'>
+                      <label className='text-xs font-medium text-[var(--modern-text)] m-0'>
+                        {t("uploadDocFlow.signatureExpires")}
+                      </label>
+                      <div className='w-48'>
+                        <DateRangePicker
+                          value={dateValue}
+                          onChange={handleDateChange}
+                          minDate={startOfToday()}
+                          range={false}
+                          containerClassName='delegation-date-picker'
+                        />
+                      </div>
+                    </div>
+                    {expiryDate && (
+                      <label className='flex items-center gap-2.5 cursor-pointer font-medium m-0'>
+                        <input
+                          type='checkbox'
+                          className='h-4 w-4 rounded border-[var(--modern-border)] text-[var(--modern-primary)] focus:ring-[var(--modern-primary)]'
+                          {...register("SetReminderBefore1Day")}
+                        />
+                        <span>{t("uploadDocFlow.remindBeforeExpiry")}</span>
+                      </label>
                     )}
-                    {/* Button to open Folder Selection Offcanvas */}
-                    <Button variant='outline' onClick={() => setIsCanvasVisible(true)} className='mt-2'>
-                      {t("uploadDocFlow.SelectFolder")}
-                    </Button>
-                  </Form>
-                </Accordion.Body>
-              </Accordion.Item>
-            </Accordion>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. Archiving Documents */}
+              <div className='flex flex-col justify-between rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] p-4 space-y-3'>
+                <div>
+                  <div className='flex items-center gap-2 border-b border-[var(--modern-border)] pb-2.5 mb-3'>
+                    <span className='text-[var(--modern-primary)]'>
+                      <Icons.FolderOpen size={18} />
+                    </span>
+                    <label className='font-bold text-xs uppercase tracking-wider text-[var(--modern-muted)] m-0'>
+                      {t("uploadDocFlow.archivingDocuments")}
+                    </label>
+                  </div>
+                  {selectedFolderName ? (
+                    <p className='text-xs text-[var(--modern-text)] mb-3'>
+                      {t("uploadDocFlow.documentGoesTo")}{" "}
+                      <strong className='text-[var(--modern-primary)] font-bold'>
+                        {selectedFolderName} {t("uploadDocFlow.Sfolders")}
+                      </strong>{" "}
+                      {t("uploadDocFlow.afterSigning")}
+                    </p>
+                  ) : (
+                    <p className='text-xs text-[var(--modern-muted)] mb-3'>
+                      {t("uploadDocFlow.noFolderSelected")}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <Button
+                    variant='outline'
+                    onClick={() => setIsCanvasVisible(true)}
+                    className='!h-9 rounded-xl border-[var(--modern-border)] hover:bg-[var(--modern-card)] text-xs font-semibold'
+                  >
+                    {t("uploadDocFlow.SelectFolder")}
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <DispatchSummaryBar
             onBack={handleBack}
             onConfirm={openConfirmationModal}
+            isLoading={isLoading}
             t={t}
           />
 
-          {/* supportin file delete modal */}
+          {/* supporting file delete modal */}
           <DeleteConfirmationModal
             show={fileModal}
             onHide={handleFileCloseModal}
@@ -1062,33 +1246,41 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
             </Modal.Body>
           </Modal>
 
-          {/* Confirmation Modal (reused component) */}
+          {/* Confirmation Modal */}
           <DeleteConfirmationModal
             show={isConfirmationModalOpen}
             onHide={closeConfirmationModal}
+            variant='primary'
             title={t("uploadDocFlow.confirmSend")}
-            subtitle={t("uploadDocFlow.proceed")}
+            subtitle={t("uploadDocFlow.revertedText")}
             warningText={t("uploadDocFlow.proceed")}
             itemTitle={t("uploadDocFlow.sendAndSign")}
             itemName={t("uploadDocFlow.docSend")}
             onConfirm={handleYesButton}
             confirmText={t("uploadDocFlow.yes")}
-            itemIcon={<Icons.PDFs size={25} />}
+            itemIcon={<Icons.PDFs size={22} />}
             cancelText={t("uploadDocFlow.no")}
-            headerIcon={<Icons.CheckCircle size={25} />}
+            headerIcon={<Icons.CheckCircle size={26} />}
           />
 
           {/* Success Modal */}
-          <Modal keyboard={false} backdrop='static' show={isSuccessModalOpen} onHide={closeSuccessModal} dialogClassName='custom-modal-width'>
-            <Modal.Header>
-              <Modal.Title>{t("uploadDocFlow.requestSent")}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body className='px-3 py-2'>{t("uploadDocFlow.requestProceed")}</Modal.Body>
-            <Modal.Footer>
-              <Button onClick={closeSuccessModal} className='applyBtn'>
-                {t("uploadDocFlow.close")}
-              </Button>
-            </Modal.Footer>
+          <Modal keyboard={false} backdrop='static' show={isSuccessModalOpen} onHide={closeSuccessModal} centered>
+            <div className="rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-6 text-[var(--modern-text)]">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+                  <Icons.CheckCircle size={22} />
+                </div>
+                <div>
+                  <h3 className="text-base font-semibold text-[var(--modern-text)] m-0">{t("uploadDocFlow.requestSent")}</h3>
+                  <p className="mt-1 text-sm text-[var(--modern-muted)] m-0">{t("uploadDocFlow.requestProceed")}</p>
+                </div>
+              </div>
+              <div className="mt-6 flex justify-end">
+                <Button onClick={closeSuccessModal} className='applyBtn rounded-xl px-5 py-2.5'>
+                  {t("uploadDocFlow.close")}
+                </Button>
+              </div>
+            </div>
           </Modal>
 
           <DeleteConfirmationModal
@@ -1109,7 +1301,7 @@ const Thirdstep = ({ setActiveStep, setCompletedSteps }) => {
       </div>
 
       <FolderSelection show={isCanvasVisible} onClose={() => setIsCanvasVisible(false)} onSelectFolder={handleSelectFolder} />
-    </Container>
+    </div>
   );
 };
 

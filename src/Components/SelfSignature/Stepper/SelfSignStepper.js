@@ -5,13 +5,14 @@ import { STEPPER_FLOWS } from "@/Components/DocumentPreparation/Stepper/stepperC
 /**
  * SelfSignStepper - SelfSignature wrapper around unified DocumentStepper (ENG-01)
  */
-const SelfSignStepper = ({ activeStep, t, completedSteps }) => {
+const SelfSignStepper = ({ activeStep, t, completedSteps, variant = "studio" }) => {
   return (
     <DocumentStepper
       activeStep={activeStep}
       t={t}
       completedSteps={completedSteps}
       flowType={STEPPER_FLOWS.SELF_SIGN}
+      variant={variant}
     />
   );
 };

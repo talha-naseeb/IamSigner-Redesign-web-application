@@ -109,7 +109,7 @@ const ImageWithDropZone = ({
         Width: buttonLabel === "QR Code" || buttonLabel === "Stamp" || buttonLabel === "Image" ? "100px" : "110px",
         Height: buttonLabel === "QR Code" || buttonLabel === "Stamp" || buttonLabel === "Image" ? "100px" : "40px",
         FontSize: "13px",
-        FontColor: "black",
+        FontColor: "",
         FontStyle: "Jost",
         PageMaxWidth: `${imgWidth - 108}px`,
         PageMaxHeight: `${imgHeight - 41}px`,
@@ -155,16 +155,26 @@ const ImageWithDropZone = ({
     });
   }
   const getButtons = () => {
-    const selectedImageButtons = buttons && buttons.filter((button) => button.masterDocPagesID === masterDocPagesId);
+    const selectedImageButtons =
+      buttons &&
+      buttons.filter((button) => {
+        const pageId = button.masterDocPagesID ?? button.MasterDocPagesID;
+        return String(pageId) === String(masterDocPagesId);
+      });
 
     const getButtonsData =
       selectedImageButtons &&
       selectedImageButtons.map((button) => {
         const positionX = parseFloat(button.controlLocationX);
         const positionY = parseFloat(button.controlLocationY);
-        const prevButton = (imageButtonsMap[selectedImage] || []).find((b) => b.controlLocationID === button.controlLocationID);
-        const width = toFiniteNumber(button.width, prevButton ? prevButton.width : undefined);
-        const height = toFiniteNumber(button.height, prevButton ? prevButton.height : undefined);
+        const bulkId = button.BulkID ?? button.bulkID ?? button.controlLocationID;
+        const prevButton = (imageButtonsMap[selectedImage] || []).find(
+          (b) => b.controlLocationID === bulkId || b.BulkID === bulkId
+        );
+        const rawWidth = button.width || button.Width;
+        const rawHeight = button.height || button.Height;
+        const width = Math.max(80, toFiniteNumber(rawWidth, prevButton ? prevButton.width : 80));
+        const height = Math.max(30, toFiniteNumber(rawHeight, prevButton ? prevButton.height : 30));
 
         const item = {
           label: button.controlName,
@@ -174,7 +184,7 @@ const ImageWithDropZone = ({
           registerSignID: button.registerSignID,
           ID: button.registerSignID,
           position: { x: positionX, y: positionY },
-          controlLocationID: button.controlLocationID,
+          controlLocationID: bulkId,
           controlID: button.controlID,
           controlIdentifier: button.controlIdentifier,
           email: button.email,
@@ -183,9 +193,9 @@ const ImageWithDropZone = ({
           width: width,
           height: height,
           qrCodePath: button.qrCodePath,
-          fontSize: button.fontSize || "",
-          fontColor: button.fontColor || "",
-          fontStyle: button.fontStyle || "",
+          fontSize: button.fontSize || button.FontSize || "",
+          fontColor: button.fontColor || button.FontColor || "",
+          fontStyle: button.fontStyle || button.FontStyle || "",
           qrCodeDetails1: button.qrCodeDetails1,
           qrCodeDetails2: button.qrCodeDetails2,
           qrCodeDetails3: button.qrCodeDetails3,
@@ -193,7 +203,7 @@ const ImageWithDropZone = ({
           customPlaceHolder: button.customPlaceHolder,
           isDigitalSignature: button.isDigitalSignature,
           category: button.category,
-          BulkID: button.BulkID ?? button.bulkID,
+          BulkID: bulkId,
         };
 
         return item;
@@ -209,13 +219,15 @@ const ImageWithDropZone = ({
     getButtons();
   }, [buttons, selectedImage, masterDocPagesId, controlID]);
 
-  const fetchButtonPositions = async () => {
+  const fetchButtonPositions = async (docId) => {
+    const targetDocID = docId || selectedMasterDocID;
     try {
-      const response = await uploadFlowService.getDistinctControlsLocation(RegisterSignID, selectedMasterDocID);
+      const response = await uploadFlowService.getDistinctControlsLocation(RegisterSignID, targetDocID);
 
-      if (response.data.successStatus) {
-        setControls(response.data.response);
-        setButtons(response.data.response);
+      if (response?.data?.successStatus) {
+        const list = Array.isArray(response.data.response) ? response.data.response : [];
+        setControls(list);
+        setButtons(list);
       }
     } catch (error) {
       console.log(error);
@@ -333,8 +345,7 @@ const ImageWithDropZone = ({
               // setTextInput(button.textEditor);
 
               updateControlsLocation(
-                button.BulkID,
-                button.controlID,
+                button.BulkID || button.controlLocationID,
                 button.controlIdentifier,
                 button.textEditor,
                 x,
@@ -397,7 +408,7 @@ const ImageWithDropZone = ({
             IsDigitalSignature: false,
             CustomPlaceHolder: getPlaceholder(item.label),
             FontSize: "13px",
-            FontColor: "black",
+            FontColor: "",
             FontStyle: "Jost",
             PageMaxWidth: `${imgWidth - 108}px`,
             PageMaxHeight: `${imgHeight - 41}px`,
@@ -428,16 +439,19 @@ const ImageWithDropZone = ({
   });
 
   const formatFontSize = (size) => {
-    return typeof size === "number" || !size.endsWith("px") ? `${size}px` : size;
+    if (!size) return "14px";
+    return typeof size === "number" || !String(size).endsWith("px") ? `${size}px` : size;
   };
 
-  const updateControlsLocation = async (BulkID, controlID, controlIdentifier, text, x, y, Height, Width, fontStyle, fontSize, fontColor, placeholder, isRequired, signatureType, category) => {
+  const updateControlsLocation = async (BulkID, controlIdentifier, text, x, y, Height, Width, fontStyle, fontSize, fontColor, placeholder, isRequired, signatureType, category) => {
     // Never send "undefinedpx"/"NaNpx": validate against the control's existing dimensions.
     const existingButton = displayedButtons.find((btn) => btn.controlLocationID === BulkID || btn.BulkID === BulkID);
-    const safeWidth = toFiniteNumber(Width, existingButton ? existingButton.width : 0);
-    const safeHeight = toFiniteNumber(Height, existingButton ? existingButton.height : 0);
+    const resolvedBulkID = BulkID || existingButton?.BulkID || existingButton?.controlLocationID;
+    const resolvedControlID = existingButton?.controlID || controlID;
+    const safeWidth = Math.max(80, toFiniteNumber(Width, existingButton ? existingButton.width : 80));
+    const safeHeight = Math.max(30, toFiniteNumber(Height, existingButton ? existingButton.height : 30));
     const updatedLocationData = {
-      BulkID: BulkID,
+      BulkID: resolvedBulkID,
       ControlIdentifier: controlIdentifier,
       ControlLocationX: `${x}px`,
       ControlLocationY: `${y}px`,
@@ -450,7 +464,8 @@ const ImageWithDropZone = ({
       CustomPlaceHolder: placeholder,
       IsRequired: isRequired,
       IsDigitalSignature: signatureType,
-      ControlID: controlID,
+      ControlID: resolvedControlID,
+      category: category,
       MasterDocID: selectedMasterDocID,
       RegisterSignID: RegisterSignID,
       MasterDocPagesID: masterDocPagesId,

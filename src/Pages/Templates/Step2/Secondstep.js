@@ -40,6 +40,7 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
   const [buttonLabel, setButtonLabel] = useState();
   const [controlID, setControlID] = useState();
   const [hoveredSignatory, setHoveredSignatory] = useState(null);
+  const [mobileTab, setMobileTab] = useState("stage");
 
   // Page deletion confirmation state
   const [deletingMasterPageID, setDeletingMasterPageID] = useState(null);
@@ -55,6 +56,7 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
     setButtonClicked(value);
     setButtonLabel(label);
     setControlID(ctrlID);
+    setMobileTab("stage");
   };
 
   useEffect(() => {
@@ -180,6 +182,80 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
   };
 
   const handleFinish = async () => {
+    // 1. Older validation: Must place at least one signature or stamp if any signatory needs to sign
+    const hasSignatureOrStamp =
+      Array.isArray(controls) &&
+      controls.some(
+        (control) =>
+          control.controlCode === "Signature" ||
+          control.controlCode === "Stamp" ||
+          control.isSignature ||
+          control.isStamp ||
+          control.controlName === "Signature" ||
+          control.controlName === "Stamp" ||
+          control.buttonLabel === "Signature" ||
+          control.buttonLabel === "Stamp"
+      );
+
+    const hasNeedsToSign =
+      !formData?.templateSignatory ||
+      formData.templateSignatory.length === 0 ||
+      formData.templateSignatory.some(
+        (s) =>
+          (s.signatureType ||
+            signatureType?.[s.templateSignatoryID] ||
+            "Needs To Sign") !== "View Only"
+      );
+
+    if (hasNeedsToSign && !hasSignatureOrStamp) {
+      toast.error(t("uploadDocFlow.placeSignatoryatleast"));
+      return;
+    }
+
+    // 2. Signatory validation: Every signatory must have at least one control if SignatureType is "Needs To Sign"
+    // If "View Only", there is no restriction on it.
+    if (formData?.templateSignatory && formData.templateSignatory.length > 0) {
+      for (const signatory of formData.templateSignatory) {
+        const sigType =
+          signatory.signatureType ||
+          signatureType?.[signatory.templateSignatoryID] ||
+          "Needs To Sign";
+
+        if (sigType === "View Only") {
+          continue;
+        }
+
+        const sigId = String(signatory.templateSignatoryID || "");
+        const signatoryControls = Array.isArray(controls)
+          ? controls.filter((c) => {
+              const cSigId = String(
+                c.templateSignatoryID ||
+                  c.signatoriesID ||
+                  c.selectedSignatoryID ||
+                  c.SignatoriesID ||
+                  ""
+              );
+              return cSigId === sigId;
+            })
+          : [];
+
+        if (signatoryControls.length === 0) {
+          const signerName =
+            signatory.name || t("uploadDocFlow.signatory", "Signatory");
+          toast.error(
+            `${signerName}: ${t(
+              "uploadDocFlow.placeSignatoryControl",
+              "Please place at least one control for this signatory"
+            )}`
+          );
+          if (signatory.templateSignatoryID) {
+            handleNameSelect(signatory.templateSignatoryID, signatory.name);
+          }
+          return;
+        }
+      }
+    }
+
     clearWorkflowStorage();
     navigate("/templates-page");
   };
@@ -252,10 +328,42 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
   const totalPlacedFields = Array.isArray(controls) ? controls.length : 0;
 
   return (
-    <div className='w-full'>
-      <main className='mx-auto grid max-w-[1560px] grid-cols-1 items-start gap-5 px-4 py-5 lg:grid-cols-[minmax(360px,430px)_minmax(0,1fr)]'>
+    <div className='relative w-full min-h-[calc(100vh-70px)] bg-[var(--modern-bg,#f7f5ff)]'>
+      {/* Mobile Segmented View Switcher */}
+      <div className='flex lg:hidden items-center gap-2 p-1.5 mx-3 sm:mx-4 mt-3 mb-4 rounded-2xl bg-[var(--modern-card)] border border-[var(--modern-border-strong)]'>
+        <button
+          type='button'
+          onClick={() => setMobileTab("stage")}
+          className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 border ${
+            mobileTab === "stage"
+              ? "bg-[var(--modern-primary,#4d8dff)] text-white border-[var(--modern-primary,#4d8dff)]"
+              : "bg-[var(--modern-raised)] text-[var(--modern-muted)] hover:text-[var(--modern-text)] border-[var(--modern-border)]"
+          }`}
+        >
+          <Icons.PDFs size={15} />
+          <span>{t("uploadDocFlow.documentCanvas", "Document Canvas")}</span>
+        </button>
+        <button
+          type='button'
+          onClick={() => setMobileTab("controls")}
+          className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 border ${
+            mobileTab === "controls"
+              ? "bg-[var(--modern-primary,#4d8dff)] text-white border-[var(--modern-primary,#4d8dff)]"
+              : "bg-[var(--modern-raised)] text-[var(--modern-muted)] hover:text-[var(--modern-text)] border-[var(--modern-border)]"
+          }`}
+        >
+          <Icons.TeamMembers size={15} />
+          <span>{t("uploadDocFlow.fieldsControls", "Fields & Controls")}</span>
+        </button>
+      </div>
+
+      <main className='mx-auto grid max-w-[1560px] grid-cols-1 items-start gap-4 p-2.5 sm:p-4 lg:p-5 lg:grid-cols-[minmax(360px,430px)_minmax(0,1fr)]'>
         {/* Left Sticky Control Panel (.panel) */}
-        <section className='flex flex-col rounded-[24px] border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] lg:sticky lg:top-[60px] lg:max-h-[calc(100vh-var(--editor-header-height,67px)-80px)] overflow-hidden'>
+        <section
+          className={`flex flex-col rounded-[24px] border border-[var(--modern-border)] bg-[var(--modern-card)] lg:sticky lg:top-[60px] lg:h-[calc(100vh-var(--editor-header-height,67px)-80px)] overflow-hidden ${
+            mobileTab === "controls" ? "flex" : "hidden lg:flex"
+          }`}
+        >
           {/* Panel Header (.phead) */}
           <div className='px-5 pt-5 pb-1.5'>
             <small className='block font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--modern-primary,#4d8dff)]'>
@@ -309,6 +417,11 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
                   const originalColor = signatory.signatureColor || "#4d8dff";
                   const isSelected =
                     selectedSignatoryID === signatory.templateSignatoryID;
+                  const sigType =
+                    signatory.signatureType ||
+                    signatureType?.[signatory.templateSignatoryID] ||
+                    "Needs To Sign";
+                  const isViewOnly = sigType === "View Only";
                   const signerFieldCount = Array.isArray(controls)
                     ? controls.filter(
                         (c) =>
@@ -331,16 +444,17 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
                         setHoveredSignatory(signatory.templateSignatoryID)
                       }
                       onMouseLeave={() => setHoveredSignatory(null)}
+                      title={`${signatory.name} (${isViewOnly ? t("uploadDocFlow.viewOnly", "View Only") : t("uploadDocFlow.needsToSign", "Needs To Sign")})`}
                       style={{
                         borderColor: isSelected ? originalColor : undefined,
                         outlineColor: isSelected
                           ? `color-mix(in srgb, ${originalColor} 24%, transparent)`
                           : undefined,
                       }}
-                      className={`inline-flex h-10 items-center gap-2 rounded-full border-[1.5px] py-1 pl-1.5 pr-3 text-[13px] transition-all ${
+                      className={`inline-flex h-10 items-center gap-2 rounded-full border-[1.5px] py-1 pl-1.5 pr-3 text-[13px] transition-all cursor-pointer appearance-none ${
                         isSelected
                           ? "bg-[var(--modern-raised)] font-semibold text-[var(--modern-text)] outline outline-4"
-                          : "border-[var(--modern-border-strong)] bg-[var(--modern-card)] font-medium text-[var(--modern-text)] hover:bg-[var(--modern-raised)]"
+                          : "border-[var(--modern-border-strong)] bg-[var(--modern-card)] font-medium text-[var(--modern-text)] hover:border-[var(--modern-primary)] hover:bg-[color-mix(in_srgb,var(--modern-primary)_8%,var(--modern-raised))] hover:text-[var(--modern-text)]"
                       }`}
                     >
                       <span
@@ -351,6 +465,20 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
                       </span>
                       <span className='max-w-[130px] truncate'>
                         {signatory.name || "—"}
+                      </span>
+                      <span
+                        className={`inline-flex items-center justify-center rounded-md p-1 ${
+                          isViewOnly
+                            ? "bg-[color-mix(in_srgb,var(--modern-text)_10%,transparent)] text-[var(--modern-muted)]"
+                            : "bg-[color-mix(in_srgb,var(--modern-primary)_12%,transparent)] text-[var(--modern-primary)]"
+                        }`}
+                        title={isViewOnly ? t("uploadDocFlow.viewOnly", "View Only") : t("uploadDocFlow.needsToSign", "Needs To Sign")}
+                      >
+                        {isViewOnly ? (
+                          <Icons.View size={12} className='shrink-0' />
+                        ) : (
+                          <Icons.SignatureType size={12} className='shrink-0' />
+                        )}
                       </span>
                       <small className='ml-0.5 rounded-full bg-[var(--modern-raised,#f1f5f9)] px-1.5 py-0.5 font-mono text-[11px] font-semibold text-[var(--modern-muted,#64748b)]'>
                         {signerFieldCount}
@@ -426,11 +554,11 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
           </div>
 
           {/* Sticky Panel Footer (.pfoot) */}
-          <div className='mt-auto flex items-center justify-between gap-2.5 border-t border-[var(--modern-border)] bg-[var(--modern-raised)]/80 px-5 py-3.5'>
+          <div className='mt-auto shrink-0 sticky bottom-0 z-20 flex items-center justify-between gap-2.5 border-t border-[var(--modern-border)] bg-[var(--modern-card)] px-5 py-3.5'>
             <Button
               variant='outline'
               id='hide_part_one'
-              className='!h-[42px] !rounded-full !px-4 font-semibold shrink-0'
+              className='!h-[42px] !rounded-full !px-4 font-semibold shrink-0 hover:border-[var(--modern-primary)] hover:text-[var(--modern-primary)] hover:bg-[color-mix(in_srgb,var(--modern-primary)_8%,var(--modern-card))] transition-all'
               onClick={handleBack}
               disabled={isLoading}
             >
@@ -474,7 +602,10 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
         </section>
 
         {/* Right Document Stage (.stage) */}
-        <section aria-label='Document Stage' className='min-w-0 flex flex-col'>
+        <section
+          aria-label='Document Stage'
+          className={`min-w-0 flex-col ${mobileTab === "stage" ? "flex" : "hidden lg:flex"}`}
+        >
           {/* Stage Top Bar (.stbar) */}
           <div className='mb-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] px-4 py-2.5'>
             <div className='min-w-0 flex-1'>
@@ -630,10 +761,10 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
           {/* Ruled Canvas Desk (.desk) */}
           <div
             ref={mainDocumentRef}
-            className='flex min-h-[600px] w-full flex-col items-center justify-center overflow-auto rounded-[24px] border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] p-4 sm:p-6'
+            className='flex min-h-[360px] sm:min-h-[600px] w-full flex-col items-center justify-center overflow-auto rounded-[24px] border border-[var(--modern-border-strong)] bg-[var(--modern-raised)] p-2 sm:p-4 lg:p-6'
             style={{
-              backgroundImage:
-                "repeating-linear-gradient(0deg, transparent 0 23px, color-mix(in srgb, var(--modern-border, #e2e8f0) 55%, transparent) 23px 24px)",
+              backgroundImage: "repeating-linear-gradient(0deg, transparent 0 23px, var(--modern-border) 23px 24px)",
+              backgroundSize: "100% 24px",
             }}
           >
             {!imagesData || imagesData.length === 0 ? (
@@ -661,8 +792,27 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
         </section>
       </main>
 
-      {/* Floating MacAI Assistant */}
-      <AIAssistant />
+      {/* Floating Action Stack for Mobile (MacAI Assistant on top, Add Fields below) */}
+      <div className='lg:hidden fixed bottom-5 right-5 rtl:right-auto rtl:left-5 z-40 flex flex-col items-end gap-2.5 pointer-events-none'>
+        <div className='pointer-events-auto'>
+          <AIAssistant className='!static' />
+        </div>
+        {mobileTab === "stage" && (
+          <button
+            type='button'
+            onClick={() => setMobileTab("controls")}
+            className='pointer-events-auto inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[var(--modern-primary,#4d8dff)] text-white text-xs font-semibold shadow-lg shadow-[var(--modern-primary,#4d8dff)]/25 border border-white/20 cursor-pointer active:scale-95 transition-all'
+          >
+            <Icons.Plus size={15} />
+            <span>{t("uploadDocFlow.addFields", "Add Fields")}</span>
+          </button>
+        )}
+      </div>
+
+      {/* Desktop MacAI Assistant */}
+      <div className='hidden lg:block'>
+        <AIAssistant className='bottom-6 right-6 rtl:right-auto rtl:left-6' />
+      </div>
 
       {/* Delete Page Confirmation Modal */}
       <DeleteConfirmationModal

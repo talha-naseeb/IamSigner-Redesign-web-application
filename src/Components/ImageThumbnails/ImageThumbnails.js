@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import { useNavigate } from "react-router-dom";
 import "./Imagethumbnails.css";
-import AIAssistant from "@/Components/CommonModals/AIAssitant/AIAssistant";
 import PageIcon from "@/assets/images/file-02.svg";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
 import { Icons } from "@/assets/Icons";
@@ -87,7 +86,6 @@ const ImageThumbnails = ({ t, controls, selectedImage, setSelectedImage, setMast
     <>
       <div className='scrollable-content-bookmark'>
         {/* <ScrollToTopButton /> */}
-        <AIAssistant />
 
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId='image-list' direction='vertical'>

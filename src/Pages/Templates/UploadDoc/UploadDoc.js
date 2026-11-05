@@ -237,7 +237,7 @@ const UploadDoc = () => {
               ) : (
                 <main className='mx-auto grid max-w-[1560px] grid-cols-1 items-start gap-5 px-4 py-5 lg:grid-cols-[minmax(360px,430px)_minmax(0,1fr)]'>
                   {/* Left Sticky Control Panel */}
-                  <section className='flex flex-col rounded-[24px] border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] lg:sticky lg:top-[60px] lg:max-h-[calc(100vh-var(--editor-header-height,67px)-80px)] overflow-hidden'>
+                  <section className='flex flex-col rounded-[24px] border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] lg:sticky lg:top-[60px] lg:h-[calc(100vh-var(--editor-header-height,67px)-80px)] overflow-hidden'>
                     {activeStep === 1 && (
                       <FirstStep
                         setActiveStep={handleSetActiveStep}

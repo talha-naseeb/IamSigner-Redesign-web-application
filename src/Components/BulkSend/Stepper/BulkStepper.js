@@ -5,13 +5,14 @@ import { STEPPER_FLOWS } from "@/Components/DocumentPreparation/Stepper/stepperC
 /**
  * BulkStepper - BulkSend wrapper around unified DocumentStepper (ENG-01)
  */
-const BulkStepper = ({ activeStep, completedSteps, t }) => {
+const BulkStepper = ({ activeStep, completedSteps, t, variant = "studio" }) => {
   return (
     <DocumentStepper
       activeStep={activeStep}
       completedSteps={completedSteps}
       t={t}
       flowType={STEPPER_FLOWS.BULK}
+      variant={variant}
     />
   );
 };

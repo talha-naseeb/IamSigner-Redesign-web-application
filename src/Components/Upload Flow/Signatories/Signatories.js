@@ -1,6 +1,8 @@
+import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Dropdown, Accordion, Offcanvas, Tab, Tabs, OverlayTrigger, Tooltip } from "@/Components/UI/shadcnCompat";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Icons } from "@/assets/Icons";
+import { X, Search, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import uploadFlowService from "@/services/uploadFlowService";
 import userService from "@/services/userService";
@@ -10,8 +12,9 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "@/Context/UserContext";
 import { Chips } from "@/Components/UI/EmailChips";
 import PhoneInput from "react-phone-input-2";
+import { UserInitialsBadge } from "@/Components/UI/dataPrimitives";
 
-const Signatories = ({ setActiveStep, setCompletedSteps }) => {
+const Signatories = ({ setActiveStep, setCompletedSteps, onPreviewSync }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [signatureTypes, setSignatureTypes] = useState([]);
   const [notificationTypes, setNotificationTypes] = useState([]);
@@ -38,6 +41,7 @@ const Signatories = ({ setActiveStep, setCompletedSteps }) => {
   const [adhockNames, setAdhockNames] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("team");
 
   const storedRegisterSignID = localStorage.getItem("registerSignID");
 
@@ -67,6 +71,12 @@ const Signatories = ({ setActiveStep, setCompletedSteps }) => {
   };
 
   const [forms, setForms] = useState([initialFormState]);
+
+  useEffect(() => {
+    if (typeof onPreviewSync === "function") {
+      onPreviewSync({ recipients: forms });
+    }
+  }, [forms, onPreviewSync]);
 
   useEffect(() => {
     localStorage.setItem("showDropdowns", JSON.stringify(showDropdowns));
@@ -631,33 +641,95 @@ const Signatories = ({ setActiveStep, setCompletedSteps }) => {
   const filteredAdhockUsers = adhockNames.filter((user) => user.name.toLowerCase().includes(searchQuery.toLowerCase()) || user.email.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className='signatories-forms'>
-      <div className='d-flex align-items-center justify-content-start gap-2 mb-3'>
-        <input type='checkbox' className='form-check-input' checked={showSignOrder} onChange={(e) => setShowSignOrder(e.target.checked)} />
-        <span> {t("uploadDocFlow.setSignOrder")}</span>
-        <OverlayTrigger placement='top' overlay={<Tooltip id='tooltip'>{t("uploadDocFlow.OrderToltip")}</Tooltip>}>
-          <span>
-            <Icons.InfoOutline size={22} style={{ color: "#a69d9d" }} />
-          </span>
-        </OverlayTrigger>
+    <div className='flex flex-col h-full min-h-[480px] bg-[var(--modern-card,#ffffff)]'>
+      {/* Studio Panel Header */}
+      <div className='px-5 pt-5 pb-2 shrink-0'>
+        <small className='block font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--modern-primary,#4d8dff)]'>
+          {t("uploadDocFlow.step", "STEP")} 2 {t("uploadDocFlow.of", "OF")} 4
+        </small>
+        <h1 className='mt-0.5 text-[22px] font-bold tracking-tight text-[var(--modern-text)]'>
+          {t("Stepper.AddSigners", "Add Signers")}
+        </h1>
+        <p className='mt-1 text-[13px] text-[var(--modern-muted)]'>
+          {t("uploadDocFlow.whoNeedsToSign", "Who needs to sign this document?")}
+        </p>
       </div>
 
-      <div className='signatory-form-container'>
-        <Form>
+      {/* Studio Scrollable Body */}
+      <div className='signatory-form-container min-h-0 flex-1 overflow-y-auto px-4 sm:px-5 pt-3 pb-5 space-y-4'>
+        {/* Set Signing Order Switch */}
+        <div className='mb-3 flex items-center justify-between gap-3 border-b border-[var(--modern-border)] pb-3'>
+          <div className='min-w-0'>
+            <span className='block text-sm font-semibold text-[var(--modern-text)]'>
+              {t("uploadDocFlow.setSignOrder")}
+            </span>
+            <small className='block text-xs text-[var(--modern-muted)]'>
+              {t("uploadDocFlow.OrderToltip")}
+            </small>
+          </div>
+          <button
+            type='button'
+            role='switch'
+            aria-checked={showSignOrder}
+            aria-label={t("uploadDocFlow.setSignOrder")}
+            onClick={() => setShowSignOrder((prev) => !prev)}
+            className={`relative h-6 w-11 shrink-0 rounded-full border transition-colors cursor-pointer ${
+              showSignOrder
+                ? "border-[var(--modern-primary,#4d8dff)] bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_22%,transparent)]"
+                : "border-[var(--modern-border-strong,#cbd5e1)] bg-[var(--modern-raised,#f1f5f9)]"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 h-4 w-4 rounded-full transition-all ${
+                showSignOrder
+                  ? "left-[22px] rtl:left-auto rtl:right-[22px] bg-[var(--modern-primary,#4d8dff)]"
+                  : "left-0.5 rtl:left-auto rtl:right-0.5 bg-[var(--modern-muted,#64748b)]"
+              }`}
+            />
+          </button>
+        </div>
+
+        <Form onSubmit={(e) => e.preventDefault()}>
           <DragDropContext onDragEnd={handleOnDragEnd}>
             <Droppable droppableId='forms'>
               {(provided) => (
-                <Form {...provided.droppableProps} ref={provided.innerRef}>
+                <div {...provided.droppableProps} ref={provided.innerRef} className='space-y-3.5'>
                   {forms.map((form, index) => (
                     <Draggable key={index} draggableId={index.toString()} index={index}>
                       {(provided) => (
-                        <div ref={provided.innerRef} {...provided.draggableProps}>
-                          <Row className='d-flex justify-content-start align-items-start'>
-                            {showSignOrder && (
-                              <Col md={1} className='pe-0'>
-                                <div className='w-12 h-10 rounded flex justify-center items-center bg-[var(--modern-card,#fff)] text-[var(--modern-text,#0f172a)] font-semibold text-sm cursor-pointer' style={{ border: `1px solid ${form.signatureColor}` }} onClick={() => setEditingIndex(index)}>
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          className='relative rounded-[18px] border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] p-3.5 transition-colors'
+                          style={{
+                            borderInlineStartWidth: "4px",
+                            borderInlineStartColor: form.signatureColor || "#4d8dff",
+                            borderInlineStartStyle: "solid",
+                            ...provided.draggableProps.style,
+                          }}
+                        >
+
+                          {/* Card Top: Order / Drag Handle / Title / Primary Actions */}
+                          <div className='flex items-center justify-between gap-2 mb-2.5 min-w-0'>
+                            <div className='flex items-center gap-2 min-w-0'>
+                              {showSignOrder && (
+                                <div
+                                  {...provided.dragHandleProps}
+                                  className='cursor-grab text-[var(--modern-muted)] hover:text-[var(--modern-text)] shrink-0'
+                                  title={t("uploadDocFlow.dragToReorder", "Drag to reorder")}
+                                >
+                                  <Icons.DragHandle size={16} />
+                                </div>
+                              )}
+                              {showSignOrder && (
+                                <div
+                                  className='w-6 h-6 rounded-full flex justify-center items-center font-mono font-semibold text-xs text-white cursor-pointer shrink-0'
+                                  style={{ backgroundColor: form.signatureColor || "#4d8dff" }}
+                                  onClick={() => setEditingIndex(index)}
+                                  title={t("uploadDocFlow.editIndex", "Click to edit order")}
+                                >
                                   {editingIndex === index ? (
-                                    <Form.Control
+                                    <input
                                       type='text'
                                       value={newIndex}
                                       onChange={(e) => setNewIndex(e.target.value)}
@@ -668,275 +740,359 @@ const Signatories = ({ setActiveStep, setCompletedSteps }) => {
                                         }
                                       }}
                                       autoFocus
-                                      style={{ border: "none" }}
+                                      className='w-full text-center bg-transparent text-white text-xs outline-none'
                                     />
                                   ) : (
                                     index + 1
                                   )}
                                 </div>
-                              </Col>
-                            )}
-                            <Col md={11}>
-                              <div className='p-5 rounded-xl border bg-[var(--modern-card,#fff)] text-[var(--modern-text,#0f172a)] mt-3' style={{ border: `1px solid ${form.signatureColor}` }}>
-                                <Row>
-                                  <Col md={4} className='d-flex gap-3 align-items-center signatory-form-col'>
-                                    {showSignOrder && <Icons.DragHandle style={{ cursor: "grab" }} {...provided.dragHandleProps} />}
-                                    <span style={{ fontWeight: "500" }}>
-                                      {t("uploadDocFlow.signatory")} {index + 1}
-                                    </span>
-                                  </Col>
-                                  <Col md={2} className='signatory-form-col'></Col>
-                                  <Col md={6} className='signatory-form-col action-buttons d-flex justify-content-end align-items-center flex-wrap gap-1'>
-                                    <Button
-                                      variant='none'
-                                      className='flex items-center gap-1.5 px-2.5 py-1 text-xs rounded border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#fff)] text-[var(--modern-text,#0f172a)] hover:bg-[var(--modern-raised,#f1f5f9)] transition-colors'
-                                      onClick={() => {
-                                        setSelectedIndex(index); // Store the index of the selected form
-                                        setShowOffcanvas(true); // Open the Offcanvas
-                                      }}
+                              )}
+                              <h3 className='m-0 font-semibold text-sm text-[var(--modern-text)] truncate'>
+                                {t("uploadDocFlow.signatory")} {index + 1}
+                              </h3>
+                            </div>
+
+                            {/* Actions Group: Existing Users + Delete + Three Dots */}
+                            <div className='flex items-center gap-1.5 shrink-0'>
+                              <button
+                                type='button'
+                                className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border-strong,#cbd5e1)] bg-[var(--modern-raised,#f8fafc)] text-[var(--modern-primary,#4d8dff)] transition-colors hover:border-[var(--modern-primary,#4d8dff)] hover:bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_10%,transparent)] cursor-pointer shrink-0'
+                                onClick={() => {
+                                  setSelectedIndex(index);
+                                  setShowOffcanvas(true);
+                                }}
+                                title={t("uploadDocFlow.existingUser", "Existing Users")}
+                                aria-label={t("uploadDocFlow.existingUser", "Existing Users")}
+                              >
+                                <Icons.UserSearch size={15} />
+                              </button>
+
+                              {/* Delete Signatory Button - clean icon button matching template section */}
+                              <button
+                                type='button'
+                                className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-transparent text-[var(--modern-muted,#64748b)] transition-colors hover:border-[var(--modern-danger,#ef4444)] hover:text-[var(--modern-danger,#ef4444)] cursor-pointer shrink-0'
+                                onClick={() => handleShowModal(index, form.signatoriesID)}
+                                title={t("uploadDocFlow.delete", "Delete")}
+                                aria-label={t("uploadDocFlow.delete", "Delete")}
+                              >
+                                <Icons.DeleteAction size={15} />
+                              </button>
+
+                              {/* Three Dots Menu with Verification Method, Notification Type, Additional Email, and Delete */}
+                              <Dropdown align='end'>
+                                <Dropdown.Toggle
+                                  variant='ghost'
+                                  id={`moreOptions${index}`}
+                                  className='!h-8 !w-8 !p-0 rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-transparent text-[var(--modern-muted,#64748b)] hover:border-[var(--modern-border-strong)] hover:text-[var(--modern-text)] inline-flex items-center justify-center cursor-pointer after:!hidden shrink-0'
+                                  title={t("uploadDocFlow.moreOptions", "More options")}
+                                  aria-label={t("uploadDocFlow.moreOptions", "More options")}
+                                >
+                                  <Icons.OtherDoc size={16} />
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu
+                                  align='end'
+                                  className='!bg-[var(--modern-card,#ffffff)] !border-[var(--modern-border,#e2e8f0)] text-sm shadow-xl py-1.5 min-w-[220px] !right-0 !left-auto rtl:!right-auto rtl:!left-0 z-[1060]'
+                                >
+                                  <Dropdown.Item
+                                    onClick={() => toggleVerificationMethod(index)}
+                                    className='flex items-center gap-2.5 text-sm py-2 px-3.5 hover:bg-[var(--modern-raised)] cursor-pointer text-[var(--modern-text)]'
+                                  >
+                                    <Icons.VerificationMethod size={16} className='text-[var(--modern-primary)] shrink-0' />
+                                    <span className='flex-1'>{t("uploadDocFlow.VerificationMethod", "Verification Method")}</span>
+                                    {showVerificationMethods[index] && <span className='text-xs text-[var(--modern-primary)] font-bold'>✓</span>}
+                                  </Dropdown.Item>
+
+                                  <Dropdown.Item
+                                    onClick={() => toggleChipsVisibility(index)}
+                                    className='flex items-center gap-2.5 text-sm py-2 px-3.5 hover:bg-[var(--modern-raised)] cursor-pointer text-[var(--modern-text)]'
+                                  >
+                                    <Icons.customEmail size={16} className='text-[var(--modern-primary)] shrink-0' />
+                                    <span className='flex-1'>{t("uploadDocFlow.additionalEmail", "Additional Email")}</span>
+                                    {showAdditionalEmail[index] && <span className='text-xs text-[var(--modern-primary)] font-bold'>✓</span>}
+                                  </Dropdown.Item>
+
+                                  <div className='my-1.5 border-t border-[var(--modern-border)]' />
+                                  <div className='px-3.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--modern-muted)]'>
+                                    {t("uploadDocFlow.notificationType", "Notification Type")}
+                                  </div>
+                                  {notificationTypes.map((notification, notIndex) => (
+                                    <Dropdown.Item
+                                      key={notIndex}
+                                      onClick={() => handleInputChange(index, "notificationType", notification)}
+                                      className={`flex items-center justify-between text-sm py-1.5 px-3.5 hover:bg-[var(--modern-raised)] cursor-pointer ${
+                                        form.notificationType === notification ? "font-semibold text-[var(--modern-primary)] bg-[var(--modern-raised)]/60" : "text-[var(--modern-text)]"
+                                      }`}
                                     >
-                                      <Icons.UserSearch size={16} />
-                                      {t("uploadDocFlow.existingUser")}
-                                    </Button>
-                                    <div>
-                                      <Form.Group controlId={`formSignatureMethod${index}`}>
-                                        <Dropdown onSelect={(e) => handleInputChange(index, "signatureType", e)}>
-                                          <Dropdown.Toggle variant='' id={`signatureType${index}`} className='d-flex align-items-center gap-2'>
-                                            {form.signatureType === "Needs To Sign" && <Icons.SignatureType />}
-                                            {form.signatureType === "View Only" && <Icons.View />}
-                                            {form.signatureType}
-                                          </Dropdown.Toggle>
-                                          <Dropdown.Menu style={{ left: "auto", right: 0, minWidth: "unset", padding: "0px" }}>
-                                            {signatureTypes.map((signature, sigIndex) => (
-                                              <Dropdown.Item key={sigIndex} eventKey={signature} className='d-flex align-items-center gap-2'>
-                                                {signature === "Needs To Sign" && <Icons.SignatureType />}
-                                                {signature === "View Only" && <Icons.View />}
-                                                {signature}
-                                              </Dropdown.Item>
-                                            ))}
-                                          </Dropdown.Menu>
-                                        </Dropdown>
-                                      </Form.Group>
-                                    </div>
-                                    <div>
-                                      <Form.Group controlId='formNotificationMethod'>
-                                        <Dropdown onSelect={(e) => handleInputChange(index, "languageType", e)}>
-                                          <Dropdown.Toggle variant='' id='LanguageType' className='d-flex align-items-center gap-2'>
-                                            <Icons.Language />
-                                            {form.languageType || "English"}
-                                          </Dropdown.Toggle>
-                                          <Dropdown.Menu style={{ left: "auto", right: 0, minWidth: "unset", padding: "0px" }}>
-                                            {languageTypes.map((language, index) => (
-                                              <Dropdown.Item key={index} eventKey={language}>
-                                                {language}
-                                              </Dropdown.Item>
-                                            ))}
-                                          </Dropdown.Menu>
-                                        </Dropdown>
-                                      </Form.Group>
-                                    </div>
-                                    <Button variant='none' className='p-0' onClick={() => handleShowModal(index, form.signatoriesID)}>
-                                      <Icons.DeleteSignatory />
-                                    </Button>
+                                      <span>{notification}</span>
+                                      {form.notificationType === notification && <span className='text-xs'>✓</span>}
+                                    </Dropdown.Item>
+                                  ))}
 
-                                    <Button variant='none' style={{ border: "1px solid #aaa9a9ff", borderRadius: "6px", padding: "1px" }} onClick={() => handleToggleDropdown(index)}>
-                                      <Icons.OtherDoc size={20} color='#b5b3b3ff' />
-                                      {showDropdowns[index] && (
-                                        <Dropdown show={showDropdowns[index]} onToggle={() => handleToggleDropdown(index)}>
-                                          <Dropdown.Menu style={{ left: "auto", right: 0, minWidth: "unset", padding: "0px" }}>
-                                            <Dropdown.Item onClick={() => toggleVerificationMethod(index)} className='d-flex align-items-center gap-2'>
-                                              <Icons.VerificationMethod size={20} />
-                                              {t("uploadDocFlow.VerificationMethod")}
-                                            </Dropdown.Item>
-                                            <Dropdown.Item onClick={() => toggleChipsVisibility(index)} className='d-flex align-items-center gap-2'>
-                                              <Icons.customEmail size={20} />
-                                              {t("uploadDocFlow.additionalEmail")}
-                                            </Dropdown.Item>
-                                          </Dropdown.Menu>
-                                        </Dropdown>
-                                      )}
-                                    </Button>
-                                  </Col>
-                                </Row>
-                                <Row className='mt-3'>
-                                  <Col md={5}>
-                                    <Form.Group controlId={`formSignatoryName${index}`}>
-                                      <Form.Label>
-                                        {t("uploadDocFlow.name")} <span className='required'>*</span>
-                                      </Form.Label>
-                                      <Form.Control type='text' value={form.name} onChange={(e) => handleInputChange(index, "name", e.target.value)} placeholder={t("uploadDocFlow.enterName")} />
+                                  <div className='my-1.5 border-t border-[var(--modern-border)]' />
+                                  <Dropdown.Item
+                                    onClick={() => handleShowModal(index, form.signatoriesID)}
+                                    className='flex items-center gap-2.5 text-sm py-2 px-3.5 text-[var(--modern-danger,#ef4444)] hover:bg-[var(--modern-danger,#ef4444)]/10 cursor-pointer font-medium'
+                                  >
+                                    <Icons.DeleteAction size={15} />
+                                    <span>{t("uploadDocFlow.delete", "Delete Signatory")}</span>
+                                  </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown>
+                            </div>
+                          </div>
 
-                                      {errors[index]?.name && <div className='error-message'>{errors[index].name}</div>}
-                                    </Form.Group>
-                                  </Col>
-                                  <Col md={2}>
-                                    <Form.Group controlId={`formNotificationMethod${index}`}>
-                                      <Form.Label>{t("uploadDocFlow.notificationType")}</Form.Label>
-                                      <Dropdown onSelect={(e) => handleInputChange(index, "notificationType", e)}>
-                                        <Dropdown.Toggle variant='' id={`notificationType${index}`}>
-                                          {form.notificationType}
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                          {notificationTypes.map((notification, notIndex) => (
-                                            <Dropdown.Item key={notIndex} eventKey={notification}>
-                                              {notification}
-                                            </Dropdown.Item>
-                                          ))}
-                                        </Dropdown.Menu>
-                                      </Dropdown>
-                                    </Form.Group>
-                                  </Col>
-                                  {form.showEmail && (
-                                    <Col md={5}>
-                                      <Form.Group controlId={`formEmailAddress${index}`}>
-                                        <Form.Label>
-                                          {t("uploadDocFlow.emailAddress")} <span className='required'>*</span>
-                                        </Form.Label>
-                                        <Form.Control
-                                          type='email'
-                                          value={form.email || ""}
-                                          onChange={(e) => handleInputChange(index, "email", e.target.value)}
-                                          placeholder={t("uploadDocFlow.enterEmail")}
-                                        />
-                                        {errors[index]?.email && <div className='error-message'>{errors[index].email}</div>}
-                                      </Form.Group>
-                                    </Col>
-                                  )}
+                          {/* Row 2: Secondary Pills - Needs To Sign & Language Type + Notification Indicator */}
+                          <div className='flex items-center gap-1.5 flex-wrap mb-3'>
+                            <Dropdown onSelect={(e) => handleInputChange(index, "signatureType", e)}>
+                              <Dropdown.Toggle
+                                variant='ghost'
+                                id={`signatureType${index}`}
+                                className='!h-7 !px-2.5 !text-xs !rounded-lg border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] inline-flex items-center gap-1.5 cursor-pointer'
+                              >
+                                {form.signatureType === "Needs To Sign" && <Icons.SignatureType size={13} />}
+                                {form.signatureType === "View Only" && <Icons.View size={13} />}
+                                <span className='truncate max-w-[110px] font-medium'>{form.signatureType || "Needs To Sign"}</span>
+                              </Dropdown.Toggle>
+                              <Dropdown.Menu align='start' className='!bg-[var(--modern-card)] !border-[var(--modern-border)] text-sm shadow-lg'>
+                                {signatureTypes.map((signature, sigIndex) => (
+                                  <Dropdown.Item key={sigIndex} eventKey={signature} className='flex items-center gap-2 text-sm py-1.5 px-3 hover:bg-[var(--modern-raised)]'>
+                                    {signature === "Needs To Sign" && <Icons.SignatureType size={14} />}
+                                    {signature === "View Only" && <Icons.View size={14} />}
+                                    <span>{signature}</span>
+                                  </Dropdown.Item>
+                                ))}
+                              </Dropdown.Menu>
+                            </Dropdown>
 
-                                  {form.showMobile && (
-                                    <Col md={5}>
-                                      <Form.Group controlId={`formPhone${index}`}>
-                                        <Form.Label>
-                                          {t("logScreens.mobileNumber")}
-                                          <span className='required'>*</span>
-                                        </Form.Label>
-                                        <PhoneInput
-                                          excludeCountries={["il"]}
-                                          country={"sa"}
-                                          value={form.phoneNumber || ""}
-                                          onChange={(phone) => handlePhoneChange(index, phone)}
-                                          inputStyle={{
-                                            width: "100%",
-                                            height: "38px",
-                                            fontSize: "14px",
-                                            border: "1px solid #ced4da",
-                                            borderRadius: "0.375rem",
-                                          }}
-                                          containerStyle={{
-                                            width: "100%",
-                                          }}
-                                          buttonStyle={{
-                                            border: "1px solid #ced4da",
-                                            borderRight: "none",
-                                            borderRadius: "0.375rem 0 0 0.375rem",
-                                          }}
-                                        />
-                                        {form.phoneNumber && form.phoneNumber.length < 10 && <div className='error-message'>{t("logScreens.ValidmobileNumber")}</div>}
-                                        {errors[index]?.mobile && <div className='error-message'>{errors[index].mobile}</div>}
-                                      </Form.Group>
-                                    </Col>
-                                  )}
+                            <Dropdown onSelect={(e) => handleInputChange(index, "languageType", e)}>
+                              <Dropdown.Toggle
+                                variant='ghost'
+                                id={`LanguageType${index}`}
+                                className='!h-7 !px-2.5 !text-xs !rounded-lg border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] inline-flex items-center gap-1.5 cursor-pointer'
+                              >
+                                <Icons.Language size={13} />
+                                <span className='font-medium'>{form.languageType || "English"}</span>
+                              </Dropdown.Toggle>
+                              <Dropdown.Menu align='start' className='!bg-[var(--modern-card)] !border-[var(--modern-border)] text-sm shadow-lg'>
+                                {languageTypes.map((language, lIndex) => (
+                                  <Dropdown.Item key={lIndex} eventKey={language} className='text-sm py-1.5 px-3 hover:bg-[var(--modern-raised)]'>
+                                    {language}
+                                  </Dropdown.Item>
+                                ))}
+                              </Dropdown.Menu>
+                            </Dropdown>
 
-                                  {showAdditionalEmail[index] && (
-                                    <Accordion defaultActiveKey='0' className='custom-dropdown'>
-                                      <Accordion.Item eventKey='0'>
-                                        <hr className='mb-1' />
-                                        <Accordion.Header className='custom-dropdown-header'>
-                                          <Icons.customEmail />
-                                          <Form.Label className='mb-0 mx-2'>{t("uploadDocFlow.additionalEmail")}</Form.Label>
-                                        </Accordion.Header>
-                                        <hr className='mt-0 mb-2' />
-                                        <Accordion.Body className='custom-dropdown-body'>
-                                          <Form.Group controlId={`formAdditionalEmails${index}`}>
-                                            <Chips
-                                              className='form-control'
-                                              value={form.additionalEmails || []}
-                                              onChange={(e) => handleChipsChange(index, e.value)}
-                                              placeholder={t("uploadDocFlow.enterAdditionalEmail")}
-                                            />
-                                          </Form.Group>
-                                        </Accordion.Body>
-                                      </Accordion.Item>
-                                    </Accordion>
-                                  )}
+                            {form.notificationType && (
+                              <span className='inline-flex items-center gap-1 h-7 px-2.5 rounded-lg border border-[var(--modern-border)] bg-[var(--modern-raised)] text-xs font-medium text-[var(--modern-muted)]'>
+                                <span>{form.notificationType}</span>
+                              </span>
+                            )}
+                          </div>
 
-                                  {showVerificationMethods[index] && (
-                                    <Accordion defaultActiveKey='0' className='custom-dropdown'>
-                                      <Accordion.Item eventKey='0'>
-                                        <hr className='mb-1' />
-                                        <Accordion.Header className='custom-dropdown-header '>
-                                          <Icons.VerificationMethod />
-                                          <Form.Label className='mb-0 mx-2'> {t("uploadDocFlow.VerificationMethod")}</Form.Label>
-                                        </Accordion.Header>
-                                        <hr className='mt-0 mb-2' />
-                                        <Accordion.Body className='custom-dropdown-body'>
-                                          <Col md={2}>
-                                            <div className='verification-method'>
-                                              <Form.Group controlId={`formVerificationMethod${index}`}>
-                                                <Dropdown onSelect={(e) => handleInputChange(index, "verificationType", e)} style={{ zIndex: "5" }}>
-                                                  <Dropdown.Toggle variant='' id={`verificationType${index}`}>
-                                                    {form.verificationType || "None"}
-                                                  </Dropdown.Toggle>
-                                                  <Dropdown.Menu>
-                                                    {verificationMethods.map((method, methodIndex) => (
-                                                      <Dropdown.Item key={methodIndex} eventKey={method}>
-                                                        {method}
-                                                      </Dropdown.Item>
-                                                    ))}
-                                                  </Dropdown.Menu>
-                                                </Dropdown>
-                                              </Form.Group>
-                                            </div>
-                                          </Col>
-                                        </Accordion.Body>
-                                      </Accordion.Item>
-                                    </Accordion>
-                                  )}
-                                </Row>
+                          {/* Inputs: Name & Email / Mobile */}
+                          <div className='space-y-3'>
+                            <div>
+                              <label className='block text-xs font-medium text-[var(--modern-muted)] mb-1.5'>
+                                {t("uploadDocFlow.name")} <span className='text-[var(--modern-danger,#ef4444)]'>*</span>
+                              </label>
+                              <Form.Control
+                                type='text'
+                                value={form.name}
+                                onChange={(e) => handleInputChange(index, "name", e.target.value)}
+                                placeholder={t("uploadDocFlow.enterName")}
+                                className='!h-[40px] !text-sm !rounded-xl text-[var(--modern-text)]'
+                              />
+                              {errors[index]?.name && <div className='mt-1 text-xs text-[var(--modern-danger,#ef4444)]'>{errors[index].name}</div>}
+                            </div>
+
+                            {form.showEmail && (
+                              <div>
+                                <label className='block text-xs font-medium text-[var(--modern-muted)] mb-1.5'>
+                                  {t("uploadDocFlow.emailAddress")} <span className='text-[var(--modern-danger,#ef4444)]'>*</span>
+                                </label>
+                                <Form.Control
+                                  type='email'
+                                  value={form.email || ""}
+                                  onChange={(e) => handleInputChange(index, "email", e.target.value)}
+                                  placeholder={t("uploadDocFlow.enterEmail")}
+                                  className='!h-[40px] !text-sm !rounded-xl text-[var(--modern-text)]'
+                                />
+                                {errors[index]?.email && <div className='mt-1 text-xs text-[var(--modern-danger,#ef4444)]'>{errors[index].email}</div>}
                               </div>
-                            </Col>
-                          </Row>
+                            )}
+
+                            {form.showMobile && (
+                              <div>
+                                <label className='block text-xs font-medium text-[var(--modern-muted)] mb-1.5'>
+                                  {t("logScreens.mobileNumber")} <span className='text-[var(--modern-danger,#ef4444)]'>*</span>
+                                </label>
+                                <PhoneInput
+                                  excludeCountries={["il"]}
+                                  country={"sa"}
+                                  value={form.phoneNumber || ""}
+                                  onChange={(phone) => handlePhoneChange(index, phone)}
+                                  inputStyle={{
+                                    width: "100%",
+                                    height: "40px",
+                                    fontSize: "14px",
+                                    border: "1px solid var(--modern-border)",
+                                    borderRadius: "0.75rem",
+                                    backgroundColor: "var(--modern-card)",
+                                    color: "var(--modern-text)",
+                                  }}
+                                  containerStyle={{ width: "100%" }}
+                                  buttonStyle={{
+                                    border: "1px solid var(--modern-border)",
+                                    borderRight: "none",
+                                    borderRadius: "0.75rem 0 0 0.75rem",
+                                    backgroundColor: "var(--modern-raised)",
+                                  }}
+                                />
+                                {form.phoneNumber && form.phoneNumber.length < 10 && <div className='mt-1 text-xs text-[var(--modern-danger,#ef4444)]'>{t("logScreens.ValidmobileNumber")}</div>}
+                                {errors[index]?.mobile && <div className='mt-1 text-xs text-[var(--modern-danger,#ef4444)]'>{errors[index].mobile}</div>}
+                              </div>
+                            )}
+
+                            {showAdditionalEmail[index] && (
+                              <div className='p-3.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] space-y-2'>
+                                <div className='flex items-center justify-between text-xs font-semibold text-[var(--modern-text)]'>
+                                  <div className='flex items-center gap-1.5'>
+                                    <Icons.customEmail size={15} />
+                                    <span>{t("uploadDocFlow.additionalEmail")}</span>
+                                  </div>
+                                  <button
+                                    type='button'
+                                    onClick={() => toggleChipsVisibility(index)}
+                                    className='inline-flex h-6 w-6 items-center justify-center rounded-lg border border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-muted)] hover:bg-[var(--modern-danger,#ef4444)]/10 hover:border-[var(--modern-danger,#ef4444)]/30 hover:text-[var(--modern-danger,#ef4444)] transition-colors cursor-pointer shrink-0'
+                                    title={t("uploadDocFlow.cancel", "Close")}
+                                    aria-label={t("uploadDocFlow.cancel", "Close")}
+                                  >
+                                    <X size={13} />
+                                  </button>
+                                </div>
+                                <Chips
+                                  className='w-full !text-sm !rounded-xl'
+                                  value={form.additionalEmails || []}
+                                  onChange={(e) => handleChipsChange(index, e.value)}
+                                  placeholder={t("uploadDocFlow.enterAdditionalEmail")}
+                                />
+                              </div>
+                            )}
+
+                            {showVerificationMethods[index] && (
+                              <div className='p-3.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] space-y-2'>
+                                <div className='flex items-center justify-between text-xs font-semibold text-[var(--modern-text)]'>
+                                  <div className='flex items-center gap-1.5'>
+                                    <Icons.VerificationMethod size={15} />
+                                    <span>{t("uploadDocFlow.VerificationMethod")}</span>
+                                  </div>
+                                  <button
+                                    type='button'
+                                    onClick={() => toggleVerificationMethod(index)}
+                                    className='inline-flex h-6 w-6 items-center justify-center rounded-lg border border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-muted)] hover:bg-[var(--modern-danger,#ef4444)]/10 hover:border-[var(--modern-danger,#ef4444)]/30 hover:text-[var(--modern-danger,#ef4444)] transition-colors cursor-pointer shrink-0'
+                                    title={t("uploadDocFlow.cancel", "Close")}
+                                    aria-label={t("uploadDocFlow.cancel", "Close")}
+                                  >
+                                    <X size={13} />
+                                  </button>
+                                </div>
+                                <Dropdown onSelect={(e) => handleInputChange(index, "verificationType", e)}>
+                                  <Dropdown.Toggle
+                                    variant='ghost'
+                                    id={`verificationType${index}`}
+                                    className='w-full !h-9 !text-sm !rounded-lg border border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-text)] flex items-center justify-between cursor-pointer'
+                                  >
+                                    <span>{form.verificationType || "None"}</span>
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu className='!bg-[var(--modern-card)] !border-[var(--modern-border)] text-sm shadow-lg'>
+                                    {verificationMethods.map((method, methodIndex) => (
+                                      <Dropdown.Item key={methodIndex} eventKey={method} className='text-sm py-1.5 px-3 hover:bg-[var(--modern-raised)]'>
+                                        {method}
+                                      </Dropdown.Item>
+                                    ))}
+                                  </Dropdown.Menu>
+                                </Dropdown>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
                     </Draggable>
                   ))}
                   {provided.placeholder}
-                </Form>
+                </div>
               )}
             </Droppable>
           </DragDropContext>
         </Form>
+
+        {/* Add Recipient / Add Yourself Ghost Buttons */}
+        <div className='mt-3.5 grid grid-cols-1 sm:grid-cols-2 gap-2.5'>
+          <button
+            type='button'
+            onClick={handleAddRecipient}
+            className='flex h-[42px] w-full items-center justify-center gap-2 rounded-xl border-[1.5px] border-dashed border-[var(--modern-border-strong,#cbd5e1)] bg-transparent text-xs font-semibold text-[var(--modern-primary,#4d8dff)] transition-colors hover:border-[var(--modern-primary,#4d8dff)] hover:bg-[var(--modern-raised,#f8fafc)]'
+          >
+            <Icons.AddCircle size={16} />
+            <span>{t("uploadDocFlow.addRecipient")}</span>
+          </button>
+
+          <button
+            type='button'
+            onClick={handleAddYourself}
+            className='flex h-[42px] w-full items-center justify-center gap-2 rounded-xl border-[1.5px] border-dashed border-[var(--modern-border-strong,#cbd5e1)] bg-transparent text-xs font-semibold text-[var(--modern-primary,#4d8dff)] transition-colors hover:border-[var(--modern-primary,#4d8dff)] hover:bg-[var(--modern-raised,#f8fafc)]'
+          >
+            <Icons.AddCircle size={16} />
+            <span>{t("uploadDocFlow.addYourself")}</span>
+          </button>
+        </div>
       </div>
 
-      <Row>
-        {showSignOrder && (
-          <Col md={1} className='pe-0' style={{ visibility: "hidden" }}>
-            <div className='signOrder'>{1}</div>
-          </Col>
-        )}
-
-        <Col md={11}>
-          <div className='add-signatory-btns  d-flex justify-content-start mb-5 pb-5 gap-3'>
-            <Button variant='outline' className='gap-2' onClick={handleAddRecipient}>
-              <Icons.AddCircle size={22} />
-              <span> {t("uploadDocFlow.addRecipient")}</span>
-            </Button>
-
-            <Button variant='outline' className='gap-2' onClick={handleAddYourself}>
-              <Icons.AddCircle size={22} />
-              <span> {t("uploadDocFlow.addYourself")}</span>
-            </Button>
-          </div>
-        </Col>
-      </Row>
-
-      <div className='fixed bottom-0 left-0 z-[1040] flex w-full items-center justify-between border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] px-5 py-2.5'>
-        <Button variant='outline' className='min-h-10 px-5 font-semibold' id='hide_part_one' onClick={handleBack}>
+      {/* Studio Sticky Footer */}
+      <div className='mt-auto sticky bottom-0 z-20 flex items-center justify-between gap-2.5 border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] px-5 py-3.5 shrink-0'>
+        <Button
+          variant='outline'
+          className='!h-[42px] !rounded-full !px-4 font-semibold shrink-0 hover:border-[var(--modern-primary)] hover:text-[var(--modern-primary)] hover:bg-[color-mix(in_srgb,var(--modern-primary)_8%,var(--modern-card))] transition-all'
+          id='hide_part_one'
+          onClick={handleBack}
+          disabled={isLoading}
+        >
           {t("uploadDocFlow.back")}
         </Button>
 
-        <Button variant='primary' className='min-h-10 px-5 font-semibold' id='hide_part_one' onClick={handleContinue} disabled={isContinueDisabled}>
-          {t("uploadDocFlow.Continue")}
+        <div className='flex min-w-0 flex-1 items-center gap-2 text-xs text-[var(--modern-muted,#64748b)]'>
+          <span
+            className={`h-2 w-2 shrink-0 rounded-full ${
+              !isContinueDisabled
+                ? "bg-[var(--modern-success,#10b981)]"
+                : "bg-[var(--modern-warning,#f59e0b)]"
+            }`}
+          />
+          <span className='truncate'>
+            {!isContinueDisabled
+              ? `${forms.length} ${t("uploadDocFlow.recipients", "recipients")}`
+              : t(
+                  "uploadDocFlow.completeRecipientDetails",
+                  "Complete recipient details"
+                )}
+          </span>
+        </div>
+
+        <Button
+          variant='primary'
+          className='!h-[42px] !rounded-full !px-6 font-semibold shrink-0'
+          id='hide_part_one'
+          onClick={handleContinue}
+          disabled={isContinueDisabled || isLoading}
+        >
+          {isLoading ? (
+            <span className='flex items-center gap-2'>
+              <span className='inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent' />
+              <span>{t("uploadDocFlow.Continue")}</span>
+            </span>
+          ) : (
+            <span>{t("uploadDocFlow.Continue")}</span>
+          )}
         </Button>
       </div>
 
@@ -959,62 +1115,208 @@ const Signatories = ({ setActiveStep, setCompletedSteps }) => {
         show={showOffcanvas}
         onHide={() => {
           setShowOffcanvas(false);
-          setSearchQuery(""); // Clear search filters when modal closes
+          setSearchQuery("");
         }}
         placement={document.documentElement.dir === "rtl" ? "start" : "end"}
+        className='border-l border-[var(--modern-border)] bg-[var(--modern-card)] rtl:border-l-0 rtl:border-r'
       >
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>{t("uploadDocFlow.SelectRecipient")}</Offcanvas.Title>
+        <Offcanvas.Header closeButton className='border-b border-[var(--modern-border)] px-5 py-4'>
+          <div>
+            <Offcanvas.Title className='text-base font-bold text-[var(--modern-text)]'>
+              {t("uploadDocFlow.SelectRecipient", "Select Recipient")}
+            </Offcanvas.Title>
+            <p className='mt-0.5 text-xs text-[var(--modern-muted)]'>
+              {selectedIndex !== null
+                ? `${t("uploadDocFlow.assigningTo", "Assigning to")} ${t(
+                    "uploadDocFlow.signatory",
+                    "Signatory"
+                  )} ${selectedIndex + 1}`
+                : t(
+                    "uploadDocFlow.selectRecipientSubtitle",
+                    "Choose from your team members or external contacts"
+                  )}
+            </p>
+          </div>
         </Offcanvas.Header>
-        <hr />
-        <Offcanvas.Body>
-          {/* Search Input */}
-          <div className='mb-3'>
-            <input type='text' className='form-control' placeholder={t("uploadDocFlow.searchUser")} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+
+        <Offcanvas.Body className='flex flex-col gap-4 p-5'>
+          {/* Search Box */}
+          <div className='relative'>
+            <Search
+              size={16}
+              className='pointer-events-none absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 text-[var(--modern-muted)]'
+            />
+            <input
+              type='text'
+              placeholder={t(
+                "uploadDocFlow.searchUser",
+                "Search recipient by name or email..."
+              )}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className='h-10 w-full rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] pl-9 pr-9 rtl:pl-9 rtl:pr-9 text-xs text-[var(--modern-text)] placeholder-[var(--modern-muted)] transition-colors focus:border-[var(--modern-primary)] focus:bg-[var(--modern-card)] focus:outline-none'
+            />
+            {searchQuery && (
+              <button
+                type='button'
+                onClick={() => setSearchQuery("")}
+                aria-label='Clear search'
+                className='absolute right-2.5 rtl:right-auto rtl:left-2.5 top-1/2 -translate-y-1/2 text-[var(--modern-muted)] hover:text-[var(--modern-text)]'
+              >
+                <X size={15} />
+              </button>
+            )}
           </div>
 
-          {/* Tabs */}
-          <Tabs defaultActiveKey='team' id='recipient-tabs'>
-            {/* Team Tab */}
-            <Tab eventKey='team' title={t("uploadDocFlow.teamMembers")}>
-              <div style={{ padding: "10px" }}>
-                <ul style={{ listStyle: "none", padding: "0" }}>
-                  {filteredTeamMembers.length > 0 ? (
-                    filteredTeamMembers.map((member, idx) => (
-                      <li key={idx} style={{ marginBottom: "10px" }}>
-                        <button className='w-full flex items-center justify-between p-2.5 rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] hover:bg-[var(--modern-border,#e2e8f0)] text-[var(--modern-text,#0f172a)] text-left transition-colors' onClick={() => handleRecipientSelection(member.name, member.email)}>
-                          <span style={{ fontSize: "0.9rem" }}>{member.name}</span>
-                          <span style={{ fontSize: "0.9rem" }}>{member.email}</span>
-                        </button>
-                      </li>
-                    ))
-                  ) : (
-                    <p>{t("uploadDocFlow.noTeam")}</p>
-                  )}
-                </ul>
-              </div>
-            </Tab>
+          {/* Segmented Pill Tabs */}
+          <div
+            role='tablist'
+            aria-label={t("uploadDocFlow.recipientCategories", "Recipient Categories")}
+            className='inline-flex w-full items-center rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] p-1'
+          >
+            <button
+              type='button'
+              role='tab'
+              aria-selected={activeTab === "team"}
+              onClick={() => setActiveTab("team")}
+              className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-1.5 text-xs font-semibold transition-all ${
+                activeTab === "team"
+                  ? "bg-[var(--modern-card)] text-[var(--modern-primary)] shadow-xs"
+                  : "text-[var(--modern-muted)] hover:text-[var(--modern-text)]"
+              }`}
+            >
+              <span>{t("uploadDocFlow.teamMembers", "Team Members")}</span>
+              <span
+                className={`rounded-full px-1.5 py-0.2 text-[10px] font-mono ${
+                  activeTab === "team"
+                    ? "bg-[color-mix(in_srgb,var(--modern-primary)_15%,transparent)] text-[var(--modern-primary)]"
+                    : "bg-[var(--modern-border)] text-[var(--modern-muted)]"
+                }`}
+              >
+                {filteredTeamMembers.length}
+              </span>
+            </button>
 
-            {/* Adhock Users Tab */}
-            <Tab eventKey='adhock' title={t("uploadDocFlow.externalUsers")}>
-              <div style={{ padding: "10px" }}>
-                <ul style={{ listStyle: "none", padding: "0" }}>
-                  {filteredAdhockUsers.length > 0 ? (
-                    filteredAdhockUsers.map((user, idx) => (
-                      <li key={idx} style={{ marginBottom: "10px" }}>
-                        <button className='w-full flex items-center justify-between p-2.5 rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f1f5f9)] hover:bg-[var(--modern-border,#e2e8f0)] text-[var(--modern-text,#0f172a)] text-left transition-colors' onClick={() => handleRecipientSelection(user.name, user.email)}>
-                          <span style={{ fontSize: "0.9rem" }}>{user.name}</span>
-                          <span style={{ fontSize: "0.9rem" }}>{user.email}</span>
-                        </button>
-                      </li>
-                    ))
-                  ) : (
-                    <p>{t("uploadDocFlow.noAdhookUsers")}</p>
-                  )}
+            <button
+              type='button'
+              role='tab'
+              aria-selected={activeTab === "external"}
+              onClick={() => setActiveTab("external")}
+              className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-1.5 text-xs font-semibold transition-all ${
+                activeTab === "external"
+                  ? "bg-[var(--modern-card)] text-[var(--modern-primary)] shadow-xs"
+                  : "text-[var(--modern-muted)] hover:text-[var(--modern-text)]"
+              }`}
+            >
+              <span>{t("uploadDocFlow.externalUsers", "External Members")}</span>
+              <span
+                className={`rounded-full px-1.5 py-0.2 text-[10px] font-mono ${
+                  activeTab === "external"
+                    ? "bg-[color-mix(in_srgb,var(--modern-primary)_15%,transparent)] text-[var(--modern-primary)]"
+                    : "bg-[var(--modern-border)] text-[var(--modern-muted)]"
+                }`}
+              >
+                {filteredAdhockUsers.length}
+              </span>
+            </button>
+          </div>
+
+          {/* Members List */}
+          <div className='flex-1 overflow-y-auto pr-0.5'>
+            {activeTab === "team" ? (
+              filteredTeamMembers.length > 0 ? (
+                <ul className='m-0 list-none space-y-2 p-0'>
+                  {filteredTeamMembers.map((member, idx) => (
+                    <li key={`team-${idx}`}>
+                      <button
+                        type='button'
+                        onClick={() => handleRecipientSelection(member.name, member.email)}
+                        className='group flex w-full items-center justify-between gap-3 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-3 text-start transition-all hover:border-[var(--modern-primary)] hover:bg-[var(--modern-raised)] cursor-pointer'
+                      >
+                        <div className='flex min-w-0 items-center gap-3'>
+                          <UserInitialsBadge name={member.name} avatarOnly />
+                          <div className='min-w-0'>
+                            <span className='block truncate text-xs font-semibold text-[var(--modern-text)] group-hover:text-[var(--modern-primary)]'>
+                              {member.name}
+                            </span>
+                            <span className='block truncate text-[11px] text-[var(--modern-muted)] font-mono'>
+                              {member.email}
+                            </span>
+                          </div>
+                        </div>
+
+                        <span className='shrink-0 rounded-lg border border-[var(--modern-border)] bg-[var(--modern-raised)] px-2.5 py-1 text-[11px] font-semibold text-[var(--modern-muted)] transition-colors group-hover:border-[var(--modern-primary)] group-hover:bg-[var(--modern-primary)] group-hover:text-white'>
+                          {t("uploadDocFlow.select", "Select")}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
                 </ul>
+              ) : (
+                <div className='flex flex-col items-center justify-center py-10 text-center'>
+                  <div className='flex h-12 w-12 items-center justify-center rounded-full bg-[var(--modern-raised)] text-[var(--modern-muted)] mb-2.5'>
+                    <Users size={22} />
+                  </div>
+                  <p className='text-xs font-semibold text-[var(--modern-text)]'>
+                    {t("uploadDocFlow.noTeam", "No Team Members Found")}
+                  </p>
+                  <p className='mt-1 max-w-[240px] text-[11px] text-[var(--modern-muted)]'>
+                    {searchQuery
+                      ? `${t("uploadDocFlow.noMatchesFor", "No matches found for")} "${searchQuery}"`
+                      : t(
+                          "uploadDocFlow.noTeamMembersSaved",
+                          "No team members are configured in your account."
+                        )}
+                  </p>
+                </div>
+              )
+            ) : filteredAdhockUsers.length > 0 ? (
+              <ul className='m-0 list-none space-y-2 p-0'>
+                {filteredAdhockUsers.map((u, idx) => (
+                  <li key={`adhock-${idx}`}>
+                    <button
+                      type='button'
+                      onClick={() => handleRecipientSelection(u.name, u.email)}
+                      className='group flex w-full items-center justify-between gap-3 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] p-3 text-start transition-all hover:border-[var(--modern-primary)] hover:bg-[var(--modern-raised)] cursor-pointer'
+                    >
+                      <div className='flex min-w-0 items-center gap-3'>
+                        <UserInitialsBadge name={u.name} avatarOnly />
+                        <div className='min-w-0'>
+                          <span className='block truncate text-xs font-semibold text-[var(--modern-text)] group-hover:text-[var(--modern-primary)]'>
+                            {u.name}
+                          </span>
+                          <span className='block truncate text-[11px] text-[var(--modern-muted)] font-mono'>
+                            {u.email}
+                          </span>
+                        </div>
+                      </div>
+
+                      <span className='shrink-0 rounded-lg border border-[var(--modern-border)] bg-[var(--modern-raised)] px-2.5 py-1 text-[11px] font-semibold text-[var(--modern-muted)] transition-colors group-hover:border-[var(--modern-primary)] group-hover:bg-[var(--modern-primary)] group-hover:text-white'>
+                        {t("uploadDocFlow.select", "Select")}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className='flex flex-col items-center justify-center py-10 text-center'>
+                <div className='flex h-12 w-12 items-center justify-center rounded-full bg-[var(--modern-raised)] text-[var(--modern-muted)] mb-2.5'>
+                  <Users size={22} />
+                </div>
+                <p className='text-xs font-semibold text-[var(--modern-text)]'>
+                  {t("uploadDocFlow.noExternalMembers", "No External Members Found")}
+                </p>
+                <p className='mt-1 max-w-[240px] text-[11px] text-[var(--modern-muted)]'>
+                  {searchQuery
+                    ? `${t("uploadDocFlow.noMatchesFor", "No matches found for")} "${searchQuery}"`
+                    : t(
+                        "uploadDocFlow.noExternalMembersSaved",
+                        "No external members found in previous recipient history."
+                      )}
+                </p>
               </div>
-            </Tab>
-          </Tabs>
+            )}
+          </div>
         </Offcanvas.Body>
       </Offcanvas>
     </div>

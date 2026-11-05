@@ -75,15 +75,26 @@ const UploadedDocumentsTable = ({
               </div>
 
               <div className='flex shrink-0 items-center gap-1.5' onClick={(e) => e.stopPropagation()}>
-                {onViewFile && (
+                {onApplyTemplate && !hasTemplate && (
                   <button
                     type='button'
-                    onClick={() => onViewFile(masterDocId, fileName)}
-                    title={translate("uploadDocFlow.view", "View")}
-                    aria-label={translate("uploadDocFlow.view", "View")}
-                    className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-transparent text-[var(--modern-muted,#64748b)] transition-colors hover:border-[var(--modern-primary,#4d8dff)] hover:text-[var(--modern-text,#0f172a)]'
+                    onClick={() => onApplyTemplate(masterDocId, index)}
+                    title={translate("uploadDocFlow.Applytemplate", "Apply Template")}
+                    aria-label={translate("uploadDocFlow.Applytemplate", "Apply Template")}
+                    className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-transparent text-[var(--modern-primary,#4d8dff)] transition-colors hover:border-[var(--modern-primary,#4d8dff)] hover:bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_10%,transparent)] cursor-pointer'
                   >
-                    <Icons.View size={16} />
+                    <Icons.ApplyTemplate size={16} />
+                  </button>
+                )}
+                {onRemoveTemplate && hasTemplate && (
+                  <button
+                    type='button'
+                    onClick={() => onRemoveTemplate(masterDocId, index)}
+                    title={translate("uploadDocFlow.removeTemplate", "Remove Template")}
+                    aria-label={translate("uploadDocFlow.removeTemplate", "Remove Template")}
+                    className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-transparent text-[var(--modern-warning,#f59e0b)] transition-colors hover:border-[var(--modern-warning,#f59e0b)] hover:bg-[color-mix(in_srgb,var(--modern-warning,#f59e0b)_10%,transparent)] cursor-pointer'
+                  >
+                    <Icons.RemoveTemplate size={16} />
                   </button>
                 )}
                 {onDeleteFile && (
@@ -92,7 +103,7 @@ const UploadedDocumentsTable = ({
                     onClick={() => onDeleteFile(masterDocId, index)}
                     title={translate("uploadDocFlow.delete", "Delete")}
                     aria-label={translate("uploadDocFlow.delete", "Delete")}
-                    className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-transparent text-[var(--modern-muted,#64748b)] transition-colors hover:border-[var(--modern-danger,#ef4444)] hover:text-[var(--modern-danger,#ef4444)]'
+                    className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-transparent text-[var(--modern-muted,#64748b)] transition-colors hover:border-[var(--modern-danger,#ef4444)] hover:text-[var(--modern-danger,#ef4444)] cursor-pointer'
                   >
                     <Icons.DeleteAction size={16} />
                   </button>
@@ -151,17 +162,6 @@ const UploadedDocumentsTable = ({
                     >
                       <Icons.RemoveTemplate size={18} />
                       {translate("uploadDocFlow.removeTemplate", "Remove Template")}
-                    </Dropdown.Item>
-                  )}
-
-                  {/* View File Option */}
-                  {onViewFile && (
-                    <Dropdown.Item
-                      className='flex items-center gap-2'
-                      onClick={() => onViewFile(masterDocId, fileName)}
-                    >
-                      <Icons.View size={18} />
-                      {translate("uploadDocFlow.view", "View")}
                     </Dropdown.Item>
                   )}
 

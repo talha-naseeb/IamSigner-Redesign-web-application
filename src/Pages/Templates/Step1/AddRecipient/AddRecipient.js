@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Button, Form, Offcanvas } from "@/Components/UI/shadcnCompat";
+import { Button, Form, Offcanvas, Dropdown } from "@/Components/UI/shadcnCompat";
 import uploadFlowService from "@/services/uploadFlowService";
 import templateService from "@/services/templateService";
 import { toast } from "react-toastify";
@@ -628,18 +628,14 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps, onPreviewSync }) => {
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            className='signatory-form relative rounded-[18px] border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] p-3.5 pl-4 rtl:pl-3.5 rtl:pr-4'
+                            className='signatory-form relative rounded-[18px] border border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] p-3.5 transition-colors'
                             style={{
+                              borderInlineStartWidth: "4px",
+                              borderInlineStartColor: accentColor,
+                              borderInlineStartStyle: "solid",
                               ...provided.draggableProps.style,
                             }}
                           >
-                            {/* Left Color Accent Bar */}
-                            <span
-                              aria-hidden='true'
-                              className='absolute left-0 rtl:left-auto rtl:right-0 top-4 bottom-4 w-[3.5px] rounded-full'
-                              style={{ backgroundColor: accentColor }}
-                            />
-
                             {/* Card Header (.hd) */}
                             <div className='mb-3 flex items-center justify-between gap-2'>
                               <div className='flex min-w-0 items-center gap-2'>
@@ -698,28 +694,98 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps, onPreviewSync }) => {
                                     setSearchQuery("");
                                     setShowOffcanvas(true);
                                   }}
-                                  className='inline-flex h-8 items-center gap-1.5 rounded-lg border border-[var(--modern-border-strong,#cbd5e1)] bg-[var(--modern-raised,#f8fafc)] px-2.5 text-xs font-semibold text-[var(--modern-primary,#4d8dff)] transition-colors hover:border-[var(--modern-primary,#4d8dff)] hover:bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_10%,transparent)]'
+                                  className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border-strong,#cbd5e1)] bg-[var(--modern-raised,#f8fafc)] text-[var(--modern-primary,#4d8dff)] transition-colors hover:border-[var(--modern-primary,#4d8dff)] hover:bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_10%,transparent)] cursor-pointer shrink-0'
                                 >
-                                  <Icons.UserSearch size={14} />
-                                  <span>
-                                    {t("uploadDocFlow.existingUser", "Existing Users")}
-                                  </span>
+                                  <Icons.UserSearch size={15} />
                                 </button>
 
                                 <button
                                   type='button'
-                                  aria-label={t("uploadDocFlow.delete", "Remove")}
+                                  aria-label={t("uploadDocFlow.delete", "Delete")}
                                   onClick={() =>
                                     handleShowConfirmModal(
                                       form.templateSignatoryID,
                                       index
                                     )
                                   }
-                                  className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-transparent text-[var(--modern-muted,#64748b)] transition-colors hover:border-[var(--modern-danger,#ef4444)] hover:text-[var(--modern-danger,#ef4444)]'
+                                  className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-transparent text-[var(--modern-muted,#64748b)] transition-colors hover:border-[var(--modern-danger,#ef4444)] hover:text-[var(--modern-danger,#ef4444)] cursor-pointer shrink-0'
+                                  title={t("uploadDocFlow.delete", "Delete")}
                                 >
                                   <Icons.DeleteAction size={15} />
                                 </button>
+
+                                {/* Three Dots Menu for Notification Type and Delete */}
+                                <Dropdown align='end'>
+                                  <Dropdown.Toggle
+                                    variant='ghost'
+                                    id={`moreOptionsTemplate${index}`}
+                                    className='!h-8 !w-8 !p-0 rounded-lg border border-[var(--modern-border,#e2e8f0)] bg-transparent text-[var(--modern-muted,#64748b)] hover:border-[var(--modern-border-strong)] hover:text-[var(--modern-text)] inline-flex items-center justify-center cursor-pointer after:!hidden shrink-0'
+                                    title={t("uploadDocFlow.moreOptions", "More options")}
+                                    aria-label={t("uploadDocFlow.moreOptions", "More options")}
+                                  >
+                                    <Icons.OtherDoc size={16} />
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu
+                                    align='end'
+                                    className='!bg-[var(--modern-card,#ffffff)] !border-[var(--modern-border,#e2e8f0)] text-sm shadow-xl py-1.5 min-w-[220px] !right-0 !left-auto rtl:!right-auto rtl:!left-0 z-[1060]'
+                                  >
+                                    <div className='px-3.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--modern-muted)]'>
+                                      {t("uploadDocFlow.notificationType", "Notification Type")}
+                                    </div>
+                                    {resolvedNotificationTypes.map((notification, notIndex) => (
+                                      <Dropdown.Item
+                                        key={notIndex}
+                                        onClick={() => handleFormChange(index, "notificationType", notification)}
+                                        className={`flex items-center justify-between text-sm py-1.5 px-3.5 hover:bg-[var(--modern-raised)] cursor-pointer ${
+                                          (form.notificationType || "Email") === notification ? "font-semibold text-[var(--modern-primary)] bg-[var(--modern-raised)]/60" : "text-[var(--modern-text)]"
+                                        }`}
+                                      >
+                                        <span>{notification}</span>
+                                        {(form.notificationType || "Email") === notification && <span className='text-xs'>✓</span>}
+                                      </Dropdown.Item>
+                                    ))}
+
+                                    <div className='my-1.5 border-t border-[var(--modern-border)]' />
+                                    <Dropdown.Item
+                                      onClick={() => handleShowConfirmModal(form.templateSignatoryID, index)}
+                                      className='flex items-center gap-2.5 text-sm py-2 px-3.5 text-[var(--modern-danger,#ef4444)] hover:bg-[var(--modern-danger,#ef4444)]/10 cursor-pointer font-medium'
+                                    >
+                                      <Icons.DeleteAction size={15} />
+                                      <span>{t("uploadDocFlow.delete", "Delete Signatory")}</span>
+                                    </Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
                               </div>
+                            </div>
+
+                            {/* Row 2: Secondary Pills - Role & Notification Indicator */}
+                            <div className='flex items-center gap-1.5 flex-wrap mb-3'>
+                              <Dropdown onSelect={(e) => handleFormChange(index, "signatureType", e)}>
+                                <Dropdown.Toggle
+                                  variant='ghost'
+                                  id={`signatureTypeTemplate${index}`}
+                                  className='!h-7 !px-2.5 !text-xs !rounded-lg border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] inline-flex items-center gap-1.5 cursor-pointer'
+                                >
+                                  {(form.signatureType || "Needs To Sign") === "Needs To Sign" && <Icons.SignatureType size={13} />}
+                                  {(form.signatureType || "Needs To Sign") === "View Only" && <Icons.View size={13} />}
+                                  <span className='truncate max-w-[110px] font-medium'>{form.signatureType || "Needs To Sign"}</span>
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu align='start' className='!bg-[var(--modern-card)] !border-[var(--modern-border)] text-sm shadow-lg'>
+                                  {resolvedSignatureTypes.map((signature, sigIndex) => (
+                                    <Dropdown.Item key={sigIndex} eventKey={signature} className='flex items-center gap-2 text-sm py-1.5 px-3 hover:bg-[var(--modern-raised)]'>
+                                      {signature === "Needs To Sign" && <Icons.SignatureType size={14} />}
+                                      {signature === "View Only" && <Icons.View size={14} />}
+                                      <span>{signature}</span>
+                                    </Dropdown.Item>
+                                  ))}
+                                </Dropdown.Menu>
+                              </Dropdown>
+
+                              {form.notificationType && (
+                                <span className='inline-flex items-center gap-1 h-7 px-2.5 rounded-lg border border-[var(--modern-border)] bg-[var(--modern-raised)] text-xs font-medium text-[var(--modern-muted)]'>
+                                  <span>{form.notificationType}</span>
+                                </span>
+                              )}
                             </div>
 
                             {/* Form Fields */}
@@ -808,61 +874,6 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps, onPreviewSync }) => {
                                   </Form.Group>
                                 </div>
                               )}
-
-                              {/* 2-Column Notification Type + Role */}
-                              <div className='grid grid-cols-1 gap-2.5 sm:grid-cols-2'>
-                                <div>
-                                  <Form.Group controlId={`formNotificationMethod${index}`}>
-                                    <Form.Label className='mb-1 block text-xs font-medium text-[var(--modern-muted,#64748b)]'>
-                                      {t("uploadDocFlow.notificationType")}
-                                    </Form.Label>
-                                    <Form.Select
-                                      value={form.notificationType || "Email"}
-                                      onChange={(e) =>
-                                        handleFormChange(
-                                          index,
-                                          "notificationType",
-                                          e.target.value
-                                        )
-                                      }
-                                    >
-                                      {resolvedNotificationTypes.map((notif, nIdx) => (
-                                        <option key={nIdx} value={notif}>
-                                          {notif}
-                                        </option>
-                                      ))}
-                                    </Form.Select>
-                                  </Form.Group>
-                                </div>
-
-                                <div>
-                                  <Form.Group controlId={`formSignatureMethod${index}`}>
-                                    <Form.Label className='mb-1 block text-xs font-medium text-[var(--modern-muted,#64748b)]'>
-                                      {t("uploadDocFlow.role", "Role")}
-                                    </Form.Label>
-                                    <Form.Select
-                                      value={
-                                        form.signatureType ||
-                                        resolvedSignatureTypes[0] ||
-                                        "Needs To Sign"
-                                      }
-                                      onChange={(e) =>
-                                        handleFormChange(
-                                          index,
-                                          "signatureType",
-                                          e.target.value
-                                        )
-                                      }
-                                    >
-                                      {resolvedSignatureTypes.map((sig, sIdx) => (
-                                        <option key={sIdx} value={sig}>
-                                          {sig}
-                                        </option>
-                                      ))}
-                                    </Form.Select>
-                                  </Form.Group>
-                                </div>
-                              </div>
                             </div>
                           </div>
                         )}
@@ -898,11 +909,11 @@ const AddRecipient = ({ setActiveStep, setCompletedSteps, onPreviewSync }) => {
       </div>
 
       {/* Studio Sticky Footer (.pfoot) */}
-      <div className='mt-auto flex items-center justify-between gap-2.5 border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-raised,#f8fafc)]/80 px-5 py-3.5'>
+      <div className='mt-auto sticky bottom-0 z-20 flex items-center justify-between gap-2.5 border-t border-[var(--modern-border,#e2e8f0)] bg-[var(--modern-card,#ffffff)] px-5 py-3.5'>
         <Button
           variant='outline'
           id='hide_part_one'
-          className='!h-[42px] !rounded-full !px-4 font-semibold shrink-0'
+          className='!h-[42px] !rounded-full !px-4 font-semibold shrink-0 hover:border-[var(--modern-primary)] hover:text-[var(--modern-primary)] hover:bg-[color-mix(in_srgb,var(--modern-primary)_8%,var(--modern-card))] transition-all'
           onClick={handleBack}
           disabled={isLoading}
         >
