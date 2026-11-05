@@ -97,21 +97,25 @@ const SignatureModal = (props) => {
   ];
 
   useEffect(() => {
-    if (controlName === "Stamp") {
+    if (controlName === "Stamp" || controlName === "Image") {
       setSelectedTab("UPLOAD");
-      getSignatureStampVerification();
-    }
-
-    if (controlName === "Image") {
-      setSelectedTab("UPLOAD");
+      if (controlName === "Stamp" && auth) {
+        getSignatureStampVerification();
+      }
+    } else {
+      setSelectedTab("SELECT_SIGN");
     }
 
     if (selectedTab === "UPLOAD") {
       setPreviewImage(null);
     }
-  }, [controlName]);
+  }, [controlName, showModal]);
 
   const getSignatureStampVerification = async () => {
+    if (!auth) {
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
     try {
       const response = await verificationService.getSignatureStampVerification(auth);
@@ -124,6 +128,8 @@ const SignatureModal = (props) => {
       }
     } catch (error) {
       // console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -154,16 +160,24 @@ const SignatureModal = (props) => {
 
       const listBounds = tabList.getBoundingClientRect();
       const buttonBounds = activeButton.getBoundingClientRect();
-      setTabIndicator({
-        left: buttonBounds.left - listBounds.left,
-        width: buttonBounds.width,
-        visible: true,
-      });
+      if (buttonBounds.width > 0) {
+        setTabIndicator({
+          left: buttonBounds.left - listBounds.left,
+          width: buttonBounds.width,
+          visible: true,
+        });
+      }
     };
 
     updateTabIndicator();
+    const rafId = requestAnimationFrame(updateTabIndicator);
+    const timer = setTimeout(updateTabIndicator, 150);
     window.addEventListener("resize", updateTabIndicator);
-    return () => window.removeEventListener("resize", updateTabIndicator);
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateTabIndicator);
+    };
   }, [selectedTab, showModal, controlName]);
 
   useEffect(() => {
@@ -445,16 +459,18 @@ const SignatureModal = (props) => {
     const isSignatureSaved = isSavedSignature ? false : true;
     handleUploadedSignature(uploadedImage, controlLocationID, signatoriesID, controlName, controlID, signatureExtension, selectedMasterDocID, isBulkSign, isSignatureSaved);
 
-    try {
-      verificationService.createSignActivityVerification(
-        {
-          Status: `${controlName} uploaded`,
-          Message: isBulkSign ? `${signatoryName} uploaded ${controlName} for all relevant sections ` : `${signatoryName} uploaded ${controlName} `,
-        },
-        auth,
-      );
-    } catch (error) {
-      console.log(error);
+    if (auth) {
+      try {
+        verificationService.createSignActivityVerification(
+          {
+            Status: `${controlName} uploaded`,
+            Message: isBulkSign ? `${signatoryName} uploaded ${controlName} for all relevant sections ` : `${signatoryName} uploaded ${controlName} `,
+          },
+          auth,
+        );
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     setShowModal(false);
@@ -484,46 +500,54 @@ const SignatureModal = (props) => {
           </Modal.Title>
         </Modal.Header>
 
-        <Modal.Body className='signature-modal-body'>
-          <p className='mt-3 mb-0'>{t("signatureModal.confirmNameSignature")}</p>
+        <Modal.Body className='signature-modal-body bg-[var(--modern-card)] text-[var(--modern-text)] p-4 sm:p-6'>
+          <p className='mt-1 mb-2 text-xs font-medium text-[var(--modern-muted)]'>
+            {controlName === "Initial"
+              ? t("signatureModal.initials_here", "Initials")
+              : controlName === "Stamp"
+              ? t("signatureModal.stamp_here", "Stamp")
+              : controlName === "Image"
+              ? t("signatureModal.upload_image", "Image")
+              : t("signatureModal.confirmNameSignature", "Confirm your name and signature")}
+          </p>
           <Row className='py-2'>
             <Col md={7}>
               {controlName === "Signature" && (
                 <>
-                  <label htmlFor='name'>
+                  <label htmlFor='name' className='text-xs font-semibold text-[var(--modern-text)] mb-1 block'>
                     {t("createTeam.fullName")}
-                    <span className='text-danger mx-1'>*</span>
+                    <span className='text-rose-500 mx-1'>*</span>
                   </label>
-                  <br />
                   <input
                     type='text'
                     id='name'
+                    className='w-full h-10 px-3 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] text-sm font-medium outline-none focus:border-[var(--modern-primary,#4d8dff)] transition-all'
                     value={fullName}
                     onChange={(e) => {
                       setFullName(e.target.value);
                       if (fieldErrors.fullName) setFieldErrors((prev) => ({ ...prev, fullName: "" }));
                     }}
                   />
-                  {fieldErrors.fullName && <small className='error-message mt-1 w-100'>{fieldErrors.fullName}</small>}
+                  {fieldErrors.fullName && <small className='text-xs text-rose-500 mt-1 block'>{fieldErrors.fullName}</small>}
                 </>
               )}
               {controlName === "Initial" && (
                 <>
-                  <label htmlFor='initials'>
-                    <b> {t("signatureModal.initials")}</b>
-                    <span className='text-danger mx-1'>*</span>
+                  <label htmlFor='initials' className='text-xs font-semibold text-[var(--modern-text)] mb-1 block'>
+                    {t("signatureModal.initials")}
+                    <span className='text-rose-500 mx-1'>*</span>
                   </label>
-                  <br />
                   <input
                     type='text'
                     id='initials'
+                    className='w-full h-10 px-3 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] text-sm font-semibold tracking-wider outline-none focus:border-[var(--modern-primary,#4d8dff)] transition-all uppercase'
                     value={initials}
                     onChange={(e) => {
                       setInitials(e.target.value);
                       if (fieldErrors.initials) setFieldErrors((prev) => ({ ...prev, initials: "" }));
                     }}
                   />
-                  {fieldErrors.initials && <small className='error-message mt-1 w-100'>{fieldErrors.initials}</small>}
+                  {fieldErrors.initials && <small className='text-xs text-rose-500 mt-1 block'>{fieldErrors.initials}</small>}
                 </>
               )}
             </Col>
@@ -544,7 +568,7 @@ const SignatureModal = (props) => {
               <button ref={(element) => { tabButtonRefs.current.UPLOAD = element; }} onClick={() => handleTabChange("UPLOAD")} className={`signature-tab-button ${selectedTab === "UPLOAD" ? "active-tab" : ""}`}>
                 {t("signatureModal.upload")}
               </button>
-              {controlName === "Image" ? null : (
+              {controlName === "Image" || controlName === "Initial" ? null : (
                 <button
                   onClick={() => {
                     handleTabChange("SAVED");
@@ -712,29 +736,38 @@ const SignatureModal = (props) => {
             </div>
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <div className='d-flex w-100 mb-2 justify-content-start align-items-center bulk-sign'>
-            <input type='checkbox' checked={isSignAllChecked} onChange={handleCheckboxChange} className='form-check-input mx-2' />
-            <small style={{ fontStyle: "italic", color: "red" }}>
+        <Modal.Footer className='border-t border-[var(--modern-border)] bg-[var(--modern-card)] p-4 flex flex-col gap-3'>
+          <div className='flex w-full justify-start items-center gap-2 bulk-sign'>
+            <input type='checkbox' id='bulkSignCheckbox' checked={isSignAllChecked} onChange={handleCheckboxChange} className='h-4 w-4 rounded accent-[var(--modern-primary,#4d8dff)] cursor-pointer' />
+            <label htmlFor='bulkSignCheckbox' className='text-xs font-medium text-[var(--modern-muted)] cursor-pointer m-0'>
               {t("signatureModal.WnatPlace")}
-              {controlName === "Stamp" && " Stamp "}
-              {controlName === "Signature" && " Signature "}
-              {controlName === "Initial" && " Initials "}
-              {controlName === "Image" && " Image "}
+              {controlName === "Stamp" && ` ${t("signatureModal.stamp", "Stamp")} `}
+              {controlName === "Signature" && ` ${t("signatureModal.signature", "Signature")} `}
+              {controlName === "Initial" && ` ${t("signatureModal.initials", "Initials")} `}
+              {controlName === "Image" && ` ${t("signatureModal.image", "Image")} `}
               {t("signatureModal.relevantSections")}
-            </small>
+            </label>
           </div>
-          <div className='d-flex justify-content-between gap-2 w-100'>
-            <Button onClick={closeModal} className='modalCancelButton'>
+          <div className='flex justify-between items-center w-full gap-3'>
+            <button
+              type='button'
+              onClick={closeModal}
+              className='px-5 py-2 text-xs font-semibold rounded-full border border-[var(--modern-border)] text-[var(--modern-text)] bg-[var(--modern-card)] hover:bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_8%,var(--modern-card))] hover:border-[var(--modern-primary,#4d8dff)] hover:text-[var(--modern-primary,#4d8dff)] transition-all cursor-pointer appearance-none outline-none'
+            >
               {t("signatureModal.cancel")}
-            </Button>
+            </button>
 
-            <Button onClick={handleSign} className='applyBtn' disabled={selectedTab === "SAVED" && !isSavedImageValid}>
+            <button
+              type='button'
+              onClick={handleSign}
+              className='inline-flex items-center justify-center gap-2 px-6 py-2 text-xs font-semibold rounded-full border-0 shadow-none outline-none text-white bg-[var(--modern-primary,#4d8dff)] hover:opacity-90 active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:pointer-events-none appearance-none'
+              disabled={selectedTab === "SAVED" && !isSavedImageValid}
+            >
               {controlName === "Stamp" && t("signatureModal.stamp_now")}
               {controlName === "Signature" && t("signatureModal.sign_now")}
               {controlName === "Initial" && t("signatureModal.initials_now")}
               {controlName === "Image" && t("signatureModal.upload_image")}
-            </Button>
+            </button>
           </div>
         </Modal.Footer>
       </Modal>

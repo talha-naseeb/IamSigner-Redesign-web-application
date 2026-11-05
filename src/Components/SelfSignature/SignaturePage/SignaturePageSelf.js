@@ -161,8 +161,7 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
   const mainDocumentRef = useRef(null);
 
   const handleDocSelect = async (masterDocID, selectedFolderName, signedDocKey) => {
-    const truncatedName = selectedFolderName.length > 10 ? selectedFolderName.slice(0, 7) + "..." : selectedFolderName;
-    setSelectedFolder(truncatedName);
+    setSelectedFolder(selectedFolderName);
     setSelectedMasterDocID(masterDocID);
     setIsLoading(true);
     getMasterDocPages(masterDocID);
@@ -276,8 +275,7 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
           setRegisterSignID(response.data.response.registerSignID);
           const firstDocument = response.data.response.primaryDocs[0];
           const firstDocName = firstDocument.docName;
-          const truncatedName = firstDocName.length > 10 ? firstDocName.slice(0, 7) + ".." : firstDocName;
-          setSelectedFolder(truncatedName);
+          setSelectedFolder(firstDocName);
 
           const firstMasterDocID = firstDocument.masterDocID;
           getMasterDocPages(firstMasterDocID);
@@ -618,7 +616,50 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
               </div>
             </div>
 
-            <div className='flex-1 p-3 sm:p-6 flex justify-center items-start overflow-x-auto bg-[var(--modern-raised)] min-h-[calc(100vh-210px)]'>
+            {/* Horizontal Page Thumbnails Strip for Mobile/Tablet */}
+            {imagesData && imagesData.length > 1 && (
+              <div className='lg:hidden px-4 pt-3 pb-2 border-b border-[var(--modern-border)] bg-[var(--modern-card)] flex items-center gap-2.5 overflow-x-auto'>
+                {imagesData.map((img, idx) => {
+                  const isCurrent = img.pagesPath === selectedImage;
+                  const pageFieldCount = Array.isArray(allControlData)
+                    ? allControlData.filter((c) => String(c.masterDocPagesID) === String(img.masterDocPagesID)).length
+                    : 0;
+
+                  return (
+                    <div
+                      key={img.masterDocPagesID || idx}
+                      onClick={() => handleImageSelect(img.pagesPath, img.masterDocPagesID)}
+                      role='button'
+                      tabIndex={0}
+                      aria-label={`${t("uploadDocFlow.page", "Page")} ${idx + 1}`}
+                      className={`group relative w-[72px] shrink-0 aspect-[8.5/11] cursor-pointer overflow-hidden rounded-[10px] border-2 bg-white transition-all ${
+                        isCurrent
+                          ? "border-[var(--modern-primary,#4d8dff)] outline outline-3 outline-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_22%,transparent)]"
+                          : "border-[var(--modern-border,#e2e8f0)] hover:border-[var(--modern-border-strong,#cbd5e1)]"
+                      }`}
+                    >
+                      <img src={img.pagesPath} alt={`Page ${idx + 1}`} className='h-full w-full object-cover pointer-events-none' />
+                      {pageFieldCount > 0 && (
+                        <span className='absolute top-1 left-1 rtl:left-auto rtl:right-1 z-10 rounded-md bg-[var(--modern-primary,#4d8dff)] px-1.5 py-0.2 font-mono text-[10px] font-semibold text-white'>
+                          {pageFieldCount}
+                        </span>
+                      )}
+                      <span className='absolute bottom-1 right-1 rtl:right-auto rtl:left-1 z-10 rounded bg-[var(--modern-card)]/90 px-1.5 py-0.2 font-mono text-[10px] font-semibold text-[var(--modern-text)] border border-[var(--modern-border)]'>
+                        {idx + 1}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            <div
+              className='flex-1 p-3 sm:p-6 flex justify-center items-start overflow-x-auto bg-[var(--modern-raised)] min-h-[calc(100vh-210px)]'
+              style={{
+                backgroundImage: "repeating-linear-gradient(0deg, transparent 0 23px, var(--modern-border) 23px 24px)",
+                backgroundSize: "100% 24px",
+              }}
+            >
               <div
                 className='main-document scrollable-content relative rounded-2xl border border-[var(--modern-border-strong)] bg-white overflow-visible'
                 ref={mainDocumentRef}
@@ -700,13 +741,14 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
                                   }}
                                   onClick={() => {
                                     if (control.controlName === "Signature" || control.controlName === "Initial" || control.controlName === "Stamp" || control.controlName === "Image") {
-                                      if (control.name) {
-                                        const nameParts = control.name.split(" ");
-                                        const initial = nameParts.map((part) => part.charAt(0)).join("");
-                                        setFullName(control.name);
+                                      const targetName = control.name || signatoryName || "";
+                                      if (targetName) {
+                                        const nameParts = targetName.split(" ").filter(Boolean);
+                                        const initial = nameParts.map((part) => part.charAt(0).toUpperCase()).join("");
+                                        setFullName(targetName);
                                         setInitials(initial);
                                       }
-                                      openModal(control.controlLocationID, control.signatoriesID, control.email, control.controlName, control.controlID, control.textEditor);
+                                      openModal(control.controlLocationID, control.signatoriesID, control.email || email, control.controlName, control.controlID, control.textEditor);
                                     }
                                     if (control.controlName === "Text" || control.controlName === "Number") {
                                       handleButtonClick(control.controlLocationID, control.textEditor);
@@ -1064,11 +1106,23 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
             </div>
 
             {/* Sidebar with Document Selector & Thumbnails */}
-            <div className='w-full lg:w-80 shrink-0 border-t lg:border-t-0 lg:border-l border-[var(--modern-border)] rtl:lg:border-r rtl:lg:border-l-0 bg-[var(--modern-card)] lg:sticky lg:top-0 h-fit lg:max-h-[calc(100vh-140px)] flex flex-col'>
-              <div className='p-3 border-b border-[var(--modern-border)]'>
+            <div className='w-full lg:w-72 xl:w-80 shrink-0 border-t lg:border-t-0 lg:border-l border-[var(--modern-border)] rtl:lg:border-r rtl:lg:border-l-0 bg-[var(--modern-card)] lg:sticky lg:top-0 h-fit lg:max-h-[calc(100vh-140px)] flex flex-col'>
+              <div className='p-3 border-b border-[var(--modern-border)] space-y-2'>
+                <div className='flex items-center justify-between'>
+                  <span className='text-xs font-semibold uppercase tracking-wider text-[var(--modern-muted)]'>
+                    {t("uploadDocFlow.document", "Document")}
+                  </span>
+                  <span className='text-[11px] font-mono font-medium text-[var(--modern-muted)]'>
+                    {imagesData?.length || 0} {t("uploadDocFlow.pages", "pages")}
+                  </span>
+                </div>
                 <div className='p-1 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] flex items-center'>
                   <DropdownButton
-                    title={selectedFolder || ""}
+                    title={
+                      <span className='truncate max-w-[210px] inline-block text-left rtl:text-right font-medium text-xs text-[var(--modern-text)]' title={selectedFolder || ""}>
+                        {selectedFolder || ""}
+                      </span>
+                    }
                     onSelect={(eventKey) => {
                       const [masterDocID, selectedFolderName, signedDocKey] = eventKey.split(",");
                       handleDocSelect(masterDocID, selectedFolderName, signedDocKey);
@@ -1080,7 +1134,7 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
                     {formData &&
                       formData.primaryDocs.map((doc) => {
                         return (
-                          <Dropdown.Item key={doc.masterDocID} eventKey={`${doc.masterDocID},${doc.docName},${doc.signedDocKey}`} className='truncate text-[var(--modern-text)] text-xs'>
+                          <Dropdown.Item key={doc.masterDocID} eventKey={`${doc.masterDocID},${doc.docName},${doc.signedDocKey}`} className='truncate text-[var(--modern-text)] text-xs font-medium'>
                             {doc.docName}
                           </Dropdown.Item>
                         );
@@ -1088,17 +1142,61 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
                   </DropdownButton>
                 </div>
               </div>
-              <div className='hidden md:block flex-1 overflow-y-auto p-2'>
-                <ImageThumbnails
-                  controls={allControlData}
-                  t={t}
-                  selectedImage={selectedImage}
-                  setSelectedImage={setSelectedImage}
-                  setMasterDocPagesId={setMasterDocPagesId}
-                  imagesData={imagesData}
-                  setImagesData={setImagesData}
-                  buttons={false}
-                />
+
+              {/* Responsive Page Thumbnails Grid (Desktop) */}
+              <div className='hidden lg:block flex-1 overflow-y-auto p-3'>
+                <div className='grid grid-cols-2 gap-3'>
+                  {imagesData &&
+                    imagesData.map((img, idx) => {
+                      const isCurrent = img.pagesPath === selectedImage;
+                      const pageFieldCount = Array.isArray(allControlData)
+                        ? allControlData.filter((c) => String(c.masterDocPagesID) === String(img.masterDocPagesID)).length
+                        : 0;
+
+                      return (
+                        <div
+                          key={img.masterDocPagesID || idx}
+                          onClick={() => handleImageSelect(img.pagesPath, img.masterDocPagesID)}
+                          role='button'
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              handleImageSelect(img.pagesPath, img.masterDocPagesID);
+                            }
+                          }}
+                          aria-label={`${t("uploadDocFlow.page", "Page")} ${idx + 1}`}
+                          className={`group relative aspect-[8.5/11] cursor-pointer overflow-hidden rounded-[10px] border-2 bg-white transition-all shadow-sm ${
+                            isCurrent
+                              ? "border-[var(--modern-primary,#4d8dff)] outline outline-3 outline-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_22%,transparent)]"
+                              : "border-[var(--modern-border,#e2e8f0)] hover:border-[var(--modern-border-strong,#cbd5e1)]"
+                          }`}
+                        >
+                          <img
+                            src={img.pagesPath}
+                            alt={`Page ${idx + 1}`}
+                            className='h-full w-full object-cover pointer-events-none'
+                            onError={() => {
+                              navigate("/home");
+                              toast.info(t("uploadDocFlow.pleaseUploadDoc"), { toastId: "broken-thumb" });
+                            }}
+                          />
+
+                          {/* Placed Field Count Badge */}
+                          {pageFieldCount > 0 && (
+                            <span className='absolute top-1 left-1 rtl:left-auto rtl:right-1 z-10 rounded-md bg-[var(--modern-primary,#4d8dff)] px-1.5 py-0.2 font-mono text-[10px] font-semibold text-white'>
+                              {pageFieldCount}
+                            </span>
+                          )}
+
+                          {/* Page Number Badge */}
+                          <span className='absolute bottom-1 right-1 rtl:right-auto rtl:left-1 z-10 rounded bg-[var(--modern-card)]/90 px-1.5 py-0.2 font-mono text-[10px] font-semibold text-[var(--modern-text)] border border-[var(--modern-border)]'>
+                            {idx + 1}
+                          </span>
+                        </div>
+                      );
+                    })}
+                </div>
               </div>
 
               <ConfirmationModal show={isConfirmationModalOpen} onHide={() => setIsConfirmationModalOpen(false)} onClick={handleCompleted} />
