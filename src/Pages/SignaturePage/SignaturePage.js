@@ -862,7 +862,7 @@ const SignaturePage = () => {
     <div className='signaturePage'>
 
       <div className={`${passwordModal ? "blur-background" : ""}`}>
-        <Row className='bg-white m-0 fixed-top signaturePage-header'>
+        <Row className='bg-[var(--modern-card)] m-0 fixed-top signaturePage-header border-b border-[var(--modern-border)]'>
           <Col className='d-flex justify-content-between align-items-center px-3 mx-3 h-100'>
             <Link to='/'>
               <Icons.StepperLogo style={{ height: "30px", width: "100px" }} />
@@ -873,11 +873,11 @@ const SignaturePage = () => {
 
         <div className='signaturePage-container' style={{ marginTop: "56px" }}>
           <Row className='main-content px-0 mx-0 pt-2'>
-            <Col md={2} className='comments-col p-0 border border-1 bg-white'>
+            <Col md={2} className='comments-col p-0 border border-[var(--modern-border)] bg-[var(--modern-card)]'>
               <Comments signAuth={auth} registerSignID={registerSignID} signatoryEmail={signatoryEmail} signatoryName={signatoryName} permissions={permissions} />
             </Col>
 
-            <Col md={8} className='image-col p-0' style={{ background: "#eee" }}>
+            <Col md={8} className='image-col p-0' style={{ background: "var(--modern-raised)" }}>
               <Row className='actions-btns ms-0 mb-2'>
                 <div className='bg-white d-flex align-items-center justify-content-between px-3 border border-1' style={{ padding: "11px" }}>
                   <div className='signature-actions-tab d-flex gap-4 '>
@@ -910,10 +910,12 @@ const SignaturePage = () => {
                   <div>
                     <Button
                       onClick={scrollToNextControl}
-                      className={`signedBtn ${isLoading || !completedControls ? "disabled-button" : ""}`}
-                      style={{
-                        backgroundColor: isLoading ? "gray" : completedControls ? "#3ea42c" : "gray",
-                      }}
+                      size="sm"
+                      className={`inline-flex items-center gap-2 font-semibold rounded-full px-5 h-9 transition-all cursor-pointer shadow-none ${
+                        completedControls
+                          ? "!bg-emerald-600 hover:!bg-emerald-700 !text-white"
+                          : "!bg-[var(--modern-primary,#4d8dff)] hover:opacity-90 !text-white"
+                      }`}
                       disabled={isLoading}
                     >
                       {isLoading ? t("signOrderDaigram.loading") : completedControls ? t("uploadDocFlow.finish") : currentControlIndex === 0 ? t("signaturePage.Start") : t("signaturePage.NextStep")}
@@ -1550,13 +1552,22 @@ const SignaturePage = () => {
             </div>
           </div> */}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant='none' onClick={closeDeclineModal} className='py-1 modalCancelButton'>
+        <Modal.Footer className="border-t border-[var(--modern-border)] flex justify-end gap-3 p-3">
+          <button
+            type="button"
+            onClick={closeDeclineModal}
+            className="px-5 py-2 text-xs font-semibold rounded-full border border-[var(--modern-border)] text-[var(--modern-text)] bg-[var(--modern-card)] hover:bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_8%,var(--modern-card))] hover:border-[var(--modern-primary,#4d8dff)] hover:text-[var(--modern-primary,#4d8dff)] transition-all cursor-pointer appearance-none outline-none"
+          >
             {t("signaturePage.close")}
-          </Button>
-          <Button variant='none' className='applyBtn  py-1 text-white fw-normal' onClick={handleFileDecline} disabled={isLoading}>
+          </button>
+          <button
+            type="button"
+            className="inline-flex items-center justify-center gap-2 px-6 py-2 text-xs font-semibold rounded-full border-0 shadow-none outline-none text-white bg-[var(--modern-danger,#ef4444)] hover:opacity-90 active:scale-95 transition-all cursor-pointer appearance-none"
+            onClick={handleFileDecline}
+            disabled={isLoading}
+          >
             {t("signaturePage.submit")}
-          </Button>
+          </button>
         </Modal.Footer>
       </Modal>
 

@@ -178,9 +178,7 @@ const SelfSignatureFlow = () => {
                   ) : activeStep === 2 ? (
                     <SecondStep setActiveStep={handleSetActiveStep} setCompletedSteps={handleSetCompletedSteps} />
                   ) : (
-                    <div className='w-full max-w-7xl mx-auto px-4 sm:px-6 py-6'>
-                      <SignaturePageSelf setActiveStep={handleSetActiveStep} setCompletedSteps={handleSetCompletedSteps} />
-                    </div>
+                    <SignaturePageSelf setActiveStep={handleSetActiveStep} setCompletedSteps={handleSetCompletedSteps} />
                   )}
                 </div>
               </div>

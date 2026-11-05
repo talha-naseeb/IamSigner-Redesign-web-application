@@ -577,19 +577,20 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
 
   return (
     <div className='w-full'>
-      <div>
-        <div className='w-full'>
-          <Row className='px-0 mx-0'>
-          <Col md={10} className='p-0 bg-[var(--modern-bg)]'>
-            <div
-              className='sticky top-0 z-20 px-4 py-3 flex items-center justify-between border-b border-[var(--modern-border)] bg-[var(--modern-card)]'
-            >
+      <div className='w-full'>
+        <div className='flex flex-col lg:flex-row flex-1 w-full items-start bg-[var(--modern-bg)] min-h-[calc(100vh-140px)]'>
+          <div className='flex-1 w-full min-w-0 bg-[var(--modern-bg)] flex flex-col'>
+            <div className='sticky top-0 z-20 px-4 sm:px-6 py-3 flex items-center justify-between border-b border-[var(--modern-border)] bg-[var(--modern-card)]/95 backdrop-blur-sm'>
               <div className='flex items-center gap-3'>
                 <Button
                   onClick={scrollToNextControl}
                   variant={completedControls ? "success" : "primary"}
                   size='sm'
-                  className='inline-flex items-center gap-2 font-semibold rounded-full px-5 h-9'
+                  className={`inline-flex items-center gap-2 font-semibold rounded-full px-5 h-9 transition-all cursor-pointer shadow-none ${
+                    completedControls
+                      ? "!bg-emerald-600 hover:!bg-emerald-700 !text-white"
+                      : "!bg-[var(--modern-primary,#4d8dff)] hover:opacity-90 !text-white"
+                  }`}
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -617,9 +618,9 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
               </div>
             </div>
 
-            <Row className='mx-0 p-0'>
+            <div className='flex-1 p-3 sm:p-6 flex justify-center items-start overflow-x-auto bg-[var(--modern-raised)] min-h-[calc(100vh-210px)]'>
               <div
-                className='main-document scrollable-content px-0'
+                className='main-document scrollable-content relative rounded-2xl border border-[var(--modern-border-strong)] bg-white overflow-visible'
                 ref={mainDocumentRef}
                 style={{
                   position: "relative",
@@ -676,24 +677,16 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
                                     width: control.width,
                                     height: control.height,
                                     border:
-                                      (control.signatureColor && control.signatureColor.trim() !== ""
-                                        ? control.signatureColor
-                                        : "#e84600" &&
-                                          (control.controlName === "Signature" || control.controlName === "Initial" || control.controlName === "Stamp" || control.controlName === "Image") &&
-                                          !uploadedSignature.find((item) => item.controlLocationID === control.controlLocationID)) ||
-                                      (control.controlName !== "Signature" &&
-                                        control.controlName !== "Initial" &&
-                                        control.controlName !== "Stamp" &&
-                                        control.controlName !== "QR Code" &&
-                                        control.controlName !== "Image")
-                                        ? `2px dotted ${control.signatureColor || "#e84600"}`
-                                        : "transparent",
-                                    // backgroundColor:
-                                    //   ((control.controlName === "Signature" || control.controlName === "Initial" || control.controlName === "Stamp" || control.controlName === "Image") &&
-                                    //     !uploadedSignature.find((item) => item.controlLocationID === control.controlLocationID)) ||
-                                    //   (control.controlName !== "Signature" && control.controlName !== "Initial" && control.controlName !== "Stamp" && control.controlName !== "Image")
-                                    //     ? "var(--theme-light)"
-                                    //     : "transparent",
+                                      uploadedSignature.find((item) => item.controlLocationID === control.controlLocationID) ||
+                                      control.controlName === "QR Code"
+                                        ? "none"
+                                        : `2px dashed ${control.signatureColor?.trim() || "var(--modern-primary, #4d8dff)"}`,
+                                    backgroundColor:
+                                      uploadedSignature.find((item) => item.controlLocationID === control.controlLocationID) ||
+                                      control.controlName === "QR Code"
+                                        ? "transparent"
+                                        : `color-mix(in srgb, ${control.signatureColor?.trim() || "var(--modern-primary, #4d8dff)"} 10%, rgba(255, 255, 255, 0.88))`,
+                                    borderRadius: "6px",
                                     cursor:
                                       control.controlName === "Signature" ||
                                       control.controlName === "Initial" ||
@@ -1067,36 +1060,35 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
                     </div>
                   </div>
                 </div>
-              </Row>
-            </Col>
-
-            <Col
-              md={2}
-              className='p-0 border-l border-[var(--modern-border)] rtl:border-r rtl:border-l-0 bg-[var(--modern-card)] sticky top-0 h-fit max-h-[calc(100vh-140px)] overflow-y-auto'
-            >
-              <div className='m-2 p-1.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] flex items-center'>
-                <DropdownButton
-                  title={selectedFolder || ""}
-                  onSelect={(eventKey) => {
-                    const [masterDocID, selectedFolderName, signedDocKey] = eventKey.split(",");
-                    handleDocSelect(masterDocID, selectedFolderName, signedDocKey);
-                  }}
-                  id='doc-dropdown'
-                  className='border-0 w-full flex justify-between items-center text-[var(--modern-text)] text-xs'
-                  variant='none'
-                >
-                  {formData &&
-                    formData.primaryDocs.map((doc) => {
-                      return (
-                        <Dropdown.Item key={doc.masterDocID} eventKey={`${doc.masterDocID},${doc.docName},${doc.signedDocKey}`} className='truncate text-[var(--modern-text)] text-xs'>
-                          {doc.docName}
-                        </Dropdown.Item>
-                      );
-                    })}
-                </DropdownButton>
               </div>
-              <hr className='m-0 border-[var(--modern-border)]' />
-              <div className='hidden md:block'>
+            </div>
+
+            {/* Sidebar with Document Selector & Thumbnails */}
+            <div className='w-full lg:w-80 shrink-0 border-t lg:border-t-0 lg:border-l border-[var(--modern-border)] rtl:lg:border-r rtl:lg:border-l-0 bg-[var(--modern-card)] lg:sticky lg:top-0 h-fit lg:max-h-[calc(100vh-140px)] flex flex-col'>
+              <div className='p-3 border-b border-[var(--modern-border)]'>
+                <div className='p-1 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] flex items-center'>
+                  <DropdownButton
+                    title={selectedFolder || ""}
+                    onSelect={(eventKey) => {
+                      const [masterDocID, selectedFolderName, signedDocKey] = eventKey.split(",");
+                      handleDocSelect(masterDocID, selectedFolderName, signedDocKey);
+                    }}
+                    id='doc-dropdown'
+                    className='border-0 w-full flex justify-between items-center text-[var(--modern-text)] text-xs'
+                    variant='none'
+                  >
+                    {formData &&
+                      formData.primaryDocs.map((doc) => {
+                        return (
+                          <Dropdown.Item key={doc.masterDocID} eventKey={`${doc.masterDocID},${doc.docName},${doc.signedDocKey}`} className='truncate text-[var(--modern-text)] text-xs'>
+                            {doc.docName}
+                          </Dropdown.Item>
+                        );
+                      })}
+                  </DropdownButton>
+                </div>
+              </div>
+              <div className='hidden md:block flex-1 overflow-y-auto p-2'>
                 <ImageThumbnails
                   controls={allControlData}
                   t={t}
@@ -1110,24 +1102,35 @@ const SignaturePageSelf = ({ setActiveStep, setCompletedSteps }) => {
               </div>
 
               <ConfirmationModal show={isConfirmationModalOpen} onHide={() => setIsConfirmationModalOpen(false)} onClick={handleCompleted} />
-            </Col>
-          </Row>
+            </div>
+          </div>
 
           <SignatureModal {...SignatureModalProps} />
         </div>
-        <div className='sticky bottom-0 z-30 flex items-center justify-between px-6 py-3.5 border-t border-[var(--modern-border)] bg-[var(--modern-card)]'>
-          <Button variant='outline' id='hide_part_one' onClick={handleBack} disabled={isLoading} className='rounded-full px-5'>
+        <div className='sticky bottom-0 z-30 flex items-center justify-between px-4 sm:px-6 py-3.5 border-t border-[var(--modern-border)] bg-[var(--modern-card)]'>
+          <Button
+            variant='outline'
+            id='hide_part_one'
+            onClick={handleBack}
+            disabled={isLoading}
+            className='rounded-full px-5 border-[var(--modern-border)] text-[var(--modern-text)] bg-[var(--modern-card)] hover:bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_8%,var(--modern-card))] hover:border-[var(--modern-primary,#4d8dff)] hover:text-[var(--modern-primary,#4d8dff)] transition-all cursor-pointer'
+          >
             {t("uploadDocFlow.back")}
           </Button>
 
           <PageNavigations imagesData={imagesData} selectedImage={selectedImage} setSelectedImage={setSelectedImage} onImageSelect={handleImageSelect} />
 
-          <Button variant='primary' id='hide_part_one' onClick={handleCheckCompletedButton} disabled={isLoading} className='rounded-full px-6 font-semibold'>
+          <Button
+            variant='primary'
+            id='hide_part_one'
+            onClick={handleCheckCompletedButton}
+            disabled={isLoading}
+            className='rounded-full px-6 font-semibold !bg-[var(--modern-primary,#4d8dff)] !text-white hover:opacity-90 active:scale-95 transition-all cursor-pointer shadow-none'
+          >
             {t("signaturePage.completed")}
           </Button>
         </div>
       </div>
-    </div>
   );
 };
 

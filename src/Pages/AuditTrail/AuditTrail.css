@@ -131,14 +131,14 @@
   width: auto;
   min-width: 7rem;
   min-height: 2.5rem;
-  border-radius: 0.625rem;
-  background: var(--modern-violet);
+  border-radius: 9999px;
+  background: var(--modern-primary, var(--modern-violet));
   color: #fff;
   font-family: var(--modern-font-ui);
 }
 
 .audit-trail-modal .applyBtn:hover {
-  background: var(--modern-violet-hover);
+  opacity: 0.9;
 }
 
 .audit-trail-modal iframe,
