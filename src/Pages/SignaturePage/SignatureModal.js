@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Button, Col, Modal, Row, Form, Dropdown } from "@/Components/UI/shadcnCompat";
 import verificationService from "@/services/verificationService";
+import uploadFlowService from "@/services/uploadFlowService";
 import ReactSignatureCanvas from "react-signature-canvas";
 import html2canvas from "html2canvas";
 import SignatureColor from "./SignatureColor";
@@ -99,32 +100,39 @@ const SignatureModal = (props) => {
   useEffect(() => {
     if (controlName === "Stamp" || controlName === "Image") {
       setSelectedTab("UPLOAD");
-      if (controlName === "Stamp" && auth) {
-        getSignatureStampVerification();
-      }
     } else {
       setSelectedTab("SELECT_SIGN");
+    }
+
+    if (controlName === "Stamp" || controlName === "Signature" || controlName === "Initial") {
+      getSignatureStampVerification();
     }
 
     if (selectedTab === "UPLOAD") {
       setPreviewImage(null);
     }
-  }, [controlName, showModal]);
+  }, [controlName, showModal, signatoriesID, auth]);
 
   const getSignatureStampVerification = async () => {
-    if (!auth) {
-      setIsLoading(false);
-      return;
-    }
     setIsLoading(true);
     try {
-      const response = await verificationService.getSignatureStampVerification(auth);
+      let response;
+      if (auth) {
+        response = await verificationService.getSignatureStampVerification(auth);
+      } else if (signatoriesID) {
+        response = await uploadFlowService.getSelfSignatureStamp(signatoriesID);
+      } else {
+        setIsLoading(false);
+        return;
+      }
 
-      if (response.data.statusCode === "1") {
-        const { mySignatureBase64String, companyStampBase64String } = response.data.response;
+      if (response?.data && (response.data.statusCode === "1" || response.data.successStatus)) {
+        const resData = response.data.response || {};
+        const mySig = resData.mySignatureBase64String || resData.mySignatureBase64 || resData.signatureStampBase64 || "";
+        const compStamp = resData.companyStampBase64String || resData.companyStampBase64 || "";
 
-        setSavedSignature(mySignatureBase64String);
-        setSavedStamp(companyStampBase64String);
+        setSavedSignature(mySig);
+        setSavedStamp(compStamp || mySig);
       }
     } catch (error) {
       // console.error(error);
@@ -438,7 +446,7 @@ const SignatureModal = (props) => {
         }
         signature = savedStamp;
         signatureExtension = ".png";
-      } else if (controlName === "Signature") {
+      } else if (controlName === "Signature" || controlName === "Initial") {
         if (!savedSignature) {
           setFieldErrors((prev) => ({ ...prev, saved: t("signatureModal.noSavedSignature") }));
           setIsLoading(false);
@@ -568,7 +576,7 @@ const SignatureModal = (props) => {
               <button ref={(element) => { tabButtonRefs.current.UPLOAD = element; }} onClick={() => handleTabChange("UPLOAD")} className={`signature-tab-button ${selectedTab === "UPLOAD" ? "active-tab" : ""}`}>
                 {t("signatureModal.upload")}
               </button>
-              {controlName === "Image" || controlName === "Initial" ? null : (
+              {controlName === "Image" ? null : (
                 <button
                   onClick={() => {
                     handleTabChange("SAVED");
@@ -719,7 +727,7 @@ const SignatureModal = (props) => {
                     ) : (
                       <small style={{ fontStyle: "italic", color: "red" }}>{t("signatureModal.stampSizeExceeded")}</small>
                     )
-                  ) : controlName === "Signature" ? (
+                  ) : controlName === "Signature" || controlName === "Initial" ? (
                     validSavedSignature ? (
                       <img src={`data:image/png;base64,${validSavedSignature}`} alt='Saved Signature' style={{ maxWidth: "100%", maxHeight: "100%" }} />
                     ) : (
