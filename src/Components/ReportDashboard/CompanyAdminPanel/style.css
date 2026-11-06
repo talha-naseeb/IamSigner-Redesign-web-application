@@ -193,16 +193,6 @@
   margin-bottom: 0.75rem;
 }
 
-.admin-activity-date-picker {
-  min-width: 220px;
-  max-width: 280px;
-}
-
-.admin-activity-date-picker .form-control {
-  min-height: 36px;
-  font-size: 0.85rem;
-}
-
 .admin-activity-loading {
   min-height: 220px;
   display: flex;

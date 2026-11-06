@@ -55,11 +55,6 @@ const normalizeFolderSize = (payload) => {
   return { readableSize: String(payload), totalSize: null, quotaBytes: null };
 };
 
-export const getDefaultLifecycleDateRange = () => ({
-  fromDate: "",
-  toDate: "",
-});
-
 const mapDocCountsToMetrics = (counts, t) =>
   DOC_CONFIG.map((item) => ({
     ...item,

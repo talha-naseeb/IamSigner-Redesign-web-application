@@ -1,20 +1,14 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState } from "react";
 import "./style.css";
 import "@/Pages/Home/Home.css";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext";
-import { DateObject } from "react-multi-date-picker";
 import UserDocuments from "./UserDocuments";
 import ActiveAccounts from "./ActiveAccounts";
-import {
-  getDefaultLifecycleDateRange,
-  useAdminDashboardData,
-} from "./hooks/useAdminDashboardData";
+import { useAdminDashboardData } from "./hooks/useAdminDashboardData";
 import ReactApexChart from "react-apexcharts";
 import MostActiveUsers from "./MostActiveUsers";
-import DateRangePicker from "@/Components/Common/DateRangePicker/DateRangePicker";
 import { useTheme } from "@/Context/ThemeContext";
-import { Dropdown } from "@/Components/UI/shadcnCompat";
 import {
   Building2,
   Users,
@@ -22,8 +16,6 @@ import {
   CheckCircle2,
   Clock,
   HardDrive,
-  Download,
-  FileSpreadsheet,
   Search,
   X,
   ShieldCheck,
@@ -40,8 +32,6 @@ import {
   Pagination,
   UserInitialsBadge,
 } from "@/Components/UI/dataPrimitives";
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
 
 const getCssVar = (name, fallback) => {
   if (typeof window === "undefined") return fallback;
@@ -73,7 +63,6 @@ const AdminHome = () => {
   const accountId = user?.AccountID;
   const remainingDays = Number(userAccess?.remainingDays);
 
-  const [lifecycleDateRange, setLifecycleDateRange] = useState(getDefaultLifecycleDateRange);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusTab, setStatusTab] = useState("all");
   const [page, setPage] = useState(1);
@@ -96,25 +85,7 @@ const AdminHome = () => {
   } = useAdminDashboardData({
     accountId,
     t,
-    fromDate: lifecycleDateRange.fromDate,
-    toDate: lifecycleDateRange.toDate,
   });
-
-  const lifecyclePickerValue =
-    lifecycleDateRange.fromDate && lifecycleDateRange.toDate
-      ? [new DateObject(lifecycleDateRange.fromDate), new DateObject(lifecycleDateRange.toDate)]
-      : [];
-
-  const handleLifecycleDateChange = (dates) => {
-    if (dates?.length === 2 && dates[0] && dates[1]) {
-      setLifecycleDateRange({
-        fromDate: dates[0].format("YYYY-MM-DD"),
-        toDate: dates[1].format("YYYY-MM-DD"),
-      });
-      return;
-    }
-    setLifecycleDateRange({ fromDate: "", toDate: "" });
-  };
 
   // Metrics Calculations
   const totalUsersMetric =
@@ -323,52 +294,6 @@ const AdminHome = () => {
     [allUsersData]
   );
 
-  // Export functions
-  const exportToExcel = useCallback(() => {
-    const worksheetData = filteredUsers.map((u) => ({
-      Name: u.fullName,
-      Email: u.emailID,
-      Role: u.role,
-      Department: u.department,
-      Contact: u.mobileNumber,
-      Status: u.isActive ? "Active" : "Inactive",
-      Joined: u.joinedDate,
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Organization Users");
-
-    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(blob, `Company_Organization_Report_${accountId || "Account"}.xlsx`);
-  }, [accountId, filteredUsers]);
-
-  const exportToWord = useCallback(() => {
-    const header =
-      "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
-      "xmlns:w='urn:schemas-microsoft-com:office:word' " +
-      "xmlns='http://www.w3.org/TR/REC-html40'>" +
-      "<head><meta charset='utf-8'><title>Organization Summary</title></head><body>";
-    const footer = "</body></html>";
-
-    let content = `<h2>Organization Report — ${user?.companyTitle || "IAMSigner Enterprise"}</h2>`;
-    content += `<p>Total Documents: ${totalDocuments} | Completion Rate: ${completionRate}% | Team Members: ${allUsersData.length}</p>`;
-    content += "<table border='1' cellspacing='0' cellpadding='6' style='width:100%; border-collapse:collapse; font-family:sans-serif;'>";
-    content += "<tr style='background-color:#f2f2f2;'><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Status</th></tr>";
-
-    filteredUsers.forEach((u) => {
-      content += `<tr><td>${u.fullName}</td><td>${u.emailID}</td><td>${u.role}</td><td>${u.department}</td><td>${u.isActive ? "Active" : "Inactive"}</td></tr>`;
-    });
-
-    content += "</table>";
-
-    const blob = new Blob(["\ufeff" + header + content + footer], {
-      type: "application/msword",
-    });
-    saveAs(blob, `Company_Organization_Report_${accountId || "Account"}.doc`);
-  }, [accountId, allUsersData.length, completionRate, filteredUsers, totalDocuments, user?.companyTitle]);
-
   const companyDisplayName =
     user?.companyTitle ||
     user?.CompanyTitle ||
@@ -412,44 +337,6 @@ const AdminHome = () => {
           </div>
         </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-3 flex-wrap ml-auto">
-          {/* Document Lifecycle Date Picker */}
-          <div className="admin-activity-date-picker">
-            <DateRangePicker
-              value={lifecyclePickerValue}
-              onChange={handleLifecycleDateChange}
-              placeholder={t("searchFilter.FilterRange", "Filter by date range")}
-              numberOfMonths={1}
-              portal
-              zIndex={1200}
-            />
-          </div>
-
-          {/* Export Dropdown */}
-          <Dropdown>
-            <Dropdown.Toggle
-              id="company-profile-export"
-              variant="none"
-              className="modern-export-btn"
-            >
-              <Download size={14} className="shrink-0" />
-              <span>{t("createTeam.Export", "Export")}</span>
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu align="end" className="modern-export-menu">
-              <Dropdown.Item onClick={exportToExcel} className="modern-export-item">
-                <FileSpreadsheet size={16} className="text-emerald-500 shrink-0" />
-                <span>{t("createTeam.exportExcel", "Export to Excel")}</span>
-              </Dropdown.Item>
-
-              <Dropdown.Item onClick={exportToWord} className="modern-export-item">
-                <FileText size={16} className="text-blue-500 shrink-0" />
-                <span>{t("createTeam.exportWord", "Export to Word")}</span>
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
       </div>
 
       {error ? (
@@ -583,7 +470,7 @@ const AdminHome = () => {
         >
           {docsLoading ? (
             <div className="py-12 text-center text-sm text-[var(--modern-muted)]">
-              {t("adminDashboard.loadingActivity", "Loading activity for selected dates...")}
+              {t("adminDashboard.loadingActivity", "Loading document activity...")}
             </div>
           ) : (
             <UserDocuments documentMetrics={lifecycleDocumentMetrics} />
