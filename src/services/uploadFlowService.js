@@ -234,7 +234,10 @@ const uploadFlowService = {
 
   // Get self signature stamp
   getSelfSignatureStamp: (signatoryID) => {
-    return api.get(`${ENDPOINTS.UPLOAD_FLOW.GET_SELF_SIGNATURE_STAMP}?SignatoryID=${signatoryID}`);
+    return api.get(`${ENDPOINTS.UPLOAD_FLOW.GET_SELF_SIGNATURE_STAMP}?SignatoryID=${signatoryID}`, {
+      skipSessionExpiryRedirect: true,
+      suppressGlobalErrorToast: true,
+    });
   },
 
   // Download supporting document

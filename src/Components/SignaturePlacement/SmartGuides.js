@@ -96,16 +96,16 @@ export const snapToControls = ({
 
 const SmartGuides = ({ guides = emptyAlignmentGuides() }) => (
   <>
-    {guides.vertical.map((position) => (
+    {guides.vertical.map((position, idx) => (
       <div
-        key={`vertical-${position}`}
+        key={`vertical-${position}-${idx}`}
         className={`alignment-guide alignment-guide--vertical ${guides.verticalSnapped ? "alignment-guide--snapped" : ""}`}
         style={{ left: `${position}px` }}
       />
     ))}
-    {guides.horizontal.map((position) => (
+    {guides.horizontal.map((position, idx) => (
       <div
-        key={`horizontal-${position}`}
+        key={`horizontal-${position}-${idx}`}
         className={`alignment-guide alignment-guide--horizontal ${guides.horizontalSnapped ? "alignment-guide--snapped" : ""}`}
         style={{ top: `${position}px` }}
       />

@@ -388,7 +388,7 @@ function CoBrandingDetails() {
                             {/* System Source Tile */}
                             <div className='cobranding-option-tile active' tabIndex={0} role='button' aria-pressed='true'>
                               <div className='d-flex align-items-center gap-2'>
-                                <Icons.Local width={20} height={20} />
+                                <Icons.Local />
                                 <span>{t("coBranding.System")}</span>
                               </div>
                               <Icons.Check className='cobranding-check-icon' size={18} />
@@ -409,7 +409,7 @@ function CoBrandingDetails() {
                                 aria-pressed={IsGoogleDrive}
                               >
                                 <div className='d-flex align-items-center gap-2'>
-                                  <Icons.GoogleDrive width={20} height={20} />
+                                  <Icons.GoogleDrive alt={t("coBranding.GoogleDrive")} />
                                   <span>{t("coBranding.GoogleDrive")}</span>
                                 </div>
                                 {IsGoogleDrive && <Icons.Check className='cobranding-check-icon' size={18} />}
@@ -431,7 +431,7 @@ function CoBrandingDetails() {
                                 aria-pressed={IsDropbox}
                               >
                                 <div className='d-flex align-items-center gap-2'>
-                                  <Icons.Dropbox width={20} height={20} />
+                                  <Icons.Dropbox alt={t("coBranding.Dropbox")} />
                                   <span>{t("coBranding.Dropbox")}</span>
                                 </div>
                                 {IsDropbox && <Icons.Check className='cobranding-check-icon' size={18} />}
@@ -453,7 +453,7 @@ function CoBrandingDetails() {
                                 aria-pressed={IsOneDrive}
                               >
                                 <div className='d-flex align-items-center gap-2'>
-                                  <Icons.OneDrive width={20} height={20} />
+                                  <Icons.OneDrive alt={t("coBranding.OneDrive")} />
                                   <span>{t("coBranding.OneDrive")}</span>
                                 </div>
                                 {IsOneDrive && <Icons.Check className='cobranding-check-icon' size={18} />}

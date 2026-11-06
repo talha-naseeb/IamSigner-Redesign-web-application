@@ -37,6 +37,8 @@ const ImageWithDropZone = ({
   const [localButtons, setLocalButtons] = useState([]);
   const [buttons, setButtons] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeletingControl, setIsDeletingControl] = useState(false);
+  const deleteControlInProgressRef = useRef(false);
   const [textInput, setTextInput] = useState();
   const dropRef = useRef(null);
   useDragAutoScroll(dropRef);
@@ -514,29 +516,26 @@ const ImageWithDropZone = ({
   };
 
   const handleButtonRemove = (index, BulkID) => {
+    if (deleteControlInProgressRef.current) return;
     setControlLocationIDToRemove(BulkID);
     setIndexToRemove(index);
     setShowConfirmationModal(true);
   };
 
   const handleSureToDelete = async (controlLocationIDToRemove) => {
-    if (indexToRemove !== null) {
-      setLocalButtons((prevButtons) => {
-        const newButtons = [...prevButtons];
-        newButtons.splice(indexToRemove, 1);
-        return newButtons;
-      });
-      setIsLoading(true);
-      try {
-        await uploadFlowService.deleteControlsLocationBulk(controlLocationIDToRemove);
+    if (
+      deleteControlInProgressRef.current ||
+      indexToRemove === null ||
+      controlLocationIDToRemove == null
+    ) {
+      return;
+    }
 
-        toast.success(t("uploadDocFlow.signatoryDeleted"));
-        fetchButtonPositions(selectedMasterDocID);
-        setIsLoading(false);
-      } catch (error) {
-        toast.error(t("uploadDocFlow.ErrDeletSignatory"));
-        setIsLoading(false);
-      }
+    // A ref blocks rapid repeat clicks before React can rerender the modal.
+    deleteControlInProgressRef.current = true;
+    setIsDeletingControl(true);
+    try {
+      await uploadFlowService.deleteControlsLocationBulk(controlLocationIDToRemove);
 
       const updatedButtons = [...displayedButtons];
       updatedButtons.splice(indexToRemove, 1);
@@ -544,13 +543,22 @@ const ImageWithDropZone = ({
         ...prevMap,
         [selectedImage]: updatedButtons,
       }));
-
+      setLocalButtons((prevButtons) =>
+        prevButtons.filter((_, buttonIndex) => buttonIndex !== indexToRemove)
+      );
       setButtonControlLocationIds((prevIds) => {
         const newIds = { ...prevIds };
         delete newIds[uniqueIdToRemove];
         return newIds;
       });
       setShowConfirmationModal(false);
+      toast.success(t("uploadDocFlow.signatoryDeleted"));
+      await fetchButtonPositions(selectedMasterDocID);
+    } catch (error) {
+      toast.error(t("uploadDocFlow.ErrDeletSignatory"));
+    } finally {
+      deleteControlInProgressRef.current = false;
+      setIsDeletingControl(false);
     }
   };
 
@@ -592,6 +600,7 @@ const ImageWithDropZone = ({
         itemTitle={t("uploadDocFlow.standardFields")}
         itemName={displayedButtons[indexToRemove]?.label || "Field"}
         onConfirm={() => handleSureToDelete(controlLocationIDToRemove)}
+        isLoading={isDeletingControl}
         confirmText={t("createTeam.confirm")}
         cancelText={t("uploadDocFlow.cancel")}
         headerIconSrc={Icons.DeleteAction}

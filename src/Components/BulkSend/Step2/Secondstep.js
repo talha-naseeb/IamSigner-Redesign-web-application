@@ -242,78 +242,39 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
   };
 
   const handleContinue = async () => {
-    // 1. Older validation: Must place at least one signature or stamp if any signatory needs to sign
-    const hasSignatureOrStamp =
-      Array.isArray(controls) &&
-      controls.some(
-        (control) =>
-          control.controlCode === "Signature" ||
-          control.controlCode === "Stamp" ||
-          control.isSignature ||
-          control.isStamp ||
-          control.controlName === "Signature" ||
-          control.controlName === "Stamp" ||
-          control.buttonLabel === "Signature" ||
-          control.buttonLabel === "Stamp"
+    // Bulk fields are shared by every recipient, so validate the shared set
+    // once instead of requiring a separate field for each signatory.
+    const placedControls = Array.isArray(controls) ? controls : [];
+    const hasControlType = (control, type) => {
+      const names = [
+        control.controlCode,
+        control.controlName,
+        control.buttonLabel,
+        control.label,
+      ];
+      const acceptedNames =
+        type === "Initial" ? ["initial", "initials"] : [type.toLowerCase()];
+      const namedType = names.some(
+        (name) => acceptedNames.includes(String(name || "").trim().toLowerCase())
       );
+      const booleanType =
+        control[`is${type}`] ??
+        control[`Is${type}`] ??
+        control[`is${type}Control`] ??
+        (type === "Initial" ? control.isInitials ?? control.IsInitials : undefined);
+      return namedType || booleanType === true;
+    };
 
-    const hasNeedsToSign =
-      !formData?.signatories ||
-      formData.signatories.length === 0 ||
-      formData.signatories.some(
-        (s) =>
-          (s.signatureType ||
-            signatureType?.[s.signatoriesID] ||
-            "Needs To Sign") !== "View Only"
-      );
+    const hasSignature = placedControls.some((control) =>
+      hasControlType(control, "Signature")
+    );
+    const hasInitials = placedControls.some((control) =>
+      hasControlType(control, "Initial")
+    );
 
-    if (hasNeedsToSign && !hasSignatureOrStamp) {
-      toast.error(t("uploadDocFlow.placeSignatoryatleast"));
+    if (!hasSignature && !hasInitials) {
+      toast.error(t("uploadDocFlow.bulkRequireSignatureOrInitials"));
       return;
-    }
-
-    // 2. Signatory validation: Every signatory must have at least one control if SignatureType is "Needs To Sign"
-    // If "View Only", there is no restriction on it.
-    if (formData?.signatories && formData.signatories.length > 0) {
-      for (const signatory of formData.signatories) {
-        const sigType =
-          signatory.signatureType ||
-          signatureType?.[signatory.signatoriesID] ||
-          "Needs To Sign";
-
-        if (sigType === "View Only") {
-          continue;
-        }
-
-        const sigId = String(signatory.signatoriesID || "");
-        const signatoryControls = Array.isArray(controls)
-          ? controls.filter((c) => {
-              const cSigId = String(
-                c.signatoriesID ||
-                  c.selectedSignatoryID ||
-                  c.SignatoriesID ||
-                  c.templateSignatoryID ||
-                  ""
-              );
-              return cSigId === sigId;
-            })
-          : [];
-
-        if (signatoryControls.length === 0) {
-          const signerName =
-            signatory.name || t("uploadDocFlow.signatory", "Signatory");
-          toast.error(
-            `${signerName}: ${t(
-              "uploadDocFlow.placeSignatoryControl",
-              "Please place at least one control for this signatory"
-            )}`
-          );
-          if (signatory.signatoriesID) {
-            handleNameSelect(signatory.signatoriesID, signatory.name);
-          }
-          return;
-        }
-      }
     }
 
     const StepData = {

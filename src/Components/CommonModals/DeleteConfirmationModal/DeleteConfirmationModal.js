@@ -46,9 +46,16 @@ const DeleteConfirmationModal = ({
     ? "bg-emerald-600 text-white hover:bg-emerald-700 active:scale-95"
     : "bg-rose-600 text-white hover:bg-rose-700 active:scale-95";
 
-  // Prevent duplicate text if subtitle and warningText are identical
+  // Prevent duplicate text if subtitle and warningText are identical or convey the same confirmation prompt
+  const cleanSubtitle = subtitle?.trim();
+  const cleanWarning = warningText?.trim();
   const hasDistinctSubtitle =
-    subtitle && subtitle.trim().toLowerCase() !== warningText?.trim().toLowerCase();
+    cleanSubtitle &&
+    cleanSubtitle.toLowerCase() !== cleanWarning?.toLowerCase() &&
+    !(
+      cleanSubtitle.toLowerCase().includes("sure you want to proceed") &&
+      cleanWarning?.toLowerCase().includes("sure you want to proceed")
+    );
 
   return (
     <AppModal

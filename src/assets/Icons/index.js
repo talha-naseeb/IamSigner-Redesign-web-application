@@ -258,6 +258,8 @@ export const Icons = {
   DragHandle: GripVertical,
   ArrowUp: ChevronUp,
   ArrowDown: ChevronDown,
+  DownChevron: ChevronDown,
+  ChevronDown: ChevronDown,
   ArrowUpFilled: ArrowUp,
   ArrowDownFilled: ArrowDown,
   DownloadAction: Download,

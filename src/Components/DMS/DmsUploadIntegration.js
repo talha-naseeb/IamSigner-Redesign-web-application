@@ -114,7 +114,7 @@ const DmsUploadIntegration = ({ onOpenPicker, isDmsUploading = false }) => {
           onOpenPicker?.();
         }}
       >
-        <Icons.MacDrive size={28} color="var(--modern-primary)" />
+        <Icons.MacDrive size={28} />
         <Form.Group controlId="dms-file-input" className="space-y-0">
           <Form.Label className="m-0 cursor-pointer whitespace-nowrap text-sm font-medium">{t("uploadDocFlow.dmsDocuments")}</Form.Label>
         </Form.Group>

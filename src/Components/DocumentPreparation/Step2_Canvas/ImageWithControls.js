@@ -242,9 +242,15 @@ const ImageWithControls = ({
               <SmartGuides guides={alignmentGuides} />
 
               {displayedButtons.map((button, index) => {
+                const uniqueKey =
+                  button.controlLocationID ||
+                  button.controlIdentifier ||
+                  button.id ||
+                  `ctrl-${button.label || "field"}-${index}-${button.position?.x ?? 0}-${button.position?.y ?? 0}`;
+
                 return (
                   <ButtonsOnImage
-                    key={button.controlLocationID}
+                    key={uniqueKey}
                     button={button}
                     index={index}
                     handleButtonRemove={handleButtonRemove}
@@ -378,7 +384,7 @@ export const ButtonsOnImage = ({
     <Draggable
       nodeRef={nodeRef}
       scale={scale || 1}
-      key={`${button.controlLocationID}-${button.position.x}-${button.position.y}`}
+      key={`${button.controlLocationID || button.controlIdentifier || button.id || index}-${button.position?.x ?? 0}-${button.position?.y ?? 0}`}
       bounds='parent'
       cancel='.react-resizable-handle, input, textarea, button'
       defaultPosition={{ x: button.position.x, y: button.position.y }}

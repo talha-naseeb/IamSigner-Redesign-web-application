@@ -1,56 +1,12 @@
 import React, { useState, useEffect } from "react";
-import "./AuditTrailInternal.css";
-import { useTheme } from "@/Context/ThemeContext";
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, UserInitialsBadge } from "@/Components/UI/dataPrimitives";
-import { Icons } from "@/assets/Icons";
-import { useTranslation } from "react-i18next";
 import verificationService from "@/services/verificationService";
-
-const renderStatusBadge = (status) => {
-  const s = String(status || "").toLowerCase();
-  let dotColor = "bg-slate-400";
-  let textColor = "text-[var(--modern-text)]";
-  let bgColor = "bg-[var(--modern-raised)]";
-  let borderColor = "border-[var(--modern-border)]";
-
-  if (s.includes("signed") || s.includes("completed") || s.includes("success")) {
-    dotColor = "bg-emerald-500";
-    textColor = "text-emerald-700 dark:text-emerald-400";
-    bgColor = "bg-emerald-500/10";
-    borderColor = "border-emerald-500/20";
-  } else if (s.includes("pending") || s.includes("wait")) {
-    dotColor = "bg-amber-500";
-    textColor = "text-amber-700 dark:text-amber-400";
-    bgColor = "bg-amber-500/10";
-    borderColor = "border-amber-500/20";
-  } else if (s.includes("decline") || s.includes("reject") || s.includes("failed")) {
-    dotColor = "bg-rose-500";
-    textColor = "text-rose-700 dark:text-rose-400";
-    bgColor = "bg-rose-500/10";
-    borderColor = "border-rose-500/20";
-  } else if (s.includes("view") || s.includes("open") || s.includes("send")) {
-    dotColor = "bg-blue-500";
-    textColor = "text-blue-700 dark:text-blue-400";
-    bgColor = "bg-blue-500/10";
-    borderColor = "border-blue-500/20";
-  }
-
-  return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${bgColor} ${textColor} ${borderColor}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
-      <span>{status || "—"}</span>
-    </span>
-  );
-};
+import AuditTrailTimeline from "./AuditTrailTimeline";
+import "./AuditTrailInternal.css";
 
 export default function AuditTrail({ url }) {
-  const { t } = useTranslation();
   const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const [signatoryData, setSignatoryData] = useState({});
-  const [receivers, setReceivers] = useState([]);
-
-  const { theme } = useTheme();
 
   const currentUrl = window.location.href;
   const parts = currentUrl.split("/");
@@ -68,7 +24,7 @@ export default function AuditTrail({ url }) {
     setIsLoading(true);
     try {
       const response = await verificationService.getAuditTrail(url, pathAfterId);
-      setData(response.data.response);
+      setData(response.data.response || []);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
@@ -79,172 +35,31 @@ export default function AuditTrail({ url }) {
     setIsLoading(true);
     try {
       const response = await verificationService.getSignAuditStatusCompleted(pathAfterId);
-      const signatoryResponse = response.data.response;
+      const sig = response.data.response || {};
       setSignatoryData({
-        senderName: signatoryResponse.senderName,
-        senderEmail: signatoryResponse.senderEmail,
-        docStatus: allSigned ? "Signed" : signatoryResponse.docStatus,
-        createdOn: signatoryResponse.createdOnFormatted,
-        docNames: signatoryResponse.docNames,
-        masterDocIDs: signatoryResponse.masterDocIDs,
+        senderName: sig.senderName,
+        senderEmail: sig.senderEmail,
+        docStatus: sig.docStatus,
+        createdOn: sig.createdOnFormatted || sig.createdOn,
+        docNames: sig.docNames,
+        masterDocIDs: sig.masterDocIDs,
+        receivers: sig.receivers || [],
       });
-      setReceivers(signatoryResponse.receivers);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
     }
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    const formattedMinutes = (minutes < 10 ? "0" : "") + minutes;
-    return `${day}/${month}/${year} ${hours}:${formattedMinutes} ${ampm}`;
-  };
-
-  // Check if all receivers have signed
-  const allSigned = receivers.every((receiver) => receiver.signStatus === "Signed");
-
-  // Check if any receiver is pending
-  const anyPending = receivers.some((receiver) => receiver.signStatus === "Pending");
-
   return (
-    <Grid className='audit-trail-internal audit-trail-internal-container'>
-      <div className='header'>
-        {theme === "dark" ? <Icons.IamSignerLightMode /> : <Icons.StepperLogo />}
-        <h4>{t("auditTrailScreen.auditTrail")}</h4>
+    <div className='audit-trail-page w-full min-h-screen bg-[var(--modern-bg)] text-[var(--modern-text)] flex items-center justify-center p-4'>
+      <div className='w-full max-w-[500px] rounded-2xl bg-[var(--modern-card)] border border-[var(--modern-border)] shadow-2xl p-6'>
+        <AuditTrailTimeline
+          data={data}
+          signatoryData={signatoryData}
+          isLoading={isLoading}
+        />
       </div>
-      <div className='signers-info'>
-        <div>
-          <span className='info-title'>{t("tablesLabel.docInfo")}</span>
-        </div>
-        <TableContainer component={Paper} className='custom-table-container custom-table-scrollbar'>
-          <Table stickyHeader style={{ border: "none" }}>
-            <TableHead>
-              <TableRow>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.date")}</TableCell>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.docName")}</TableCell>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.documentID")}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>{signatoryData.createdOn ? formatDate(signatoryData.createdOn) : ""}</TableCell>
-                <TableCell className='font-medium text-[var(--modern-text)]'>{signatoryData.docNames}</TableCell>
-                <TableCell className='text-[var(--modern-muted)]'>{signatoryData.masterDocIDs}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-
-      <div className='signers-info'>
-        <div>
-          <span className='info-title'>{t("auditTrailModal.senderInfo")}</span>
-        </div>
-        <TableContainer component={Paper} className='custom-table-container custom-table-scrollbar'>
-          <Table style={{ border: "none" }}>
-            <TableHead>
-              <TableRow>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.date")}</TableCell>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.name")}</TableCell>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.email")}</TableCell>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.status")}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>{signatoryData.createdOn ? formatDate(signatoryData.createdOn) : ""}</TableCell>
-                <TableCell>
-                  <UserInitialsBadge name={signatoryData.senderName} />
-                </TableCell>
-                <TableCell className='text-[var(--modern-muted)]'>{signatoryData.senderEmail}</TableCell>
-                <TableCell>
-                  {renderStatusBadge(anyPending ? "Pending" : allSigned ? "Signed" : signatoryData.docStatus)}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-      <div className='signers-info mb-3'>
-        <div>
-          <span className='info-title'>{t("auditTrailModal.receiverInfo")}</span>
-        </div>
-        <TableContainer component={Paper} className='custom-table-container custom-table-scrollbar'>
-          <Table style={{ border: "none" }}>
-            <TableHead>
-              <TableRow>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.serialNo") || "S.No."}</TableCell>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.name")}</TableCell>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.email")}</TableCell>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.status")}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {receivers.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan='4' className='no-docs'>
-                    <Icons.BulkDocuments size={50} color='var(--modern-border)' />
-                    {t("dashboardCardStatuses.notDocsFound")}
-                  </TableCell>
-                </TableRow> 
-              )}
-              {receivers.map((receiver, index) => (
-                <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>
-                    <UserInitialsBadge name={receiver.receiverName} />
-                  </TableCell>
-                  <TableCell className='text-[var(--modern-muted)]'>{receiver.receiverEmail}</TableCell>
-                  <TableCell>{renderStatusBadge(receiver.signStatus)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-      <div className='journal-info'>
-        <div>
-          <span className='info-title'>{t("auditTrailModal.usersActivity")}</span>
-        </div>
-        <TableContainer component={Paper} className='custom-table-container custom-table-scrollbar'>
-          <Table style={{ border: "none" }}>
-            <TableHead>
-              <TableRow>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.serialNo") || "S.No."}</TableCell>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.date")}</TableCell>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.actions")}</TableCell>
-                <TableCell className='TableHeaderCell'>{t("tablesLabel.details")}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan='4' className='no-docs'>
-                    <Icons.BulkDocuments size={50} />
-                    {t("dashboardCardStatuses.notDocsFound")}
-                  </TableCell>
-                </TableRow>
-              )}
-              {data.map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell className='text-[var(--modern-muted)]'>{row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</TableCell>
-                  <TableCell>{renderStatusBadge(row.status)}</TableCell>
-                  <TableCell className='text-sm text-[var(--modern-text)]'>{row.message}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-    </Grid>
+    </div>
   );
 }

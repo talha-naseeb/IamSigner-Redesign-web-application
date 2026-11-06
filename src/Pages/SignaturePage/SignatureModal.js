@@ -31,7 +31,7 @@ const SignatureModal = (props) => {
   const [previewImage, setPreviewImage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({ fullName: "", initials: "", draw: "", upload: "", saved: "" });
-  const [selectedStyle, setSelectedStyle] = useState("default");
+  const [selectedStyle, setSelectedStyle] = useState("style1");
   const [isLoading, setIsLoading] = useState(false);
   const [uploadSign, setUploadSign] = useState();
   const [extension, setExtension] = useState();
@@ -72,29 +72,29 @@ const SignatureModal = (props) => {
   }, [showModal]);
 
   const styleOptions = [
-    { id: "arial", name: "Arial" },
-    { id: "aptos", name: "Aptos" },
-    { id: "calibri", name: "Calibri" },
-    { id: "ubuntu", name: "Ubuntu" },
     { id: "style1", name: "Dancing Script" },
     { id: "style2", name: "Great Vibes" },
+    { id: "style8", name: "Alex Brush" },
     { id: "style3", name: "Pacifico" },
+    { id: "style13", name: "Parisienne" },
+    { id: "style14", name: "Sacramento" },
+    { id: "style15", name: "Satisfy" },
     { id: "style4", name: "Covered" },
     { id: "style5", name: "Rochester" },
     { id: "style6", name: "Monsieur" },
     { id: "style7", name: "Engagement" },
-    { id: "style8", name: "Alex Brush" },
     { id: "style9", name: "Allura" },
     { id: "style10", name: "Arizonia" },
     { id: "style11", name: "Kaushan" },
     { id: "style12", name: "Pinyon" },
-    { id: "style13", name: "Parisienne" },
-    { id: "style14", name: "Sacramento" },
-    { id: "style15", name: "Satisfy" },
     { id: "style16", name: "Homemade" },
     { id: "style17", name: "Marck Script" },
     { id: "style18", name: "Shadows" },
     { id: "style19", name: "Tangerine" },
+    { id: "ubuntu", name: "Ubuntu" },
+    { id: "arial", name: "Arial" },
+    { id: "calibri", name: "Calibri" },
+    { id: "aptos", name: "Aptos" },
   ];
 
   useEffect(() => {
@@ -104,23 +104,19 @@ const SignatureModal = (props) => {
       setSelectedTab("SELECT_SIGN");
     }
 
-    if (controlName === "Stamp" || controlName === "Signature" || controlName === "Initial") {
-      getSignatureStampVerification();
-    }
-
     if (selectedTab === "UPLOAD") {
       setPreviewImage(null);
     }
-  }, [controlName, showModal, signatoriesID, auth]);
+  }, [controlName, showModal]);
 
   const getSignatureStampVerification = async () => {
     setIsLoading(true);
     try {
       let response;
-      if (auth) {
-        response = await verificationService.getSignatureStampVerification(auth);
-      } else if (signatoriesID) {
+      if (signatoriesID) {
         response = await uploadFlowService.getSelfSignatureStamp(signatoriesID);
+      } else if (auth) {
+        response = await verificationService.getSignatureStampVerification(auth);
       } else {
         setIsLoading(false);
         return;
@@ -128,14 +124,14 @@ const SignatureModal = (props) => {
 
       if (response?.data && (response.data.statusCode === "1" || response.data.successStatus)) {
         const resData = response.data.response || {};
-        const mySig = resData.mySignatureBase64String || resData.mySignatureBase64 || resData.signatureStampBase64 || "";
-        const compStamp = resData.companyStampBase64String || resData.companyStampBase64 || "";
+        const mySig = resData.mySignatureBase64 || resData.signatureStampBase64 || resData.mySignatureBase64String || "";
+        const compStamp = resData.companyStampBase64 || resData.signatureStampBase64 || resData.companyStampBase64String || "";
 
         setSavedSignature(mySig);
         setSavedStamp(compStamp || mySig);
       }
     } catch (error) {
-      // console.error(error);
+      // Saved stamps/signatures are optional. Ignore missing-record responses.
     } finally {
       setIsLoading(false);
     }
@@ -352,17 +348,22 @@ const SignatureModal = (props) => {
   };
 
   const renderSignature = () => {
-    const boldClass = isBold ? "fw-bold" : "";
+    const boldClass = isBold ? "font-bold" : "font-normal";
+    const activeStyleClass = selectedStyle === "default" ? "style1" : selectedStyle;
     return (
-      <div className={`signStyle d-flex align-items-center ${boldClass}`} style={{ color: selectedColor, width: "fit-content", backgroundColor: "transparent" }}>
+      <div className={`signStyle flex items-center justify-center ${boldClass}`} style={{ color: selectedColor, width: "fit-content", backgroundColor: "transparent" }}>
         {controlName === "Signature" && (
-          <div className='signature-item'>
-            <h1 className={`${selectedStyle} ${boldClass}`}>{fullName}</h1>
+          <div className='signature-item py-2'>
+            <span className={`${activeStyleClass} text-3xl sm:text-4xl select-none tracking-wide`} style={{ lineHeight: 1.3 }}>
+              {fullName || "Your Signature"}
+            </span>
           </div>
         )}
         {controlName === "Initial" && (
-          <div className='signature-item'>
-            <h1 className={`${selectedStyle} ${boldClass}`}>{initials}</h1>
+          <div className='signature-item py-2'>
+            <span className={`${activeStyleClass} text-3xl sm:text-4xl select-none tracking-widest uppercase`} style={{ lineHeight: 1.3 }}>
+              {initials || "IN"}
+            </span>
           </div>
         )}
       </div>
@@ -498,9 +499,9 @@ const SignatureModal = (props) => {
 
   return (
     <>
-      <Modal show={showModal} onHide={closeModal} dialogClassName={`custom-modal-width ${className}`}>
-        <Modal.Header closeButton>
-          <Modal.Title>
+      <Modal show={showModal} onHide={closeModal} centered dialogClassName={`custom-modal-width ${className}`}>
+        <Modal.Header closeButton className='border-b border-[var(--modern-border)] bg-[var(--modern-card)] px-6 py-4'>
+          <Modal.Title className='text-base font-bold text-[var(--modern-text)]'>
             {controlName === "Stamp" && t("signatureModal.stamp_here")}
             {controlName === "Signature" && t("signatureModal.sign_here")}
             {controlName === "Initial" && t("signatureModal.initials_here")}
@@ -529,7 +530,7 @@ const SignatureModal = (props) => {
                   <input
                     type='text'
                     id='name'
-                    className='w-full h-10 px-3 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] text-sm font-medium outline-none focus:border-[var(--modern-primary,#4d8dff)] transition-all'
+                    className='w-full h-11 px-3.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-text)] text-sm font-semibold outline-none focus:border-[var(--modern-primary,#4d8dff)] focus:ring-2 focus:ring-[var(--modern-primary,#4d8dff)]/20 transition-all'
                     value={fullName}
                     onChange={(e) => {
                       setFullName(e.target.value);
@@ -548,7 +549,7 @@ const SignatureModal = (props) => {
                   <input
                     type='text'
                     id='initials'
-                    className='w-full h-10 px-3 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] text-sm font-semibold tracking-wider outline-none focus:border-[var(--modern-primary,#4d8dff)] transition-all uppercase'
+                    className='w-full h-11 px-3.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-text)] text-sm font-semibold tracking-wider outline-none focus:border-[var(--modern-primary,#4d8dff)] focus:ring-2 focus:ring-[var(--modern-primary,#4d8dff)]/20 transition-all uppercase'
                     value={initials}
                     onChange={(e) => {
                       setInitials(e.target.value);
@@ -560,83 +561,122 @@ const SignatureModal = (props) => {
               )}
             </Col>
           </Row>
-          <div className='signature_tabs pt-2'>
-            <div className='nav-links signature-tab-list' ref={tabListRef}>
+          <div className='pt-2'>
+            <div className='inline-flex items-center gap-1 p-1 rounded-xl bg-[var(--modern-raised)] border border-[var(--modern-border)] mb-4' ref={tabListRef}>
               {controlName === "Stamp" || controlName === "Image" ? null : (
                 <>
-                  <button ref={(element) => { tabButtonRefs.current.SELECT_SIGN = element; }} onClick={() => handleTabChange("SELECT_SIGN")} className={`signature-tab-button ${selectedTab === "SELECT_SIGN" ? "active-tab" : ""}`}>
+                  <button
+                    type='button'
+                    ref={(element) => { tabButtonRefs.current.SELECT_SIGN = element; }}
+                    onClick={() => handleTabChange("SELECT_SIGN")}
+                    className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border-0 appearance-none outline-none ${
+                      selectedTab === "SELECT_SIGN"
+                        ? "bg-[var(--modern-card)] text-[var(--modern-primary,#4d8dff)] shadow-xs"
+                        : "bg-transparent text-[var(--modern-muted)] hover:text-[var(--modern-text)]"
+                    }`}
+                  >
                     {t("signatureModal.selectStyle")}
                   </button>
-                  <button ref={(element) => { tabButtonRefs.current.DRAW = element; }} onClick={() => handleTabChange("DRAW")} className={`signature-tab-button ${selectedTab === "DRAW" ? "active-tab" : ""}`}>
+                  <button
+                    type='button'
+                    ref={(element) => { tabButtonRefs.current.DRAW = element; }}
+                    onClick={() => handleTabChange("DRAW")}
+                    className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border-0 appearance-none outline-none ${
+                      selectedTab === "DRAW"
+                        ? "bg-[var(--modern-card)] text-[var(--modern-primary,#4d8dff)] shadow-xs"
+                        : "bg-transparent text-[var(--modern-muted)] hover:text-[var(--modern-text)]"
+                    }`}
+                  >
                     {t("signatureModal.draw")}
                   </button>
                 </>
               )}
 
-              <button ref={(element) => { tabButtonRefs.current.UPLOAD = element; }} onClick={() => handleTabChange("UPLOAD")} className={`signature-tab-button ${selectedTab === "UPLOAD" ? "active-tab" : ""}`}>
+              <button
+                type='button'
+                ref={(element) => { tabButtonRefs.current.UPLOAD = element; }}
+                onClick={() => handleTabChange("UPLOAD")}
+                className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border-0 appearance-none outline-none ${
+                  selectedTab === "UPLOAD"
+                    ? "bg-[var(--modern-card)] text-[var(--modern-primary,#4d8dff)] shadow-xs"
+                    : "bg-transparent text-[var(--modern-muted)] hover:text-[var(--modern-text)]"
+                }`}
+              >
                 {t("signatureModal.upload")}
               </button>
               {controlName === "Image" ? null : (
                 <button
+                  type='button'
                   onClick={() => {
                     handleTabChange("SAVED");
                     getSignatureStampVerification();
                   }}
                   ref={(element) => { tabButtonRefs.current.SAVED = element; }}
-                  className={`signature-tab-button ${selectedTab === "SAVED" ? "active-tab" : ""}`}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border-0 appearance-none outline-none ${
+                    selectedTab === "SAVED"
+                      ? "bg-[var(--modern-card)] text-[var(--modern-primary,#4d8dff)] shadow-xs"
+                      : "bg-transparent text-[var(--modern-muted)] hover:text-[var(--modern-text)]"
+                  }`}
                 >
                   {t("signatureModal.saved")}
                 </button>
               )}
-              <span
-                aria-hidden='true'
-                className='signature-tab-indicator'
-                style={{
-                  opacity: tabIndicator.visible ? 1 : 0,
-                  transform: `translateX(${tabIndicator.left}px)`,
-                  width: `${tabIndicator.width}px`,
-                }}
-              />
             </div>
-            <hr className='m-0' />
 
             {selectedTab === "SELECT_SIGN" && (
               <div>
-                <div className='d-flex justify-content-between align-items-center my-3'>
-                  {/* <b>Preview</b> */}
+                <div className='flex items-center justify-between flex-wrap gap-2 my-3'>
                   <SignatureColor selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
-                  <div>
-                    <button style={{ fontFamily: "Ubuntu" }} className={isBold ? "active-tab" : ""} onClick={handleBoldToggle}>
+                  <div className='flex items-center gap-2'>
+                    <button
+                      type='button'
+                      onClick={handleBoldToggle}
+                      className={`h-9 px-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer appearance-none outline-none ${
+                        isBold
+                          ? "border-[var(--modern-primary,#4d8dff)] bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_12%,var(--modern-card))] text-[var(--modern-primary,#4d8dff)] font-extrabold"
+                          : "border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-text)] hover:border-[var(--modern-border-strong)]"
+                      }`}
+                    >
                       {t("signatureModal.bold")}
                     </button>
-                    <Dropdown className='d-inline-block ml-2'>
-                      <Dropdown.Toggle variant='none' id='dropdown-basic' className='change-sign-dropdown '>
-                        <span className={selectedStyle === "default" ? "" : selectedStyle}>
-                          {selectedStyle === "default" ? t("signatureModal.changeSign") : styleOptions.find((s) => s.id === selectedStyle)?.name || selectedStyle}
+                    <Dropdown className='inline-block'>
+                      <Dropdown.Toggle variant='none' id='dropdown-basic' className='change-sign-dropdown'>
+                        <span className={selectedStyle === "default" ? "style1" : selectedStyle}>
+                          {selectedStyle === "default"
+                            ? styleOptions[0]?.name || t("signatureModal.changeSign")
+                            : styleOptions.find((s) => s.id === selectedStyle)?.name || selectedStyle}
                         </span>
                       </Dropdown.Toggle>
 
-                      <Dropdown.Menu className='style-dropdown-menu'>
-                        <div className='p-2 sticky-top bg-white border-bottom'>
+                      <Dropdown.Menu className='style-dropdown-menu rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] shadow-lg'>
+                        <div className='p-2 sticky-top bg-[var(--modern-card)] border-b border-[var(--modern-border)]'>
                           <input
                             type='text'
-                            className='form-control form-control-sm'
+                            className='w-full h-8 px-2.5 rounded-lg border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] text-xs outline-none focus:border-[var(--modern-primary,#4d8dff)]'
                             placeholder={t("signatureModal.searchFonts")}
                             value={styleSearchTerm}
                             onChange={(e) => setStyleSearchTerm(e.target.value)}
                             onClick={(e) => e.stopPropagation()}
                           />
                         </div>
-                        <div className='style-options-list'>
+                        <div className='style-options-list max-h-56 overflow-y-auto p-1'>
                           {styleOptions
                             .filter((style) => style.name.toLowerCase().includes(styleSearchTerm.toLowerCase()))
                             .map((style) => (
-                              <Dropdown.Item key={style.id} className={`style-dropdown-item ${selectedStyle === style.id ? "active-style-item" : ""}`} onClick={() => setSelectedStyle(style.id)}>
+                              <Dropdown.Item
+                                key={style.id}
+                                className={`px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors ${
+                                  selectedStyle === style.id
+                                    ? "bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_12%,var(--modern-card))] text-[var(--modern-primary,#4d8dff)] font-semibold"
+                                    : "text-[var(--modern-text)] hover:bg-[var(--modern-raised)]"
+                                }`}
+                                onClick={() => setSelectedStyle(style.id)}
+                              >
                                 <span className={style.id}>{style.name}</span>
                               </Dropdown.Item>
                             ))}
                           {styleOptions.filter((style) => style.name.toLowerCase().includes(styleSearchTerm.toLowerCase())).length === 0 && (
-                            <div className='p-3 text-center text-muted' style={{ fontSize: "12px" }}>
+                            <div className='p-3 text-center text-xs text-[var(--modern-muted)]'>
                               {t("uploadDocFlow.notItemsFound")}
                             </div>
                           )}
@@ -645,8 +685,8 @@ const SignatureModal = (props) => {
                     </Dropdown>
                   </div>
                 </div>
-                <div className='preview-box d-flex align-items-center'>
-                  <div className='signStyle' ref={previewBoxRef}>
+                <div className='preview-box flex items-center justify-center p-6 rounded-2xl border border-[var(--modern-border)] bg-white min-h-[150px] shadow-xs'>
+                  <div className='signStyle flex items-center justify-center' ref={previewBoxRef}>
                     {renderSignature()}
                   </div>
                 </div>
@@ -655,22 +695,34 @@ const SignatureModal = (props) => {
 
             {selectedTab === "DRAW" && (
               <div>
-                <div className='d-flex justify-content-between flex-wrap align-items-start my-3'>
-                  {/* <b>Draw signature</b> */}
-
+                <div className='flex items-center justify-between flex-wrap gap-2 my-3'>
                   <SignatureColor selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
-                  <div className='d-flex align-items-start justify-content-end'>
-                    <div className='d-flex align-items-start gap-1 justify-content-end'>
-                      <Form.Label>{t("signatureModal.Pointer")}</Form.Label>
-                      <Form.Group controlId='minWidthSlider' className='mx-1' style={{ width: "50%" }}>
-                        <input type='range' min='0.1' max='5' step='0.1' value={minWidth} onChange={handleMinWidthChange} />
-                      </Form.Group>
+                  <div className='flex items-center gap-3'>
+                    <div className='flex items-center gap-2'>
+                      <Form.Label className='text-xs font-semibold text-[var(--modern-muted)] m-0'>
+                        {t("signatureModal.Pointer")}
+                      </Form.Label>
+                      <input
+                        type='range'
+                        min='0.1'
+                        max='5'
+                        step='0.1'
+                        value={minWidth}
+                        onChange={handleMinWidthChange}
+                        className='w-24 h-1.5 bg-[var(--modern-border)] rounded-lg appearance-none cursor-pointer accent-[var(--modern-primary,#4d8dff)]'
+                      />
                     </div>
-                    <button onClick={handleClear}>{t("signatureModal.clear")}</button>
+                    <button
+                      type='button'
+                      onClick={handleClear}
+                      className='h-8 px-3 rounded-lg border border-[var(--modern-border)] bg-[var(--modern-card)] text-xs font-semibold text-[var(--modern-muted)] hover:text-rose-500 hover:border-rose-500/30 transition-all cursor-pointer appearance-none outline-none'
+                    >
+                      {t("signatureModal.clear")}
+                    </button>
                   </div>
                 </div>
 
-                <div className='preview-box'>
+                <div className='preview-box flex items-center justify-center p-2 rounded-2xl border border-[var(--modern-border)] bg-white min-h-[160px] shadow-xs'>
                   <ReactSignatureCanvas
                     penColor={selectedColor}
                     minWidth={minWidth}
@@ -681,7 +733,7 @@ const SignatureModal = (props) => {
                     canvasProps={{
                       width: 500,
                       height: 150,
-                      className: "sigCanvas",
+                      className: "sigCanvas max-w-full",
                       background: "transparent",
                     }}
                   />
@@ -691,56 +743,68 @@ const SignatureModal = (props) => {
             )}
 
             {selectedTab === "UPLOAD" && (
-              <div>
-                <div className='d-flex justify-content-between my-3'>{/* <b>Preview</b> */}</div>
-                <div className='preview-box mb-2 d-flex align-items-center p-2'>
-                  {errorMessage ? <div className='error-message'>{errorMessage}</div> : previewImage && <img src={previewImage} alt='Uploaded' style={{ maxWidth: "100%", maxHeight: "100%" }} />}
+              <div className='space-y-3 pt-2'>
+                <div className='preview-box flex items-center justify-center p-3 rounded-2xl border border-[var(--modern-border)] bg-white min-h-[140px] shadow-xs'>
+                  {errorMessage ? (
+                    <div className='text-xs text-rose-500'>{errorMessage}</div>
+                  ) : previewImage ? (
+                    <img src={previewImage} alt='Uploaded' className='max-h-28 max-w-full object-contain' />
+                  ) : (
+                    <span className='text-xs text-[var(--modern-muted)]'>{t("signatureModal.picQuality")}</span>
+                  )}
                 </div>
-                <div>
-                  <Button onClick={handleFileSelect} className='signature-button'>
+                <div className='flex items-center justify-between gap-3'>
+                  <button
+                    type='button'
+                    onClick={handleFileSelect}
+                    className='inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] text-xs font-semibold text-[var(--modern-text)] hover:border-[var(--modern-primary,#4d8dff)] hover:text-[var(--modern-primary,#4d8dff)] transition-all cursor-pointer'
+                  >
                     {controlName === "Stamp" && t("signatureModal.upload_stamp")}
                     {controlName === "Signature" && t("signatureModal.upload_signature")}
                     {controlName === "Initial" && t("signatureModal.upload_initials")}
                     {controlName === "Image" && t("signatureModal.upload_image")}
-                  </Button>
+                  </button>
                   <input type='file' accept='.jpg, .jpeg, .png' style={{ display: "none" }} ref={fileInputRef} onChange={handleFileUpload} />
+
+                  <label className='flex items-center gap-2 cursor-pointer m-0 text-xs text-[var(--modern-muted)]'>
+                    <input
+                      type='checkbox'
+                      checked={isSavedSignature}
+                      onChange={() => setIsSavedSignature(!isSavedSignature)}
+                      className='h-4 w-4 rounded accent-[var(--modern-primary,#4d8dff)]'
+                    />
+                    <span>{t("signatureModal.saveForLater")}</span>
+                  </label>
                 </div>
-                {fieldErrors.upload && <small className='error-message mt-1 w-100'>{fieldErrors.upload}</small>}
-                <small>{t("signatureModal.picQuality")}</small>
-                <br />
-                <div className='adopt-text my-2'>
-                  <input type='checkbox' className='form-check-input mx-2' checked={isSavedSignature} onChange={() => setIsSavedSignature(!isSavedSignature)} />
-                  <small style={{ fontStyle: "italic", color: "red" }}>{t("signatureModal.saveForLater")}</small>
-                </div>
+                {fieldErrors.upload && <small className='text-xs text-rose-500 mt-1 block'>{fieldErrors.upload}</small>}
               </div>
             )}
 
             {selectedTab === "SAVED" && (
-              <div>
-                <div className='d-flex justify-content-between my-3'></div>
-                <div className='preview-box mb-2 d-flex align-items-center p-2'>
+              <div className='pt-2'>
+                <div className='preview-box flex items-center justify-center p-3 rounded-2xl border border-[var(--modern-border)] bg-white min-h-[140px] shadow-xs'>
                   {errorMessage ? (
-                    <div className='error-message'>{errorMessage}</div>
+                    <div className='text-xs text-rose-500'>{errorMessage}</div>
                   ) : controlName === "Stamp" ? (
                     validSavedStamp ? (
-                      <img src={`data:image/png;base64,${validSavedStamp}`} alt='Saved Stamp' style={{ maxWidth: "100%", maxHeight: "100%" }} />
+                      <img src={`data:image/png;base64,${validSavedStamp}`} alt='Saved Stamp' className='max-h-28 max-w-full object-contain' />
                     ) : (
-                      <small style={{ fontStyle: "italic", color: "red" }}>{t("signatureModal.stampSizeExceeded")}</small>
+                      <span className='text-xs text-rose-500 italic'>{t("signatureModal.stampSizeExceeded")}</span>
                     )
                   ) : controlName === "Signature" || controlName === "Initial" ? (
                     validSavedSignature ? (
-                      <img src={`data:image/png;base64,${validSavedSignature}`} alt='Saved Signature' style={{ maxWidth: "100%", maxHeight: "100%" }} />
+                      <img src={`data:image/png;base64,${validSavedSignature}`} alt='Saved Signature' className='max-h-28 max-w-full object-contain' />
                     ) : (
-                      <small style={{ fontStyle: "italic", color: "red" }}>{t("signatureModal.signatureSizeExceeded")}</small>
+                      <span className='text-xs text-rose-500 italic'>{t("signatureModal.signatureSizeExceeded")}</span>
                     )
                   ) : null}
                 </div>
-                {fieldErrors.saved && <small className='error-message mt-1 w-100'>{fieldErrors.saved}</small>}
+                {fieldErrors.saved && <small className='text-xs text-rose-500 mt-1 block'>{fieldErrors.saved}</small>}
               </div>
             )}
 
-            <div className='adopt-text my-2'>
-              <small>{t("signatureModal.signatureDesc")}</small>
+            <div className='mt-4 p-3 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-raised)]/50 text-xs text-[var(--modern-muted)] leading-relaxed'>
+              {t("signatureModal.signatureDesc")}
             </div>
           </div>
         </Modal.Body>

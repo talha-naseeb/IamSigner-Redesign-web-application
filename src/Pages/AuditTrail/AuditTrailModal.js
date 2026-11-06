@@ -1,49 +1,82 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Modal } from "@/Components/UI/shadcnCompat";
-import { useTranslation } from "react-i18next";
-import { History } from "lucide-react";
+import verificationService from "@/services/verificationService";
+import AuditTrailTimeline from "./AuditTrailTimeline";
 import "./AuditTrail.css";
 
 const AuditTrailModal = ({ show, handleClose, auditTrailURL, className }) => {
-  const { t } = useTranslation();
+  const [data, setData] = useState([]);
+  const [signatoryData, setSignatoryData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!show || !auditTrailURL) return;
+
+    const isDownload = auditTrailURL.includes("DownloadAuditTrail");
+    const parts = auditTrailURL.split("/id/");
+    const pathAfterId = parts[1] || "";
+
+    if (!pathAfterId) return;
+
+    let isMounted = true;
+    setIsLoading(true);
+
+    const fetchData = async () => {
+      try {
+        const [activityRes, statusRes] = await Promise.all([
+          verificationService.getAuditTrail(
+            isDownload ? "/v1.0/api/GetSignActivityVerification" : "/v1.0/api/GetSignActivityCompleted",
+            pathAfterId
+          ),
+          isDownload
+            ? verificationService.getSignAuditStatusVerification(pathAfterId)
+            : verificationService.getSignAuditStatusCompleted(pathAfterId),
+        ]);
+
+        if (isMounted) {
+          setData(activityRes?.data?.response || []);
+          const sig = statusRes?.data?.response || {};
+          setSignatoryData({
+            senderName: sig.senderName,
+            senderEmail: sig.senderEmail,
+            docStatus: sig.docStatus,
+            createdOn: sig.createdOnFormatted || sig.createdOn,
+            docNames: sig.docNames,
+            masterDocIDs: sig.masterDocIDs,
+            receivers: sig.receivers || [],
+          });
+          setIsLoading(false);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [show, auditTrailURL]);
 
   return (
     <Modal
       show={show}
       onHide={handleClose}
-      size='xl'
-      dialogClassName='custom-modal-width !max-w-none w-full'
-      className={`audit-trail-modal overflow-hidden !max-w-[1440px] w-[96vw] ${className || ""}`}
+      centered={true}
+      backdrop={true}
+      dialogClassName='!max-w-[500px] w-full mx-auto px-4'
+      className={`audit-trail-modal ${className || ""}`}
+      contentClassName='!p-6 !rounded-2xl !bg-[var(--modern-card)] !border !border-[var(--modern-border)] shadow-2xl'
     >
-      <Modal.Header closeButton className='border-b border-[var(--modern-border)] px-5 py-4 bg-[var(--modern-card)]'>
-        <div className='flex items-center gap-3'>
-          <div className='flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--modern-raised)] text-[var(--theme-color)] border border-[var(--modern-border)]'>
-            <History size={20} />
-          </div>
-          <div>
-            <Modal.Title className='text-base font-semibold text-[var(--modern-text)] m-0'>
-              {t("auditTrailModal.auditTrail")}
-            </Modal.Title>
-          </div>
-        </div>
-      </Modal.Header>
-      <Modal.Body className='audit-trail-modal-body p-0 bg-[var(--modern-card)]'>
-        <iframe
-          title={t("auditTrailModal.auditTrail")}
-          src={auditTrailURL}
-          width='100%'
-          className='w-full border-0 bg-transparent h-[72vh] min-h-[560px]'
-        />
-      </Modal.Body>
-      <Modal.Footer className='border-t border-[var(--modern-border)] px-5 py-3.5 flex items-center justify-end gap-3 bg-[var(--modern-card)]'>
-        <button
-          type='button'
-          onClick={handleClose}
-          className='px-5 py-2 text-xs font-semibold rounded-lg bg-[var(--theme-color)] text-white hover:opacity-90 transition-opacity'
-        >
-          {t("auditTrailModal.close") || t("common.close") || "Close"}
-        </button>
-      </Modal.Footer>
+      <AuditTrailTimeline
+        data={data}
+        signatoryData={signatoryData}
+        isLoading={isLoading}
+        onClose={handleClose}
+      />
     </Modal>
   );
 };

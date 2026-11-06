@@ -6,6 +6,7 @@ import { useUser } from "@/Context/UserContext";
 import { toast } from "react-toastify";
 import uploadFlowService from "@/services/uploadFlowService";
 import DeleteConfirmationModal from "@/Components/CommonModals/DeleteConfirmationModal/DeleteConfirmationModal";
+import { formatCommentTime12Hour, getCommentDisplayName } from "@/utils/commentFormatters";
 import { Send, Pencil, Trash2, MessageSquare, Loader2, X } from "lucide-react";
 
 export const CommentsOffcanvas = ({
@@ -233,9 +234,10 @@ export const CommentsOffcanvas = ({
               const isEditing = editingId === comment.docCommentsID;
               const isOwner = comment.createdBy === user?.email;
               const avatarColor = getAvatarBg(comment.createdBy || user?.email);
+              const displayName = getCommentDisplayName(comment, user?.fullName || "User");
               const initials = getInitials(
-                comment.createdBy || user?.email,
-                comment.commentPostedBy || comment.fullName || user?.fullName
+                displayName,
+                displayName
               );
 
               return (
@@ -299,7 +301,7 @@ export const CommentsOffcanvas = ({
                           </div>
                           <div className='min-w-0'>
                             <div className='text-xs font-semibold text-[var(--modern-text)] truncate'>
-                              {comment.commentPostedBy || comment.fullName || user?.fullName || "User"}
+                              {displayName}
                             </div>
                             <div className='text-[10px] text-[var(--modern-muted)] truncate'>
                               {comment.createdBy || user?.email}
@@ -351,7 +353,7 @@ export const CommentsOffcanvas = ({
                         }`}
                       >
                         <span>{comment.createdDate}</span>
-                        {comment.createdTime && <span>{comment.createdTime}</span>}
+                        {comment.createdTime && <span>{formatCommentTime12Hour(comment.createdTime)}</span>}
                         {comment.modifiedOn && (
                           <span className='italic text-[10px] text-[var(--modern-muted)]'>
                             ({t("addComment.edit") || "edited"})

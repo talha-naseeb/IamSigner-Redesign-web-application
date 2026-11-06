@@ -301,7 +301,7 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
   const totalPlacedFields = Array.isArray(controls) ? controls.length : 0;
 
   return (
-    <div className='relative w-full min-h-[calc(100vh-70px)] bg-[var(--modern-bg,#f7f5ff)]'>
+    <div className='relative w-full min-h-[calc(100vh-70px)] bg-[var(--modern-bg,#f7f5ff)] pb-24 lg:pb-6'>
       {/* Mobile Segmented View Switcher */}
       <div className='flex lg:hidden items-center gap-2 p-1.5 mx-3 sm:mx-4 mt-3 mb-4 rounded-2xl bg-[var(--modern-card)] border border-[var(--modern-border-strong)]'>
         <button
@@ -685,7 +685,7 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
       </main>
 
       {/* Floating Action Stack for Mobile (MacAI Assistant on top, Add Fields below) */}
-      <div className='lg:hidden fixed bottom-5 right-5 rtl:right-auto rtl:left-5 z-40 flex flex-col items-end gap-2.5 pointer-events-none'>
+      <div className='lg:hidden fixed bottom-20 right-5 rtl:right-auto rtl:left-5 z-40 flex flex-col items-end gap-2.5 pointer-events-none'>
         <div className='pointer-events-auto'>
           <AIAssistant className='!static' />
         </div>
@@ -699,6 +699,45 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
             <span>{t("uploadDocFlow.addFields", "Add Fields")}</span>
           </button>
         )}
+      </div>
+
+      {/* Fixed Bottom Action Bar for Mobile (< 1024px) */}
+      <div className='lg:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between gap-3 border-t border-[var(--modern-border)] bg-[var(--modern-card)] px-4 py-3 shadow-lg'>
+        <Button
+          variant='outline'
+          className='!h-10 !rounded-full !px-4 text-xs font-semibold shrink-0 border-[var(--modern-border)] text-[var(--modern-text)] bg-[var(--modern-card)] hover:bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_8%,var(--modern-card))] hover:border-[var(--modern-primary,#4d8dff)] hover:text-[var(--modern-primary,#4d8dff)]'
+          onClick={handleBack}
+          disabled={isLoading}
+        >
+          {t("uploadDocFlow.back")}
+        </Button>
+
+        <div className='flex items-center gap-1.5 text-xs text-[var(--modern-muted)] font-medium truncate'>
+          <span
+            className={`h-2 w-2 shrink-0 rounded-full ${
+              totalPlacedFields > 0 ? "bg-emerald-500" : "bg-amber-500"
+            }`}
+          />
+          <span className='truncate font-mono'>
+            {totalPlacedFields} {t("uploadDocFlow.fieldsPlaced", "fields placed")}
+          </span>
+        </div>
+
+        <Button
+          variant='primary'
+          className='!h-10 !rounded-full !px-5 text-xs font-semibold inline-flex items-center gap-1.5 shrink-0 !bg-[var(--modern-primary,#4d8dff)] !text-white hover:opacity-90 active:scale-95 shadow-none'
+          onClick={handleContinue}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <span className='inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent' />
+          ) : (
+            <>
+              <span>{t("uploadDocFlow.Continue")}</span>
+              <Icons.Check size={14} />
+            </>
+          )}
+        </Button>
       </div>
 
       {/* Desktop MacAI Assistant */}

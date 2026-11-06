@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import verificationService from "@/services/verificationService";
 import { Button, Col, Dropdown, DropdownButton, Form, Modal, Row } from "@/Components/UI/shadcnCompat";
 import { Link, useNavigate } from "react-router-dom";
+import { ChevronDown, ChevronUp, ZoomIn, ZoomOut, Maximize2, Paperclip, Eye, Download, FileText, Plus, MessageSquare, Sun, Moon, Check } from "lucide-react";
 import { toast } from "react-toastify";
 import Comments from "@/Components/Comments/Comments";
 import SignatureModal from "./SignatureModal";
@@ -10,13 +11,13 @@ import { useTranslation } from "react-i18next";
 import { Icons } from "@/assets/Icons";
 import LanguageSelector from "@/Components/Language/LanguageSelector";
 import PasswordModal from "./PasswordModal";
-import ImageThumbnails from "@/Components/ImageThumbnails/ImageThumbnails";
-import { PageNavigations } from "@/Components/DocumentPreparation";
+import PageNavigations from "@/Components/DocumentPreparation/Step2_Canvas/PageNavigations";
 import ConfirmationModal from "./ConfirmationModal";
 import InputEditors from "./InputEditors";
 import { getSignatureErrorRoute } from "@/Helpers/signatureErrors";
 import { notifyDocumentSigned } from "@/Helpers/documentSignChannel";
 import DocumentLoadError from "./DocumentLoadError";
+import { useTheme } from "@/Context/ThemeContext";
 
 // The verify APIs sometimes return Windows-style paths (backslashes) in pagesPath,
 // which browsers treat as literal characters so the page images 404. Normalize them here.
@@ -31,6 +32,7 @@ const withNormalizedPageUrls = (items) =>
 
 const SignaturePage = () => {
   const { t } = useTranslation();
+  const { theme, toggleTheme } = useTheme();
 
   const [formData, setFormData] = useState();
   const [masterDocIDs, setMasterDocIDs] = useState([]);
@@ -41,6 +43,14 @@ const SignaturePage = () => {
   const [selectedSignedDocKey, setSelectedSignedDocKey] = useState();
   const [defaultMasterDocID, setDefaultMasterDocID] = useState(null);
   const [imagesData, setImagesData] = useState([]);
+  const [isThumbnailsExpanded, setIsThumbnailsExpanded] = useState(false);
+  const totalPagesCount = imagesData?.length || 0;
+  const halfCount = Math.ceil(totalPagesCount / 2);
+  const visibleThumbnails = useMemo(() => {
+    if (!imagesData || !Array.isArray(imagesData)) return [];
+    if (isThumbnailsExpanded || totalPagesCount <= 6) return imagesData;
+    return imagesData.slice(0, halfCount);
+  }, [imagesData, isThumbnailsExpanded, totalPagesCount, halfCount]);
   const [masterDocPagesId, setMasterDocPagesId] = useState();
   const [selectedImage, setSelectedImage] = useState();
   const [fullName, setFullName] = useState("");
@@ -82,8 +92,128 @@ const SignaturePage = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [textUpdated, setTextUpdated] = useState(false);
   const [checkboxValues, setCheckboxValues] = useState({});
-  const [permissions, setPermissions] = useState();
+  const [permissions, setPermissions] = useState({
+    isAllowDownload: true,
+    canDownloadAuditTrail: true,
+    isAllowDeclined: true,
+    isAllowComments: true,
+    canAddSupportingDocument: true,
+  });
   const [docLoadError, setDocLoadError] = useState(false);
+
+  // Download dropdown menu state & ref
+  const [showDownloadMenu, setShowDownloadMenu] = useState(false);
+  const downloadRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (downloadRef.current && !downloadRef.current.contains(e.target)) {
+        setShowDownloadMenu(false);
+      }
+    };
+    if (showDownloadMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDownloadMenu]);
+
+  // Comments & Supporting documents panel state
+  const [isCommentsOpen, setIsCommentsOpen] = useState(
+    typeof window !== "undefined" ? window.innerWidth >= 1024 : true
+  );
+  const [commentsInitialTab, setCommentsInitialTab] = useState("comments");
+  const [counts, setCounts] = useState({ commentsCount: 0, supportingDocsCount: 0 });
+
+  // Zoom & scaling state (reusing Step 2 canvas standard)
+  const [zoomScale, setZoomScale] = useState(1);
+  const [isFitMode, setIsFitMode] = useState(false);
+  const [naturalDim, setNaturalDim] = useState({ width: 0, height: 0 });
+  const viewportDeskRef = useRef(null);
+  const canvasScrollRef = useRef(null);
+  const userManualZoomRef = useRef(false);
+
+  const calculateFitScale = useCallback((nw) => {
+    if (!viewportDeskRef.current || !nw) return 1;
+    const padding = window.innerWidth < 768 ? 16 : 48;
+    const avail = viewportDeskRef.current.clientWidth - padding;
+    if (avail > 0 && nw > 0) {
+      return Math.min(1.0, Math.max(0.25, avail / nw));
+    }
+    return 1;
+  }, []);
+
+  const handleImageLoaded = (e) => {
+    const nw = e?.target?.naturalWidth || 800;
+    const nh = e?.target?.naturalHeight || 1100;
+    setNaturalDim({ width: nw, height: nh });
+
+    if (!userManualZoomRef.current) {
+      const fit = calculateFitScale(nw);
+      if (fit < 1.0 || window.innerWidth < 1024) {
+        setZoomScale(Number(fit.toFixed(2)));
+        setIsFitMode(true);
+      } else {
+        setZoomScale(1);
+        setIsFitMode(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const el = viewportDeskRef.current;
+    if (!el || !naturalDim.width) return;
+
+    const handleResize = () => {
+      if (!userManualZoomRef.current || isFitMode) {
+        const newFit = calculateFitScale(naturalDim.width);
+        setZoomScale(Number(newFit.toFixed(2)));
+        setIsFitMode(true);
+      }
+    };
+
+    let resizeObserver;
+    if (typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(() => {
+        handleResize();
+      });
+      resizeObserver.observe(el);
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      if (resizeObserver) resizeObserver.disconnect();
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [naturalDim.width, calculateFitScale, isFitMode]);
+
+  const handleZoomIn = () => {
+    userManualZoomRef.current = true;
+    setIsFitMode(false);
+    setZoomScale((prev) => Math.min(2.0, Number((prev + 0.15).toFixed(2))));
+  };
+
+  const handleZoomOut = () => {
+    userManualZoomRef.current = true;
+    setIsFitMode(false);
+    setZoomScale((prev) => Math.max(0.25, Number((prev - 0.15).toFixed(2))));
+  };
+
+  const handleFitToggle = () => {
+    if (!naturalDim.width) return;
+    if (isFitMode) {
+      userManualZoomRef.current = true;
+      setZoomScale(1);
+      setIsFitMode(false);
+    } else {
+      userManualZoomRef.current = false;
+      const fit = calculateFitScale(naturalDim.width);
+      setZoomScale(Number(fit.toFixed(2)));
+      setIsFitMode(true);
+    }
+  };
 
   useEffect(() => {
     const sortControlsByPage = () => {
@@ -179,18 +309,11 @@ const SignaturePage = () => {
 
     const element = control && document.getElementById(control.controlLocationID);
     if (element) {
-      const rect = element.getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const offsetTop = rect.top + scrollTop - 300;
-      const offsetBottom = rect.bottom + scrollTop + 100;
+      element.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
 
-      window.scrollTo({
-        top: offsetTop,
-        bottom: offsetBottom,
-        behavior: "smooth",
-      });
-
-      indicatorRef.current.style.top = control.controlLocationY;
+      if (indicatorRef.current) {
+        indicatorRef.current.style.top = control.controlLocationY;
+      }
     }
   };
 
@@ -214,8 +337,7 @@ const SignaturePage = () => {
   };
 
   const handleDocSelect = async (masterDocID, selectedFolderName, signedDocKey) => {
-    const truncatedName = selectedFolderName.length > 10 ? selectedFolderName.slice(0, 7) + "..." : selectedFolderName;
-    setSelectedFolder(truncatedName);
+    setSelectedFolder(selectedFolderName);
     setFileName(selectedFolderName);
     setSelectedMasterDocID(masterDocID);
     setSelectedSignedDocKey(signedDocKey);
@@ -223,13 +345,15 @@ const SignaturePage = () => {
     getMasterDocPages(masterDocID);
     setIsLoading(false);
     try {
-      await verificationService.createSignActivityVerification(
-        {
-          Status: "Document viewed",
-          Message: `${signatoryName} viewed  ${selectedFolderName} document`,
-        },
-        auth,
-      );
+      if (auth) {
+        await verificationService.createSignActivityVerification(
+          {
+            Status: "Document viewed",
+            Message: `${signatoryName} viewed ${selectedFolderName} document`,
+          },
+          auth,
+        );
+      }
     } catch (error) {}
   };
 
@@ -239,6 +363,16 @@ const SignaturePage = () => {
       setMasterDocPagesId(imagesData[0].masterDocPagesID);
     }
   }, [imagesData]);
+
+  // Auto-expand thumbnails if active page is in the latter half
+  useEffect(() => {
+    if (!isThumbnailsExpanded && imagesData && imagesData.length > 6) {
+      const selectedIndex = imagesData.findIndex((img) => img.pagesPath === selectedImage);
+      if (selectedIndex >= Math.ceil(imagesData.length / 2)) {
+        setIsThumbnailsExpanded(true);
+      }
+    }
+  }, [selectedImage, imagesData, isThumbnailsExpanded]);
 
   const handleImageSelect = (image, id) => {
     setMasterDocPagesId(id);
@@ -349,8 +483,7 @@ const SignaturePage = () => {
           setDefaultMasterDocID(masterDocIDs[0]);
           const firstDocument = response.data.response.primaryDocs[0];
           const firstDocName = firstDocument.docName;
-          const truncatedName = firstDocName.length > 10 ? firstDocName.slice(0, 7) + ".." : firstDocName;
-          setSelectedFolder(truncatedName);
+          setSelectedFolder(firstDocName);
 
           const firstMasterDocID = firstDocument.masterDocID;
           getMasterDocPages(firstMasterDocID);
@@ -851,118 +984,438 @@ const SignaturePage = () => {
     setCompletedControls(allControlsCompleted);
   }, [sortedControls, uploadedSignature, textUpdated]);
 
-  useEffect(() => {
-    document.body.classList.add("force-light-body");
-    return () => {
-      document.body.classList.remove("force-light-body");
-    };
-  }, []);
+  const progressStats = useMemo(() => {
+    const total = sortedControls.length;
+    if (total === 0) return { total: 0, completed: 0, percent: 100 };
+    const completed = sortedControls.filter((control) => {
+      if (["Signature", "Initial", "Stamp", "Image"].includes(control.controlName)) {
+        return uploadedSignature.some((item) => item.controlLocationID === control.controlLocationID);
+      }
+      if (["Text", "Number", "Date", "Checkbox", "Radio"].includes(control.controlName)) {
+        if (control.controlName === "Checkbox") {
+          return !!checkboxValues[control.controlLocationID];
+        }
+        return !!(control.textEditor && String(control.textEditor).trim() !== "");
+      }
+      return control.controlStatus !== "Pending";
+    }).length;
+    const percent = Math.min(100, Math.round((completed / total) * 100));
+    return { total, completed, percent };
+  }, [sortedControls, uploadedSignature, checkboxValues, textUpdated]);
+
+  const currentPageIndex = useMemo(() => {
+    if (!imagesData || imagesData.length === 0) return 0;
+    const idx = imagesData.findIndex(
+      (img) => img.pagesPath === selectedImage || img.masterDocPagesID === masterDocPagesId
+    );
+    return idx >= 0 ? idx : 0;
+  }, [imagesData, selectedImage, masterDocPagesId]);
+
+  const handlePrevPage = () => {
+    if (currentPageIndex > 0 && imagesData[currentPageIndex - 1]) {
+      const prev = imagesData[currentPageIndex - 1];
+      handleImageSelect(prev.pagesPath, prev.masterDocPagesID);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPageIndex < imagesData.length - 1 && imagesData[currentPageIndex + 1]) {
+      const next = imagesData[currentPageIndex + 1];
+      handleImageSelect(next.pagesPath, next.masterDocPagesID);
+    }
+  };
 
   return (
-    <div className='signaturePage'>
-
-      <div className={`${passwordModal ? "blur-background" : ""}`}>
-        <Row className='bg-[var(--modern-card)] m-0 fixed-top signaturePage-header border-b border-[var(--modern-border)]'>
-          <Col className='d-flex justify-content-between align-items-center px-3 mx-3 h-100'>
-            <Link to='/'>
-              <Icons.StepperLogo style={{ height: "30px", width: "100px" }} />
-            </Link>
-            <LanguageSelector auth={auth} />
-          </Col>
-        </Row>
-
-        <div className='signaturePage-container' style={{ marginTop: "56px" }}>
-          <Row className='main-content px-0 mx-0 pt-2'>
-            <Col md={2} className='comments-col p-0 border border-[var(--modern-border)] bg-[var(--modern-card)]'>
-              <Comments signAuth={auth} registerSignID={registerSignID} signatoryEmail={signatoryEmail} signatoryName={signatoryName} permissions={permissions} />
-            </Col>
-
-            <Col md={8} className='image-col p-0' style={{ background: "var(--modern-raised)" }}>
-              <Row className='actions-btns ms-0 mb-2'>
-                <div className='bg-white d-flex align-items-center justify-content-between px-3 border border-1' style={{ padding: "11px" }}>
-                  <div className='signature-actions-tab d-flex gap-4 '>
-                    {permissions && permissions.isAllowDownload && (
-                      <div className='action d-flex align-items-center gap-2' onClick={() => handleFileDownload()}>
-                        <Icons.DownloadAction size={20} />
-                        <span> {t("signaturePage.download")}</span>
-                      </div>
-                    )}
-
-                    <div className='action d-flex align-items-center gap-2' onClick={() => handleViewAuditTrail()}>
-                      <Icons.AuditTrail size={20} />
-                      <span> {t("signaturePage.viewAuditTrail")}</span>
-                    </div>
-                    {permissions && permissions.canDownloadAuditTrail && (
-                      <div className='action d-flex align-items-center gap-2' onClick={() => handleDownloadAuditTrail()}>
-                        <Icons.DownloadAction size={20} />
-                        <span>{t("signaturePage.DownloadAuditTrail")}</span>
-                      </div>
-                    )}
-
-                    {permissions && permissions.isAllowDeclined && (
-                      <div className='action d-flex align-items-center gap-2' onClick={() => setShowDeclineModal(true)}>
-                        <Icons.Declined size={20} />
-                        <span>{t("signaturePage.declined")}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <Button
-                      onClick={scrollToNextControl}
-                      size="sm"
-                      className={`inline-flex items-center gap-2 font-semibold rounded-full px-5 h-9 transition-all cursor-pointer shadow-none ${
-                        completedControls
-                          ? "!bg-emerald-600 hover:!bg-emerald-700 !text-white"
-                          : "!bg-[var(--modern-primary,#4d8dff)] hover:opacity-90 !text-white"
-                      }`}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? t("signOrderDaigram.loading") : completedControls ? t("uploadDocFlow.finish") : currentControlIndex === 0 ? t("signaturePage.Start") : t("signaturePage.NextStep")}
-                    </Button>
+    <div className='signaturePage w-full min-h-screen bg-[var(--modern-bg)] text-[var(--modern-text)] flex flex-col font-sans transition-colors duration-300'>
+      <div className={`flex flex-col flex-1 w-full ${passwordModal ? "blur-background" : ""}`}>
+        {/* Unified Sticky Top Action Bar (Matching iamSigner Studio prototype .sbar) */}
+        <header className='sticky top-0 z-30 border-b border-[var(--modern-border)] bg-[var(--modern-card)]/95 backdrop-blur-md px-3 sm:px-6 py-2.5 transition-colors shadow-xs'>
+          <div className='max-w-[1540px] mx-auto flex items-center justify-between gap-2.5 sm:gap-3 flex-wrap'>
+            {/* Left: Brand Logo + Signatory Identifier Pill */}
+            <div className='flex items-center gap-3'>
+              <Link to='/' className='flex items-center shrink-0'>
+                <Icons.StepperLogo style={{ height: "28px", width: "95px" }} />
+              </Link>
+              {signatoryName && (
+                <div className='flex items-center gap-2 pl-3 border-l border-[var(--modern-border)] rtl:border-l-0 rtl:border-r rtl:pl-0 rtl:pr-3'>
+                  <div className='flex items-center gap-2'>
+                    <span className='text-[11px] font-semibold text-[var(--modern-muted)] whitespace-nowrap'>
+                      {t("signaturePage.previewingAs", "Previewing as")}:
+                    </span>
+                    <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold text-[var(--modern-primary,#4d8dff)] bg-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_12%,var(--modern-card))] border border-[color-mix(in_srgb,var(--modern-primary,#4d8dff)_25%,transparent)] shadow-xs max-w-[200px] truncate'>
+                      <span className='w-1.5 h-1.5 rounded-full bg-[var(--modern-primary,#4d8dff)] shrink-0' />
+                      <span className='truncate'>{signatoryName}</span>
+                    </span>
                   </div>
                 </div>
-              </Row>
+              )}
+            </div>
 
-              <Row className='mx-0 p-0' style={{ marginTop: "67px" }}>
-                <div
-                  className='main-document scrollable-content  px-0 px-md-2'
-                  ref={mainDocumentRef}
-                  style={{
-                    position: "relative",
-                  }}
+            {/* Right: Actions (View Trail, Downloads, Decline, Theme, Lang) */}
+            <div className='flex items-center gap-1.5 sm:gap-2 flex-wrap'>
+              {/* Mobile Drawer Trigger for Comments */}
+              <button
+                type='button'
+                onClick={() => setIsCommentsOpen(true)}
+                className='lg:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[var(--modern-border)] bg-[var(--modern-raised)] text-xs font-semibold text-[var(--modern-text)] hover:border-[var(--modern-primary)] hover:text-[var(--modern-primary)] transition-all cursor-pointer shadow-xs'
+                title={t("Comments.Comments", "Comments")}
+              >
+                <MessageSquare size={13} className='text-[var(--modern-primary)]' />
+                <span className='hidden xs:inline'>{t("Comments.Comments", "Comments")}</span>
+                {(counts.commentsCount > 0 || counts.supportingDocsCount > 0) && (
+                  <span className='px-1.5 py-0.2 rounded-full bg-[var(--modern-primary)] text-white font-mono text-[10px] font-bold'>
+                    {counts.commentsCount + counts.supportingDocsCount}
+                  </span>
+                )}
+              </button>
+
+              {/* View Audit Trail */}
+              <button
+                type='button'
+                onClick={() => handleViewAuditTrail()}
+                className='inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border border-[var(--modern-border)] bg-[var(--modern-raised)] text-xs font-semibold text-[var(--modern-text)] hover:border-[var(--modern-primary,#4d8dff)] hover:text-[var(--modern-primary,#4d8dff)] transition-all cursor-pointer shadow-xs shrink-0'
+                title={t("signaturePage.viewAuditTrail", "View Audit Trail")}
+              >
+                <Icons.AuditTrail size={13} />
+                <span>{t("signaturePage.viewAuditTrail", "View Audit Trail")}</span>
+              </button>
+
+              {/* Download Document */}
+              {permissions && permissions.isAllowDownload && (
+                <button
+                  type='button'
+                  onClick={handleFileDownload}
+                  className='inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border border-[var(--modern-border)] bg-[var(--modern-raised)] text-xs font-semibold text-[var(--modern-text)] hover:border-[var(--modern-primary,#4d8dff)] hover:text-[var(--modern-primary,#4d8dff)] transition-all cursor-pointer shadow-xs shrink-0'
+                  title={t("signaturePage.download", "Download Document")}
                 >
-                  <div className='large-image' style={{ position: "relative" }}>
-                    <div
-                      className='doc-image'
-                      style={{
-                        // width: "100%",
-                        position: "relative",
-                        height: "auto",
-                      }}
-                    >
-                      {sortedControls.length > 0 && sortedControls.some((control) => control.masterDocPagesID === masterDocPagesId) && (
-                        <div
-                          ref={indicatorRef}
-                          className='indicator'
-                          id='indicator'
-                          style={{
-                            position: "absolute",
-                            top: `${sortedControls[0].controlLocationY}`,
-                            left: "-6px",
-                          }}
-                        >
-                          <Icons.ArrowGif style={{ width: "100px", height: "45px" }} />
-                        </div>
-                      )}
+                  <Icons.DownloadAction size={13} />
+                  <span>{t("signaturePage.download", "Download")}</span>
+                </button>
+              )}
 
+              {/* Download Audit Trail */}
+              {permissions && permissions.canDownloadAuditTrail && (
+                <button
+                  type='button'
+                  onClick={handleDownloadAuditTrail}
+                  className='inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border border-[var(--modern-border)] bg-[var(--modern-raised)] text-xs font-semibold text-[var(--modern-text)] hover:border-[var(--modern-primary,#4d8dff)] hover:text-[var(--modern-primary,#4d8dff)] transition-all cursor-pointer shadow-xs shrink-0'
+                  title={t("signaturePage.DownloadAuditTrail", "Download Audit Trail")}
+                >
+                  <Icons.AuditTrail size={13} />
+                  <span>{t("signaturePage.auditTrail", "Audit Trail")}</span>
+                </button>
+              )}
+
+              {/* Decline */}
+              {permissions && permissions.isAllowDeclined && (
+                <button
+                  type='button'
+                  onClick={() => setShowDeclineModal(true)}
+                  className='inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border border-rose-300/60 dark:border-rose-900/60 bg-rose-50/70 dark:bg-rose-950/40 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-all cursor-pointer shadow-xs shrink-0'
+                  title={t("signaturePage.decline", "Decline")}
+                >
+                  <Icons.Declined size={13} />
+                  <span>{t("signaturePage.decline", "Decline")}</span>
+                </button>
+              )}
+
+              {/* Theme Toggle */}
+              <button
+                type='button'
+                onClick={toggleTheme}
+                aria-label={theme === "dark" ? t("header.switchToLightMode", "Switch to light mode") : t("header.switchToDarkMode", "Switch to dark mode")}
+                title={theme === "dark" ? t("header.switchToLightMode", "Switch to light mode") : t("header.switchToDarkMode", "Switch to dark mode")}
+                className='inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--modern-border)] bg-[var(--modern-raised)] text-[var(--modern-text)] hover:border-[var(--modern-primary)] hover:text-[var(--modern-primary)] transition-all cursor-pointer'
+              >
+                {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+              </button>
+
+              {/* Language Selector */}
+              <LanguageSelector auth={auth} />
+            </div>
+          </div>
+        </header>
+
+        {/* 2-Column Studio Workspace (.slay: 300px Left Sidebar + Flexible Stage) */}
+        <div className='max-w-[1540px] w-full mx-auto grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-6 p-4 sm:p-6 pb-32 flex-1 items-start'>
+          {/* Left Column: Stacked Comments & Supporting Documents (.sside) - Fixed/Sticky on both LTR and RTL */}
+          <aside className='hidden lg:flex flex-col gap-4 w-[300px] shrink-0 sticky top-[72px] self-start max-h-[calc(100vh-6rem)] overflow-y-auto custom-scrollbar z-20'>
+            <Comments
+              signAuth={auth}
+              registerSignID={registerSignID}
+              signatoryEmail={signatoryEmail}
+              signatoryName={signatoryName}
+              permissions={permissions}
+              initialTab={commentsInitialTab}
+              variant='stacked'
+              onCountsChange={setCounts}
+            />
+          </aside>
+
+          {/* Mobile Slide-over Drawer for Comments */}
+          {isCommentsOpen && (
+            <>
+              <div
+                className='fixed inset-0 bg-black/50 backdrop-blur-xs z-40 lg:hidden'
+                onClick={() => setIsCommentsOpen(false)}
+              />
+              <aside className='fixed inset-y-0 left-0 z-50 w-[300px] max-w-[85vw] bg-[var(--modern-card)] border-r border-[var(--modern-border)] shadow-2xl flex flex-col h-full overflow-hidden lg:hidden'>
+                <Comments
+                  signAuth={auth}
+                  registerSignID={registerSignID}
+                  signatoryEmail={signatoryEmail}
+                  signatoryName={signatoryName}
+                  permissions={permissions}
+                  initialTab={commentsInitialTab}
+                  onClose={() => setIsCommentsOpen(false)}
+                  onCountsChange={setCounts}
+                />
+              </aside>
+            </>
+          )}
+
+          {/* Right Column: Stage (.stage) */}
+          <section className='min-w-0 flex flex-col gap-3 flex-1'>
+            {/* Stage Top Bar: Document Title & Dropdown on Left, Pager & Zoom Controls on Right */}
+            <div className='flex items-center justify-between gap-3 flex-wrap p-2.5 sm:p-3 rounded-2xl border border-[var(--modern-border)] bg-[var(--modern-card)] shadow-xs'>
+              {/* Document Title & Dropdown Switcher */}
+              <div className='flex items-center gap-2.5 min-w-0 flex-1'>
+                <div className='flex flex-col min-w-0'>
+                  <div className='flex items-center gap-2'>
+                    <b className='text-sm sm:text-base font-bold text-[var(--modern-text)] truncate' title={selectedFolder || fileName}>
+                      {selectedFolder || fileName || t("signaturePage.document", "Document")}
+                    </b>
+                    {formData && formData.primaryDocs && formData.primaryDocs.length > 1 && (
+                      <Dropdown className='inline-block'>
+                        <Dropdown.Toggle
+                          variant='none'
+                          className='p-1 rounded-lg border border-[var(--modern-border)] bg-[var(--modern-raised)] text-xs text-[var(--modern-muted)] hover:text-[var(--modern-text)]'
+                        >
+                          <ChevronDown size={13} />
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu className='max-h-60 overflow-y-auto p-1.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)] shadow-lg z-50'>
+                          {formData.primaryDocs.map((doc) => (
+                            <Dropdown.Item
+                              key={doc.masterDocID}
+                              onClick={() => handleDocSelect(doc.masterDocID, doc.docName, doc.signedDocKey)}
+                              className='px-3 py-1.5 text-xs rounded-lg text-[var(--modern-text)] hover:bg-[var(--modern-raised)] transition-colors truncate'
+                            >
+                              {doc.docName}
+                            </Dropdown.Item>
+                          ))}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    )}
+                  </div>
+                  <small className='text-xs text-[var(--modern-muted)] truncate'>
+                    {imagesData.length} {t("signaturePage.pages", "pages")} {signatoryName ? `· ${signatoryName}` : ""}
+                  </small>
+                </div>
+              </div>
+
+              {/* Right: Pager + Zoom Controls */}
+              <div className='flex items-center gap-2 sm:gap-3 flex-wrap shrink-0'>
+                {/* Pager: ‹ X of Y › */}
+                <div className='flex items-center gap-1 p-1 rounded-full border border-[var(--modern-border)] bg-[var(--modern-raised)]'>
+                  <button
+                    type='button'
+                    onClick={handlePrevPage}
+                    disabled={currentPageIndex === 0}
+                    aria-label='Previous page'
+                    className='h-7 w-7 rounded-full flex items-center justify-center text-sm font-bold text-[var(--modern-text)] hover:bg-[var(--modern-card)] disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer transition-colors border-0 bg-transparent'
+                  >
+                    ‹
+                  </button>
+                  <span className='font-mono text-xs font-semibold text-[var(--modern-muted)] px-2 min-w-[70px] text-center'>
+                    {currentPageIndex + 1} {t("signaturePage.of", "of")} {imagesData.length}
+                  </span>
+                  <button
+                    type='button'
+                    onClick={handleNextPage}
+                    disabled={currentPageIndex >= imagesData.length - 1}
+                    aria-label='Next page'
+                    className='h-7 w-7 rounded-full flex items-center justify-center text-sm font-bold text-[var(--modern-text)] hover:bg-[var(--modern-card)] disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer transition-colors border-0 bg-transparent'
+                  >
+                    ›
+                  </button>
+                </div>
+
+                {/* Zoom Controls */}
+                <div className='flex items-center gap-0.5 sm:gap-1 rounded-full border border-[var(--modern-border)] bg-[var(--modern-raised)] p-0.5 sm:p-1'>
+                  <button
+                    type='button'
+                    onClick={handleZoomOut}
+                    disabled={zoomScale <= 0.25}
+                    title={t("uploadDocFlow.zoomOut", "Zoom out")}
+                    aria-label='Zoom out'
+                    className='inline-flex h-6 sm:h-7 w-6 sm:w-7 items-center justify-center rounded-full border border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-text)] hover:border-[var(--modern-primary)] hover:text-[var(--modern-primary)] disabled:opacity-30 cursor-pointer transition-colors'
+                  >
+                    <ZoomOut size={12} />
+                  </button>
+
+                  <button
+                    type='button'
+                    onClick={handleFitToggle}
+                    title='Reset to 100%'
+                    className={`min-w-[42px] sm:min-w-[48px] px-1.5 py-0.5 rounded-full border text-[10px] sm:text-[11px] font-mono font-semibold transition-all cursor-pointer ${
+                      isFitMode
+                        ? "border-[var(--modern-primary)] bg-[var(--modern-primary)]/15 text-[var(--modern-primary)]"
+                        : "border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-text)] hover:border-[var(--modern-primary)] hover:text-[var(--modern-primary)]"
+                    }`}
+                  >
+                    {Math.round(zoomScale * 100)}%
+                  </button>
+
+                  <button
+                    type='button'
+                    onClick={handleZoomIn}
+                    disabled={zoomScale >= 2.0}
+                    title={t("uploadDocFlow.zoomIn", "Zoom in")}
+                    aria-label='Zoom in'
+                    className='inline-flex h-6 sm:h-7 w-6 sm:w-7 items-center justify-center rounded-full border border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-text)] hover:border-[var(--modern-primary)] hover:text-[var(--modern-primary)] disabled:opacity-30 cursor-pointer transition-colors'
+                  >
+                    <ZoomIn size={12} />
+                  </button>
+
+                  <div className='h-3 sm:h-4 w-px bg-[var(--modern-border)] mx-0.5' />
+
+                  <button
+                    type='button'
+                    onClick={handleFitToggle}
+                    title='Fit to screen'
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] sm:text-[11px] font-semibold transition-all cursor-pointer ${
+                      isFitMode
+                        ? "border-[var(--modern-primary)] bg-[var(--modern-primary)] text-white"
+                        : "border-[var(--modern-border)] bg-[var(--modern-card)] text-[var(--modern-primary)] hover:bg-[var(--modern-raised)]"
+                    }`}
+                  >
+                    <Maximize2 size={11} />
+                    <span className='hidden sm:inline'>Fit</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Horizontal Page Thumbnails Strip */}
+            {imagesData && imagesData.length > 1 && (
+              <div className='w-full overflow-x-auto py-2 px-1 flex items-center gap-2.5 rounded-xl border border-[var(--modern-border)] bg-[var(--modern-card)]/50 custom-scrollbar shrink-0'>
+                {imagesData.map((img, idx) => {
+                  const isCurrent = idx === currentPageIndex;
+                  const pageFieldCount = Array.isArray(allControlData)
+                    ? allControlData.filter((c) => String(c.masterDocPagesID) === String(img.masterDocPagesID)).length
+                    : 0;
+
+                  return (
+                    <button
+                      key={img.masterDocPagesID || idx}
+                      type='button'
+                      onClick={() => handleImageSelect(img.pagesPath, img.masterDocPagesID)}
+                      className={`group relative shrink-0 w-16 sm:w-20 aspect-[8.5/11] rounded-lg border-2 overflow-hidden transition-all cursor-pointer bg-white ${
+                        isCurrent
+                          ? "border-[var(--modern-primary)] shadow-sm ring-2 ring-[var(--modern-primary)]/20"
+                          : "border-[var(--modern-border)] hover:border-[var(--modern-border-strong)] opacity-80 hover:opacity-100"
+                      }`}
+                      aria-label={`${t("uploadDocFlow.page", "Page")} ${idx + 1}`}
+                    >
                       <img
-                        src={selectedImage}
-                        alt=''
-                        onError={() => {
-                          if (selectedImage) setDocLoadError(true);
+                        src={img.pagesPath}
+                        alt={`Page ${idx + 1}`}
+                        className='w-full h-full object-cover pointer-events-none'
+                        onError={(e) => {
+                          e.currentTarget.style.opacity = "0.3";
                         }}
                       />
+                      {pageFieldCount > 0 && (
+                        <span className='absolute top-1 left-1 rtl:left-auto rtl:right-1 z-10 h-4 min-w-[16px] px-1 rounded-full bg-[var(--modern-primary)] text-white text-[9px] font-bold flex items-center justify-center shadow-xs'>
+                          {pageFieldCount}
+                        </span>
+                      )}
+                      <span className='absolute bottom-1 right-1 rtl:right-auto rtl:left-1 z-10 rounded bg-black/60 backdrop-blur-xs text-white px-1 font-mono text-[9px] font-semibold'>
+                        {idx + 1}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Ruled Canvas Desk (Scrollable Document Stage) */}
+            <div
+              ref={canvasScrollRef}
+              className='flex-1 p-3 sm:p-6 flex flex-col items-center justify-start overflow-y-auto overflow-x-auto bg-[var(--modern-raised)] rounded-2xl border border-[var(--modern-border)] min-h-[520px] max-h-[calc(100vh-230px)] custom-scrollbar'
+              style={{
+                backgroundImage: "repeating-linear-gradient(0deg, transparent 0 23px, var(--modern-border) 23px 24px)",
+                backgroundSize: "100% 24px",
+              }}
+            >
+              {isLoading && (!imagesData || imagesData.length === 0 || !selectedImage) ? (
+                <div className='flex flex-col items-center justify-center gap-3 py-24 sm:py-36 text-center my-auto'>
+                  <div className='h-10 w-10 animate-spin rounded-full border-3 border-[var(--modern-primary,#4d8dff)] border-t-transparent' />
+                  <div className='space-y-1'>
+                    <p className='text-sm sm:text-base font-semibold text-[var(--modern-text)]'>
+                      {t("uploadDocFlow.loadingPreview", "Loading document preview…")}
+                    </p>
+                    <p className='text-xs text-[var(--modern-muted)]'>
+                      {t("signaturePage.preparingDocument", "Preparing pages and signature fields...")}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className='w-full flex flex-col items-center' ref={viewportDeskRef}>
+                {/* Scaled Document Outer Box */}
+                <div
+                  style={{
+                    width: naturalDim.width ? `${naturalDim.width * zoomScale}px` : "auto",
+                    height: naturalDim.height ? `${naturalDim.height * zoomScale}px` : "auto",
+                    position: "relative",
+                  }}
+                  className='transition-all duration-150'
+                >
+                  <div
+                    className='main-document scrollable-content relative rounded-2xl border border-[var(--modern-border-strong)] bg-white overflow-visible'
+                    ref={mainDocumentRef}
+                    style={{
+                      transform: `scale(${zoomScale})`,
+                      transformOrigin: "top left",
+                      width: naturalDim.width || "auto",
+                      height: naturalDim.height || "auto",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                    }}
+                  >
+                    <div className='large-image'>
+                      <div
+                        className='doc-image'
+                        style={{
+                          // width: "100%",
+                          position: "relative",
+                          height: "auto",
+                        }}
+                      >
+                        {sortedControls.length > 0 && sortedControls.some((control) => control.masterDocPagesID === masterDocPagesId) && (
+                          <div
+                            ref={indicatorRef}
+                            className='indicator'
+                            id='indicator'
+                            style={{
+                              position: "absolute",
+                              top: `${sortedControls[0].controlLocationY}`,
+                              left: "-6px",
+                            }}
+                          >
+                            <Icons.ArrowGif style={{ width: "100px", height: "45px" }} />
+                          </div>
+                        )}
+
+                        <img
+                          src={selectedImage}
+                          alt=''
+                          onLoad={handleImageLoaded}
+                          onError={() => {
+                            if (selectedImage) setDocLoadError(true);
+                          }}
+                        />
 
                       {controlData.map((control, index) => {
                         // console.log(control);
@@ -997,18 +1450,9 @@ const SignaturePage = () => {
                                     width: control.width,
                                     height: control.height,
                                     border:
-                                      (control.signatureColor && control.signatureColor.trim() !== ""
-                                        ? control.signatureColor
-                                        : "#e84600" &&
-                                          (control.controlName === "Signature" || control.controlName === "Initial" || control.controlName === "Stamp" || control.controlName === "Image") &&
-                                          !uploadedSignature.find((item) => item.controlLocationID === control.controlLocationID)) ||
-                                      (control.controlName !== "Signature" &&
-                                        control.controlName !== "Initial" &&
-                                        control.controlName !== "Stamp" &&
-                                        control.controlName !== "QR Code" &&
-                                        control.controlName !== "Image")
-                                        ? `2px dotted ${control.signatureColor || "#e84600"}`
-                                        : "transparent",
+                                      control.controlName === "QR Code"
+                                        ? "none"
+                                        : `2px dotted ${control.signatureColor?.trim() || "#e84600"}`,
                                     backgroundColor:
                                       ((control.controlName === "Signature" || control.controlName === "Initial" || control.controlName === "Stamp" || control.controlName === "Image") &&
                                         !uploadedSignature.find((item) => item.controlLocationID === control.controlLocationID)) ||
@@ -1288,7 +1732,11 @@ const SignaturePage = () => {
                                     style={{
                                       backgroundColor: "transparent",
                                       color: "black",
-                                      border: "none",
+                                      border:
+                                        control.controlName === "QR Code"
+                                          ? "none"
+                                          : `2px dotted ${control.signatureColor?.trim() || "#e84600"}`,
+                                      borderRadius: "6px",
                                       width: control.width,
                                       height: control.height,
                                     }}
@@ -1414,77 +1862,78 @@ const SignaturePage = () => {
                     </div>
                   </div>
                 </div>
-              </Row>
-            </Col>
-
-            <Col md={2} className='page-display p-0'>
-              <div className='documents-dropdown'>
-                <DropdownButton
-                  title={selectedFolder || ""}
-                  onSelect={(eventKey) => {
-                    const [masterDocID, selectedFolderName, signedDocKey] = eventKey.split(",");
-                    handleDocSelect(masterDocID, selectedFolderName, signedDocKey);
-                  }}
-                  id='doc-dropdown'
-                  className='border border-0 w-100'
-                  variant='none'
-                >
-                  {formData &&
-                    formData.primaryDocs.map((doc) => {
-                      return (
-                        <Dropdown.Item key={doc.masterDocID} eventKey={`${doc.masterDocID},${doc.docName},${doc.signedDocKey}`} className='truncate-text'>
-                          {doc.docName}
-                        </Dropdown.Item>
-                      );
-                    })}
-                </DropdownButton>
               </div>
-              <hr className='m-0' />
-              <div className='doc-pages d-none d-md-block'>
-                <ImageThumbnails
-                  controls={allControlData}
-                  t={t}
-                  selectedImage={selectedImage}
-                  setSelectedImage={setSelectedImage}
-                  setMasterDocPagesId={setMasterDocPagesId}
-                  imagesData={imagesData}
-                  setImagesData={setImagesData}
-                  buttons={false}
-                  onImageError={() => setDocLoadError(true)}
-                />
-              </div>
-
-              <div className='completed-btn d-flex justify-content-center align-items-center p-2'>
-                {viewOnly ? (
-                  <>
-                    <div className='signbutton-container'>
-                      <div></div>
-                      <Button className='Continue-btn' variant='none' onClick={() => setIsConfirmationModalOpen(true)}>
-                        {t("signaturePage.confirm")}
-                      </Button>
-                    </div>
-
-                    <ConfirmationModal show={isConfirmationModalOpen} onHide={() => setIsConfirmationModalOpen(false)} onClick={handleViewOnly} className='force-light-modal' />
-                  </>
-                ) : (
-                  <>
-                    <div className='signbutton-container'>
-                      <div className='d-flex justify-content-center m-auto'>
-                        <PageNavigations imagesData={imagesData} selectedImage={selectedImage} setSelectedImage={setSelectedImage} onImageSelect={handleImageSelect} />
-                      </div>
-
-                      <Button className='Continue-btn' variant='none' onClick={handleCheckCompletedButton}>
-                        {t("signaturePage.completed")}
-                      </Button>
-                    </div>
-                    <ConfirmationModal show={isConfirmationModalOpen} onHide={() => setIsConfirmationModalOpen(false)} onClick={handleCompleted} className='force-light-modal' />
-                  </>
-                )}
-              </div>
-            </Col>
-          </Row>
+            </div>
+          )}
         </div>
+      </section>
+    </div>
+
+    {/* Floating Bottom Dock (Progress bar + Counter + Start/Next CTA + Completed CTA) */}
+    <div className='fixed inset-x-0 bottom-0 z-40 flex items-center justify-center p-4 pb-6 pointer-events-none'>
+      <div className='pointer-events-auto flex items-center gap-2.5 sm:gap-4 px-3 sm:px-6 py-2 sm:py-2.5 rounded-full border border-[var(--modern-border-strong)] bg-[var(--modern-card)]/95 backdrop-blur-xl shadow-xl flex-wrap justify-center max-w-[calc(100vw-24px)]'>
+        {/* Progress bar track */}
+        <div className='h-1.5 w-16 sm:w-28 rounded-full bg-[var(--modern-raised)] border border-[var(--modern-border)] overflow-hidden shrink-0'>
+          <div
+            className='h-full bg-gradient-to-r from-[var(--modern-primary,#4d8dff)] to-emerald-500 transition-all duration-300'
+            style={{ width: `${progressStats.percent}%` }}
+          />
+        </div>
+
+        {/* Counter */}
+        <span className='font-mono text-xs font-semibold text-[var(--modern-muted)] shrink-0'>
+          {progressStats.completed} / {progressStats.total}
+        </span>
+
+        {/* Start / Next Field CTA */}
+        <button
+          type='button'
+          onClick={scrollToNextControl}
+          disabled={isLoading || sortedControls.length === 0}
+          className='inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full bg-[var(--modern-primary,#4d8dff)] text-white text-xs font-bold hover:opacity-90 active:scale-95 transition-all shadow-sm cursor-pointer border-0 disabled:opacity-50 disabled:pointer-events-none'
+        >
+          {progressStats.completed === 0
+            ? t("signaturePage.Start", "Start")
+            : progressStats.completed < progressStats.total
+            ? t("signaturePage.NextStep", "Next Step")
+            : t("signaturePage.allSet", "All Set")}
+        </button>
+
+        {/* Completed Button */}
+        {viewOnly ? (
+          <button
+            type='button'
+            onClick={() => setIsConfirmationModalOpen(true)}
+            className='inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-sm border-0 cursor-pointer active:scale-95'
+          >
+            <Check size={14} />
+            <span>{t("signaturePage.confirm", "Confirm")}</span>
+          </button>
+        ) : (
+          <button
+            type='button'
+            onClick={handleCheckCompletedButton}
+            disabled={!enableCompletedButton && !completedControls}
+            className={`inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full text-xs font-bold transition-all shadow-sm border-0 ${
+              completedControls || enableCompletedButton
+                ? "bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer active:scale-95"
+                : "bg-emerald-600/30 text-emerald-100 cursor-not-allowed opacity-60"
+            }`}
+          >
+            <Check size={14} />
+            <span>{t("signaturePage.completed", "Completed")}</span>
+          </button>
+        )}
       </div>
+    </div>
+
+    {/* Confirmation Modal */}
+    <ConfirmationModal
+      show={isConfirmationModalOpen}
+      onHide={() => setIsConfirmationModalOpen(false)}
+      onClick={viewOnly ? handleViewOnly : handleCompleted}
+    />
+  </div>
 
       {/* audit trail modal */}
       <AuditTrailModal
@@ -1494,10 +1943,9 @@ const SignaturePage = () => {
           setShowATModal(false);
           setAuditTrailURL("");
         }}
-        className='force-light-modal'
       />
       {/* signature modal */}
-      <SignatureModal {...SignatureModalProps} className='force-light-modal' />
+      <SignatureModal {...SignatureModalProps} />
       {/* password modal */}
       {passwordModal && (
         <PasswordModal
@@ -1508,12 +1956,11 @@ const SignaturePage = () => {
           signatoryName={signatoryName}
           passwordProtected={passwordProtected}
           defaultMasterDocID={defaultMasterDocID}
-          className='force-light-modal'
         />
       )}
 
       {/* decline modal */}
-      <Modal show={showDeclineModal} onHide={closeDeclineModal} dialogClassName='custom-modal-width force-light-modal' backdrop='static' keyboard={false}>
+      <Modal show={showDeclineModal} onHide={closeDeclineModal} dialogClassName='custom-modal-width' backdrop='static' keyboard={false}>
         <Modal.Header closeButton>
           <div className='header-content'>
             <div className='header-icon'>

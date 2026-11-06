@@ -410,7 +410,7 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
           }`}
         >
           {/* Signatory Selector Strip */}
-          <div className='border-b border-[var(--modern-border)] bg-[var(--modern-raised)]/60 px-5 py-4'>
+          <div className='border-b border-[var(--modern-border)] bg-[var(--modern-card)] px-5 py-4'>
             <div className='text-xs font-semibold uppercase tracking-wider text-[var(--modern-muted)] mb-2'>
               {t("uploadDocFlow.selectSignatory", "Select Signatory")}
             </div>
@@ -432,7 +432,7 @@ const Secondstep = ({ setActiveStep, setCompletedSteps }) => {
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all shrink-0 cursor-pointer appearance-none ${
                       isSelected
                         ? "bg-[var(--modern-card)] text-[var(--modern-text)] border-2"
-                        : "bg-[var(--modern-raised)] text-[var(--modern-muted)] border-[var(--modern-border)] hover:border-[var(--modern-border-strong)] hover:bg-[color-mix(in_srgb,var(--modern-primary)_8%,var(--modern-card))] hover:text-[var(--modern-text)]"
+                        : "bg-[var(--modern-raised)] text-[var(--modern-text)] border-[var(--modern-border)] hover:border-[var(--modern-primary)] hover:bg-[color-mix(in_srgb,var(--modern-primary)_12%,var(--modern-card))] hover:text-[var(--modern-primary)]"
                     }`}
                     style={{
                       borderColor: isSelected ? sigColor : undefined,

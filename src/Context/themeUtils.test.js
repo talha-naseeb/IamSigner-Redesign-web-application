@@ -5,6 +5,8 @@ import {
   applyPaletteToDocument,
   getInitialTheme,
   getInitialPalette,
+  getStoredTheme,
+  persistTheme,
   isThemeName,
   isPaletteName,
   cleanupLegacyThemeStorage,
@@ -81,6 +83,31 @@ describe("Theme & Palette Engine Unit Tests (UI-03)", () => {
     it("restores valid light theme from storage", () => {
       const storage = createMockStorage({ [THEME_STORAGE_KEY]: "light" });
       assert.strictEqual(getInitialTheme({ storage }), "light");
+    });
+
+    it("restores valid dark theme from sessionStorage over storage", () => {
+      const storage = createMockStorage({ [THEME_STORAGE_KEY]: "light" });
+      const sessionStorage = createMockStorage({ [THEME_STORAGE_KEY]: "dark" });
+      assert.strictEqual(getInitialTheme({ storage, sessionStorage }), "dark");
+    });
+
+    it("restores valid light theme from sessionStorage", () => {
+      const sessionStorage = createMockStorage({ [THEME_STORAGE_KEY]: "light" });
+      assert.strictEqual(getInitialTheme({ sessionStorage }), "light");
+    });
+
+    it("persists theme to both localStorage and sessionStorage", () => {
+      const storage = createMockStorage();
+      const sessionStorage = createMockStorage();
+      persistTheme("dark", storage, sessionStorage);
+      assert.strictEqual(storage.getItem(THEME_STORAGE_KEY), "dark");
+      assert.strictEqual(sessionStorage.getItem(THEME_STORAGE_KEY), "dark");
+    });
+
+    it("getStoredTheme returns null when neither storage has theme", () => {
+      const storage = createMockStorage();
+      const sessionStorage = createMockStorage();
+      assert.strictEqual(getStoredTheme(storage, sessionStorage), null);
     });
 
     it("falls back to default light theme when storage has invalid value", () => {

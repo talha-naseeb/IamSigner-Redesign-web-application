@@ -34,9 +34,43 @@ export const cleanupLegacyThemeStorage = (storage = typeof localStorage !== "und
   });
 };
 
-export const getInitialTheme = ({ storage = typeof localStorage !== "undefined" ? localStorage : undefined, matchMediaRef } = {}) => {
+export const getStoredTheme = (
+  storage = typeof localStorage !== "undefined" ? localStorage : undefined,
+  sessionStorage = typeof window !== "undefined" && typeof window.sessionStorage !== "undefined" ? window.sessionStorage : undefined
+) => {
+  try {
+    const sessionTheme = sessionStorage?.getItem(THEME_STORAGE_KEY);
+    if (isThemeName(sessionTheme)) return sessionTheme;
+  } catch {}
+  try {
+    const localTheme = storage?.getItem(THEME_STORAGE_KEY);
+    if (isThemeName(localTheme)) return localTheme;
+  } catch {}
+  return null;
+};
+
+export const persistTheme = (
+  theme,
+  storage = typeof localStorage !== "undefined" ? localStorage : undefined,
+  sessionStorage = typeof window !== "undefined" && typeof window.sessionStorage !== "undefined" ? window.sessionStorage : undefined
+) => {
+  if (!isThemeName(theme)) return;
+  try {
+    storage?.setItem(THEME_STORAGE_KEY, theme);
+  } catch {}
+  try {
+    sessionStorage?.setItem(THEME_STORAGE_KEY, theme);
+  } catch {}
+};
+
+export const getInitialTheme = ({
+  storage = typeof localStorage !== "undefined" ? localStorage : undefined,
+  sessionStorage = typeof window !== "undefined" && typeof window.sessionStorage !== "undefined" ? window.sessionStorage : undefined,
+  matchMediaRef,
+} = {}) => {
   cleanupLegacyThemeStorage(storage);
-  const storedTheme = storage?.getItem(THEME_STORAGE_KEY);
+  cleanupLegacyThemeStorage(sessionStorage);
+  const storedTheme = getStoredTheme(storage, sessionStorage);
   if (isThemeName(storedTheme)) return storedTheme;
   return getSystemTheme(matchMediaRef);
 };
@@ -49,6 +83,19 @@ export const getInitialPalette = ({ storage = typeof localStorage !== "undefined
 export const applyThemeToDocument = (theme, documentRef = typeof document !== "undefined" ? document : undefined) => {
   const nextTheme = isThemeName(theme) ? theme : DEFAULT_THEME;
   documentRef?.documentElement?.setAttribute("data-theme", nextTheme);
+  try {
+    if (nextTheme === THEMES.dark) {
+      documentRef?.documentElement?.classList?.add?.("dark");
+      if (documentRef?.documentElement?.style) {
+        documentRef.documentElement.style.colorScheme = "dark";
+      }
+    } else {
+      documentRef?.documentElement?.classList?.remove?.("dark");
+      if (documentRef?.documentElement?.style) {
+        documentRef.documentElement.style.colorScheme = "light";
+      }
+    }
+  } catch {}
   return nextTheme;
 };
 
