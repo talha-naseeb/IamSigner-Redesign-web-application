@@ -22,6 +22,11 @@ const documentService = {
     return api.get(`${ENDPOINTS.DOCUMENTS.GET_APP_USER_DOCS_COUNT}?AppUserID=${appUserID}`);
   },
 
+  // Get documents owned by an app user
+  getAppUserDocs: (appUserID, requestConfig = {}) => {
+    return api.get(`${ENDPOINTS.DOCUMENTS.GET_APP_USER_DOCS}?AppUserID=${appUserID}`, requestConfig);
+  },
+
   // Get Admin All Docs Count (FromDate / ToDate are optional)
   getAdminAllDocsCount: (accountID, { fromDate, toDate } = {}, requestConfig = {}) => {
     const params = { AccountID: accountID };

@@ -1595,7 +1595,19 @@
     "shared": "مشارك",
     "inactive": "غير نشط",
     "recalled": "مسترجع",
-    "bulk": "جملة"
+    "bulk": "جملة",
+    "documents": "الوثائق",
+    "documentsCount": "وثائق",
+    "noDocuments": "لم يتم العثور على وثائق لهذا العضو.",
+    "all": "الكل",
+    "documentName": "الوثيقة",
+    "searchDocuments": "تصفية حسب اسم الوثيقة",
+    "noFilteredDocuments": "لا توجد وثائق تطابق عوامل التصفية.",
+    "rowsPerPage": "الصفوف",
+    "userInformation": "معلومات المستخدم",
+    "documentInformation": "معلومات الوثائق",
+    "export": "تصدير إلى Excel",
+    "sections": "أقسام تفاصيل عضو الفريق"
   },
   "UserDocs": {
     "userDocs": "وثائق المستخدم",

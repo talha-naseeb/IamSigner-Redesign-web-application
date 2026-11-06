@@ -41,6 +41,7 @@ import UserSearchFilter from "./UserSearchFilter";
 import ViewTeamDetails from "./ViewTeamDetails";
 import PhoneInput from "react-phone-input-2";
 import userService from "@/services/userService";
+import { exportTeamDocumentsCsv, exportTeamDocumentsWord, fetchTeamDocuments } from "@/utils/teamDocumentExport";
 
 function CreateTeam() {
   const { t } = useTranslation();
@@ -49,6 +50,7 @@ function CreateTeam() {
   const [selectedAppUserId, setSelectedAppUserId] = useState("");
   const [selectedIsActive, setSelectedIsActive] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isExportingDocuments, setIsExportingDocuments] = useState(false);
   const [data, setData] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
@@ -478,38 +480,24 @@ function CreateTeam() {
     saveAs(blob, "TeamMembers.xlsx");
   };
 
-  const exportToWord = () => {
-    const header =
-      "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
-      "xmlns:w='urn:schemas-microsoft-com:office:word' " +
-      "xmlns='http://www.w3.org/TR/REC-html40'>" +
-      "<head><meta charset='utf-8'><title>Team Members Report</title></head><body>";
-    const footer = "</body></html>";
-
-    let htmlTable =
-      '<table border="1" style="border-collapse: collapse; width: 100%;">' +
-      "<tr><th>Name</th><th>Email</th><th>Role</th><th>Created On</th><th>Department</th><th>Country Code</th><th>Mobile Number</th><th>Status</th></tr>";
-
-    visibleTeamMembers.forEach((row) => {
-      htmlTable += `<tr>
-        <td>${row.fullName || ""}</td>
-        <td>${row.emailID || ""}</td>
-        <td>${row.roleNameEn || ""}</td>
-        <td>${row.createdOnFormatted ? formatDate(row.createdOnFormatted) : ""}</td>
-        <td>${row.department || ""}</td>
-        <td>${row.countryCode || ""}</td>
-        <td>${row.mobileNumber || ""}</td>
-        <td>${row.isActive ? "Active" : "Inactive"}</td>
-      </tr>`;
-    });
-
-    htmlTable += "</table>";
-
-    const source = header + htmlTable + footer;
-    const blob = new Blob(["\ufeff", source], {
-      type: "application/msword",
-    });
-    saveAs(blob, "TeamMembers.doc");
+  const exportTeamDocuments = async (format = "csv") => {
+    if (!data.length || isExportingDocuments) return;
+    setIsExportingDocuments(true);
+    try {
+      const exportUsers = await fetchTeamDocuments(data);
+      if (format === "word") {
+        exportTeamDocumentsWord(exportUsers, t);
+      } else {
+        exportTeamDocumentsCsv(exportUsers, t);
+      }
+      if (exportUsers.some(({ docsFailed }) => docsFailed)) {
+        toast.warning(t("createTeam.exportDocumentsPartial", "Some users' documents could not be fetched; the export marks those users."));
+      }
+    } catch (error) {
+      toast.error(t("createTeam.exportDocumentsError", "Could not export team documents."));
+    } finally {
+      setIsExportingDocuments(false);
+    }
   };
 
   const hasAdvancedFilters = Boolean(fullName || emailID || role || isActive !== undefined || department);
@@ -593,7 +581,12 @@ function CreateTeam() {
                       <span>{t("createTeam.exportExcel", "Export to Excel")}</span>
                     </Dropdown.Item>
 
-                    <Dropdown.Item onClick={exportToWord} className='modern-export-item'>
+                    <Dropdown.Item onClick={() => exportTeamDocuments("csv")} disabled={isExportingDocuments} className='modern-export-item'>
+                      {isExportingDocuments ? <Loader2 size={16} className='animate-spin shrink-0' /> : <FileSpreadsheet size={16} className='text-emerald-500 shrink-0' />}
+                      <span>{isExportingDocuments ? t("createTeam.exportingDocuments", "Exporting documents…") : t("createTeam.exportDocumentsCsv", "Export all users and documents to CSV")}</span>
+                    </Dropdown.Item>
+
+                    <Dropdown.Item onClick={() => exportTeamDocuments("word")} disabled={isExportingDocuments} className='modern-export-item'>
                       <FileText size={16} className='text-blue-500 shrink-0' />
                       <span>{t("createTeam.exportWord", "Export to Word")}</span>
                     </Dropdown.Item>

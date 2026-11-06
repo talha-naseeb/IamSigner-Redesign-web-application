@@ -1587,7 +1587,19 @@
     "shared": "Shared",
     "inactive": "Inactive",
     "recalled": "Recalled",
-    "bulk": "Bulk"
+    "bulk": "Bulk",
+    "documents": "Documents",
+    "documentsCount": "documents",
+    "noDocuments": "No documents found for this team member.",
+    "all": "All",
+    "documentName": "Document",
+    "searchDocuments": "Filter by document name",
+    "noFilteredDocuments": "No documents match these filters.",
+    "rowsPerPage": "Rows",
+    "userInformation": "User Information",
+    "documentInformation": "Document Information",
+    "export": "Export to Excel",
+    "sections": "Team member details sections"
   },
   "UserDocs": {
     "userDocs": "User's Documents",

@@ -39,6 +39,7 @@ export const ENDPOINTS = {
     GET_RECENT_DOCS: "/v1.0/api/GetAllDocs",
     GET_DOCUMENT_COUNTS: "/v1.0/api/GetCounts",
     GET_APP_USER_DOCS_COUNT: "/Admin/GetAllDocCountsByAppUserID",
+    GET_APP_USER_DOCS: "/Admin/GetAllDocsByAppUserID",
     GET_ADMIN_ALL_DOCS_COUNTS: "/Admin/GetAllDocCountsByAccountID",
     GET_ACCOUNT_FOLDER_SIZE: "/v1.0/api/GetAccountFolderSize",
     DOWNLOAD_DOC: "/v1.0/api/DownloadDoc",
